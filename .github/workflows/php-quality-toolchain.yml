@@ -93,17 +93,74 @@ jobs:
         run: composer audit --locked --no-interaction
 
       - name: WordPress Coding Standards
+        id: phpcs
+        continue-on-error: true
         shell: bash
-        run: composer quality:phpcs
+        run: |
+          set -o pipefail
+          composer quality:phpcs 2>&1 | tee phpcs.log
 
       - name: WordPress-aware PHPStan
+        id: phpstan
+        continue-on-error: true
         shell: bash
-        run: composer quality:phpstan
+        run: |
+          set -o pipefail
+          composer quality:phpstan 2>&1 | tee phpstan.log
 
       - name: PHPUnit unit suite
+        id: phpunit
+        continue-on-error: true
         shell: bash
         run: composer test:unit
 
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Upload failing PHP diagnostics
+        if: always() && (steps.phpcs.outcome == 'failure' || steps.phpstan.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: php-quality-diagnostics-${{ github.run_id }}
+          path: |
+            phpcs.log
+            phpstan.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Record PHP quality outcomes
+        if: always()
+        shell: bash
+        env:
+          WPE_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+          PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+          PHPUNIT_OUTCOME: ${{ steps.phpunit.outcome }}
+        run: |
+          printf 'head=%s\nphpcs=%s\nphpstan=%s\nphpunit=%s\n' \
+            "${WPE_SOURCE_SHA}" "${PHPCS_OUTCOME}" "${PHPSTAN_OUTCOME}" "${PHPUNIT_OUTCOME}" \
+            > php-quality-outcomes.txt
+          cat php-quality-outcomes.txt >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload PHP quality outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: php-quality-outcomes-${{ github.run_id }}
+          path: php-quality-outcomes.txt
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Enforce PHP quality outcomes
+        if: always()
+        shell: bash
+        env:
+          PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+          PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+          PHPUNIT_OUTCOME: ${{ steps.phpunit.outcome }}
+        run: |
+          set -euo pipefail
+          test "${PHPCS_OUTCOME}" = success
+          test "${PHPSTAN_OUTCOME}" = success
+          test "${PHPUNIT_OUTCOME}" = success

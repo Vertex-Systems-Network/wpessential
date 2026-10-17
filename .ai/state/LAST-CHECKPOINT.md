@@ -1,5 +1,94 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — Dashboard Widget dynamic-binding guard candidate
+
+- `RB-0148` selects 12 preexisting PHPStan always-narrowed errors in `DashboardWidgetActionInputDescriptor` dynamic-binding validation. A local untrusted array view makes the existing shape/value guards statically meaningful while keeping its public property PHPDoc, constructor signature, serialized values and rejection behavior unchanged. Exact source `5c74d5c409ed57607a5f49afe4cbbef05203c12c` PHP Quality run `39073644628`, diagnostic artifact `12115833369` SHA-256 `843da1d1833d5f704f8f7cfae80aad4388766040285f815063b5e5aa2faaa012`, reduced PHPStan **438 → 426** and descriptor errors **12 → 0**. WPCS audit `39073644634`, artifact `12115659882` SHA-256 `8d96569811950d1a1d5db1947e09fbb110239d53f28cddc55587aef42f7d95b0`, had one new `Generic.Commenting.DocComment.MissingShort` at the local annotation; expanded docblock correction passed exact-head WPCS audit `39073950043` on `aba13b69`, artifact `12116272493` SHA-256 `f30989cfada588d3bfa39bd2dae144765a5efecb12d13fb7876d705cbf2288f7`: errors back to **54,490**, warnings **5,102**, naming **9,417**. PHP Quality run `39073953853`, artifact `12116406748` SHA-256 `2f49e5c9a55adebaf28fac05d152c99ea2aaeb07fda32dd0e32f514e8fa815c4`, confirms PHPStan **426**, descriptor **0**. Full gates red.
+
+# 2026-10-18 — PHPStan CSV encoder input-contract candidate
+
+- Exact `2bed6b36a80fe7f342fb7be363134789039ef6a5` PHP Quality run `39072891772` uploaded diagnostic artifact `12116380050`, SHA-256 `c42ab098e1ab1dc859c318efd4ef53c85b4b486ff8746b6a1ff13d1c924d2e0a`. PHPStan reports 446 errors; PHPCS reports broad legacy violations.
+- `RB-0147` widens only the PHPDoc input types of AdminColumnsCsvExportEncoder::encode() and normalizeColumns() to reflect untrusted values checked at runtime. Eight preexisting PHPStan errors in that file concern always-narrowed validation guards. Exact-head PHP Quality run `39073152084`, diagnostic artifact `12115204198` SHA-256 `0d35bad1bd47c1fcafbd6ecd8329bcf285314cdb7d3b355cf87f1a02f974e485`, reduced PHPStan errors **446 → 438** and encoder errors **8 → 0**. Read-only WPCS audit `39073148859`, artifact `12115763037` SHA-256 `90d7a7c0d23b0083431364935dc74a1cb40f1bbdc17af522ac15a46c50dc7f29`, reports framework errors **54,493 → 54,490**, warnings **5,102**, naming **9,417**. Full gate red; public PHP signatures, guards, CSV keys and output unchanged.
+
+# 2026-10-18 — Exact PHP quality failure attribution
+
+- Exact source `a641cd28e6e1bb1e3dee7410c015fddac628cfd8` PHP Quality run `39072610269` failed at unchanged enforcement. Outcome artifact `12115618299`, SHA-256 `fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a`, records PHPCS=failure, PHPStan=failure, PHPUnit=success. The diagnostic artifact step passed.
+- Follow-on captures complete PHPCS/PHPStan command logs as an artifact on failure; fresh exact-head CI required before targeting individual errors.
+
+# 2026-10-18 — PHP quality outcome diagnosis candidate
+
+- Exact PR head `37226d669338dbacc6d742cfdba6100f97b82883` finished 11/15 required PR workflows successful. PHP Quality Toolchain (`39071169990`), CPT Runtime (`39071169974`), Taxonomy Runtime (`39071170020`) and Architecture Guards (`39071169985`) failed at quality enforcement. The `continue-on-error` step summaries do not identify which underlying PHP command failed; job logs connector returned Transport closed.
+- `RB-0146` adds a small outcome artifact to the PHP Quality Toolchain workflow, recording exact PR source SHA and PHPCS/PHPStan/PHPUnit step outcomes before unchanged enforcement. CI must validate the artifact; no quality requirement is relaxed.
+
+# 2026-10-18 — Query validator local-only reduction verified
+
+- Exact PR head `d92c05585078060b5cb90aa68769c19859e13bcc` has 11/15 required PR workflows successful; PHP Quality Toolchain, CPT Runtime, Taxonomy Runtime and Architecture Guards failed at PHP quality enforcement. Job logs connector returned Transport closed; step summaries alone do not prove the underlying command outcomes.
+- `RB-0145` selects six method-local names in QueryAstValidator provider extension, ordering and unsafe-payload scan methods, 20 prior VariableNotSnakeCase findings. Public/private method parameters, AST keys, semantics and diagnostics remain unchanged. Read-only audit `39070950046` passed on `aa153c433c1728a60b8d06fc7adf3a16e3fa1554`, artifact `12115087720`, SHA-256 `a1011133e320ecd261e3cf84bbeb43bb36f7f10c0c928d464b3f1276d8f30bd4`: naming **9,437 → 9,417**, errors **54,513 → 54,493**, warnings **5,103 → 5,102**. Full CI pending/red; local PHP/Composer unavailable.
+
+# 2026-10-17 — Exact 29 CSV export-scope findings removed; warning correction verified
+
+- Source `c5a9ff35580df1fcfe6c7e2db01fd9d71092a427` passed read-only audit run `39066717128`, artifact `12112993399`, SHA-256 `5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf`. Naming findings **9,466 → 9,437**, framework errors **54,542 → 54,513**, warnings **5,103 → 5,104**. Blank-line correction passed exact-head audit `39066980663` on `d201d446`, artifact `12113358765`, SHA-256 `66cee3d1926eee62400074eeff708f2c4cddc5894b121537f8516bea2d4263ed`; naming **9,437**, errors **54,513**, warnings restored **5,103**. Full quality gates remain red/pending, PR open/unmerged.
+
+# 2026-10-17 — Exact 33 CSV selection findings removed
+
+- Source `f5ab9368a52c6c2198d28757fc3ec28959307908` passed read-only naming audit run `39051322816`, artifact `12108046642`, SHA-256 `9d5c0a070f4a6edbf73454524468ec7a7a51544d5de88d51e7fba59be17194d8`. Naming findings **9,499 → 9,466**, framework errors **54,575 → 54,542**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending; PR open/unmerged.
+- `RB-0144` proposes seven locals across four CSV export-scope methods (29 prior findings), retaining signatures, private parameter names, CSV keys and ordering. Fresh exact-head audit/full CI required; local PHP/Composer unavailable.
+
+# 2026-10-17 — Exact 24 CSV collection findings removed
+
+- Source `d6d9964774160ce998d1c0857045f152c4e3f2ac` passed read-only naming audit run `39050644066`, artifact `12107503073`, SHA-256 `da455b19b56dae2536a6f93f471bdc0afa2ad3eb6f3d091a9cc65f11af7980b9`. Naming findings **9,523 → 9,499**, framework errors **54,599 → 54,575**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending; PR #1416 open/unmerged.
+- `RB-0143` proposes seven locals across private `exactSelectedRows()` and `selectColumns()` (33 prior findings). Four parameter names, CSV keys, row membership and ordering remain unchanged. Fresh exact-head audit/full CI required; local PHP/Composer unavailable.
+
+# 2026-10-17 — Exact-head CI reconciled and CSV collection candidate
+
+- On PR head `359ec47c792624f4dc8d05584bdbcd90b683b39c`, all 15 pull-request workflow runs completed: 11 success, four quality-enforcement failures in PHP Quality Toolchain (`39050053011`), Taxonomy Runtime (`39050053048`), CPT Runtime (`39050053009`) and Architecture Guards (`39050053035`). Each failed job reports an `Enforce PHP quality outcome(s)` step; individual underlying command conclusions are not proven by `continue-on-error` step status, and job logs could not be fetched. PR remains open/unmerged.
+- `RB-0142` selects 24 method-local naming findings across six symbols in `AdminColumnsCsvExportService::collectAllMatching()`. Ten parameter-reference findings in the same method stay unchanged. PHPDoc local annotation follows the local rename; CSV output/contract keys stay intact. Fresh exact-head audit and full CI required; local PHP/Composer unavailable.
+
+# 2026-10-17 — Warning regression corrected at exact head
+
+- Source `9c87fc8fec05879a01a9e4b89cc28a5499455f43` passed read-only naming audit run `39049801229`, artifact `12107032077`, SHA-256 `ef9fa8e6e599d157197031e2964cfdb2ae9e804e6f0c9262746a25878659ed10`. Framework warnings **5,107 → 5,103**, naming findings stable **9,523**, framework errors stable **54,599**. The four predicate assignment warnings from the previous batch are gone.
+- PR #1416 remains open under Issue #1417. On the exact `9c87fc8` head, PHP Quality Toolchain run `39049804633` failed while other checks were still queued/running at last read (15 pull-request workflow runs: 5 success, 1 failure, 9 incomplete). Full-tree WPCS quality enforcement is not green. No merge, deployment or release. Local PHP/Composer unavailable.
+
+# 2026-10-17 — Predicate naming reduction and four warning regressions
+
+- Source `e7a16d2b152cd96819649381d73c4538cd4d6e07` passed read-only naming audit run `39049530316`, artifact `12106079996`, SHA-256 `43882c08edeb09b21fb70b38b285596b8dcd151f284c5179c787513f115cae62`. Naming findings **9,551 → 9,523**, framework errors **54,627 → 54,599**, warnings **5,103 → 5,107**. Four new assignment alignment warnings at QueryAstValidator lines 482, 501, 541, 643 require correction. Full quality gate red.
+- `RB-0141` proposes spacing-only correction to these four assignments; no behavior, public API or WPCS rule change. Fresh exact-head audit/full CI required; local PHP/Composer unavailable. PR open/unmerged.
+
+# 2026-10-17 — Exact 26 Query findings removed; predicate-local candidate
+
+- Source `d0c2c0ad49c214d4f6daf78bddfa5ac1e4640744` passed read-only naming audit run `39049237625`, artifact `12107490225`, SHA-256 `2f0acbd76cd938b6ebc46c9a8902dca0c68254c371e160cb40c8a958a5a4641a`. Naming findings **9,577 → 9,551**, framework errors **54,653 → 54,627**, warnings stable **5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.
+- `RB-0140` proposes two local names across private Query AST predicate methods (28 prior findings), retaining method signatures, AST keys, descriptor properties and issue codes. Fresh audit/full CI required; local PHP/Composer unavailable. PR open/unmerged.
+
+# 2026-10-17 — Exact 19 Query source findings removed; next three-method candidate
+
+- Source `81cfe04be23edf3337cb7cafb3ed911fd6169d23` passed read-only naming audit run `39039355431`, artifact `12103750714`, SHA-256 `9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13`. Naming findings **9,596 → 9,577**, framework errors **54,672 → 54,653**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending.
+- `RB-0139` proposes nine local names across public `validate()` and two private Query AST parse methods (26 prior findings), retaining signatures, AST keys and named constructor labels. Fresh exact-head audit/full CI required. Local PHP/Composer unavailable; PR open/unmerged.
+
+# 2026-10-17 — Exact 19-finding reduction and Query source candidate
+
+- Source `a0a2620027eae33057bb3d541baa1f5182c06068` passed read-only naming audit run `39039076369`, artifact `12103665548`, SHA-256 `e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3`. Naming findings **9,615 → 9,596**, framework errors **54,691 → 54,672**, warnings stable **5,103**. Full-tree quality enforcement still blocks PR merge.
+- `RB-0138` proposes three local names in private `QueryAstValidator::parseSource()` (20 prior findings), preserving AST keys, descriptor properties and validation issue codes. Existing QueryAstValidatorTest covers source behavior; local PHP/Composer unavailable. Fresh audit and full exact-head CI required.
+
+# 2026-10-17 — Exact 36-finding reduction and next reference-method batch
+
+- Source `2c62f3f0202b7a3c86666ff5683fda50108c23ee` passed read-only naming audit run `39038797537`, artifact `12103386238`, SHA-256 `0950ce512c00c3460de991febabe79d60498fa986ccc0ecca8793d9a9082755b`. Naming findings **9,651 → 9,615**, framework PHPCS errors **54,727 → 54,691**, warnings **5,104 → 5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.
+- `RB-0137` proposes four local identifiers in two private Dashboard Widget registration reference methods (20 prior findings), preserving callable properties, public API and serialized keys. Fresh audit and full CI remain mandatory; local PHP/Composer unavailable. PR stays open/unmerged.
+
+# 2026-10-17 — Exact 44-finding reduction and next registration compiler batch
+
+- Source `51991d75354cfe33068ddbfe46e92a593d38d16a` passed read-only naming audit run `39037663759`, artifact `12102238683`, SHA-256 `09ffa45df4dd26ea385e8a3754c67a44a3d11477ff20b0f912e7a0690c30547a`. Naming findings **9,695 → 9,651** and framework PHPCS errors **54,771 → 54,727**; warnings **5,103 → 5,104** from a line-length warning at `DashboardWidgetRegistrationCompiler.php:579`. Full-tree WPCS remains red.
+- `RB-0136` proposes 14 local names in public `compile()` (36 prior naming findings) while preserving its signature, properties, descriptor named argument labels, payload keys and values. A scoped condition wrap addresses the new line-length warning. Fresh audit and exact-head full CI are mandatory; local PHP/Composer unavailable. PR stays open/unmerged.
+
+# 2026-10-17 — Exact 211-finding reduction and registration target candidate
+
+- Exact source `aaccde6540e4ec619aeb310a69c71760f6446195` passed read-only naming audit run `39037320723`, artifact `12102517969`, SHA-256 `8f6ab7e5dd6fe4ad474c9bf688f60c843ed464a6fdbc1a79c551b0653429320e`. Naming findings **9,906 → 9,695**, framework PHPCS errors **54,982 → 54,771**, warnings **5,105 → 5,103**. All 211 removed naming findings were `VariableNotSnakeCase` in `DashboardWidgetsModule::register()`. Framework scan is not whole-repository WPCS or a merge gate pass.
+- `RB-0135` proposes ten method-local names in `DashboardWidgetRegistrationCompiler::compileTarget()` (44 prior findings), including synchronized PHPDoc local annotations. Its result requires a new exact-head audit. `RB-0134` full CI remains pending/red, with CPT Runtime's quality enforcement failing. Local PHP/Composer are unavailable; preserve all full quality gates and keep PR open.
+
+# 2026-10-17 — Fresh-main reconciliation and PR #1416 continuation
+
+- Current `main`: `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30` (protected merge of PR #1421). The open PR #1416 head at refresh was `831367cc61694c1c2bb6b7335364752fb5f38ed7`, three main commits behind; those three current-main commits were merged locally into the existing PR branch without conflicts.
+- Exact PR head `78660165dcc8be6c9259ada5f060ee3c32367f91`: all 55 checks completed, 51 passed and 4 failed in PHP quality, Architecture, CPT and Taxonomy quality-enforcement steps. The `ai-timeout-resilient-state-contract` smoke now passes (run `39025261525`, artifact `12098441999`), confirming the quoted issue/PR state fix. The last exact audited full-tree WPCS result is `55,287 errors / 5,104 warnings` on `21fa582`; no newer count is available.
+- The branch includes current `main` `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30` and is zero commits behind. PR #1416 remains OPEN and blocked by required quality enforcement; no merge, standards bypass, release or deployment.
+- RB-0126 records the completed failed merge-gate attempt. RB-0127 is registered for a fresh read-only naming/PSR-4 ABI audit before the next bounded local-only variable remediation. Local runner has no PHP/Composer; exact-head PHP 8.2 GitHub CI is used for PHP validation.
 ## 2026-10-13 — RB-0125 terminal read-only review PASS
 
 - Issue #1411 / PR #1412 corrected exact head `c24c97eed560f206cd1ab8ad177882ba78fd0f0b`: **14/14** exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform 10/10; 7 scoped files, zero behind/review threads; protected merge `d85f3183e2684a94c0f654fd191d7185dbda1929`. Initial Architecture failure was compact checkpoint >16KiB; repaired and reran green.
@@ -11,104 +100,9 @@
 - Bounded `PASS_DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1`: postcreate privilege/current WP user+site+network drift denies a false `created_draft` success with generic `write_failed`; exactly one Draft may persist; no automatic retry, rollback, publication, public import, provider, production or GA.
 - Discrepancy detected on merged main: README, compact AI state/queue/checkpoint and Runner Benchmark still marked RB-0124 PENDING. Issue #1409 covers exactly these five documentation/AI reconciliation files, leaving no recursive implementation slot. After protected merge, fresh main/issues/PRs select a new safe source milestone. #858 admin, #947 independent Worker and #1102 separate authorization remain parked.
 
-## 2026-10-10 — RB-0123 real MySQL PASS; RB-0124 postcreate WP authorization recheck staged
+## Older detailed milestones
 
-- RB-0123 Issue #1405 / PR #1406 corrected exact head `bf6eb7ecac80a8877fb66f17b4ca02e37931de0a`, **12/12** exact-head CI PASS incl. real disposable MySQL concurrency, Governance, Architecture, Platform 10/10; six paths, 0 behind/reviews; protected merged `49c089329ed1f4f632958ca4c17c57c0f4466b3e`. Initial fixture failed due invalid underscore slug, self-repaired and completely rerun.
-- RB-0124 Issue #1407 branch `agent/dashboard-draft-postcreate-authorization-recheck-v1`: internal-only Draft importer now checks caller `manage_options` and current WP identity after persisted Draft/widget fingerprint verification; loss of authorization cannot claim `created_draft`. Existing created Draft remains, no retry/rollback/publish.
-- PHPUnit capability revocation and real pinned WP two-site user/blog context drift fixtures staged in eight approved paths. All path-applicable CI and protected merge PENDING. External #858/#1102/#947 parked; full parity/provider/GA unpromoted.
-
-
-## 2026-10-09 — RB-0121 terminal PASS; ready next safe source
-
-- RB-0121 Issue #1399 / PR #1400 exact head `f48132cc007b201ecf3f701a827d08d41c5c6aef`: **14/14** path-applicable CI PASS incl. PHP Quality, Distributable, Governance, Architecture and 10-cell Platform; exactly 7 authorized paths, zero behind/reviews, protected merged `5f17579908d15db504ac495565cfd3b297fa63be`; issue closed.
-- Internal-only Draft importer now rechecks CURRENT Published widget references after persisted Draft readback; if target changes after initial preflight, generic `write_failed` replaces false success, without additional write/rollback or publication.
-- Issue #1401 terminal 5-file README/AI state/queue/benchmark reconciliation. No recursive docs-only IN_PROGRESS slot; next safe reversible source fresh audit. Park #858 admin, #1102 privileged P-006, #947 independent Worker; no production/GA/full parity.
-
-
-## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY
-
-- Issue #1391 / PR #1392 exact head `9916b4ca8559c7ac20ed64c366104338b60c83c5`, **12/12** applicable CI PASS incl. actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `574d1f89cb8a1455079182256b4739140a00214c`; issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1`. Silent write acknowledgement, altered stored record and read exception produce generic `write_failed`; neither automatic import/retry/rollback nor public Ability, publishing, native layout/provider/production/GA.
-- Issue #1393 terminal shared-truth correction sets queue `READY_NEXT_SAFE_SOURCE` **without** recursive admin IN_PROGRESS slot; next work chosen by fresh issue-first main audit. #858/#947/#1102 parked.
-
-
-## 2026-10-09 — RB-0116 real MySQL mapped Draft terminal PASS, next safe source READY
-
-- Issue #1385 / PR #1386 exact head `a8248878d00f1b13f2afd99b1bfd4fbbb319603e`: 12/12 applicable exact-head CI PASS including actual disposable MySQL Definition/Audit, Governance, Architecture, Platform Compatibility 10/10; 6 authorized files, zero behind/unresolved reviews, protected merge `dbeece1c1fd81f2aefac9d2ae6820942446acdad`; issue closed.
-- Only bounded `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_REAL_MYSQL_V1` certified. Internal-only Draft create-once; no public importer, publishing, live DB, WordPress layout, provider/cache/GA.
-- Issue #1387 terminates shared truth and leaves queue `READY_NEXT_SAFE_SOURCE` **without** another recursive administrative IN_PROGRESS slot. Fresh main/issues/PR audit next; #858/#947/#1102 remain parked.
-
-
-## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY
-
-- RB-0113 Issue #1377 / PR #1378 exact head `e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c`: **12/12** path-applicable exact-head CI PASS including actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `482c935e1da311737d545736881d2cc35384d2d4`, issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1`: internal-only Draft/revision-one insert-once, typed collision/fingerprint/capability denial, site isolation. No public importer, automatic publishing, native WordPress dashboard usermeta, provider/remote, production release or full GA.
-- Issue #1379 terminal shared-truth reconciliation resets queue to `READY_NEXT_SAFE_SOURCE` **without** creating an administrative IN_PROGRESS queue slot; next cycle picks a meaningful authorized source milestone after fresh issue-first audit.
-
-
-## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
-
-- RB-0108 Issue #1365 / PR #1366 exact head `16f4db02c01cf2129029c3e72245d932635d9ebf`: **13/13** path-applicable CI PASS including pinned real two-site WP7.1/PHP8.2/MySQL8.4 Multisite Isolation, Governance, Architecture and Platform 10/10; exactly 6 authorized files, zero behind/reviews, protected merged `f5083db963b6fa443be6d728d678feae4ce3d3d0`, issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1` only. Deterministic cross-site candidate mapping validates Published target widget refs with non-authenticating content SHA256; `applicable=false`, no actual import, native WordPress preferences writes, cache/provider/deployment or GA.
-- Issue #1367 five-file README/AI state/queue/benchmark closeout deliberately records no new `IN_PROGRESS` admin slot after merge. Next safe source lane needs fresh audit. Park unrelated #858 admin, #1102 privileged P-006 and #947 independent Worker.
-
-
-## 2026-10-09 — RB-0106 read-only import preflight real WordPress PASS
-
-- RB-0106 Issue #1359 / PR #1360 exact head `1cdb9d222b1442650fab7563b6e3aeaf14154ed0`: **13/13** path-applicable CI PASS including pinned real two-site WordPress Multisite, Governance, Architecture and Platform 10/10; 6 authorized files, no behind/review blockers, protected merged `151c70cbffa8346e10dae552d4debe2a4985540f`; issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_IMPORT_PREFLIGHT_REAL_WORDPRESS_V1`; all preflight states `applicable=false`, no importer/native WordPress preferences/provider/cache/deployment/GA.
-- Issue #1361 terminal README/shared-truth status reconciliation; external #858 admin, #1102 P-006 and #947 Worker lanes parked.
-
-
-## 2026-10-09 — RB-0104 real WordPress fingerprint freshness PASS, terminal reconciliation
-
-- Issue #1353 / PR #1354 original candidate failed an invalid test fixture assumption: uppercase of an all-numeric UUID did not change the UUID. Autonomous scoped fix committed a letter-bearing uppercase test UUID; all applicable exact-head CI restarted and passed.
-- Corrected PR exact head `9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e`: **13/13** path-applicable CI PASS incl. pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation, Governance, Architecture, Platform Compatibility 10/10; exactly 6 allowed paths, 0 behind/reviews; protected merged `595f6114e0954736e343255e1cb5766f336d6473`. Issue #1353 closed.
-- Promote only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1`; no import, signature trust, native WordPress dashboard preferences, provider, cache, full Surface10 product parity, production or GA.
-- Issue #1355 is real 5-file post-merge README/queue/benchmark PENDING-to-PASS evidence reconciliation. Fresh audit after protected merge; #858 admin, #1102 privileged P-006 and #947 independent Worker parked.
-
-
-## 2026-10-09 — RB-0102 real WordPress preset snapshot PASS, terminal reconciliation
-
-- RB-0102 Issue #1347 / PR #1348 exact head `6410be52dc80aaec01c7b84849272b7ef60cedf0`, **13/13** path-applicable exact-head CI PASS including pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation and Platform 10/10, Governance/Architecture. Exact six files, zero behind/threads, protected merged `939605b1d7567966e1a95763b76e2c35500e5c43`; issue closed.
-- Only `PASS_DASHBOARD_PRESET_PORTABILITY_REAL_WORDPRESS_READ_V1` promoted; no complete portability import/round-trip, cryptographic signing, usermeta writes, provider, cache, production or GA.
-- Issue #1349 records real post-merge README/AI state/queue benchmark pending-to-PASS divergence; exact 5 shared-truth files and 2 path-applicable CI gates only. Fresh main/Issues/PRs and queue must be re-audited after protected merge.
-- #858 admin, #1102 privileged P-006, #947 independent Worker parked; independent safe source work remains eligible.
-
-
-## 2026-10-09 — RB-0100 PASS; post-merge README/shared truth closeout
-
-- RB-0100 Issue #1341 / PR #1342 exact head `d978030f7aca15fd6193307de840248ceed74398`: **13/13 exact-head CI PASS**, including real pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite isolation, Governance, Architecture and Platform Compatibility 10/10.
-- Protected squash merge `c171acebf90ef90def07363ad26c9af52b3f3973`; exact 6-file authorized scope; zero behind and unresolved review threads; Issue #1341 closed.
-- Promote only `PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1`. No native WordPress order/hide/collapse mutation, auto-preset application, full Surface 10 parity, production or GA.
-- Issue #1343 post-merge shared-truth discrepancy reconciliation has five documentation/coordination files only. After protected merge, use fresh main/Issues/PR/queue to select next authorized product work. Park #858/#1102/#947.
-
-
-## 2026-10-09 — RB-0098 PASS; post-merge evidence terminal
-
-- Issue #1335 / PR #1336 merged `78b1bfbd0426e922b514159feebebfbf51f7f667`, exact PR head `098054362615e12e3e5f7617bc03512ec06db487`.
-- 13/13 applicable exact-head CI PASS, including real WP 7.1 / PHP 8.2 / MySQL 8.4 two-site Multisite Isolation step, Governance, Architecture and Platform Compatibility 10/10. Exact seven-file allowlist, zero behind and review blockers; Issue #1335 closed.
-- Promoted only `PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1`; no automatic native preset application, no full Surface 10 parity/certification and no production/GA.
-- Issue #1337 is real post-merge README/state/queue/benchmark divergence reconciliation, five-file scope, no runtime source.
-- Next safe source lane must be freshly evaluated after merging Issue #1337; admin #858, privileged P-006 #1102 and independent Worker #947 remain parked.
-
-
-## 2026-10-09 — RB-0097 PASS; real post-merge shared truth reconciled
-
-- Issue #1327 auto-closed on accepted PR #1332; merge `adb7cfa042e733ec59e530601c9cb6152ba1e526`.
-- Exact implementation PR head `f5844b210e17646ed60e57fa5ddbc0f2a228f18a`; 14/14 checks PASS (Governance, PHP, Distributable, Architecture, Platform Compatibility 10/10); 18 accepted paths, zero behind, zero unresolved review threads.
-- Terminal evidence only: `PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1`. No full Surface 10 runtime parity, native layout preference application, deployment or GA.
-- Issue #1333 records material README/state/queue/benchmark divergence after the merge. This narrow reconciliation does not introduce runtime source changes. Future safe source milestone must be freshly selected and scoped; #858/#1102/#947 remain parked.
-
-## 2026-10-08 — Continuous governance closed; RB-0097 next
-
-- Last verified main before this checkpoint PR: `cd4af50f70386f73cb2c89101de484c941b7d2b4`.
-- Issue #1328 / PR #1329 exact head `231311e2cbb2ece9f94e1a6d75201aa32d221650`: 12/12 PASS; squash merged to the main SHA above; #1328 closed.
-- PR #1330 earlier merged autonomous continuity and README progress rules; PR #1329 reconciled all affected policies and coordination queue.
-- Issue #1327 / RB-0097 Dashboard Multisite preset-policy foundation: next dependency-ready source task, subject to fresh main/issues/PR/claim reconciliation and its strict 18-file contract. The AI chooses and progresses it without routine owner prompting.
-- #858 remains repository-admin only; #1102 needs separate privileged P-006 authorization; #947 is independent Worker-only. Park these lanes rather than idling authorized work.
-- For every later commit, re-resolve actual main; `observed_main_sha` is a historical resume anchor, not a current-head claim. Refresh this file and README's concise progress view after significant integrations.
-- Preserve exact-head checks, review, file allowlists, production/credential/privileged boundaries. Continuous execution is limited to the actual running workspace/session; it cannot outlive that runtime without an independent orchestrator.
+Detailed RB-0123 through RB-0097 evidence remains in the linked GitHub Issues/PRs and repository history; the compact status table below preserves the latest certified summary.
 
 ## Recent certified milestones
 

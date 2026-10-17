@@ -380,6 +380,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         $resolver = new RuntimeDynamicResolver(new DynamicValueResult(true, 'Dynamic text'));
         $repository = $this->repositoryWith($this->definition(
             renderSource: $this->queryAndDynamicRenderSource(),
+            contentType: 'announcement',
         ));
         $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>combined</p>'));
         $context = new ExecutionContext(new Principal(7), 3);
@@ -714,12 +715,13 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         ?array $renderSource = null,
         string $title = 'Safe Widget',
         array $lifecycle = [],
+        string $contentType = 'rich_text',
     ): Definition {
         $renderSource ??= $this->literalRenderSource();
         $widget = [
             'key' => 'runtime_widget',
             'title' => $title,
-            'type' => 'rich_text',
+            'type' => $contentType,
             'context' => 'normal',
             'priority' => 'default',
             'network_dashboard' => false,

@@ -10,6 +10,26 @@ use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
 
 final class FieldDefinitionNormalizerTest extends TestCase
 {
+    public function testEmptySettingsAreAllowedButIndexedSettingsRemainRejected(): void
+    {
+        $normalizer = new FieldDefinitionNormalizer();
+        $field = $normalizer->normalize([
+            'key' => 'subtitle',
+            'label' => 'Subtitle',
+            'type' => 'text',
+            'settings' => [],
+        ]);
+        self::assertSame([], $field['settings']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $normalizer->normalize([
+            'key' => 'subtitle',
+            'label' => 'Subtitle',
+            'type' => 'text',
+            'settings' => ['indexed'],
+        ]);
+    }
+
     public function testMetaBoxStyleCloneAndSortNormalizeToSharedRepeatabilityContract(): void
     {
         $field = (new FieldDefinitionNormalizer())->normalize([

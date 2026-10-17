@@ -89,7 +89,6 @@ jobs:
         run: |
           set -euo pipefail
           composer fast
-          composer quality:php
           php -l frameworks/Modules/CustomPostTypes/CustomPostTypeDefinitionProjector.php
           php -l frameworks/Modules/CustomPostTypes/CustomPostTypeRegistrationProvider.php
           php -l frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
@@ -98,6 +97,21 @@ jobs:
           php -l frameworks/Platform/WordPress/Registrations/PostTypeRuntimeRegistrar.php
           php -l tests/Integration/wordpress-cpt-runtime.php
           php -l tests/Integration/wordpress-cpt-validation.php
+
+      - name: WordPress Coding Standards
+        id: phpcs
+        continue-on-error: true
+        run: composer quality:phpcs
+
+      - name: WordPress-aware PHPStan
+        id: phpstan
+        continue-on-error: true
+        run: composer quality:phpstan
+
+      - name: PHPUnit unit suite
+        id: phpunit
+        continue-on-error: true
+        run: composer test:unit
 
       - name: Prepare exact WordPress 7.1 fixture
         shell: bash
@@ -202,3 +216,16 @@ jobs:
         if: always()
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Enforce PHP quality outcomes
+        if: always()
+        shell: bash
+        env:
+          PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+          PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+          PHPUNIT_OUTCOME: ${{ steps.phpunit.outcome }}
+        run: |
+          set -euo pipefail
+          test "${PHPCS_OUTCOME}" = success
+          test "${PHPSTAN_OUTCOME}" = success
+          test "${PHPUNIT_OUTCOME}" = success

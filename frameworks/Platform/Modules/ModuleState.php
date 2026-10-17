@@ -6,12 +6,12 @@ namespace WPEssential\Platform\Modules;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 enum ModuleState: string
 {
-    case Registered = 'registered';
-    case Degraded = 'degraded';
-    case Booted = 'booted';
+	case Registered = 'registered';
+	case Degraded = 'degraded';
+	case Booted = 'booted';
 }

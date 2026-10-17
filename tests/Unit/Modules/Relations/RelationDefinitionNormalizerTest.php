@@ -10,6 +10,21 @@ use WPEssential\Modules\Relations\RelationDefinitionNormalizer;
 
 final class RelationDefinitionNormalizerTest extends TestCase
 {
+    public function testEmptyOptionalMapsUseDefaultsButIndexedBoundsAreRejected(): void
+    {
+        $normalizer = new RelationDefinitionNormalizer();
+        $payload = $this->payload();
+        $payload['direction'] = [];
+        $payload['bounds'] = [];
+        $normalized = $normalizer->normalize($payload);
+        self::assertFalse($normalized['direction']['reciprocal']);
+        self::assertSame(1, $normalized['bounds']['to_max']);
+
+        $payload['bounds'] = [1, 2];
+        $this->expectException(InvalidArgumentException::class);
+        $normalizer->normalize($payload);
+    }
+
     public function testOneToManyDefaultsPreserveDirectionalCardinality(): void
     {
         $normalized = (new RelationDefinitionNormalizer())->normalize($this->payload());

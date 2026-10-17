@@ -6,19 +6,19 @@ namespace WPEssential\Platform\WordPress\Ajax;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface WordPressAjaxEnvironmentInterface
 {
-    public function registerAction(string $hook, callable $callback): void;
+	public function registerAction(string $hook, callable $callback): void;
 
-    /** @return array<string,mixed> */
-    public function request(): array;
+	/** @return array<string,mixed> */
+	public function request(): array;
 
-    public function isAuthenticated(): bool;
+	public function isAuthenticated(): bool;
 
-    public function currentUserCan(string $capability): bool;
+	public function currentUserCan(string $capability): bool;
 
-    public function respond(AjaxResponse $response): void;
+	public function respond(AjaxResponse $response): void;
 }

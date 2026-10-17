@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Contracts;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 /**
@@ -16,6 +16,6 @@ if (!defined('ABSPATH')) {
  */
 interface AdminColumnsSourceCatalogInterface
 {
-    /** @return list<array<string,mixed>> */
-    public function adminColumnSources(): array;
+	/** @return list<array<string,mixed>> */
+	public function adminColumnSources(): array;
 }

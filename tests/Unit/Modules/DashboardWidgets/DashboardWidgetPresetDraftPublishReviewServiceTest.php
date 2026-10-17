@@ -116,7 +116,7 @@ final class DashboardWidgetPresetDraftPublishReviewServiceTest extends TestCase
         );
 
         $network = $this->repo();
-        $networkDraft = $this->draft(networkDefault: true);
+        $networkDraft = $this->draft(roles: [], networkDefault: true);
         $network->save($networkDraft);
         self::assertSame(
             ['status' => 'forbidden', 'publish_authorized' => false],

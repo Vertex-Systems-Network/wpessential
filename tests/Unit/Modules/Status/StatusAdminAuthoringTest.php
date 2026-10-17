@@ -183,7 +183,7 @@ final class StatusAdminAuthoringTest extends TestCase
     {
         $source = file_get_contents(dirname(__DIR__, 4) . '/frameworks/Modules/Status/StatusModule.php');
         self::assertIsString($source);
-        self::assertStringContainsString("'wpessential/status/admin/'", $source);
+        self::assertStringContainsString("'wpessential/status/admin-'", $source);
         self::assertStringContainsString("capability: self::ADMIN_CAPABILITY", $source);
         self::assertStringContainsString("NonceOperation::Update", $source);
         self::assertStringNotContainsString("'site_id'", $source);

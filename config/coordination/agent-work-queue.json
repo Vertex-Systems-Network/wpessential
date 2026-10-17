@@ -1,9 +1,9 @@
 {
-  "schema_version": 207,
-  "snapshot_date": "2026-10-13",
-  "queue_anchor_main_sha": "d85f3183e2684a94c0f654fd191d7185dbda1929",
-  "mode": "READY_NEXT_SAFE_SOURCE",
-  "source_issue": "#1413",
+  "schema_version": 208,
+  "snapshot_date": "2026-10-17",
+  "queue_anchor_main_sha": "6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30",
+  "mode": "ACTIVE_OPEN_PR",
+  "source_issue": "#1417",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -249,7 +249,9 @@
     "1403": "CLOSED_COMPLETED_RB0122_PR1404_14_OF_14_PASS",
     "1405": "CLOSED_COMPLETED_RB0123_PR1406_REAL_MYSQL_12_OF_12_PASS",
     "1407": "CLOSED_COMPLETED_RB0124_PR1408_PINNED_WP_15_OF_15_PASS",
-    "1411": "CLOSED_COMPLETED_RB0125_PR1412_14_OF_14_PASS"
+    "1411": "CLOSED_COMPLETED_RB0125_PR1412_14_OF_14_PASS",
+    "1415": "OPEN_ACTIONABLE_REPRESENTED_BY_PR_1416",
+    "1417": "OPEN_ACTIONABLE_WPCS_REMEDIATION_IN_PR_1416"
   },
   "auto_assignment": {
     "enabled": true,
@@ -279,7 +281,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "RB-0125 PR #1412 terminal 14/14 exact-head CI and protected merge; refresh main/OPEN Issues/PRs and select next authorized independent ready source. Do not create recursive reconciliation slot. #858 admin, #947 Worker-only and #1102 P-006 authorization parked.",
+    "next_safe_action": "Issue #1417 / PR #1416 remains actionable. RB-0144 read-only audit passed on c5a9ff35, artifact 12112993399: 29 fewer naming/framework errors, one alignment warning; full CI pending/red. Correction audit 39066980663 restored warnings to 5,103; d92c0558 exact PR CI 11/15 passes with four PHP quality enforcement failures. RB-0145 audit 39070950046 passed on aa153c43 with 20 fewer naming/framework errors and one fewer warning; 37226d66 PR CI 11/15 pass, four quality failures. RB-0146 artifact 12115618299 on a641cd28 confirms PHPCS and PHPStan failure, PHPUnit success; diagnostic artifact 12116380050 shows 446 PHPStan errors and broad PHPCS backlog. RB-0147 exact e2ba5832 verification: PHPStan 446 to 438, encoder errors 8 to 0, WPCS errors 54,493 to 54,490, warnings stable 5,102; full gates red; RB-0148 PHPStan 438 to 426 on 5c74d5c4; doc-comment correction audited at aba13b69: WPCS errors restored 54,490, warnings 5,102; PHPStan 426, descriptor 0. Full gate red. #858, #947 and #1102 parked.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,

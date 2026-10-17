@@ -6,12 +6,12 @@ namespace WPEssential\Platform\WordPress\Registrations;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface CompiledRegistrationStoreInterface
 {
-    public function active(): ?CompiledRegistrationManifest;
+	public function active(): ?CompiledRegistrationManifest;
 
-    public function publish(CompiledRegistrationManifest $manifest): void;
+	public function publish(CompiledRegistrationManifest $manifest): void;
 }

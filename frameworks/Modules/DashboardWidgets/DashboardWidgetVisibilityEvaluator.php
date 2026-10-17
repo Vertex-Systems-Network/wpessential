@@ -1,83 +1,109 @@
 <?php
+/**
+ * Evaluate Dashboard widget access using fail-closed principal checks.
+ *
+ * @package WPEssential\Modules\DashboardWidgets
+ */
 
 declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use Throwable;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 
-final readonly class DashboardWidgetVisibilityEvaluator
-{
-    public function __construct(
-        private CapabilityCheckerInterface $capabilities,
-        private DashboardWidgetRoleMembershipProviderInterface $roles,
-    ) {}
+/** Enforce role, capability and user constraints for widget visibility. */
+final readonly class DashboardWidgetVisibilityEvaluator {
 
-    public function evaluate(
-        DashboardWidgetVisibilityDescriptor $visibility,
-        ExecutionContext $context,
-    ): DashboardWidgetVisibilityDecision {
-        if (!$context->principal->isAuthenticated()) {
-            return DashboardWidgetVisibilityDecision::deny(
-                DashboardWidgetVisibilityDecision::REASON_UNAUTHENTICATED,
-            );
-        }
+	/**
+	 * Construct the visibility evaluator with canonical access providers.
+	 *
+	 * @param CapabilityCheckerInterface                     $capabilities Capability checker.
+	 * @param DashboardWidgetRoleMembershipProviderInterface $roles Current roles.
+	 */
+	public function __construct(
+		private CapabilityCheckerInterface $capabilities,
+		private DashboardWidgetRoleMembershipProviderInterface $roles,
+	) {}
 
-        if ($context->principal->actorType !== 'user') {
-            return DashboardWidgetVisibilityDecision::deny(
-                DashboardWidgetVisibilityDecision::REASON_NON_USER_ACTOR,
-            );
-        }
+	/**
+	 * Return an explicit allow/deny decision for the authorized caller.
+	 *
+	 * @param DashboardWidgetVisibilityDescriptor $visibility Canonical visibility rules.
+	 * @param ExecutionContext                    $context Authorized context.
+	 * @return DashboardWidgetVisibilityDecision
+	 */
+	public function evaluate(
+		DashboardWidgetVisibilityDescriptor $visibility,
+		ExecutionContext $context,
+	): DashboardWidgetVisibilityDecision {
+		if ( ! $context->principal->isAuthenticated() ) {
+			return DashboardWidgetVisibilityDecision::deny(
+				DashboardWidgetVisibilityDecision::REASON_UNAUTHENTICATED,
+			);
+		}
 
-        if (!$this->roles->isCurrentUserContext($context)) {
-            return DashboardWidgetVisibilityDecision::deny(
-                DashboardWidgetVisibilityDecision::REASON_CONTEXT_MISMATCH,
-            );
-        }
+		if ( $context->principal->actorType !== 'user' ) {
+			return DashboardWidgetVisibilityDecision::deny(
+				DashboardWidgetVisibilityDecision::REASON_NON_USER_ACTOR,
+			);
+		}
 
-        if ($visibility->roles !== [] && !$this->roles->hasAnyRole($context, $visibility->roles)) {
-            return DashboardWidgetVisibilityDecision::deny(
-                DashboardWidgetVisibilityDecision::REASON_ROLE_MISMATCH,
-            );
-        }
+		if ( ! $this->roles->isCurrentUserContext( $context ) ) {
+			return DashboardWidgetVisibilityDecision::deny(
+				DashboardWidgetVisibilityDecision::REASON_CONTEXT_MISMATCH,
+			);
+		}
 
-        if ($visibility->capabilities !== [] && !$this->hasAnyCapability($context, $visibility->capabilities)) {
-            return DashboardWidgetVisibilityDecision::deny(
-                DashboardWidgetVisibilityDecision::REASON_CAPABILITY_MISMATCH,
-            );
-        }
+		if ( array() !== $visibility->roles && ! $this->roles->hasAnyRole( $context, $visibility->roles ) ) {
+			return DashboardWidgetVisibilityDecision::deny(
+				DashboardWidgetVisibilityDecision::REASON_ROLE_MISMATCH,
+			);
+		}
 
-        $userId = $context->principal->userId;
-        if ($visibility->users !== [] && (!is_int($userId) || !in_array($userId, $visibility->users, true))) {
-            return DashboardWidgetVisibilityDecision::deny(
-                DashboardWidgetVisibilityDecision::REASON_USER_MISMATCH,
-            );
-        }
+		if (
+			array() !== $visibility->capabilities
+			&& ! $this->hasAnyCapability( $context, $visibility->capabilities )
+		) {
+			return DashboardWidgetVisibilityDecision::deny(
+				DashboardWidgetVisibilityDecision::REASON_CAPABILITY_MISMATCH,
+			);
+		}
 
-        return DashboardWidgetVisibilityDecision::allow();
-    }
+		$userId = $context->principal->userId;
+		if ( $visibility->users !== [] && ( ! is_int( $userId ) || ! in_array( $userId, $visibility->users, true )) ) {
+			return DashboardWidgetVisibilityDecision::deny(
+				DashboardWidgetVisibilityDecision::REASON_USER_MISMATCH,
+			);
+		}
 
-    /**
-     * @param list<string> $capabilities
-     */
-    private function hasAnyCapability(ExecutionContext $context, array $capabilities): bool
-    {
-        try {
-            foreach ($capabilities as $capability) {
-                if ($this->capabilities->can($context, $capability)) {
-                    return true;
-                }
-            }
-        } catch (Throwable) {
-            return false;
-        }
+		return DashboardWidgetVisibilityDecision::allow();
+	}
 
-        return false;
-    }
+	/**
+	 * Check any permitted capability while denying exceptions.
+	 *
+	 * @param ExecutionContext $context Authorized execution context.
+	 * @param array            $capabilities Capability names to check.
+	 * @return bool
+	 */
+	private function hasAnyCapability(ExecutionContext $context, array $capabilities): bool
+	{
+		try {
+			foreach ( $capabilities as $capability ) {
+				if ( $this->capabilities->can( $context, $capability ) ) {
+					return true;
+				}
+			}
+		} catch ( Throwable ) {
+			return false;
+		}
+
+		return false;
+	}
 }

@@ -6,14 +6,14 @@ namespace WPEssential\Platform\WordPress\Security;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 enum NonceOperation: string
 {
-    case Apply = 'apply';
-    case Create = 'create';
-    case Update = 'update';
-    case Reset = 'reset';
-    case Delete = 'delete';
+	case Apply = 'apply';
+	case Create = 'create';
+	case Update = 'update';
+	case Reset = 'reset';
+	case Delete = 'delete';
 }

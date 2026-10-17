@@ -1,0 +1,207 @@
+name: WPCS Guarded Single-Sniff Batch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-guarded-whitespace-batch
+  cancel-in-progress: false
+
+jobs:
+  guarded-whitespace:
+    name: Per-file token-safe WPCS single-sniff reduction
+    if: github.repository == 'Vertex-Systems-Network/wpessential'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout immutable source revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: PHP 8.2 locked toolchain
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+
+      - name: Install and check unmodified baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF_NAME" = 'agent/local-phpunit-bootstrap-repair-v1'
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+          composer install --no-interaction --prefer-dist --no-progress
+          composer validate --strict
+          composer audit --locked --no-interaction
+          composer test:unit
+          composer architecture:validate
+          composer engineering:validate
+
+      - name: Choose bounded targets from actual PHPCS errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          vendor/bin/phpcs -q --standard=phpcs.xml.dist --extensions=php --report=json --report-file=/tmp/wpcs-before.json frameworks > /tmp/wpcs-report-before.log 2>&1 || true
+          test -s /tmp/wpcs-before.json || { cat /tmp/wpcs-report-before.log; exit 1; }
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('/tmp/wpcs-before.json').read_text())
+          root = Path.cwd().resolve()
+          prefixes = ('Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace',)
+          candidates = []
+          for name, record in data['files'].items():
+              path = Path(name).resolve()
+              if not path.is_relative_to(root / 'frameworks') or not path.is_file() or path.suffix != '.php':
+                  continue
+              score = sum(
+                  1 for item in record.get('messages', [])
+                  if item.get('fixable') and str(item.get('source', '')).startswith(prefixes)
+              )
+              if score:
+                  candidates.append((score, path.relative_to(root).as_posix()))
+          candidates.sort(key=lambda row: (-row[0], row[1]))
+          Path('/tmp/wpcs-candidates').write_text(''.join(path + '\n' for _, path in candidates[:20]))
+          print('Candidate source files:', len(candidates), 'selected:', len(candidates[:20]))
+          print('Highest candidate scores:', candidates[:5])
+          PY
+
+      - name: Remediate per file with token, CI test and full-sniff checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          accepted=0
+          rejected=0
+          mapfile -t candidate_files < /tmp/wpcs-candidates
+          for phpfile in "${candidate_files[@]}"; do
+            test -n "$phpfile" || continue
+            echo "::group::PHPCBF $phpfile"
+            git show "$GITHUB_SHA:$phpfile" > /tmp/wpcs-original.php
+            vendor/bin/phpcs -q --standard=phpcs.xml.dist --report=json --report-file=/tmp/wpcs-file-before.json "$phpfile" > /tmp/wpcs-file-before.log 2>&1 || true
+            test -s /tmp/wpcs-file-before.json || { cat /tmp/wpcs-file-before.log; exit 1; }
+            vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace "$phpfile" > /tmp/wpcs-fixer.log 2>&1 || true
+            if git diff --quiet -- "$phpfile"; then
+              echo "No fixable changes"
+              echo "::endgroup::"
+              continue
+            fi
+            vendor/bin/phpcs -q --standard=phpcs.xml.dist --report=json --report-file=/tmp/wpcs-file-after.json "$phpfile" > /tmp/wpcs-file-after.log 2>&1 || true
+            test -s /tmp/wpcs-file-after.json || { cat /tmp/wpcs-file-after.log; exit 1; }
+            if php -r '
+              $old = token_get_all(file_get_contents($argv[1]));
+              $new = token_get_all(file_get_contents($argv[2]));
+              $clean = static function (array $tokens): array {
+                  return array_values(array_filter(
+                      $tokens,
+                      static fn ($token): bool => !is_array($token) || $token[0] !== T_WHITESPACE
+                  ));
+              };
+              if ($clean($old) === $clean($new)) { fwrite(STDOUT, "PHP token identity PASS\n"); exit(0); }
+              fwrite(STDERR, "PHP token identity FAIL\n"); exit(1);
+            ' /tmp/wpcs-original.php "$phpfile" &&
+            php -l "$phpfile" &&
+            git diff --check -- "$phpfile" &&
+            python3 - /tmp/wpcs-file-before.json /tmp/wpcs-file-after.json <<'PY'
+          import collections
+          import json
+          import sys
+          prior, current = [json.load(open(p)) for p in sys.argv[1:]]
+          def signatures(report):
+              return collections.Counter(
+                  message['source'] for file in report['files'].values()
+                  for message in file.get('messages', [])
+              )
+          old, new = signatures(prior), signatures(current)
+          increases = [(key, new[key] - old.get(key, 0)) for key in new if new[key] > old.get(key, 0)]
+          if increases or current['totals']['errors'] > prior['totals']['errors'] or current['totals']['warnings'] > prior['totals']['warnings']:
+              print('Rejected WPCS regression:', increases[:12])
+              sys.exit(1)
+          if sum(new.values()) >= sum(old.values()):
+              print('Rejected no-net-improvement change')
+              sys.exit(1)
+          print('File WPCS diagnostics removed:', sum(old.values()) - sum(new.values()))
+          PY
+            then
+              if composer test:unit > /tmp/wpcs-unit.log 2>&1; then
+                accepted=$((accepted + 1))
+                echo "Accepted token-preserving PHPUnit-green fix"
+              else
+                git restore --source="$GITHUB_SHA" -- "$phpfile"
+                rejected=$((rejected + 1))
+                echo "Rejected: PHPUnit regression"
+                tail -n 25 /tmp/wpcs-unit.log
+              fi
+            else
+              git restore --source="$GITHUB_SHA" -- "$phpfile"
+              rejected=$((rejected + 1))
+              echo "Rejected: token, syntax or WPCS regression; inspect PHPCBF and check diagnostics above"
+            fi
+            echo "::endgroup::"
+          done
+          echo "Accepted files: $accepted; rejected files: $rejected"
+          test "$accepted" -gt 0 || echo "No eligible fixes; no push will occur."
+
+      - name: Require final global diagnostics reduction and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer test:unit
+          composer architecture:validate
+          composer engineering:validate
+          git diff --check
+          vendor/bin/phpcs -q --standard=phpcs.xml.dist --extensions=php --report=json --report-file=/tmp/wpcs-after.json frameworks > /tmp/wpcs-report-after.log 2>&1 || true
+          test -s /tmp/wpcs-after.json || { cat /tmp/wpcs-report-after.log; exit 1; }
+          python3 - <<'PY'
+          import collections
+          import json
+          def counts(path):
+              report = json.load(open(path))
+              signatures = collections.Counter(
+                  message['source']
+                  for item in report['files'].values()
+                  for message in item.get('messages', [])
+              )
+              return report['totals'], signatures
+          before, old = counts('/tmp/wpcs-before.json')
+          after, new = counts('/tmp/wpcs-after.json')
+          if after['errors'] > before['errors'] or after['warnings'] > before['warnings']:
+              raise SystemExit('Global WPCS regression: refusing push')
+          if any(new[code] > old[code] for code in new):
+              raise SystemExit('Global WPCS sniff regression: refusing push')
+          print('Whole-framework WPCS before:', before['errors'], 'errors;', before['warnings'], 'warnings')
+          print('Whole-framework WPCS after:', after['errors'], 'errors;', after['warnings'], 'warnings')
+          PY
+
+      - name: Upload guarded WPCS diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wpcs-guarded-diagnostics-${{ github.sha }}
+          if-no-files-found: warn
+          path: |
+            /tmp/wpcs-before.json
+            /tmp/wpcs-after.json
+            /tmp/wpcs-report-before.log
+            /tmp/wpcs-report-after.log
+            /tmp/wpcs-candidates
+
+      - name: Report safe changes without repository writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- frameworks; then
+            echo "No verified source changes to report." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git diff --check
+          git diff --stat -- frameworks >> "$GITHUB_STEP_SUMMARY"
+          echo "Verified source changes were detected but were not auto-pushed; review and publish them through the protected PR workflow." >> "$GITHUB_STEP_SUMMARY"

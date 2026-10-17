@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Modules\Taxonomies;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use LogicException;
@@ -32,429 +32,429 @@ use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class TaxonomyModule implements ModuleInterface
 {
-    private const CAPABILITY = 'manage_options';
+	private const CAPABILITY = 'manage_options';
 
-    public function manifest(): ModuleManifest
-    {
-        return new ModuleManifest(
-            id: 'taxonomies',
-            name: 'Taxonomy Builder',
-            version: '0.1.0',
-            edition: 'free',
-        );
-    }
+	public function manifest(): ModuleManifest
+	{
+		return new ModuleManifest(
+			id: 'taxonomies',
+			name: 'Taxonomy Builder',
+			version: '0.1.0',
+			edition: 'free',
+		);
+	}
 
-    public function register(ServiceRegistryInterface $services): void
-    {
-        $definitions = $services->get('platform.definitions');
-        $providers = $services->get('platform.registrations.providers');
-        $taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
-        $abilities = $services->get('platform.abilities');
-        $abilityBridge = $services->get('platform.abilities.wordpress');
-        $abilityContexts = $services->get('platform.abilities.contexts');
-        $ajaxRoutes = $services->get('platform.ajax.routes');
-        if (!$definitions instanceof DefinitionRepositoryInterface) {
-            throw new LogicException('Taxonomies requires the shared Definition Repository.');
-        }
-        if (!$providers instanceof RegistrationDefinitionProviderRegistry) {
-            throw new LogicException('Taxonomies requires the shared registration provider registry.');
-        }
-        if (!$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar) {
-            throw new LogicException('Taxonomies requires the shared Taxonomy runtime registrar.');
-        }
-        if (!$abilities instanceof AbilityRegistry) {
-            throw new LogicException('Taxonomies requires the shared Ability Registry.');
-        }
-        if (!$abilityBridge instanceof WordPressAbilityBridge) {
-            throw new LogicException('Taxonomies requires the shared WordPress Ability bridge.');
-        }
-        if (!$abilityContexts instanceof WordPressExecutionContextFactory) {
-            throw new LogicException('Taxonomies requires the shared WordPress execution context factory.');
-        }
-        if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
-            throw new LogicException('Taxonomies requires the shared AJAX route registry.');
-        }
+	public function register( ServiceRegistryInterface $services ): void
+	{
+		$definitions = $services->get('platform.definitions');
+		$providers = $services->get('platform.registrations.providers');
+		$taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
+		$abilities = $services->get('platform.abilities');
+		$abilityBridge = $services->get('platform.abilities.wordpress');
+		$abilityContexts = $services->get('platform.abilities.contexts');
+		$ajaxRoutes = $services->get('platform.ajax.routes');
+		if ( !$definitions instanceof DefinitionRepositoryInterface ) {
+			throw new LogicException('Taxonomies requires the shared Definition Repository.');
+		}
+		if ( !$providers instanceof RegistrationDefinitionProviderRegistry ) {
+			throw new LogicException('Taxonomies requires the shared registration provider registry.');
+		}
+		if ( !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar ) {
+			throw new LogicException('Taxonomies requires the shared Taxonomy runtime registrar.');
+		}
+		if ( !$abilities instanceof AbilityRegistry ) {
+			throw new LogicException('Taxonomies requires the shared Ability Registry.');
+		}
+		if ( !$abilityBridge instanceof WordPressAbilityBridge ) {
+			throw new LogicException('Taxonomies requires the shared WordPress Ability bridge.');
+		}
+		if ( !$abilityContexts instanceof WordPressExecutionContextFactory ) {
+			throw new LogicException('Taxonomies requires the shared WordPress execution context factory.');
+		}
+		if ( !$ajaxRoutes instanceof AjaxRouteRegistry ) {
+			throw new LogicException('Taxonomies requires the shared AJAX route registry.');
+		}
 
-        $projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
-        $provider = new TaxonomyRegistrationProvider($definitions, $projector);
-        $validation = new TaxonomyValidationService($definitions, $projector);
-        $roleImpact = new TaxonomyRoleImpactReadModel(services: $services);
-        $cptUiMapper = new TaxonomyCptUiImportMapper();
-        $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
-        $keyMigrationPreview = new TaxonomyKeyMigrationPreviewService($definitions, $projector);
-        $rewriteRefresh = new TaxonomyRewriteRefreshCoordinator();
-        $providers->register($provider);
-        $services->set('module.taxonomies.projector', $projector);
-        $services->set('module.taxonomies.registration-provider', $provider);
-        $services->set('module.taxonomies.validation', $validation);
-        $services->set('module.taxonomies.role-impact', $roleImpact);
-        $services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
-        $services->set('module.taxonomies.cptui-preview', $cptUiPreview);
-        $services->set('module.taxonomies.key-migration-preview', $keyMigrationPreview);
-        $services->set('module.taxonomies.rewrite-refresh', $rewriteRefresh);
+		$projector = new TaxonomyDefinitionProjector( $taxonomyRegistrar->providers() );
+		$provider = new TaxonomyRegistrationProvider( $definitions, $projector );
+		$validation = new TaxonomyValidationService( $definitions, $projector );
+		$roleImpact = new TaxonomyRoleImpactReadModel( services: $services );
+		$cptUiMapper = new TaxonomyCptUiImportMapper();
+		$cptUiPreview = new TaxonomyCptUiImportPreviewService( $cptUiMapper, $validation );
+		$keyMigrationPreview = new TaxonomyKeyMigrationPreviewService( $definitions, $projector );
+		$rewriteRefresh = new TaxonomyRewriteRefreshCoordinator();
+		$providers->register( $provider );
+		$services->set('module.taxonomies.projector', $projector);
+		$services->set('module.taxonomies.registration-provider', $provider);
+		$services->set('module.taxonomies.validation', $validation);
+		$services->set('module.taxonomies.role-impact', $roleImpact);
+		$services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
+		$services->set('module.taxonomies.cptui-preview', $cptUiPreview);
+		$services->set('module.taxonomies.key-migration-preview', $keyMigrationPreview);
+		$services->set('module.taxonomies.rewrite-refresh', $rewriteRefresh);
 
-        $this->registerAbilities(
-            $abilities,
-            $abilityBridge,
-            $definitions,
-            $projector,
-            $validation,
-            $roleImpact,
-            $cptUiPreview,
-            $keyMigrationPreview,
-            $rewriteRefresh,
-        );
-        $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
-    }
+		$this->registerAbilities(
+			$abilities,
+			$abilityBridge,
+			$definitions,
+			$projector,
+			$validation,
+			$roleImpact,
+			$cptUiPreview,
+			$keyMigrationPreview,
+			$rewriteRefresh,
+		);
+		$this->registerAjaxRoutes( $ajaxRoutes, $abilities, $abilityContexts );
+	}
 
-    public function boot(ServiceRegistryInterface $services): void
-    {
-        $abilities = $services->get('platform.abilities');
-        $contexts = $services->get('platform.abilities.contexts');
-        $ajax = $services->get('platform.ajax.dispatcher');
-        $gateway = $services->get('platform.ajax.gateway');
-        $assets = $services->get('platform.admin.assets');
-        $taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
-        $rewriteRefresh = $services->get('module.taxonomies.rewrite-refresh');
+	public function boot( ServiceRegistryInterface $services ): void
+	{
+		$abilities = $services->get('platform.abilities');
+		$contexts = $services->get('platform.abilities.contexts');
+		$ajax = $services->get('platform.ajax.dispatcher');
+		$gateway = $services->get('platform.ajax.gateway');
+		$assets = $services->get('platform.admin.assets');
+		$taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
+		$rewriteRefresh = $services->get('module.taxonomies.rewrite-refresh');
 
-        if (!$abilities instanceof AbilityRegistry
-            || !$contexts instanceof WordPressExecutionContextFactory
-            || !$ajax instanceof AjaxDispatcher
-            || !$gateway instanceof WordPressAjaxGateway
-            || !$assets instanceof AdminAssetManifest
-            || !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar
-            || !$rewriteRefresh instanceof TaxonomyRewriteRefreshCoordinator
-        ) {
-            throw new LogicException('Taxonomy admin requires the shared admin, Ability, AJAX, and Taxonomy runtime services.');
-        }
+		if ( !$abilities instanceof AbilityRegistry
+			|| !$contexts instanceof WordPressExecutionContextFactory
+			|| !$ajax instanceof AjaxDispatcher
+			|| !$gateway instanceof WordPressAjaxGateway
+			|| !$assets instanceof AdminAssetManifest
+			|| !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar
+			|| !$rewriteRefresh instanceof TaxonomyRewriteRefreshCoordinator
+		) {
+			throw new LogicException('Taxonomy admin requires the shared admin, Ability, AJAX, and Taxonomy runtime services.');
+		}
 
-        add_action('wp_loaded', $rewriteRefresh->flushPending(...), 99);
+		add_action('wp_loaded', $rewriteRefresh->flushPending(...), 99);
 
-        $objectTypes = new TaxonomyObjectTypeCatalog($abilities, $contexts);
-        $services->set('module.taxonomies.object-types', $objectTypes);
+		$objectTypes = new TaxonomyObjectTypeCatalog( $abilities, $contexts );
+		$services->set('module.taxonomies.object-types', $objectTypes);
 
-        $admin = new TaxonomyAdminController(
-            abilities: $abilities,
-            contexts: $contexts,
-            ajax: $ajax,
-            assets: $assets,
-            objectTypes: $objectTypes,
-            runtimeProviders: $taxonomyRegistrar->providers(),
-            ajaxAction: $gateway->action(),
-        );
-        $previewBridge = new TaxonomyCptUiImportPreviewAdminBridge($ajax);
-        $services->set('module.taxonomies.admin', $admin);
-        $services->set('module.taxonomies.cptui-preview-admin', $previewBridge);
-        $admin->register();
-        $previewBridge->register();
-    }
+		$admin = new TaxonomyAdminController(
+			abilities: $abilities,
+			contexts: $contexts,
+			ajax: $ajax,
+			assets: $assets,
+			objectTypes: $objectTypes,
+			runtimeProviders: $taxonomyRegistrar->providers(),
+			ajaxAction: $gateway->action(),
+		);
+		$previewBridge = new TaxonomyCptUiImportPreviewAdminBridge( $ajax );
+		$services->set('module.taxonomies.admin', $admin);
+		$services->set('module.taxonomies.cptui-preview-admin', $previewBridge);
+		$admin->register();
+		$previewBridge->register();
+	}
 
-    private function registerAbilities(
-        AbilityRegistry $abilities,
-        WordPressAbilityBridge $bridge,
-        DefinitionRepositoryInterface $definitions,
-        TaxonomyDefinitionProjector $projector,
-        TaxonomyValidationService $validation,
-        TaxonomyRoleImpactReadModel $roleImpact,
-        TaxonomyCptUiImportPreviewService $cptUiPreview,
-        TaxonomyKeyMigrationPreviewService $keyMigrationPreview,
-        TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
-    ): void {
-        $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
-        $outputSchema = ['type' => 'object'];
-        $saveHandler = new TaxonomyAbilityHandler(
-            $definitions,
-            $projector,
-            $validation,
-            TaxonomyAbilityHandler::SAVE,
-            $rewriteRefresh,
-            $roleImpact,
-        );
+	private function registerAbilities(
+		AbilityRegistry $abilities,
+		WordPressAbilityBridge $bridge,
+		DefinitionRepositoryInterface $definitions,
+		TaxonomyDefinitionProjector $projector,
+		TaxonomyValidationService $validation,
+		TaxonomyRoleImpactReadModel $roleImpact,
+		TaxonomyCptUiImportPreviewService $cptUiPreview,
+		TaxonomyKeyMigrationPreviewService $keyMigrationPreview,
+		TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
+	): void {
+		$channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
+		$outputSchema = ['type' => 'object'];
+		$saveHandler = new TaxonomyAbilityHandler(
+			$definitions,
+			$projector,
+			$validation,
+			TaxonomyAbilityHandler::SAVE,
+			$rewriteRefresh,
+			$roleImpact,
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/list',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: ['type' => 'object'],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyAbilityHandler(
-                $definitions,
-                $projector,
-                $validation,
-                TaxonomyAbilityHandler::LIST,
-                roleImpact: $roleImpact,
-            ),
-            'List taxonomies',
-            'Lists canonical WPEssential Taxonomy definitions for the current site scope.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/list',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: ['type' => 'object'],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				TaxonomyAbilityHandler::LIST,
+				roleImpact: $roleImpact,
+			),
+			'List taxonomies',
+			'Lists canonical WPEssential Taxonomy definitions for the current site scope.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/get',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['id'],
-                    'properties' => ['id' => ['type' => 'string']],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyAbilityHandler(
-                $definitions,
-                $projector,
-                $validation,
-                TaxonomyAbilityHandler::GET,
-                roleImpact: $roleImpact,
-            ),
-            'Get taxonomy',
-            'Reads one canonical WPEssential Taxonomy definition by immutable definition id.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/get',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['id'],
+					'properties' => ['id' => ['type' => 'string']],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				TaxonomyAbilityHandler::GET,
+				roleImpact: $roleImpact,
+			),
+			'Get taxonomy',
+			'Reads one canonical WPEssential Taxonomy definition by immutable definition id.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/validate',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['payload'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'payload' => ['type' => 'object'],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyValidationAbilityHandler($validation, $roleImpact),
-            'Validate taxonomy',
-            'Preflights a Taxonomy candidate without mutating canonical definitions or runtime registration.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/validate',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['payload'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'payload' => ['type' => 'object'],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyValidationAbilityHandler( $validation, $roleImpact ),
+			'Validate taxonomy',
+			'Preflights a Taxonomy candidate without mutating canonical definitions or runtime registration.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/key-migration-preview',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['id', 'target_key'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'target_key' => ['type' => 'string'],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyKeyMigrationPreviewAbilityHandler($keyMigrationPreview),
-            'Preview taxonomy-key migration',
-            'Builds a read-only taxonomy-key migration impact and recovery plan without changing Definitions, terms, relationships, or rewrite rules.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/key-migration-preview',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['id', 'target_key'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'target_key' => ['type' => 'string'],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyKeyMigrationPreviewAbilityHandler( $keyMigrationPreview ),
+			'Preview taxonomy-key migration',
+			'Builds a read-only taxonomy-key migration impact and recovery plan without changing Definitions, terms, relationships, or rewrite rules.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/import-preview',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['source'],
-                    'properties' => [
-                        'source' => ['type' => 'object'],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyCptUiImportPreviewAbilityHandler($cptUiPreview),
-            'Preview CPT UI taxonomy import',
-            'Maps one CPT UI taxonomy record into a canonical Taxonomy payload and validates it without persisting a Definition.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/import-preview',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['source'],
+					'properties' => [
+						'source' => ['type' => 'object'],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyCptUiImportPreviewAbilityHandler( $cptUiPreview ),
+			'Preview CPT UI taxonomy import',
+			'Maps one CPT UI taxonomy record into a canonical Taxonomy payload and validates it without persisting a Definition.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/import-commit',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: true,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['source'],
-                    'properties' => [
-                        'source' => ['type' => 'object'],
-                        'id' => ['type' => 'string'],
-                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyCptUiImportCommitAbilityHandler($cptUiPreview, $saveHandler),
-            'Commit CPT UI taxonomy import',
-            'Remaps and validates one CPT UI taxonomy record before delegating create or revision-safe update to the canonical Surface 2 save path.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/import-commit',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['source'],
+					'properties' => [
+						'source' => ['type' => 'object'],
+						'id' => ['type' => 'string'],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyCptUiImportCommitAbilityHandler( $cptUiPreview, $saveHandler ),
+			'Commit CPT UI taxonomy import',
+			'Remaps and validates one CPT UI taxonomy record before delegating create or revision-safe update to the canonical Surface 2 save path.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/import-definition',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: true,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['definition'],
-                    'properties' => [
-                        'definition' => ['type' => 'object'],
-                        'strategy' => ['type' => 'string', 'enum' => ['create_only', 'update_existing']],
-                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyAbilityHandler(
-                $definitions,
-                $projector,
-                $validation,
-                TaxonomyAbilityHandler::IMPORT,
-                $rewriteRefresh,
-                $roleImpact,
-            ),
-            'Import taxonomy definition',
-            'Imports one portable Taxonomy definition through Surface 2 create-only or explicit revision-safe update semantics.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/import-definition',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['definition'],
+					'properties' => [
+						'definition' => ['type' => 'object'],
+						'strategy' => ['type' => 'string', 'enum' => ['create_only', 'update_existing']],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				TaxonomyAbilityHandler::IMPORT,
+				$rewriteRefresh,
+				$roleImpact,
+			),
+			'Import taxonomy definition',
+			'Imports one portable Taxonomy definition through Surface 2 create-only or explicit revision-safe update semantics.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/save',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: true,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['payload'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-                        'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
-                        'payload' => ['type' => 'object'],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            $saveHandler,
-            'Save taxonomy',
-            'Creates or revision-safely updates a canonical Taxonomy definition through Surface 2.',
-        );
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/save',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['payload'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+						'payload' => ['type' => 'object'],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			$saveHandler,
+			'Save taxonomy',
+			'Creates or revision-safely updates a canonical Taxonomy definition through Surface 2.',
+		);
 
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: 'wpessential/taxonomy/status',
-                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
-                capability: self::CAPABILITY,
-                mutates: true,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['id', 'expected_revision', 'status'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-                        'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
-                    ],
-                ],
-                outputSchema: $outputSchema,
-            ),
-            new TaxonomyAbilityHandler(
-                $definitions,
-                $projector,
-                $validation,
-                TaxonomyAbilityHandler::STATUS,
-                $rewriteRefresh,
-                $roleImpact,
-            ),
-            'Change taxonomy status',
-            'Changes Taxonomy lifecycle status without deleting its canonical persisted definition.',
-        );
-    }
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/status',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['id', 'expected_revision', 'status'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				TaxonomyAbilityHandler::STATUS,
+				$rewriteRefresh,
+				$roleImpact,
+			),
+			'Change taxonomy status',
+			'Changes Taxonomy lifecycle status without deleting its canonical persisted definition.',
+		);
+	}
 
-    private function registerAbility(
-        AbilityRegistry $abilities,
-        WordPressAbilityBridge $bridge,
-        AbilityDescriptor $descriptor,
-        AbilityHandlerInterface $handler,
-        string $label,
-        string $description,
-    ): void {
-        $abilities->register($descriptor, $handler);
-        $bridge->expose(new WordPressAbilityExposure(
-            internalName: $descriptor->name,
-            label: $label,
-            description: $description,
-            showInRest: true,
-        ));
-    }
+	private function registerAbility(
+		AbilityRegistry $abilities,
+		WordPressAbilityBridge $bridge,
+		AbilityDescriptor $descriptor,
+		AbilityHandlerInterface $handler,
+		string $label,
+		string $description,
+	): void {
+		$abilities->register( $descriptor, $handler );
+		$bridge->expose(new WordPressAbilityExposure(
+			internalName: $descriptor->name,
+			label: $label,
+			description: $description,
+			showInRest: true,
+		));
+	}
 
-    private function registerAjaxRoutes(
-        AjaxRouteRegistry $routes,
-        AbilityRegistry $abilities,
-        WordPressExecutionContextFactory $contexts,
-    ): void {
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.list', 'wpessential/taxonomy/list', NonceOperation::Apply);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.get', 'wpessential/taxonomy/get', NonceOperation::Apply);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.validate', 'wpessential/taxonomy/validate', NonceOperation::Apply);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.key_migration_preview', 'wpessential/taxonomy/key-migration-preview', NonceOperation::Apply);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_preview', 'wpessential/taxonomy/import-preview', NonceOperation::Apply);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_commit', 'wpessential/taxonomy/import-commit', NonceOperation::Update);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update);
-        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.status', 'wpessential/taxonomy/status', NonceOperation::Update);
-    }
+	private function registerAjaxRoutes(
+		AjaxRouteRegistry $routes,
+		AbilityRegistry $abilities,
+		WordPressExecutionContextFactory $contexts,
+	): void {
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.list', 'wpessential/taxonomy/list', NonceOperation::Apply);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.get', 'wpessential/taxonomy/get', NonceOperation::Apply);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.validate', 'wpessential/taxonomy/validate', NonceOperation::Apply);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.key_migration_preview', 'wpessential/taxonomy/key-migration-preview', NonceOperation::Apply);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_preview', 'wpessential/taxonomy/import-preview', NonceOperation::Apply);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_commit', 'wpessential/taxonomy/import-commit', NonceOperation::Update);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update);
+		$this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.status', 'wpessential/taxonomy/status', NonceOperation::Update);
+	}
 
-    private function registerAjaxRoute(
-        AjaxRouteRegistry $routes,
-        AbilityRegistry $abilities,
-        WordPressExecutionContextFactory $contexts,
-        string $type,
-        string $abilityName,
-        NonceOperation $operation,
-    ): void {
-        $routes->register(new AjaxRoute(
-            type: $type,
-            handler: new AbilityAjaxHandler($abilities, $abilityName, $contexts),
-            operation: $operation,
-            capability: self::CAPABILITY,
-            allowGuests: false,
-            requiresNonce: true,
-        ));
-    }
+	private function registerAjaxRoute(
+		AjaxRouteRegistry $routes,
+		AbilityRegistry $abilities,
+		WordPressExecutionContextFactory $contexts,
+		string $type,
+		string $abilityName,
+		NonceOperation $operation,
+	): void {
+		$routes->register(new AjaxRoute(
+			type: $type,
+			handler: new AbilityAjaxHandler( $abilities, $abilityName, $contexts ),
+			operation: $operation,
+			capability: self::CAPABILITY,
+			allowGuests: false,
+			requiresNonce: true,
+		));
+	}
 }

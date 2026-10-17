@@ -1,0 +1,162 @@
+name: WPCS Bounded CLI Autofix
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpcs-cli-autofix-wpessential
+  cancel-in-progress: false
+
+jobs:
+  bounded-autofix:
+    name: PHPCBF syntax and unit guarded repair
+    if: github.repository == 'Vertex-Systems-Network/wpessential'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source commit and branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF_NAME" = 'agent/local-phpunit-bootstrap-repair-v1'
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+
+      - name: Install exact quality toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f composer.lock; then
+            composer install --no-interaction --prefer-dist --no-progress
+          else
+            composer update --no-interaction --prefer-dist --no-progress
+          fi
+          composer validate --strict
+          composer audit --locked --no-interaction
+
+      - name: Confirm unmodified source PHPUnit baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer test:unit
+
+      - name: Apply indentation-only PHPCBF across the framework
+        shell: bash
+        run: |
+          set -euo pipefail
+          target_paths=(frameworks)
+          set +e
+          vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Generic.WhiteSpace.DisallowSpaceIndent --extensions=php --report=summary "${target_paths[@]}" > /tmp/wpcs-autofix.log 2>&1
+          formatter_exit=$?
+          set -e
+          tail -n 120 /tmp/wpcs-autofix.log
+          echo "Indentation-only PHPCBF exit code: $formatter_exit"
+          git diff --check
+
+      - name: Reject non-indentation and unsafe PHP token changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          allowed = ("frameworks/",)
+          paths = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=AM"], text=True).splitlines()
+          for path in paths:
+              if not path.startswith(allowed) or not path.endswith(".php"):
+                  sys.exit("Unexpected PHPCBF path: " + path)
+              previous = subprocess.check_output(["git", "show", os.environ["GITHUB_SHA"] + ":" + path])
+              current = pathlib.Path(path).read_bytes()
+              old_lines = previous.splitlines(keepends=True)
+              new_lines = current.splitlines(keepends=True)
+              if len(old_lines) != len(new_lines) or any(
+                  old.lstrip(b" \t") != new.lstrip(b" \t")
+                  for old, new in zip(old_lines, new_lines)
+              ):
+                  sys.exit("Refusing non-indentation edit in " + path)
+          print("Bounded PHP-path validation passed:", len(paths), "PHP files")
+          PY
+          while IFS= read -r phpfile; do
+            test -n "$phpfile" || continue
+            # A PHPCS fixer can alter tokenized comments or multiline strings.
+            # Discard that one file rather than sacrificing all other safe fixes.
+            if ! git show "$GITHUB_SHA:$phpfile" | php -r '
+              $old = stream_get_contents(STDIN);
+              $new = file_get_contents($argv[1]);
+              $normalized = static function (string $source): array {
+                $tokens = token_get_all($source);
+                $clean = [];
+                foreach ($tokens as $token) {
+                  if (is_array($token) && $token[0] === T_WHITESPACE) {
+                    continue;
+                  }
+                  $clean[] = is_array($token) ? [$token[0], $token[1]] : $token;
+                }
+                return $clean;
+              };
+              if ($normalized($old) !== $normalized($new)) {
+                fwrite(STDERR, "PHP token change forbidden: " . $argv[1] . PHP_EOL);
+                exit(1);
+              }
+            ' "$phpfile"; then
+              echo "Skip unsafe PHP token change: $phpfile"
+              git restore --source="$GITHUB_SHA" -- "$phpfile"
+            fi
+          done < <(git diff --name-only --diff-filter=AM -- '*.php')
+          echo "Safe indentation-only changed PHP files: $(git diff --name-only -- '*.php' | wc -l)"
+          git diff --check
+
+      - name: Lint all changed PHP files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --name-only --diff-filter=AM -- '*.php' | while IFS= read -r phpfile; do
+            php -l "$phpfile"
+          done
+          git diff --check
+
+      - name: Verify architecture and engineering contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer architecture:validate
+          composer engineering:validate
+
+      - name: Require PHPUnit regression suite to pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer test:unit
+
+      - name: Report safe formatting changes without repository writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- frameworks; then
+            echo "No changes to push."
+            exit 0
+          fi
+          git diff --check
+          git diff --stat -- frameworks >> "$GITHUB_STEP_SUMMARY"
+          echo "Safe formatting changes were detected but were not auto-pushed; review and publish them through the protected PR workflow." >> "$GITHUB_STEP_SUMMARY"

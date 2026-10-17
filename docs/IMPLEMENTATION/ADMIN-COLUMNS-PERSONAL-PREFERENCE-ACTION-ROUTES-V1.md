@@ -10,9 +10,9 @@ Refine the promoted current-user personal preference transport so read and mutat
 
 The transport exposes three fixed operations. The caller does not submit an `action` field.
 
-- `wpessential/admin-columns/personal-preference/load` / `admin-columns.personal.preference.load`: non-mutating, `NonceOperation::Apply`.
-- `wpessential/admin-columns/personal-preference/save` / `admin-columns.personal.preference.save`: mutating, `NonceOperation::Update`.
-- `wpessential/admin-columns/personal-preference/reset` / `admin-columns.personal.preference.reset`: mutating, `NonceOperation::Update`.
+- `wpessential/admin-columns/personal-preference-load` / `admin-columns.personal.preference.load`: non-mutating, `NonceOperation::Apply`.
+- `wpessential/admin-columns/personal-preference-save` / `admin-columns.personal.preference.save`: mutating, `NonceOperation::Update`.
+- `wpessential/admin-columns/personal-preference-reset` / `admin-columns.personal.preference.reset`: mutating, `NonceOperation::Update`.
 
 Each route constructs `AdminColumnsPersonalPreferenceAbilityHandler` with a fixed operation. A caller therefore cannot reinterpret the read-only load route as save/reset by changing request data.
 
@@ -47,3 +47,7 @@ Load and reset reject `preference`. All operations reject caller `action`, `user
 ## Tests
 
 Focused tests prove fixed-operation handler behavior, current-user binding, stale-revision failure, caller action/user rejection, action-specific schemas, and distinct Apply/Update nonce registration. All applicable exact-head CI must be green before promotion.
+
+## Ability identifier compatibility correction (2026-10-13 local development)
+
+The previous four-segment preference Ability identifiers did not pass `AbilityDescriptor` registration (`wpessential/<domain>/<action>`), so they could not be registered at runtime. The canonicalized three-segment identifiers above preserve the existing AJAX route strings, user identity source, read/write boundaries and nonce semantics; no legacy public route is newly enabled. Pending exact-head CI and broader baseline remediation.

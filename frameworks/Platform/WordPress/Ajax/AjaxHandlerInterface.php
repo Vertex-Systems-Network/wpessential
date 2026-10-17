@@ -6,11 +6,11 @@ namespace WPEssential\Platform\WordPress\Ajax;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface AjaxHandlerInterface
 {
-    /** @param array<string,mixed> $payload */
-    public function handle(array $payload): mixed;
+	/** @param array<string,mixed> $payload */
+	public function handle(array $payload): mixed;
 }

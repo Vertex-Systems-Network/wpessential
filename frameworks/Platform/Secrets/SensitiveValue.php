@@ -6,30 +6,30 @@ namespace WPEssential\Platform\Secrets;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use JsonSerializable;
 
 final class SensitiveValue implements JsonSerializable
 {
-    public function __construct(private string $plaintext)
-    {
-    }
+	public function __construct(private string $plaintext)
+	{
+	}
 
-    public function reveal(): string
-    {
-        return $this->plaintext;
-    }
+	public function reveal(): string
+	{
+		return $this->plaintext;
+	}
 
-    /** @return array{value:string} */
-    public function __debugInfo(): array
-    {
-        return ['value' => '[REDACTED]'];
-    }
+	/** @return array{value:string} */
+	public function __debugInfo(): array
+	{
+		return ['value' => '[REDACTED]'];
+	}
 
-    public function jsonSerialize(): string
-    {
-        return '[REDACTED]';
-    }
+	public function jsonSerialize(): string
+	{
+		return '[REDACTED]';
+	}
 }

@@ -366,6 +366,11 @@ final class FakeCt1Wpdb
     ) {
     }
 
+    public function db_server_info(): string
+    {
+        return '8.4.0-MySQL';
+    }
+
     public function prepare(string $query, mixed ...$args): string
     {
         $this->prepared[] = ['query' => $query, 'args' => $args];

@@ -1,64 +1,83 @@
 <?php
+/**
+ * Authorized Query planning and provider execution facade.
+ *
+ * @package WPEssential\Modules\Query
+ */
 
 declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use Throwable;
 use WPEssential\Platform\Auth\ExecutionContext;
 
-final readonly class QueryAuthorizedExecutor
-{
-    public function __construct(
-        private QueryAuthorizedPlanner $planner,
-        private QueryProviderExecutorInterface $providerExecutor,
-    ) {
-    }
+/** Execute already-authorized Query plans without leaking provider exceptions. */
+final readonly class QueryAuthorizedExecutor {
 
-    public function execute(
-        QueryDefinition $definition,
-        ExecutionContext $context,
-    ): QueryExecutionResult|QueryExecutionError {
-        try {
-            $authorized = $this->planner->plan($definition, $context);
-        } catch (QueryPlanningException|QueryProviderCompilationException $exception) {
-            return new QueryExecutionError(
-                errorCode: $exception->errorCode,
-                path: $exception->path,
-                message: $exception->getMessage(),
-            );
-        } catch (Throwable) {
-            return new QueryExecutionError(
-                errorCode: 'wpe_query_provider_failed',
-                path: '$.source',
-                message: 'Authorized Query planning failed before provider execution.',
-            );
-        }
+	/**
+	 * Construct the authorized executor.
+	 *
+	 * @param QueryAuthorizedPlanner         $planner Query authorization planner.
+	 * @param QueryProviderExecutorInterface $providerExecutor Provider execution adapter.
+	 */
+	public function __construct(
+		private QueryAuthorizedPlanner $planner,
+		private QueryProviderExecutorInterface $providerExecutor,
+	) {
+	}
 
-        if ($authorized->shortCircuitResult !== null) {
-            return $authorized->shortCircuitResult;
-        }
+	/**
+	 * Execute Query after authorization and normalize provider failures.
+	 *
+	 * @param QueryDefinition  $definition Query definition.
+	 * @param ExecutionContext $context Authenticated execution context.
+	 * @return QueryExecutionResult|QueryExecutionError
+	 */
+	public function execute(
+		QueryDefinition $definition,
+		ExecutionContext $context,
+	): QueryExecutionResult|QueryExecutionError {
+		try {
+			$authorized = $this->planner->plan( $definition, $context );
+		} catch ( QueryPlanningException | QueryProviderCompilationException $exception ) {
+			return new QueryExecutionError(
+				errorCode: $exception->errorCode,
+				path: $exception->path,
+				message: $exception->getMessage(),
+			);
+		} catch ( Throwable ) {
+			return new QueryExecutionError(
+				errorCode: 'wpe_query_provider_failed',
+				path: '$.source',
+				message: 'Authorized Query planning failed before provider execution.',
+			);
+		}
 
-        if (!$this->providerExecutor->supports($authorized->providerPlan)) {
-            return new QueryExecutionError(
-                errorCode: 'wpe_query_dependency_unavailable',
-                path: '$.source',
-                message: 'Authorized provider plan has no registered execution adapter.',
-            );
-        }
+		if ( $authorized->shortCircuitResult !== null ) {
+			return $authorized->shortCircuitResult;
+		}
 
-        try {
-            return $this->providerExecutor->execute($authorized->providerPlan);
-        } catch (Throwable) {
-            return new QueryExecutionError(
-                errorCode: 'wpe_query_provider_failed',
-                path: '$.source',
-                message: 'Provider execution failed without a normalized result.',
-            );
-        }
-    }
+		if ( ! $this->providerExecutor->supports( $authorized->providerPlan ) ) {
+			return new QueryExecutionError(
+				errorCode: 'wpe_query_dependency_unavailable',
+				path: '$.source',
+				message: 'Authorized provider plan has no registered execution adapter.',
+			);
+		}
+
+		try {
+			return $this->providerExecutor->execute( $authorized->providerPlan );
+		} catch ( Throwable ) {
+			return new QueryExecutionError(
+				errorCode: 'wpe_query_provider_failed',
+				path: '$.source',
+				message: 'Provider execution failed without a normalized result.',
+			);
+		}
+	}
 }

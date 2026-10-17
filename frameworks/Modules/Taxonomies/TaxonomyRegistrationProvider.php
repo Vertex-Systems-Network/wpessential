@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Contracts\DefinitionRepositoryInterface;
@@ -14,23 +14,23 @@ use WPEssential\Platform\WordPress\Registrations\RegistrationDefinitionProviderI
 
 final class TaxonomyRegistrationProvider implements RegistrationDefinitionProviderInterface
 {
-    public function __construct(
-        private readonly DefinitionRepositoryInterface $definitions,
-        private readonly TaxonomyDefinitionProjector $projector = new TaxonomyDefinitionProjector(),
-    ) {}
+	public function __construct(
+		private readonly DefinitionRepositoryInterface $definitions,
+		private readonly TaxonomyDefinitionProjector $projector = new TaxonomyDefinitionProjector(),
+	) {}
 
-    public function id(): string
-    {
-        return 'taxonomies';
-    }
+	public function id(): string
+	{
+		return 'taxonomies';
+	}
 
-    public function definitions(): iterable
-    {
-        foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $definition) {
-            if ($definition->status !== DefinitionStatus::Published) {
-                continue;
-            }
-            yield $this->projector->project($definition);
-        }
-    }
+	public function definitions(): iterable
+	{
+		foreach ( $this->definitions->byType( TaxonomyDefinitionProjector::DEFINITION_TYPE ) as $definition ) {
+			if ( $definition->status !== DefinitionStatus::Published ) {
+				continue;
+			}
+			yield $this->projector->project( $definition );
+		}
+	}
 }

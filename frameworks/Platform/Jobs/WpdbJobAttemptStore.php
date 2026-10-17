@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Jobs;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use DateTimeImmutable;
@@ -19,278 +19,278 @@ use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
 final class WpdbJobAttemptStore implements JobAttemptStoreInterface
 {
-    private readonly JobTableNames $tables;
+	private readonly JobTableNames $tables;
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new JobTableNames($database);
-    }
+	public function __construct(private readonly DatabaseAdapterInterface $database)
+	{
+		$this->tables = new JobTableNames($database);
+	}
 
-    public function lease(JobScope $scope, string $jobId, string $workerId, int $leaseSeconds, ?DateTimeImmutable $now = null): ?JobLease
-    {
-        $this->assertJobId($jobId);
-        $workerId = trim($workerId);
-        if ($workerId === '' || strlen($workerId) > 191 || preg_match('/^[A-Za-z0-9._:-]+$/', $workerId) !== 1) {
-            throw new InvalidArgumentException('Job worker id is invalid.');
-        }
-        $this->assertLeaseSeconds($leaseSeconds);
+	public function lease(JobScope $scope, string $jobId, string $workerId, int $leaseSeconds, ?DateTimeImmutable $now = null): ?JobLease
+	{
+		$this->assertJobId($jobId);
+		$workerId = trim($workerId);
+		if ($workerId === '' || strlen($workerId) > 191 || preg_match('/^[A-Za-z0-9._:-]+$/', $workerId) !== 1) {
+			throw new InvalidArgumentException('Job worker id is invalid.');
+		}
+		$this->assertLeaseSeconds($leaseSeconds);
 
-        $now = $this->utc($now);
-        $expiresAt = $now->modify(sprintf('+%d seconds', $leaseSeconds));
-        $nowSql = $this->sqlTime($now);
-        $expiresSql = $this->sqlTime($expiresAt);
+		$now = $this->utc($now);
+		$expires_at = $now->modify(sprintf('+%d seconds', $leaseSeconds));
+		$now_sql = $this->sqlTime($now);
+		$expires_sql = $this->sqlTime($expires_at);
 
-        $this->database->beginTransaction();
-        try {
-            $job = $this->database->getRow($this->database->prepare(
-                "SELECT id FROM `{$this->tables->jobs}` WHERE network_id = %d AND site_id = %d AND id = %s FOR UPDATE",
-                $scope->networkId,
-                $scope->siteId,
-                $jobId,
-            ));
-            if ($job === null) {
-                $this->database->rollBack();
-                throw new RuntimeException(sprintf('Cannot lease unknown Job "%s".', $jobId));
-            }
+		$this->database->beginTransaction();
+		try {
+			$job = $this->database->getRow($this->database->prepare(
+				"SELECT id FROM `{$this->tables->jobs}` WHERE network_id = %d AND site_id = %d AND id = %s FOR UPDATE",
+				$scope->networkId,
+				$scope->siteId,
+				$jobId,
+			));
+			if ($job === null) {
+				$this->database->rollBack();
+				throw new RuntimeException(sprintf('Cannot lease unknown Job "%s".', $jobId));
+			}
 
-            $this->database->query($this->database->prepare(
-                "UPDATE `{$this->tables->attempts}` SET state = %s, completed_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND job_id = %s AND state = %s AND lease_expires_at <= %s",
-                JobAttemptState::Abandoned->value,
-                $nowSql,
-                $nowSql,
-                $scope->networkId,
-                $scope->siteId,
-                $jobId,
-                JobAttemptState::Leased->value,
-                $nowSql,
-            ));
+			$this->database->query($this->database->prepare(
+				"UPDATE `{$this->tables->attempts}` SET state = %s, completed_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND job_id = %s AND state = %s AND lease_expires_at <= %s",
+				JobAttemptState::Abandoned->value,
+				$now_sql,
+				$now_sql,
+				$scope->networkId,
+				$scope->siteId,
+				$jobId,
+				JobAttemptState::Leased->value,
+				$now_sql,
+			));
 
-            $active = $this->database->getRow($this->database->prepare(
-                "SELECT attempt_id FROM `{$this->tables->attempts}` WHERE network_id = %d AND site_id = %d AND job_id = %s AND state = %s AND lease_expires_at > %s ORDER BY attempt_no DESC LIMIT 1",
-                $scope->networkId,
-                $scope->siteId,
-                $jobId,
-                JobAttemptState::Leased->value,
-                $nowSql,
-            ));
-            if ($active !== null) {
-                $this->database->commit();
-                return null;
-            }
+			$active = $this->database->getRow($this->database->prepare(
+				"SELECT attempt_id FROM `{$this->tables->attempts}` WHERE network_id = %d AND site_id = %d AND job_id = %s AND state = %s AND lease_expires_at > %s ORDER BY attempt_no DESC LIMIT 1",
+				$scope->networkId,
+				$scope->siteId,
+				$jobId,
+				JobAttemptState::Leased->value,
+				$now_sql,
+			));
+			if ($active !== null) {
+				$this->database->commit();
+				return null;
+			}
 
-            $attemptNumber = 1 + (int) ($this->database->getVar($this->database->prepare(
-                "SELECT COALESCE(MAX(attempt_no), 0) FROM `{$this->tables->attempts}` WHERE network_id = %d AND site_id = %d AND job_id = %s",
-                $scope->networkId,
-                $scope->siteId,
-                $jobId,
-            )) ?? 0);
+			$attempt_number = 1 + (int) ($this->database->getVar($this->database->prepare(
+				"SELECT COALESCE(MAX(attempt_no), 0) FROM `{$this->tables->attempts}` WHERE network_id = %d AND site_id = %d AND job_id = %s",
+				$scope->networkId,
+				$scope->siteId,
+				$jobId,
+			)) ?? 0);
 
-            $attemptId = self::uuid();
-            $token = bin2hex(random_bytes(32));
-            $tokenHash = hash('sha256', $token);
+			$attempt_id = self::uuid();
+			$token = bin2hex(random_bytes(32));
+			$token_hash = hash('sha256', $token);
 
-            $this->database->insert($this->tables->attempts, [
-                'network_id' => $scope->networkId,
-                'site_id' => $scope->siteId,
-                'attempt_id' => $attemptId,
-                'job_id' => $jobId,
-                'attempt_no' => $attemptNumber,
-                'state' => JobAttemptState::Leased->value,
-                'worker_id' => $workerId,
-                'lease_token_hash' => $tokenHash,
-                'lease_acquired_at' => $nowSql,
-                'lease_expires_at' => $expiresSql,
-                'heartbeat_at' => $nowSql,
-                'checkpoint_seq' => 0,
-                'checkpoint_json' => null,
-                'failure_class' => null,
-                'completed_at' => null,
-                'created_at' => $nowSql,
-                'updated_at' => $nowSql,
-            ], ['%d', '%d', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s']);
+			$this->database->insert($this->tables->attempts, [
+				'network_id' => $scope->networkId,
+				'site_id' => $scope->siteId,
+				'attempt_id' => $attempt_id,
+				'job_id' => $jobId,
+				'attempt_no' => $attempt_number,
+				'state' => JobAttemptState::Leased->value,
+				'worker_id' => $workerId,
+				'lease_token_hash' => $token_hash,
+				'lease_acquired_at' => $now_sql,
+				'lease_expires_at' => $expires_sql,
+				'heartbeat_at' => $now_sql,
+				'checkpoint_seq' => 0,
+				'checkpoint_json' => null,
+				'failure_class' => null,
+				'completed_at' => null,
+				'created_at' => $now_sql,
+				'updated_at' => $now_sql,
+			], ['%d', '%d', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s']);
 
-            $this->database->commit();
+			$this->database->commit();
 
-            return new JobLease(
-                scope: $scope,
-                attemptId: $attemptId,
-                jobId: $jobId,
-                attemptNumber: $attemptNumber,
-                workerId: $workerId,
-                token: $token,
-                expiresAt: $expiresAt,
-            );
-        } catch (Throwable $exception) {
-            $this->safeRollback();
-            throw $exception;
-        }
-    }
+			return new JobLease(
+				scope: $scope,
+				attemptId: $attempt_id,
+				jobId: $jobId,
+				attemptNumber: $attempt_number,
+				workerId: $workerId,
+				token: $token,
+				expiresAt: $expires_at,
+			);
+		} catch (Throwable $exception) {
+			$this->safeRollback();
+			throw $exception;
+		}
+	}
 
-    public function heartbeat(JobLease $lease, int $leaseSeconds, ?DateTimeImmutable $now = null): ?JobLease
-    {
-        $this->assertLeaseSeconds($leaseSeconds);
-        $now = $this->utc($now);
-        $expiresAt = $now->modify(sprintf('+%d seconds', $leaseSeconds));
-        $nowSql = $this->sqlTime($now);
+	public function heartbeat(JobLease $lease, int $leaseSeconds, ?DateTimeImmutable $now = null): ?JobLease
+	{
+		$this->assertLeaseSeconds($leaseSeconds);
+		$now = $this->utc($now);
+		$expires_at = $now->modify(sprintf('+%d seconds', $leaseSeconds));
+		$now_sql = $this->sqlTime($now);
 
-        $affected = $this->database->query($this->database->prepare(
-            "UPDATE `{$this->tables->attempts}` SET heartbeat_at = %s, lease_expires_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND attempt_id = %s AND job_id = %s AND worker_id = %s AND lease_token_hash = %s AND state = %s AND lease_expires_at > %s",
-            $nowSql,
-            $this->sqlTime($expiresAt),
-            $nowSql,
-            $lease->scope->networkId,
-            $lease->scope->siteId,
-            $lease->attemptId,
-            $lease->jobId,
-            $lease->workerId,
-            hash('sha256', $lease->token),
-            JobAttemptState::Leased->value,
-            $nowSql,
-        ));
+		$affected = $this->database->query($this->database->prepare(
+			"UPDATE `{$this->tables->attempts}` SET heartbeat_at = %s, lease_expires_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND attempt_id = %s AND job_id = %s AND worker_id = %s AND lease_token_hash = %s AND state = %s AND lease_expires_at > %s",
+			$now_sql,
+			$this->sqlTime($expires_at),
+			$now_sql,
+			$lease->scope->networkId,
+			$lease->scope->siteId,
+			$lease->attemptId,
+			$lease->jobId,
+			$lease->workerId,
+			hash('sha256', $lease->token),
+			JobAttemptState::Leased->value,
+			$now_sql,
+		));
 
-        if ($affected !== 1) {
-            return null;
-        }
+		if ($affected !== 1) {
+			return null;
+		}
 
-        return new JobLease(
-            scope: $lease->scope,
-            attemptId: $lease->attemptId,
-            jobId: $lease->jobId,
-            attemptNumber: $lease->attemptNumber,
-            workerId: $lease->workerId,
-            token: $lease->token,
-            expiresAt: $expiresAt,
-            checkpointSequence: $lease->checkpointSequence,
-        );
-    }
+		return new JobLease(
+			scope: $lease->scope,
+			attemptId: $lease->attemptId,
+			jobId: $lease->jobId,
+			attemptNumber: $lease->attemptNumber,
+			workerId: $lease->workerId,
+			token: $lease->token,
+			expiresAt: $expires_at,
+			checkpointSequence: $lease->checkpointSequence,
+		);
+	}
 
-    public function checkpoint(JobLease $lease, int $sequence, array $checkpoint, ?DateTimeImmutable $now = null): bool
-    {
-        if ($sequence < 1) {
-            throw new InvalidArgumentException('Checkpoint sequence must be positive.');
-        }
-        try {
-            $json = json_encode($checkpoint, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        } catch (JsonException $exception) {
-            throw new RuntimeException('Unable to encode Job checkpoint.', 0, $exception);
-        }
+	public function checkpoint(JobLease $lease, int $sequence, array $checkpoint, ?DateTimeImmutable $now = null): bool
+	{
+		if ($sequence < 1) {
+			throw new InvalidArgumentException('Checkpoint sequence must be positive.');
+		}
+		try {
+			$json = json_encode($checkpoint, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		} catch (JsonException $exception) {
+			throw new RuntimeException('Unable to encode Job checkpoint.', 0, $exception);
+		}
 
-        $now = $this->utc($now);
-        $nowSql = $this->sqlTime($now);
-        $affected = $this->database->query($this->database->prepare(
-            "UPDATE `{$this->tables->attempts}` SET checkpoint_seq = %d, checkpoint_json = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND attempt_id = %s AND job_id = %s AND worker_id = %s AND lease_token_hash = %s AND state = %s AND lease_expires_at > %s AND checkpoint_seq < %d",
-            $sequence,
-            $json,
-            $nowSql,
-            $lease->scope->networkId,
-            $lease->scope->siteId,
-            $lease->attemptId,
-            $lease->jobId,
-            $lease->workerId,
-            hash('sha256', $lease->token),
-            JobAttemptState::Leased->value,
-            $nowSql,
-            $sequence,
-        ));
+		$now = $this->utc($now);
+		$now_sql = $this->sqlTime($now);
+		$affected = $this->database->query($this->database->prepare(
+			"UPDATE `{$this->tables->attempts}` SET checkpoint_seq = %d, checkpoint_json = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND attempt_id = %s AND job_id = %s AND worker_id = %s AND lease_token_hash = %s AND state = %s AND lease_expires_at > %s AND checkpoint_seq < %d",
+			$sequence,
+			$json,
+			$now_sql,
+			$lease->scope->networkId,
+			$lease->scope->siteId,
+			$lease->attemptId,
+			$lease->jobId,
+			$lease->workerId,
+			hash('sha256', $lease->token),
+			JobAttemptState::Leased->value,
+			$now_sql,
+			$sequence,
+		));
 
-        return $affected === 1;
-    }
+		return $affected === 1;
+	}
 
-    public function complete(JobLease $lease, JobAttemptState $state, ?JobFailureClass $failure = null, ?DateTimeImmutable $now = null): bool
-    {
-        if (!$state->isTerminal()) {
-            throw new InvalidArgumentException('A leased attempt cannot complete into the leased state.');
-        }
-        if ($state === JobAttemptState::Failed && $failure === null) {
-            throw new InvalidArgumentException('Failed Job attempts require a failure class.');
-        }
-        if ($state !== JobAttemptState::Failed && $failure !== null) {
-            throw new InvalidArgumentException('Failure class is only valid for failed Job attempts.');
-        }
+	public function complete(JobLease $lease, JobAttemptState $state, ?JobFailureClass $failure = null, ?DateTimeImmutable $now = null): bool
+	{
+		if (!$state->isTerminal()) {
+			throw new InvalidArgumentException('A leased attempt cannot complete into the leased state.');
+		}
+		if ($state === JobAttemptState::Failed && $failure === null) {
+			throw new InvalidArgumentException('Failed Job attempts require a failure class.');
+		}
+		if ($state !== JobAttemptState::Failed && $failure !== null) {
+			throw new InvalidArgumentException('Failure class is only valid for failed Job attempts.');
+		}
 
-        $now = $this->utc($now);
-        $nowSql = $this->sqlTime($now);
-        $failureValue = $failure?->value ?? '';
-        $affected = $this->database->query($this->database->prepare(
-            "UPDATE `{$this->tables->attempts}` SET state = %s, failure_class = NULLIF(%s, ''), completed_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND attempt_id = %s AND job_id = %s AND worker_id = %s AND lease_token_hash = %s AND state = %s AND lease_expires_at > %s",
-            $state->value,
-            $failureValue,
-            $nowSql,
-            $nowSql,
-            $lease->scope->networkId,
-            $lease->scope->siteId,
-            $lease->attemptId,
-            $lease->jobId,
-            $lease->workerId,
-            hash('sha256', $lease->token),
-            JobAttemptState::Leased->value,
-            $nowSql,
-        ));
+		$now = $this->utc($now);
+		$now_sql = $this->sqlTime($now);
+		$failure_value = $failure?->value ?? '';
+		$affected = $this->database->query($this->database->prepare(
+			"UPDATE `{$this->tables->attempts}` SET state = %s, failure_class = NULLIF(%s, ''), completed_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND attempt_id = %s AND job_id = %s AND worker_id = %s AND lease_token_hash = %s AND state = %s AND lease_expires_at > %s",
+			$state->value,
+			$failure_value,
+			$now_sql,
+			$now_sql,
+			$lease->scope->networkId,
+			$lease->scope->siteId,
+			$lease->attemptId,
+			$lease->jobId,
+			$lease->workerId,
+			hash('sha256', $lease->token),
+			JobAttemptState::Leased->value,
+			$now_sql,
+		));
 
-        return $affected === 1;
-    }
+		return $affected === 1;
+	}
 
-    public function reclaimExpired(JobScope $scope, int $limit = 100, ?DateTimeImmutable $now = null): int
-    {
-        if ($limit < 1 || $limit > 1000) {
-            throw new InvalidArgumentException('Expired Job reclaim limit must be between 1 and 1000.');
-        }
-        $now = $this->utc($now);
-        $nowSql = $this->sqlTime($now);
-        $affected = $this->database->query($this->database->prepare(
-            "UPDATE `{$this->tables->attempts}` SET state = %s, completed_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND state = %s AND lease_expires_at <= %s ORDER BY lease_expires_at ASC LIMIT %d",
-            JobAttemptState::Abandoned->value,
-            $nowSql,
-            $nowSql,
-            $scope->networkId,
-            $scope->siteId,
-            JobAttemptState::Leased->value,
-            $nowSql,
-            $limit,
-        ));
+	public function reclaimExpired(JobScope $scope, int $limit = 100, ?DateTimeImmutable $now = null): int
+	{
+		if ($limit < 1 || $limit > 1000) {
+			throw new InvalidArgumentException('Expired Job reclaim limit must be between 1 and 1000.');
+		}
+		$now = $this->utc($now);
+		$now_sql = $this->sqlTime($now);
+		$affected = $this->database->query($this->database->prepare(
+			"UPDATE `{$this->tables->attempts}` SET state = %s, completed_at = %s, updated_at = %s WHERE network_id = %d AND site_id = %d AND state = %s AND lease_expires_at <= %s ORDER BY lease_expires_at ASC LIMIT %d",
+			JobAttemptState::Abandoned->value,
+			$now_sql,
+			$now_sql,
+			$scope->networkId,
+			$scope->siteId,
+			JobAttemptState::Leased->value,
+			$now_sql,
+			$limit,
+		));
 
-        return is_int($affected) ? $affected : 0;
-    }
+		return is_int($affected) ? $affected : 0;
+	}
 
-    private function assertJobId(string $jobId): void
-    {
-        if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $jobId) !== 1) {
-            throw new InvalidArgumentException('Job lease requires a canonical UUIDv4 Job ID.');
-        }
-    }
+	private function assertJobId(string $jobId): void
+	{
+		if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $jobId) !== 1) {
+			throw new InvalidArgumentException('Job lease requires a canonical UUIDv4 Job ID.');
+		}
+	}
 
-    private function assertLeaseSeconds(int $leaseSeconds): void
-    {
-        if ($leaseSeconds < 5 || $leaseSeconds > 3600) {
-            throw new InvalidArgumentException('Job lease duration must be between 5 and 3600 seconds.');
-        }
-    }
+	private function assertLeaseSeconds(int $leaseSeconds): void
+	{
+		if ($leaseSeconds < 5 || $leaseSeconds > 3600) {
+			throw new InvalidArgumentException('Job lease duration must be between 5 and 3600 seconds.');
+		}
+	}
 
-    private function utc(?DateTimeImmutable $now): DateTimeImmutable
-    {
-        return ($now ?? new DateTimeImmutable('now', new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('UTC'));
-    }
+	private function utc(?DateTimeImmutable $now): DateTimeImmutable
+	{
+		return ($now ?? new DateTimeImmutable('now', new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('UTC'));
+	}
 
-    private function sqlTime(DateTimeImmutable $time): string
-    {
-        return $time->format('Y-m-d H:i:s.u');
-    }
+	private function sqlTime(DateTimeImmutable $time): string
+	{
+		return $time->format('Y-m-d H:i:s.u');
+	}
 
-    private function safeRollback(): void
-    {
-        try {
-            $this->database->rollBack();
-        } catch (Throwable) {
-        }
-    }
+	private function safeRollback(): void
+	{
+		try {
+			$this->database->rollBack();
+		} catch (Throwable) {
+		}
+	}
 
-    private static function uuid(): string
-    {
-        $bytes = random_bytes(16);
-        $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
-        $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
-        $hex = bin2hex($bytes);
+	private static function uuid(): string
+	{
+		$bytes = random_bytes(16);
+		$bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
+		$bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
+		$hex = bin2hex($bytes);
 
-        return sprintf('%s-%s-%s-%s-%s', substr($hex, 0, 8), substr($hex, 8, 4), substr($hex, 12, 4), substr($hex, 16, 4), substr($hex, 20));
-    }
+		return sprintf('%s-%s-%s-%s-%s', substr($hex, 0, 8), substr($hex, 8, 4), substr($hex, 12, 4), substr($hex, 16, 4), substr($hex, 20));
+	}
 }

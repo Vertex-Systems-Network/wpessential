@@ -5,184 +5,184 @@ declare(strict_types=1);
 namespace WPEssential\Modules\DashboardWidgets;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use InvalidArgumentException;
 
 final readonly class DashboardWidgetRegistrationDescriptor
 {
-    public const CONTEXT_NORMAL = 'normal';
-    public const CONTEXT_SIDE = 'side';
-    public const CONTEXT_COLUMN3 = 'column3';
-    public const CONTEXT_COLUMN4 = 'column4';
+	public const CONTEXT_NORMAL = 'normal';
+	public const CONTEXT_SIDE = 'side';
+	public const CONTEXT_COLUMN3 = 'column3';
+	public const CONTEXT_COLUMN4 = 'column4';
 
-    public const PRIORITY_HIGH = 'high';
-    public const PRIORITY_CORE = 'core';
-    public const PRIORITY_DEFAULT = 'default';
-    public const PRIORITY_LOW = 'low';
+	public const PRIORITY_HIGH = 'high';
+	public const PRIORITY_CORE = 'core';
+	public const PRIORITY_DEFAULT = 'default';
+	public const PRIORITY_LOW = 'low';
 
-    public const SITE_SCOPE_ALL_SITES = 'all_sites';
-    public const SITE_SCOPE_SITE_IDS = 'site_ids';
-    public const MAX_SITE_IDS = 100;
+	public const SITE_SCOPE_ALL_SITES = 'all_sites';
+	public const SITE_SCOPE_SITE_IDS = 'site_ids';
+	public const MAX_SITE_IDS = 100;
 
-    public const LIFECYCLE_BEFORE_SCHEDULE = 'before_schedule';
-    public const LIFECYCLE_ACTIVE = 'active';
-    public const LIFECYCLE_EXPIRED = 'expired';
+	public const LIFECYCLE_BEFORE_SCHEDULE = 'before_schedule';
+	public const LIFECYCLE_ACTIVE = 'active';
+	public const LIFECYCLE_EXPIRED = 'expired';
 
-    /** @var list<string> */
-    public const SITE_SCOPES = [
-        self::SITE_SCOPE_ALL_SITES,
-        self::SITE_SCOPE_SITE_IDS,
-    ];
+	/** @var list<string> */
+	public const SITE_SCOPES = [
+		self::SITE_SCOPE_ALL_SITES,
+		self::SITE_SCOPE_SITE_IDS,
+	];
 
-    /** @var list<string> */
-    public const CONTEXTS = [
-        self::CONTEXT_NORMAL,
-        self::CONTEXT_SIDE,
-        self::CONTEXT_COLUMN3,
-        self::CONTEXT_COLUMN4,
-    ];
+	/** @var list<string> */
+	public const CONTEXTS = [
+		self::CONTEXT_NORMAL,
+		self::CONTEXT_SIDE,
+		self::CONTEXT_COLUMN3,
+		self::CONTEXT_COLUMN4,
+	];
 
-    /** @var list<string> */
-    public const PRIORITIES = [
-        self::PRIORITY_HIGH,
-        self::PRIORITY_CORE,
-        self::PRIORITY_DEFAULT,
-        self::PRIORITY_LOW,
-    ];
+	/** @var list<string> */
+	public const PRIORITIES = [
+		self::PRIORITY_HIGH,
+		self::PRIORITY_CORE,
+		self::PRIORITY_DEFAULT,
+		self::PRIORITY_LOW,
+	];
 
-    public function __construct(
-        public string $definitionId,
-        public int $revision,
-        public string $key,
-        public string $title,
-        public string $context,
-        public string $priority,
-        public bool $networkDashboard,
-        public bool $defaultHidden = false,
-        public bool $defaultCollapsed = false,
-        public bool $dismissible = false,
-        public ?string $siteScope = null,
-        /** @var list<int> */
-        public array $siteIds = [],
-        public ?string $backgroundJobId = null,
-        public ?string $actionAbilityId = null,
-        public ?DashboardWidgetActionConfirmationDescriptor $actionConfirmation = null,
-        public ?DashboardWidgetActionInputDescriptor $actionInput = null,
-        public ?int $scheduleStartAt = null,
-        public ?int $scheduleEndAt = null,
-        public bool $manualRefresh = false,
-    ) {
-        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
-        }
-        if ($this->revision < 1) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor revision must be positive.');
-        }
-        if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $this->key)) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor key must be bounded canonical WordPress-safe text.');
-        }
-        if (
-            $this->title === ''
-            || strlen($this->title) > 160
-            || str_contains($this->title, '<')
-            || str_contains($this->title, '>')
-            || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $this->title)
-        ) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor title must be bounded plain text.');
-        }
-        if (!in_array($this->context, self::CONTEXTS, true)) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor context is unsupported.');
-        }
-        if (!in_array($this->priority, self::PRIORITIES, true)) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor priority is unsupported.');
-        }
-        if ($this->siteScope !== null && !in_array($this->siteScope, self::SITE_SCOPES, true)) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor site scope is unsupported.');
-        }
-        if (!array_is_list($this->siteIds) || count($this->siteIds) > self::MAX_SITE_IDS) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor site ids must be a bounded normalized list.');
-        }
+	public function __construct(
+		public string $definitionId,
+		public int $revision,
+		public string $key,
+		public string $title,
+		public string $context,
+		public string $priority,
+		public bool $networkDashboard,
+		public bool $defaultHidden = false,
+		public bool $defaultCollapsed = false,
+		public bool $dismissible = false,
+		public ?string $siteScope = null,
+		/** @var list<int> */
+		public array $siteIds = [],
+		public ?string $backgroundJobId = null,
+		public ?string $actionAbilityId = null,
+		public ?DashboardWidgetActionConfirmationDescriptor $actionConfirmation = null,
+		public ?DashboardWidgetActionInputDescriptor $actionInput = null,
+		public ?int $scheduleStartAt = null,
+		public ?int $scheduleEndAt = null,
+		public bool $manualRefresh = false,
+	) {
+		if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
+		}
+		if ($this->revision < 1) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor revision must be positive.');
+		}
+		if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $this->key)) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor key must be bounded canonical WordPress-safe text.');
+		}
+		if (
+			$this->title === ''
+			|| strlen($this->title) > 160
+			|| str_contains($this->title, '<')
+			|| str_contains($this->title, '>')
+			|| preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $this->title)
+		) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor title must be bounded plain text.');
+		}
+		if (!in_array($this->context, self::CONTEXTS, true)) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor context is unsupported.');
+		}
+		if (!in_array($this->priority, self::PRIORITIES, true)) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor priority is unsupported.');
+		}
+		if ($this->siteScope !== null && !in_array($this->siteScope, self::SITE_SCOPES, true)) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor site scope is unsupported.');
+		}
+		if (!array_is_list($this->siteIds) || count($this->siteIds) > self::MAX_SITE_IDS) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor site ids must be a bounded normalized list.');
+		}
 
-        $previousSiteId = 0;
-        foreach ($this->siteIds as $siteId) {
-            if (!is_int($siteId) || $siteId < 1 || $siteId <= $previousSiteId) {
-                throw new InvalidArgumentException('Dashboard Widget descriptor site ids must be unique positive integers sorted ascending.');
-            }
-            $previousSiteId = $siteId;
-        }
+		$previousSiteId = 0;
+		foreach ($this->siteIds as $siteId) {
+			if (!is_int($siteId) || $siteId < 1 || $siteId <= $previousSiteId) {
+				throw new InvalidArgumentException('Dashboard Widget descriptor site ids must be unique positive integers sorted ascending.');
+			}
+			$previousSiteId = $siteId;
+		}
 
-        if ($this->siteScope === null && $this->siteIds !== []) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor site ids require site_ids scope.');
-        }
-        if ($this->siteScope === self::SITE_SCOPE_SITE_IDS && $this->siteIds === []) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor site_ids scope requires at least one site id.');
-        }
-        if ($this->siteScope === self::SITE_SCOPE_ALL_SITES && $this->siteIds !== []) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor all_sites scope forbids site ids.');
-        }
-        if ($this->networkDashboard && ($this->siteScope !== null || $this->siteIds !== [])) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor network target cannot include site targeting.');
-        }
-        if (
-            $this->backgroundJobId !== null
-            && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->backgroundJobId) !== 1
-        ) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor background job id must be a lowercase RFC 4122 UUID.');
-        }
-        if (
-            $this->actionAbilityId !== null
-            && preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $this->actionAbilityId) !== 1
-        ) {
-            throw new InvalidArgumentException('Dashboard Widget descriptor action ability id must use the canonical ability name shape.');
-        }
-        if ($this->scheduleStartAt !== null && $this->scheduleEndAt !== null && $this->scheduleStartAt >= $this->scheduleEndAt) {
-            throw new InvalidArgumentException('Dashboard Widget lifecycle start must be earlier than end.');
-        }
-        if ($this->actionInput !== null) {
-            if ($this->actionAbilityId === null || $this->actionInput->abilityId !== $this->actionAbilityId) {
-                throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration action Ability.');
-            }
-            if (
-                $this->actionInput->definitionId !== $this->definitionId
-                || $this->actionInput->definitionRevision !== $this->revision
-            ) {
-                throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration definition revision.');
-            }
-        }
-    }
+		if ($this->siteScope === null && $this->siteIds !== []) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor site ids require site_ids scope.');
+		}
+		if ($this->siteScope === self::SITE_SCOPE_SITE_IDS && $this->siteIds === []) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor site_ids scope requires at least one site id.');
+		}
+		if ($this->siteScope === self::SITE_SCOPE_ALL_SITES && $this->siteIds !== []) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor all_sites scope forbids site ids.');
+		}
+		if ($this->networkDashboard && ($this->siteScope !== null || $this->siteIds !== [])) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor network target cannot include site targeting.');
+		}
+		if (
+			$this->backgroundJobId !== null
+			&& preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->backgroundJobId) !== 1
+		) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor background job id must be a lowercase RFC 4122 UUID.');
+		}
+		if (
+			$this->actionAbilityId !== null
+			&& preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $this->actionAbilityId) !== 1
+		) {
+			throw new InvalidArgumentException('Dashboard Widget descriptor action ability id must use the canonical ability name shape.');
+		}
+		if ($this->scheduleStartAt !== null && $this->scheduleEndAt !== null && $this->scheduleStartAt >= $this->scheduleEndAt) {
+			throw new InvalidArgumentException('Dashboard Widget lifecycle start must be earlier than end.');
+		}
+		if ($this->actionInput !== null) {
+			if ($this->actionAbilityId === null || $this->actionInput->abilityId !== $this->actionAbilityId) {
+				throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration action Ability.');
+			}
+			if (
+				$this->actionInput->definitionId !== $this->definitionId
+				|| $this->actionInput->definitionRevision !== $this->revision
+			) {
+				throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration definition revision.');
+			}
+		}
+	}
 
-    public function lifecycleStateAt(int $timestamp): string
-    {
-        if ($timestamp < 0) {
-            throw new InvalidArgumentException('Dashboard Widget lifecycle evaluation timestamp must be non-negative.');
-        }
-        if ($this->scheduleStartAt !== null && $timestamp < $this->scheduleStartAt) {
-            return self::LIFECYCLE_BEFORE_SCHEDULE;
-        }
-        if ($this->scheduleEndAt !== null && $timestamp >= $this->scheduleEndAt) {
-            return self::LIFECYCLE_EXPIRED;
-        }
+	public function lifecycleStateAt(int $timestamp): string
+	{
+		if ($timestamp < 0) {
+			throw new InvalidArgumentException('Dashboard Widget lifecycle evaluation timestamp must be non-negative.');
+		}
+		if ($this->scheduleStartAt !== null && $timestamp < $this->scheduleStartAt) {
+			return self::LIFECYCLE_BEFORE_SCHEDULE;
+		}
+		if ($this->scheduleEndAt !== null && $timestamp >= $this->scheduleEndAt) {
+			return self::LIFECYCLE_EXPIRED;
+		}
 
-        return self::LIFECYCLE_ACTIVE;
-    }
+		return self::LIFECYCLE_ACTIVE;
+	}
 
-    public function isActiveAt(int $timestamp): bool
-    {
-        return $this->lifecycleStateAt($timestamp) === self::LIFECYCLE_ACTIVE;
-    }
+	public function isActiveAt(int $timestamp): bool
+	{
+		return $this->lifecycleStateAt($timestamp) === self::LIFECYCLE_ACTIVE;
+	}
 
-    public function isEligibleForSite(int $siteId): bool
-    {
-        if ($siteId < 1 || $this->networkDashboard) {
-            return false;
-        }
+	public function isEligibleForSite(int $siteId): bool
+	{
+		if ($siteId < 1 || $this->networkDashboard) {
+			return false;
+		}
 
-        return match ($this->siteScope) {
-            null, self::SITE_SCOPE_ALL_SITES => true,
-            self::SITE_SCOPE_SITE_IDS => in_array($siteId, $this->siteIds, true),
-            default => false,
-        };
-    }
+		return match ($this->siteScope) {
+			null, self::SITE_SCOPE_ALL_SITES => true,
+			self::SITE_SCOPE_SITE_IDS => in_array($siteId, $this->siteIds, true),
+			default => false,
+		};
+	}
 }

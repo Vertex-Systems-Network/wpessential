@@ -256,12 +256,18 @@ jobs:
         run: find frameworks tests/Smoke tests/Integration tests/Unit -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
 
       - name: WordPress Coding Standards
+        id: phpcs
+        continue-on-error: true
         run: composer quality:phpcs
 
       - name: WordPress-aware PHPStan
+        id: phpstan
+        continue-on-error: true
         run: composer quality:phpstan
 
       - name: PHPUnit unit suite
+        id: phpunit
+        continue-on-error: true
         run: composer test:unit
 
       - name: Run diagnostic smoke suite
@@ -388,3 +394,16 @@ jobs:
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Enforce PHP quality outcome
+        if: always()
+        shell: bash
+        env:
+          PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+          PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+          PHPUNIT_OUTCOME: ${{ steps.phpunit.outcome }}
+        run: |
+          set -euo pipefail
+          test "${PHPCS_OUTCOME}" = success
+          test "${PHPSTAN_OUTCOME}" = success
+          test "${PHPUNIT_OUTCOME}" = success
