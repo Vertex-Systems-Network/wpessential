@@ -1,3 +1,9 @@
+## Fresh exact-head re-audit — pending
+
+The previous retained naming report is from source head `21fa582724250c6d3fd40aa299447d872a661f39` (55,287 full-tree PHPCS errors / 5,104 warnings). Subsequent PR commits applied bounded local-only naming fixes in `AdminAssetManifest.php`, `RuntimeDiagnosticsSnapshot.php`, and `WpdbJobAttemptStore.php`, plus whitespace-only `AssetDescriptor.php`; therefore the old finding inventory is stale for selecting another edit. The latest integrated branch head before this diagnostic refresh is `78660165dcc8be6c9259ada5f060ee3c32367f91`, based on current main `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30`.
+
+Runner `RB-0127` triggers a fresh read-only naming/PSR-4 ABI audit at the resulting exact PR head. Until its artifact is reviewed, no new naming source candidate is selected. The audit will not rename public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers, or alter WPCS rules.
+
 # WPCS naming, PSR-4 and public-ABI audit — 2026-10-17
 
 ## Purpose and boundary

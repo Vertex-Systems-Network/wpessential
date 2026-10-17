@@ -3,10 +3,9 @@
 # 2026-10-17 — Fresh-main reconciliation and PR #1416 continuation
 
 - Current `main`: `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30` (protected merge of PR #1421). The open PR #1416 head at refresh was `831367cc61694c1c2bb6b7335364752fb5f38ed7`, three main commits behind; those three current-main commits were merged locally into the existing PR branch without conflicts.
-- Exact-head GitHub run on `831367c`: 55/55 checks completed, 51 successful and 4 failed. PHP quality enforcement failed; the last separately audited full-tree WPCS result remains red, but no newer error count is claimed. Two runtime workflows also failed their shared quality enforcement. Architecture failed its smoke contract because `active_issue` and `active_pr` used unquoted numeric values, while the current contract requires `null` or quoted `"#number"` values.
-- Repair in progress: reconcile compact state identifiers and main anchor, rerun/verify the smoke contract, publish the branch update, and continue the issue-authorized no-ABI-change WPCS remediation. Keep full-tree WPCS required; no ruleset bypass, protected merge, release or deployment.
-- Local runner does not currently provide PHP/Composer; attempting to install distro packages was blocked by the sandbox's apt privilege restrictions. Exact-head PHP 8.2 CI is the available test runner for PHP validation.
-
+- Exact PR head `78660165dcc8be6c9259ada5f060ee3c32367f91`: all 55 checks completed, 51 passed and 4 failed in PHP quality, Architecture, CPT and Taxonomy quality-enforcement steps. The `ai-timeout-resilient-state-contract` smoke now passes (run `39025261525`, artifact `12098441999`), confirming the quoted issue/PR state fix. The last exact audited full-tree WPCS result is `55,287 errors / 5,104 warnings` on `21fa582`; no newer count is available.
+- The branch includes current `main` `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30` and is zero commits behind. PR #1416 remains OPEN and blocked by required quality enforcement; no merge, standards bypass, release or deployment.
+- RB-0126 records the completed failed merge-gate attempt. RB-0127 is registered for a fresh read-only naming/PSR-4 ABI audit before the next bounded local-only variable remediation. Local runner has no PHP/Composer; exact-head PHP 8.2 GitHub CI is used for PHP validation.
 ## 2026-10-13 — RB-0125 terminal read-only review PASS
 
 - Issue #1411 / PR #1412 corrected exact head `c24c97eed560f206cd1ab8ad177882ba78fd0f0b`: **14/14** exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform 10/10; 7 scoped files, zero behind/review threads; protected merge `d85f3183e2684a94c0f654fd191d7185dbda1929`. Initial Architecture failure was compact checkpoint >16KiB; repaired and reran green.

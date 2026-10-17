@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "d85f3183e2684a94c0f654fd191d7185dbda1929",
+  "anchor_main_sha": "6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3908,24 +3908,48 @@
       "category": "WPCS_SEMANTICS_PRESERVING_REMEDIATION_MERGE_GATE_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy, Governance, Distributable and applicable Platform/contract checks",
-      "environment": "agent/local-phpunit-bootstrap-repair-v1 after checkpoint dff57012f81cb54a731f8de6c9a572d65f224f20",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30; exact PR head 78660165dcc8be6c9259ada5f060ee3c32367f91",
       "dependencies": [
-        "main 93f40a70f329d8d825826233694a1cfe3c10ad34",
-        "PR #1416 current head"
+        "main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30",
+        "PR #1416 exact head 78660165dcc8be6c9259ada5f060ee3c32367f91"
       ],
       "authorization": "GOV-OWNER-CONSENT-001, Issue #1417 WPCS-first source remediation; no policy bypass, provider, production, release or deployment",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-first|pr1416|rb0126",
+      "disposition": "TERMINAL_FAILED",
+      "status": "FAIL",
+      "evidence": [
+        "PR #1416 exact head 78660165dcc8be6c9259ada5f060ee3c32367f91 includes the latest three main commits and is zero commits behind.",
+        "All 55 checks completed: 51 passed and 4 failed in the PHP quality, Architecture, CPT and Taxonomy quality-enforcement steps. The timeout-resilient state smoke passes (Architecture run 39025261525, artifact 12098441999).",
+        "Last separately audited full-tree WPCS result is 55,287 errors / 5,104 warnings on 21fa582724250c6d3fd40aa299447d872a661f39; no exact newer count is claimed. PR remains open and merge blocked."
+      ],
+      "note": "Exact-head gate attempt failed; continue Issue #1417 within the same PR. Keep full-tree WPCS, PHPStan/PHPUnit and protected checks required; no rule bypass, merge, production deployment, release or GA."
+    },
+    {
+      "id": "RB-0127",
+      "source": "Issue #1417 / PR #1416 WPCS-first continuation",
+      "category": "WPCS_NAMING_PSR4_ABI_READ_ONLY_AUDIT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "WPCS Naming ABI Audit (read-only exact-head run): locked Composer toolchain, dependency audit, architecture/engineering contracts, PHPUnit and naming-only PHPCS JSON classification",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source after 78660165dcc8be6c9259ada5f060ee3c32367f91; PHP 8.2; read-only naming diagnostic on frameworks/",
+      "dependencies": [
+        "RB-0126 completed failed gate attempt at 78660165dcc8be6c9259ada5f060ee3c32367f91",
+        "PR #1416 source remains open and authorized under Issue #1417"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417 WPCS-first remediation; diagnostic only, no ruleset change, public ABI rename, provider, production, release or deployment",
+      "merge_blocking": false,
+      "security_critical": false,
+      "expected_minutes": 12,
+      "dedup_key": "quality|wpcs-naming-abi-readonly|pr1416|rb0127",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Semantics-preserving AssetDescriptor whitespace/docblock correction committed on PR branch.",
-        "README and compact state reconciled; exact-head CI must be evaluated on the resulting branch head.",
-        "No runtime/API/authorization behavior intentionally changed; no merge-readiness or green-gate claim."
+        "Read-only exact-head diagnostic is needed to identify remaining safe local-only variable findings after the completed AssetDescriptor, AdminAssetManifest, RuntimeDiagnosticsSnapshot and WpdbJobAttemptStore source batches.",
+        "Workflow uploads JSON and summary artifacts; no runtime source or WPCS ruleset mutation is performed."
       ],
-      "note": "WPCS debt reduction only; full-tree WPCS/PHPStan baselines and protected merge gates remain authoritative."
+      "note": "Diagnostic input for one bounded local-only variable remediation. Preserve PSR-4, public/promoted properties, interface/public method names, serialized keys, WordPress IDs and all existing WPCS gates."
     }
   ],
   "last_reconciled_issue": "#1417",
