@@ -233,51 +233,51 @@ final readonly class AdminColumnsCsvExportService
 	): array {
 		$offset = 0;
 		$rows = [];
-		$baselineRevision = null;
-		$baselineColumns = null;
-		$encoderColumns = null;
+		$baseline_revision = null;
+		$baseline_columns = null;
+		$encoder_columns = null;
 
 		while ( $offset < $this->maxRows ) {
-			$pageSize = min( self::PAGE_SIZE, $this->maxRows - $offset );
-			$page = $this->readPage( $viewId, $controls, $pageSize, $offset, $context );
+			$page_size = min( self::PAGE_SIZE, $this->maxRows - $offset );
+			$page = $this->readPage( $viewId, $controls, $page_size, $offset, $context );
 
-			[$baselineRevision, $baselineColumns, $encoderColumns] = $this->assertStablePage(
+			[$baseline_revision, $baseline_columns, $encoder_columns] = $this->assertStablePage(
 				$page,
 				$viewId,
-				$pageSize,
-				$baselineRevision,
-				$baselineColumns,
-				$encoderColumns,
+				$page_size,
+				$baseline_revision,
+				$baseline_columns,
+				$encoder_columns,
 			);
 			if ( $expectedViewRevision !== null ) {
-				$this->assertViewRevision( $baselineRevision, $expectedViewRevision );
+				$this->assertViewRevision( $baseline_revision, $expectedViewRevision );
 			}
 
-			/** @var list<array<string,scalar|null>> $pageRows */
-			$pageRows = $page['rows'];
-			foreach ( $pageRows as $row ) {
+			/** @var list<array<string,scalar|null>> $page_rows */
+			$page_rows = $page['rows'];
+			foreach ( $page_rows as $row ) {
 				$rows[] = $row;
 			}
 
 			$returned = $page['returned'];
 			$offset += $returned;
-			if ( $returned < $pageSize ) {
+			if ( $returned < $page_size ) {
 				break;
 			}
 		}
 
 		if ( $offset === $this->maxRows ) {
 			$probe = $this->readPage( $viewId, $controls, 1, $offset, $context );
-			[$probeRevision] = $this->assertStablePage(
+			[$probe_revision] = $this->assertStablePage(
 				$probe,
 				$viewId,
 				1,
-				$baselineRevision,
-				$baselineColumns,
-				$encoderColumns,
+				$baseline_revision,
+				$baseline_columns,
+				$encoder_columns,
 			);
 			if ( $expectedViewRevision !== null ) {
-				$this->assertViewRevision( $probeRevision, $expectedViewRevision );
+				$this->assertViewRevision( $probe_revision, $expectedViewRevision );
 			}
 			if (($probe['returned'] ?? null) !== 0) {
 				throw new LengthException(sprintf(
@@ -287,11 +287,11 @@ final readonly class AdminColumnsCsvExportService
 			}
 		}
 
-		if ( !is_array( $encoderColumns ) || $encoderColumns === [] ) {
+		if ( !is_array( $encoder_columns ) || $encoder_columns === [] ) {
 			throw new RuntimeException('Admin Columns CSV export did not establish a stable column contract.');
 		}
 
-		return [$encoderColumns, $rows];
+		return [$encoder_columns, $rows];
 	}
 
 	/**

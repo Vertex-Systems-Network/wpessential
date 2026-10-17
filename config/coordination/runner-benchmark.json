@@ -4325,26 +4325,27 @@
     {
       "id": "RB-0142",
       "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
-      "category": "WPCS_NEXT_CONTRACT_SAFE_SOURCE_TRANCHE_REVIEW",
+      "category": "WPCS_ADMIN_COLUMNS_CSV_COLLECTION_LOCALS_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "Exact-head PR required CI reconciliation and next read-only WPCS finding classification",
-      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR head 9c87fc8fec05879a01a9e4b89cc28a5499455f43; GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for CSV collection method locals",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after 359ec47c792624f4dc8d05584bdbcd90b683b39c; PHP 8.2 GitHub runner",
       "dependencies": [
-        "RB-0141 read-only audit PASS, full merge matrix pending/red",
-        "Issue #1417 and PR #1416 remain open"
+        "RB-0141 read-only audit PASS; 359ec47c exact PR matrix 11 success / four quality-enforcement failures",
+        "PR #1416 remains open under Issue #1417"
       ],
       "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no public ABI, WPCS rule, provider, production, release or deployment change",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 20,
-      "dedup_key": "quality|wpcs-next-contract-safe-tranche|pr1416|rb0142",
+      "dedup_key": "quality|wpcs-admin-columns-csv-collect-locals|pr1416|rb0142",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Current exact framework audit: 9,523 naming findings, 54,599 errors and 5,103 warnings; public ABI/property findings require separate classification.",
-        "Inspect exact-head full required checks before selecting next source edit; no WPCS rule or protection bypass."
+        "Exact prior artifact reports 24 selected VariableNotSnakeCase findings across six local names in private AdminColumnsCsvExportService::collectAllMatching(); ten parameter reference findings are excluded.",
+        "Only selected local identifiers and PHPDoc local annotation change; method parameters and CSV output/contract keys preserved.",
+        "Existing AdminColumnsCsvExportServiceTest covers collection/row limits; local PHP/Composer unavailable."
       ],
-      "note": "Select a bounded contract-safe source tranche and register exact runner evidence before further publication."
+      "note": "Measure actual naming/errors/warnings from next source artifact; preserve full merge gates."
     }
   ],
   "last_reconciled_issue": "#1417",

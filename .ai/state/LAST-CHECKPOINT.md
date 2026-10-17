@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact-head CI reconciled and CSV collection candidate
+
+- On PR head `359ec47c792624f4dc8d05584bdbcd90b683b39c`, all 15 pull-request workflow runs completed: 11 success, four quality-enforcement failures in PHP Quality Toolchain (`39050053011`), Taxonomy Runtime (`39050053048`), CPT Runtime (`39050053009`) and Architecture Guards (`39050053035`). Each failed job reports an `Enforce PHP quality outcome(s)` step; individual underlying command conclusions are not proven by `continue-on-error` step status, and job logs could not be fetched. PR remains open/unmerged.
+- `RB-0142` selects 24 method-local naming findings across six symbols in `AdminColumnsCsvExportService::collectAllMatching()`. Ten parameter-reference findings in the same method stay unchanged. PHPDoc local annotation follows the local rename; CSV output/contract keys stay intact. Fresh exact-head audit and full CI required; local PHP/Composer unavailable.
+
 # 2026-10-17 — Warning regression corrected at exact head
 
 - Source `9c87fc8fec05879a01a9e4b89cc28a5499455f43` passed read-only naming audit run `39049801229`, artifact `12107032077`, SHA-256 `ef9fa8e6e599d157197031e2964cfdb2ae9e804e6f0c9262746a25878659ed10`. Framework warnings **5,107 → 5,103**, naming findings stable **9,523**, framework errors stable **54,599**. The four predicate assignment warnings from the previous batch are gone.

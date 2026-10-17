@@ -1,3 +1,7 @@
+## Next bounded source candidate — Admin Columns CSV collection locals
+
+The exact `9c87fc8` read-only inventory reports 34 `VariableNotSnakeCase` findings in `AdminColumnsCsvExportService::collectAllMatching()`. Ten are references to the private method's existing `viewId` and `expectedViewRevision` parameters; those parameter names remain unchanged. The candidate normalizes **24 findings** across six method-local symbols (`baselineRevision`, `baselineColumns`, `encoderColumns`, `pageSize`, `pageRows`, `probeRevision`) and synchronizes the `pageRows` PHPDoc local annotation. A reverse-mapping check must preserve every other line and all CSV output/contract identifiers. `RB-0142` requires fresh source audit and exact-head CI before any reduction is claimed.
+
 ## Exact warning correction — four alignment findings removed
 
 The [read-only audit run 39049801229](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39049801229) succeeded on `9c87fc8fec05879a01a9e4b89cc28a5499455f43`; artifact `12107032077` has SHA-256 `ef9fa8e6e599d157197031e2964cfdb2ae9e804e6f0c9262746a25878659ed10`. Framework-scope warnings **5,107 → 5,103**, with naming findings stable **9,523** and framework errors stable **54,599**. All four new assignment-alignment warnings introduced at the prior source were removed. The full-tree WPCS merge gate remains red; this report is read-only framework-scope evidence.
