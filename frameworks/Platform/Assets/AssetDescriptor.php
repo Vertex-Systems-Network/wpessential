@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Assets;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,9 +13,9 @@ use InvalidArgumentException;
 final readonly class AssetDescriptor
 {
 	/**
-     * @param list<string> $dependencies
-     * @param list<string> $adminRoutes
-     */
+	 * @param list<string> $dependencies
+	 * @param list<string> $adminRoutes
+	 */
 	public function __construct(
 		public string $handle,
 		public int $ownerSurfaceId,
