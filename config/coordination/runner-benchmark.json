@@ -4287,13 +4287,39 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-query-ast-predicate-locals|pr1416|rb0140",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "AUDIT_PASS_WARNING_REGRESSION",
       "evidence": [
         "Prior artifact reports 28 VariableNotSnakeCase findings on fieldRef/searchScope local names across private predicate parsers.",
         "Only local variable references change; signatures, AST keys, descriptor properties and issue codes preserved.",
-        "Existing QueryAstValidatorTest covers predicate variants; local PHP/Composer unavailable."
+        "Existing QueryAstValidatorTest covers predicate variants; local PHP/Composer unavailable.",
+        "Read-only audit 39049530316 PASS; artifact 12106079996 sha256:43882c08edeb09b21fb70b38b285596b8dcd151f284c5179c787513f115cae62 confirms naming 9,551 → 9,523, framework errors 54,627 → 54,599, warnings 5,103 → 5,107 from four new assignment alignment findings."
       ],
-      "note": "Measure naming/errors/warnings from next artifact; preserve full merge gates."
+      "note": "28 naming findings removed; four warning regressions require RB-0141 correction; full quality gate pending/red."
+    },
+    {
+      "id": "RB-0141",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
+      "category": "WPCS_QUERY_AST_ASSIGNMENT_ALIGNMENT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for four assignment alignment corrections",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after e7a16d2b152cd96819649381d73c4538cd4d6e07; PHP 8.2 GitHub runner",
+      "dependencies": [
+        "RB-0140 read-only audit identifies four new alignment warnings",
+        "PR #1416 remains open under Issue #1417"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no public ABI, WPCS rule, provider, production, release or deployment change",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-query-ast-alignment|pr1416|rb0141",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Four Generic.Formatting.MultipleStatementAlignment.NotSameWarning findings at QueryAstValidator lines 482, 501, 541 and 643 appeared after field_ref local renames.",
+        "Add one spacing character after each operator assignment variable; no token or behavior change; fresh audit must confirm no warning regression.",
+        "Local PHP/Composer unavailable; retain all exact-head full CI."
+      ],
+      "note": "Measure warnings and error count from next artifact; preserve full merge gates."
     }
   ],
   "last_reconciled_issue": "#1417",

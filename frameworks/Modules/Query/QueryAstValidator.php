@@ -479,7 +479,7 @@ final class QueryAstValidator
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator', 'value'], $path, $issues);
 		$field_ref = $raw['field_ref'] ?? null;
-		$operator = $raw['operator'] ?? null;
+		$operator  = $raw['operator'] ?? null;
 		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		$this->validateOperator($operator, $path . '.operator', $descriptor, $issues);
 		if (!array_key_exists('value', $raw)) {
@@ -498,7 +498,7 @@ final class QueryAstValidator
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator'], $path, $issues);
 		$field_ref = $raw['field_ref'] ?? null;
-		$operator = $raw['operator'] ?? null;
+		$operator  = $raw['operator'] ?? null;
 		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		if (!in_array($operator, ['exists', 'not_exists'], true)) {
 			$this->issue($issues, 'wpe_query_unsupported_operator', $path . '.operator', 'Existence operator must be exists or not_exists.');
@@ -538,7 +538,7 @@ final class QueryAstValidator
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator', 'values'], $path, $issues);
 		$field_ref = $raw['field_ref'] ?? null;
-		$operator = $raw['operator'] ?? null;
+		$operator  = $raw['operator'] ?? null;
 		$values = $raw['values'] ?? null;
 		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		if (!in_array($operator, ['in', 'not_in'], true)) {
@@ -640,7 +640,7 @@ final class QueryAstValidator
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator', 'value'], $path, $issues);
 		$field_ref = $raw['field_ref'] ?? null;
-		$operator = $raw['operator'] ?? null;
+		$operator  = $raw['operator'] ?? null;
 		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		$this->validateOperator($operator, $path . '.operator', $descriptor, $issues);
 		if (!array_key_exists('value', $raw)) {

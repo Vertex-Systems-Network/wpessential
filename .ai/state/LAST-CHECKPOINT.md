@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Predicate naming reduction and four warning regressions
+
+- Source `e7a16d2b152cd96819649381d73c4538cd4d6e07` passed read-only naming audit run `39049530316`, artifact `12106079996`, SHA-256 `43882c08edeb09b21fb70b38b285596b8dcd151f284c5179c787513f115cae62`. Naming findings **9,551 → 9,523**, framework errors **54,627 → 54,599**, warnings **5,103 → 5,107**. Four new assignment alignment warnings at QueryAstValidator lines 482, 501, 541, 643 require correction. Full quality gate red.
+- `RB-0141` proposes spacing-only correction to these four assignments; no behavior, public API or WPCS rule change. Fresh exact-head audit/full CI required; local PHP/Composer unavailable. PR open/unmerged.
+
 # 2026-10-17 — Exact 26 Query findings removed; predicate-local candidate
 
 - Source `d0c2c0ad49c214d4f6daf78bddfa5ac1e4640744` passed read-only naming audit run `39049237625`, artifact `12107490225`, SHA-256 `2f0acbd76cd938b6ebc46c9a8902dca0c68254c371e160cb40c8a958a5a4641a`. Naming findings **9,577 → 9,551**, framework errors **54,653 → 54,627**, warnings stable **5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.
