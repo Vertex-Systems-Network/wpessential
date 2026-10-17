@@ -1,3 +1,16 @@
+## Exact source naming improvement — 96 verified findings removed
+
+The [read-only audit run 39031820547](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39031820547) succeeded on `20af6758c7d0ae0b30fa8a5be544577a0625c293`; artifact `12100573107` has SHA-256 `1709c4056c090642714d1d8b8c1414d0f79612ecd524522ff79f01b696e29788`. The same pinned workflow and ruleset report:
+
+| Exact source | Framework PHPCS errors | Warnings | Naming findings | `VariableNotSnakeCase` |
+|---|---:|---:|---:|---:|
+| `5aa3b516` before | 55,182 | 5,104 | 10,106 | 6,992 |
+| `20af6758` after | 55,086 | 5,104 | 10,010 | 6,896 |
+
+All **96** removed findings were in the three private loading/error/empty state compiler methods; other naming sniff totals were unchanged. These are `frameworks/` PHPCS totals, not a whole-repository gate result or merge authorization.
+
+The next bounded candidate is **104** local-variable findings in four other private methods of the same file (`compile`, `compileQuery`, `filters`, `orderBy`). Four constructor parameter findings tied to the class's property/API names are excluded. The proposed source change preserves output keys, public properties, method names and named argument labels, and requires fresh audit plus required CI before any result is claimed.
+
 ## Fresh exact-head naming audit — verified
 
 The repaired [GitHub Actions run 39031345857](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39031345857) finished successfully on source `5aa3b516a94474c0734a6f48cfb1ef53327f2806`. Artifact `12100651533` has SHA-256 `a4a9aaa3d691d7ceb8b099620b01852abb36fbe624246dec7ee871c78ed485b8` and contains the original PHPCS JSON, a naming-only JSON classification, and a summary. The source remained clean after the read-only scan.

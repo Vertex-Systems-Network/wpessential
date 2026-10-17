@@ -62,47 +62,47 @@ final readonly class DashboardWidgetRenderSourceCompiler
 
 	public function compile( Definition $definition ): DashboardWidgetRenderSourceDescriptor
 	{
-		$contentClass = $this->contentClassCompiler->compile( $definition );
+		$content_class = $this->contentClassCompiler->compile( $definition );
 
 		$widget = $definition->payload['widget'] ?? null;
 		if ( !is_array( $widget ) || array_is_list( $widget ) ) {
 			throw new InvalidArgumentException('Dashboard Widget metadata must be an object/map for render-source compilation.');
 		}
 
-		$renderSource = $widget['render_source'] ?? null;
-		if ( !is_array( $renderSource ) || array_is_list( $renderSource ) ) {
+		$render_source = $widget['render_source'] ?? null;
+		if ( !is_array( $render_source ) || array_is_list( $render_source ) ) {
 			throw new InvalidArgumentException('Dashboard Widget render_source must be an object/map.');
 		}
-		$this->assertKnownKeys($renderSource, self::RENDER_SOURCE_KEYS, 'Dashboard Widget render_source');
+		$this->assertKnownKeys($render_source, self::RENDER_SOURCE_KEYS, 'Dashboard Widget render_source');
 
-		if (($renderSource['kind'] ?? null) !== 'component_blueprint') {
+		if (($render_source['kind'] ?? null) !== 'component_blueprint') {
 			throw new InvalidArgumentException('Dashboard Widget render_source kind must be component_blueprint for V1.');
 		}
 
-		$blueprintId = $renderSource['blueprint_id'] ?? null;
+		$blueprint_id = $render_source['blueprint_id'] ?? null;
 		if (
-			!is_string( $blueprintId )
-			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $blueprintId) !== 1
+			!is_string( $blueprint_id )
+			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $blueprint_id) !== 1
 		) {
 			throw new InvalidArgumentException('Dashboard Widget render_source blueprint_id must be a lowercase RFC 4122 UUID.');
 		}
 
-		$blueprintRevision = $renderSource['blueprint_revision'] ?? null;
-		if ( !is_int( $blueprintRevision ) || $blueprintRevision < 1 ) {
+		$blueprint_revision = $render_source['blueprint_revision'] ?? null;
+		if ( !is_int( $blueprint_revision ) || $blueprint_revision < 1 ) {
 			throw new InvalidArgumentException('Dashboard Widget render_source blueprint_revision must be a positive integer.');
 		}
 
-		$canonicalBlueprint = $this->componentCatalog->forContentType( $contentClass->contentType );
-		if ( $canonicalBlueprint === null ) {
+		$canonical_blueprint = $this->componentCatalog->forContentType( $content_class->contentType );
+		if ( $canonical_blueprint === null ) {
 			throw new InvalidArgumentException('Dashboard Widget trusted content class has no canonical Component Blueprint.');
 		}
-		if ( $blueprintId !== $canonicalBlueprint->id || $blueprintRevision !== $canonicalBlueprint->revision ) {
+		if ( $blueprint_id !== $canonical_blueprint->id || $blueprint_revision !== $canonical_blueprint->revision ) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget render_source Blueprint must match the canonical Blueprint for its trusted content class.',
 			);
 		}
 
-		$bindings = $renderSource['bindings'] ?? null;
+		$bindings = $render_source['bindings'] ?? null;
 		if ( !is_array( $bindings ) || ( $bindings !== [] && array_is_list( $bindings ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget render_source bindings must be an object/map.');
 		}
@@ -110,7 +110,7 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			throw new InvalidArgumentException('Dashboard Widget render_source bindings exceed the bounded V1 limit.');
 		}
 
-		$blueprint = $this->blueprints->get( $blueprintId, $blueprintRevision );
+		$blueprint = $this->blueprints->get( $blueprint_id, $blueprint_revision );
 		if ( $blueprint === null ) {
 			throw new InvalidArgumentException('Dashboard Widget render_source Blueprint id/revision is not registered.');
 		}
@@ -118,26 +118,26 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			throw new InvalidArgumentException('Dashboard Widget render_source Blueprint must be owned by Surface 10.');
 		}
 
-		$authoredKeys = array_keys( $bindings );
-		foreach ( $authoredKeys as $key ) {
+		$authored_keys = array_keys( $bindings );
+		foreach ( $authored_keys as $key ) {
 			if (!is_string($key) || preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $key) !== 1) {
 				throw new InvalidArgumentException('Dashboard Widget render_source binding keys must be stable semantic identifiers.');
 			}
 		}
 
-		$schemaKeys = array_keys( $blueprint->bindingSchema );
-		sort( $authoredKeys, SORT_STRING );
-		sort( $schemaKeys, SORT_STRING );
-		if ( $authoredKeys !== $schemaKeys ) {
+		$schema_keys = array_keys( $blueprint->bindingSchema );
+		sort( $authored_keys, SORT_STRING );
+		sort( $schema_keys, SORT_STRING );
+		if ( $authored_keys !== $schema_keys ) {
 			throw new InvalidArgumentException('Dashboard Widget render_source bindings must exactly match the Blueprint binding schema keys.');
 		}
 
-		/** @var array<string, scalar|list<scalar>> $literalBindings */
-		$literalBindings = [];
-		/** @var array<string,array{field_ref:string,mode:string,binding_type:string}> $queryBindings */
-		$queryBindings = [];
-		/** @var array<string,array{source_ref:string,value_ref:string,resource:string,binding_type:string}> $dynamicBindings */
-		$dynamicBindings = [];
+		/** @var array<string, scalar|list<scalar>> $literal_bindings */
+		$literal_bindings = [];
+		/** @var array<string,array{field_ref:string,mode:string,binding_type:string}> $query_bindings */
+		$query_bindings = [];
+		/** @var array<string,array{source_ref:string,value_ref:string,resource:string,binding_type:string}> $dynamic_bindings */
+		$dynamic_bindings = [];
 
 		foreach ( $blueprint->bindingSchema as $key => $type ) {
 			$envelope = $bindings[$key] ?? null;
@@ -154,19 +154,19 @@ final readonly class DashboardWidgetRenderSourceCompiler
 				$this->assertValueMatchesType($envelope['value'], $type);
 				/** @var scalar|list<scalar> $value */
 				$value = $envelope['value'];
-				$literalBindings[$key] = $value;
+				$literal_bindings[$key] = $value;
 				continue;
 			}
 
 			if ($source === 'query') {
 				$this->assertKnownKeys($envelope, self::QUERY_BINDING_KEYS, 'Dashboard Widget Query render_source binding');
-				$fieldRef = $this->fieldReference($envelope['field_ref'] ?? null, 'Dashboard Widget Query binding field_ref');
+				$field_ref = $this->fieldReference($envelope['field_ref'] ?? null, 'Dashboard Widget Query binding field_ref');
 				$mode = $envelope['mode'] ?? null;
 				if (!is_string($mode) || !in_array($mode, ['first', 'column'], true)) {
 					throw new InvalidArgumentException('Dashboard Widget Query binding mode must be first or column.');
 				}
-				$queryBindings[$key] = [
-					'field_ref' => $fieldRef,
+				$query_bindings[$key] = [
+					'field_ref' => $field_ref,
 					'mode' => $mode,
 					'binding_type' => $type,
 				];
@@ -175,11 +175,11 @@ final readonly class DashboardWidgetRenderSourceCompiler
 
 			if ($source === 'dynamic') {
 				$this->assertKnownKeys($envelope, self::DYNAMIC_BINDING_KEYS, 'Dashboard Widget Dynamic render_source binding');
-				$sourceRef = $this->semanticReference(
+				$source_ref = $this->semanticReference(
 					$envelope['source_ref'] ?? null,
 					'Dashboard Widget Dynamic binding source_ref',
 				);
-				$valueRef = $this->semanticReference(
+				$value_ref = $this->semanticReference(
 					$envelope['value_ref'] ?? null,
 					'Dashboard Widget Dynamic binding value_ref',
 				);
@@ -187,9 +187,9 @@ final readonly class DashboardWidgetRenderSourceCompiler
 				if (!is_string($resource) || !in_array($resource, ['site', 'user', 'network'], true)) {
 					throw new InvalidArgumentException('Dashboard Widget Dynamic binding resource must be site, user or network.');
 				}
-				$dynamicBindings[$key] = [
-					'source_ref' => $sourceRef,
-					'value_ref' => $valueRef,
+				$dynamic_bindings[$key] = [
+					'source_ref' => $source_ref,
+					'value_ref' => $value_ref,
 					'resource' => $resource,
 					'binding_type' => $type,
 				];
@@ -199,54 +199,54 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			throw new InvalidArgumentException('Dashboard Widget render_source binding source must be literal, query or dynamic.');
 		}
 
-		ksort( $literalBindings, SORT_STRING );
-		ksort( $queryBindings, SORT_STRING );
-		ksort( $dynamicBindings, SORT_STRING );
+		ksort( $literal_bindings, SORT_STRING );
+		ksort( $query_bindings, SORT_STRING );
+		ksort( $dynamic_bindings, SORT_STRING );
 
-		$queryAuthored = array_key_exists('query', $renderSource);
-		if ( $queryBindings === [] && $queryAuthored ) {
+		$query_authored = array_key_exists('query', $render_source);
+		if ( $query_bindings === [] && $query_authored ) {
 			throw new InvalidArgumentException('Dashboard Widget render_source query requires at least one Query binding.');
 		}
-		if ( $queryBindings !== [] && !$queryAuthored ) {
+		if ( $query_bindings !== [] && !$query_authored ) {
 			throw new InvalidArgumentException('Dashboard Widget Query binding requires render_source.query.');
 		}
 
 		$query = null;
-		if ( $queryBindings !== [] ) {
-			$query = $this->compileQuery($renderSource['query'], $queryBindings);
+		if ( $query_bindings !== [] ) {
+			$query = $this->compileQuery($render_source['query'], $query_bindings);
 		}
 
-		$emptyState = null;
-		if (array_key_exists('empty_state', $renderSource)) {
-			if ( $queryBindings === [] ) {
+		$empty_state = null;
+		if (array_key_exists('empty_state', $render_source)) {
+			if ( $query_bindings === [] ) {
 				throw new InvalidArgumentException(
 					'Dashboard Widget render_source empty_state requires at least one Query binding.',
 				);
 			}
-			$emptyState = $this->compileEmptyState($renderSource['empty_state']);
+			$empty_state = $this->compileEmptyState($render_source['empty_state']);
 		}
 
-		$errorState = null;
-		if (array_key_exists('error_state', $renderSource)) {
-			$errorState = $this->compileErrorState($renderSource['error_state']);
+		$error_state = null;
+		if (array_key_exists('error_state', $render_source)) {
+			$error_state = $this->compileErrorState($render_source['error_state']);
 		}
 
-		$loadingState = null;
-		if (array_key_exists('loading_state', $renderSource)) {
-			$loadingState = $this->compileLoadingState($renderSource['loading_state']);
+		$loading_state = null;
+		if (array_key_exists('loading_state', $render_source)) {
+			$loading_state = $this->compileLoadingState($render_source['loading_state']);
 		}
 
 		return new DashboardWidgetRenderSourceDescriptor(
 			definitionId: $definition->id,
 			definitionRevision: $definition->revision,
-			blueprintId: $blueprintId,
-			blueprintRevision: $blueprintRevision,
-			bindings: $literalBindings,
+			blueprintId: $blueprint_id,
+			blueprintRevision: $blueprint_revision,
+			bindings: $literal_bindings,
 			query: $query,
-			emptyState: $emptyState,
-			errorState: $errorState,
-			loadingState: $loadingState,
-			dynamicBindings: $dynamicBindings,
+			emptyState: $empty_state,
+			errorState: $error_state,
+			loadingState: $loading_state,
+			dynamicBindings: $dynamic_bindings,
 		);
 	}
 
@@ -596,16 +596,16 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			throw new InvalidArgumentException('Dashboard Widget Query contract_version must equal canonical Query consumer V1.');
 		}
 
-		$sourceRef = $raw['source_ref'] ?? null;
-		if (!is_string($sourceRef) || preg_match('/^[a-z][a-z0-9._-]{1,127}$/', $sourceRef) !== 1) {
+		$source_ref = $raw['source_ref'] ?? null;
+		if (!is_string($source_ref) || preg_match('/^[a-z][a-z0-9._-]{1,127}$/', $source_ref) !== 1) {
 			throw new InvalidArgumentException('Dashboard Widget Query source_ref must be a stable Data Source identifier.');
 		}
 
 		$filters = $this->filters($raw['filters'] ?? []);
-		$orderBy = $this->orderBy($raw['order_by'] ?? []);
+		$order_by = $this->orderBy($raw['order_by'] ?? []);
 
-		$pageSize = $raw['page_size'] ?? 20;
-		if ( !is_int( $pageSize ) || $pageSize < 1 || $pageSize > 50 ) {
+		$page_size = $raw['page_size'] ?? 20;
+		if ( !is_int( $page_size ) || $page_size < 1 || $page_size > 50 ) {
 			throw new InvalidArgumentException('Dashboard Widget Query page_size must be within 1..50.');
 		}
 
@@ -614,19 +614,19 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			throw new InvalidArgumentException('Dashboard Widget Query offset must be within 0..1000.');
 		}
 
-		$projectionSet = [];
+		$projection_set = [];
 		foreach ( $bindings as $binding ) {
-			$projectionSet[$binding['field_ref']] = true;
+			$projection_set[$binding['field_ref']] = true;
 		}
-		$projection = array_keys( $projectionSet );
+		$projection = array_keys( $projection_set );
 		sort( $projection, SORT_STRING );
 
 		return new DashboardWidgetQueryBindingDescriptor(
-			sourceRef: $sourceRef,
+			sourceRef: $source_ref,
 			projection: $projection,
 			filters: $filters,
-			orderBy: $orderBy,
-			pageSize: $pageSize,
+			orderBy: $order_by,
+			pageSize: $page_size,
 			offset: $offset,
 			bindings: $bindings,
 		);
@@ -652,27 +652,27 @@ final readonly class DashboardWidgetRenderSourceCompiler
 				throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d requires value.', $index));
 			}
 
-			$fieldRef = $this->fieldReference($filter['field_ref'] ?? null, sprintf('Dashboard Widget Query filter %d field_ref', $index));
+			$field_ref = $this->fieldReference($filter['field_ref'] ?? null, sprintf('Dashboard Widget Query filter %d field_ref', $index));
 			$operator = $filter['operator'] ?? null;
 			if ( !is_string( $operator ) || !in_array( $operator, self::FILTER_OPERATORS, true ) ) {
 				throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d operator is unsupported.', $index));
 			}
 
-			$filterValue = $filter['value'];
+			$filter_value = $filter['value'];
 			if (in_array($operator, ['in', 'not_in'], true)) {
-				if ( !is_array( $filterValue ) || !array_is_list( $filterValue ) || $filterValue === [] || count( $filterValue ) > 20 ) {
+				if ( !is_array( $filter_value ) || !array_is_list( $filter_value ) || $filter_value === [] || count( $filter_value ) > 20 ) {
 					throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d set value must contain 1..20 items.', $index));
 				}
-				foreach ( $filterValue as $item ) {
+				foreach ( $filter_value as $item ) {
 					if ( $item === null || !is_scalar( $item ) ) {
 						throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d set values must be non-null scalars.', $index));
 					}
 				}
-			} elseif ( $filterValue !== null && !is_scalar( $filterValue ) ) {
+			} elseif ( $filter_value !== null && !is_scalar( $filter_value ) ) {
 				throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d comparison value must be scalar or null.', $index));
 			}
 
-			$filters[] = ['field_ref' => $fieldRef, 'operator' => $operator, 'value' => $filterValue];
+			$filters[] = ['field_ref' => $field_ref, 'operator' => $operator, 'value' => $filter_value];
 		}
 
 		return $filters;
@@ -696,16 +696,16 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			}
 			$this->assertKnownKeys($order, self::ORDER_KEYS, sprintf('Dashboard Widget Query order %d', $index));
 
-			$fieldRef = $this->fieldReference($order['field_ref'] ?? null, sprintf('Dashboard Widget Query order %d field_ref', $index));
+			$field_ref = $this->fieldReference($order['field_ref'] ?? null, sprintf('Dashboard Widget Query order %d field_ref', $index));
 			$direction = $order['direction'] ?? null;
 			if (!is_string($direction) || !in_array($direction, ['asc', 'desc'], true)) {
 				throw new InvalidArgumentException(sprintf('Dashboard Widget Query order %d direction must be asc or desc.', $index));
 			}
-			if ( isset( $seen[$fieldRef] ) ) {
+			if ( isset( $seen[$field_ref] ) ) {
 				throw new InvalidArgumentException('Dashboard Widget Query order fields must be unique.');
 			}
-			$seen[$fieldRef] = true;
-			$orders[] = ['field_ref' => $fieldRef, 'direction' => $direction];
+			$seen[$field_ref] = true;
+			$orders[] = ['field_ref' => $field_ref, 'direction' => $direction];
 		}
 
 		return $orders;

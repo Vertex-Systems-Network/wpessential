@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 96-finding reduction and next compiler batch
+
+- Exact source `20af6758c7d0ae0b30fa8a5be544577a0625c293` passed the read-only WPCS naming audit (run `39031820547`, artifact `12100573107`, SHA-256 `1709c4056c090642714d1d8b8c1414d0f79612ecd524522ff79f01b696e29788`). Compared with prior source `5aa3b516`, naming findings are **10,106 → 10,010**, all 96 removed from `VariableNotSnakeCase`; other naming sniff counts and warnings are unchanged. Framework-scope PHPCS JSON totals are **55,182 errors / 5,104 warnings → 55,086 / 5,104**. This does not certify whole-repository PHPCS or a green merge gate.
+- The same source file has 108 remaining `VariableNotSnakeCase` findings: 104 within four private methods (`compile`, `compileQuery`, `filters`, `orderBy`) and four constructor parameter uses tied to property/API names. The next bounded batch changes only those 104 method-local occurrences; a byte-for-byte reverse-mapping check across all 797 lines passes, and response/serialized keys plus named argument labels are unchanged. `RB-0133` tracks the next audit and required CI.
+- `RB-0132` full CI is still queued/running at last check. Keep PR #1416 open and preserve full WPCS, PHPStan, PHPUnit and protection gates.
+
+
 # 2026-10-17 — Fresh naming inventory and bounded state compiler batch
 
 - Repaired WPCS Naming ABI Audit run `39031345857` completed successfully on exact source `5aa3b516a94474c0734a6f48cfb1ef53327f2806`. Artifact `12100651533` (SHA-256 `a4a9aaa3d691d7ceb8b099620b01852abb36fbe624246dec7ee871c78ed485b8`) reports **10,106 naming findings**: 6,992 local-variable snake_case, 2,055 used-property, 908 method-name, 127 property, 24 interpolated-variable. This is naming-only, not the full-tree WPCS total.

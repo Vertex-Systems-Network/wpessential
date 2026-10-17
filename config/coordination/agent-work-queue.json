@@ -281,7 +281,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1417 / PR #1416 remains the actionable source path. RB-0131 read-only audit passed on 5aa3b516 and artifact 12100651533 reports 10,106 naming findings; 96 local-variable findings are scoped to three private Dashboard Widget state compiler methods. Submit this bounded RB-0132 source batch and verify required exact-head CI plus a fresh audit. Preserve full WPCS/protected gates; #858, #947 and #1102 remain parked.",
+    "next_safe_action": "Issue #1417 / PR #1416 remains the actionable source path. RB-0132 read-only audit passed on 20af6758 and artifact 12100573107 confirms 96 fewer naming errors, framework PHPCS 55,182 → 55,086 with stable 5,104 warnings; full CI is queued/running. Submit the next bounded RB-0133 batch for 104 method-local findings in the same compiler, preserving constructor/property API and all protected gates. #858, #947 and #1102 remain parked.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
