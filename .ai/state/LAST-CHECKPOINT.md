@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Naming audit YAML parse repair
+
+- The prior WPCS Naming ABI Audit runs failed immediately with zero jobs because `.github/workflows/wpcs-naming-abi-audit.yml` ended with an unindented stray SHA line (`635b851...`) after the artifact path list. A local YAML parser reproduced the failure at line 160. Removing that one line makes the workflow parse with its `naming-abi-audit` job intact; `git diff --check` passes.
+- `RB-0127` is a failed workflow-parse attempt, not PHP/runner evidence. `RB-0131` registers the next read-only exact-source naming audit. The audit artifact is required before using any newly inferred naming count or selecting another signature-sensitive source candidate.
+- The previous corrected source `702ab7a3` finished 55 checks with 51 success / 4 quality-enforcement failures. Dashboard diagnostics source `cec20f0a` is the active PR head and its CI is in progress.
+
+
 # 2026-10-17 — Dashboard diagnostics local naming batch prepared
 
 - Exact PR head `702ab7a39c74e462ad41182ce153467ff5bfdea5` restored the two comparators and normalized three private empty-state locals. Its 55 checks were 50 success, 4 failures at PHP quality/Architecture/CPT/Taxonomy enforcement and one browser E2E still running at the last read. PHP quality capture steps use `continue-on-error`; command outcomes cannot be inferred from their displayed success. Full-tree WPCS remains unpassed and no current numeric total is claimed.

@@ -3948,9 +3948,10 @@
       "evidence": [
         "Read-only exact-head diagnostic is needed to identify remaining safe local-only variable findings after the completed AssetDescriptor, AdminAssetManifest, RuntimeDiagnosticsSnapshot and WpdbJobAttemptStore source batches.",
         "Workflow uploads JSON and summary artifacts; no runtime source or WPCS ruleset mutation is performed.",
-        "Push-triggered run 39026004530 failed before creating a job or artifact; no naming finding inventory was produced."
+        "Push-triggered run 39026004530 failed before creating a job or artifact; no naming finding inventory was produced.",
+        "Reproduced invalid YAML locally: an unindented stray SHA after the final artifact path caused a parse error at line 160. RB-0131 repairs the workflow and reruns the read-only audit."
       ],
-      "note": "No naming result inferred from the failed audit. Proceeded with one manually classified local-only variable rename and registered exact-head validation separately."
+      "note": "Failed before job creation because the workflow YAML was invalid; no naming result inferred. RB-0131 repairs the parse error."
     },
     {
       "id": "RB-0128",
@@ -3996,13 +3997,13 @@
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-snake-case-corrected|pr1416|rb0129",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "disposition": "TERMINAL_FAILED",
+      "status": "FAIL",
       "evidence": [
         "Restore two pre-existing comparator locals to $slug_order; no behavior change.",
         "Normalize only $expectedKeys, $actualKeys and $normalizedBindings inside DashboardWidgetEmptyStateDescriptor::__construct to snake_case. Public promoted fields and serialized binding keys remain unchanged.",
         "Local PHP/Composer unavailable; git diff --check passes, exact-head CI needed.",
-        "At last read, exact head 702ab7a39c74e462ad41182ce153467ff5bfdea5 had 50 success, 4 failures at the required PHP quality/Architecture/CPT/Taxonomy enforcement steps, and browser E2E in progress."
+        "Exact head 702ab7a39c74e462ad41182ce153467ff5bfdea5 completed 55 checks: 51 success / 4 failures at required PHP quality, Architecture, CPT and Taxonomy enforcement. Capture steps use continue-on-error; individual command outcomes are not inferred from their displayed step conclusions."
       ],
       "note": "Required quality outcome and downstream contracts must be evaluated on the new exact PR head. No full-tree PHPCS pass or current count is inferred from historical evidence."
     },
@@ -4023,13 +4024,38 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-dashboard-diagnostics-locals|pr1416|rb0130",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Five method-local camelCase variables in DashboardWidgetDiagnosticsAbilityHandler are changed to snake_case; response keys, public properties and constructor arguments remain stable.",
         "Existing DashboardWidgetDiagnosticsAbilityHandlerTest exercises checksum and runtime response statuses, including error cases.",
-        "Local PHP/Composer unavailable; exact-head CI must validate this source batch."
+        "Local PHP/Composer unavailable; exact-head CI on source cec20f0a3ef97bb997d315726de7ac94014bd670 is in progress."
       ],
       "note": "No new full-tree WPCS count or green gate is inferred until exact-head required checks finish."
+    },
+    {
+      "id": "RB-0131",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit recovery",
+      "category": "READ_ONLY_WPCS_NAMING_ABI_AUDIT_YAML_REPAIR_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "WPCS Naming ABI Audit: parse-valid workflow, locked quality graph, read-only PHPCS JSON classification and artifact upload",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source after cec20f0a3ef97bb997d315726de7ac94014bd670; PHP 8.2 GitHub runner",
+      "dependencies": [
+        "RB-0127 failed before job creation due to invalid workflow YAML",
+        "Issue #1417 and PR #1416 remain active"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417 diagnostic scope; read-only workflow repair, no WPCS gate change, public ABI rename, provider, production, release or deployment",
+      "merge_blocking": false,
+      "security_critical": false,
+      "expected_minutes": 12,
+      "dedup_key": "quality|wpcs-naming-abi-parse-repair|pr1416|rb0131",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Removed one unindented stray SHA line at end of .github/workflows/wpcs-naming-abi-audit.yml; local YAML parser now resolves naming-abi-audit job.",
+        "Workflow still checks the exact source, runs locked quality tooling and uploads naming JSON/summary without source writes.",
+        "Do not claim a fresh naming count until the new GitHub run creates a job and artifact."
+      ],
+      "note": "Use artifact to classify local-only findings and immutable ABI/PSR-4 conflicts while preserving required full-tree CI."
     }
   ],
   "last_reconciled_issue": "#1417",

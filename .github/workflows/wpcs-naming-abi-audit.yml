@@ -157,4 +157,3 @@ jobs:
             /tmp/wpcs-naming-before.log
             /tmp/wpcs-naming-findings.json
             /tmp/wpcs-naming-summary.md
-635b85197f9924f5437d0c2d03ea7c2abdc1b30a

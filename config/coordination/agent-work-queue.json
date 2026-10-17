@@ -281,7 +281,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1417 / PR #1416 remains the actionable source path. RB-0129 exact head 702ab7a3 had 50 success, 4 quality-enforcement failures and one browser E2E running at last read. Once that run settles, publish the five-local diagnostics naming batch under RB-0130, preserving public response keys and all protected gates. #858, #947 and #1102 remain parked.",
+    "next_safe_action": "Issue #1417 / PR #1416 remains the actionable source path. Corrected source 702ab7a3 finished 51/55 checks; diagnostics source cec20f0a has CI in progress. Repair the stray SHA parse error in the read-only WPCS naming workflow under RB-0131, then inspect its artifact before selecting another naming source batch. Preserve full WPCS/protected gates; #858, #947 and #1102 remain parked.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,

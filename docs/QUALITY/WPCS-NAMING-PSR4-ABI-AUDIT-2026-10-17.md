@@ -1,8 +1,10 @@
-## Fresh exact-head re-audit — RB-0127 did not produce a job
+## Fresh exact-head re-audit — YAML parse repair
 
 The previous retained naming report is from source head `21fa582724250c6d3fd40aa299447d872a661f39` (55,287 full-tree PHPCS errors / 5,104 warnings). Subsequent PR commits applied bounded local-only naming fixes in `AdminAssetManifest.php`, `RuntimeDiagnosticsSnapshot.php`, and `WpdbJobAttemptStore.php`, plus whitespace-only `AssetDescriptor.php`; therefore the old finding inventory is stale for selecting another edit. The latest integrated branch head before this diagnostic refresh is `78660165dcc8be6c9259ada5f060ee3c32367f91`, based on current main `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30`.
 
 Runner `RB-0127` was triggered at exact head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`, but run `39026004530` failed before creating a job or artifact. Therefore it supplies no new finding inventory. The subsequent `$slug_order` → `$slugOrder` comparator edits were in the wrong direction for the recorded `VariableNotSnakeCase` WPCS sniff. They are restored at the next source head. The new candidate changes three constructor-only camelCase locals in `DashboardWidgetEmptyStateDescriptor.php` to snake_case. Public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers and WPCS rules are preserved.
+
+The zero-job failure is reproducible as invalid workflow YAML: a bare SHA at the end of `.github/workflows/wpcs-naming-abi-audit.yml` caused a parser error at line 160. The single stray line has been removed. The repaired file parses with the original read-only `naming-abi-audit` job and artifact steps; `RB-0131` will provide the first fresh naming inventory if GitHub executes it successfully.
 
 The next separate source batch changes five method-local names in `DashboardWidgetDiagnosticsAbilityHandler.php` to snake_case. It leaves the response keys `checksum_status`, `runtime_state` and `content_type`, the input key `definition_id`, and constructor properties unchanged. Existing diagnostics unit tests exercise those output fields and the blocked/error states. The batch requires its own exact PR checks; it is not a fresh full-tree WPCS count.
 
