@@ -1,6 +1,6 @@
 ## Dashboard Widget dynamic-binding validation candidate
 
-`RB-0148` addresses 12 preexisting PHPStan diagnostics in `DashboardWidgetActionInputDescriptor` by validating a local untrusted view of the dynamic bindings. The public property shape remains precise for downstream consumers; the constructor keeps its existing guards and thrown errors. Exact-head CI and read-only WPCS audit must establish the outcome.
+`RB-0148` addresses 12 preexisting PHPStan diagnostics in `DashboardWidgetActionInputDescriptor` by validating a local untrusted view of the dynamic bindings. The public property shape remains precise for downstream consumers; the constructor keeps its existing guards and thrown errors. [PHP Quality run 39073644628](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39073644628) on `5c74d5c4` produced diagnostic artifact `12115833369` (SHA-256 `843da1d1833d5f704f8f7cfae80aad4388766040285f815063b5e5aa2faaa012`): PHPStan **438 → 426**, descriptor **12 → 0**. [WPCS audit 39073644634](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39073644634), artifact `12115659882` (SHA-256 `8d96569811950d1a1d5db1947e09fbb110239d53f28cddc55587aef42f7d95b0`), reports framework errors **54,490 → 54,491**, warnings **5,102** stable, naming **9,417** stable. The only new error is `Generic.Commenting.DocComment.MissingShort` on the local annotation; expanded docblock correction awaits fresh audit.
 
 ## PHPStan input contract candidate
 

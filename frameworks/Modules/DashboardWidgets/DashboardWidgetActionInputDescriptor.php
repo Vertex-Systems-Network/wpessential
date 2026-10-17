@@ -48,7 +48,11 @@ final readonly class DashboardWidgetActionInputDescriptor
 			}
 		}
 
-		/** @var array<string,mixed> $untrusted_bindings */
+		/**
+		 * Validate the supplied descriptors as untrusted values.
+		 *
+		 * @var array<string,mixed> $untrusted_bindings
+		 */
 		$untrusted_bindings = $this->dynamicBindings;
 		foreach ( $untrusted_bindings as $key => $binding ) {
 			$this->assertBindingKey( $key );

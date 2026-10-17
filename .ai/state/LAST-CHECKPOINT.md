@@ -2,7 +2,7 @@
 
 # 2026-10-18 — Dashboard Widget dynamic-binding guard candidate
 
-- `RB-0148` selects 12 preexisting PHPStan always-narrowed errors in `DashboardWidgetActionInputDescriptor` dynamic-binding validation. A local untrusted array view makes the existing shape/value guards statically meaningful while keeping its public property PHPDoc, constructor signature, serialized values and rejection behavior unchanged. Exact-head PHPStan, WPCS and tests required.
+- `RB-0148` selects 12 preexisting PHPStan always-narrowed errors in `DashboardWidgetActionInputDescriptor` dynamic-binding validation. A local untrusted array view makes the existing shape/value guards statically meaningful while keeping its public property PHPDoc, constructor signature, serialized values and rejection behavior unchanged. Exact source `5c74d5c409ed57607a5f49afe4cbbef05203c12c` PHP Quality run `39073644628`, diagnostic artifact `12115833369` SHA-256 `843da1d1833d5f704f8f7cfae80aad4388766040285f815063b5e5aa2faaa012`, reduced PHPStan **438 → 426** and descriptor errors **12 → 0**. WPCS audit `39073644634`, artifact `12115659882` SHA-256 `8d96569811950d1a1d5db1947e09fbb110239d53f28cddc55587aef42f7d95b0`, had one new `Generic.Commenting.DocComment.MissingShort` at the local annotation; expanded docblock correction awaits audit. Warnings **5,102**, naming **9,417** unchanged. Full gates red.
 
 # 2026-10-18 — PHPStan CSV encoder input-contract candidate
 
