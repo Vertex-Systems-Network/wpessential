@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 19-finding reduction and Query source candidate
+
+- Source `a0a2620027eae33057bb3d541baa1f5182c06068` passed read-only naming audit run `39039076369`, artifact `12103665548`, SHA-256 `e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3`. Naming findings **9,615 → 9,596**, framework errors **54,691 → 54,672**, warnings stable **5,103**. Full-tree quality enforcement still blocks PR merge.
+- `RB-0138` proposes three local names in private `QueryAstValidator::parseSource()` (19 prior findings), preserving AST keys, descriptor properties and validation issue codes. Existing QueryAstValidatorTest covers source behavior; local PHP/Composer unavailable. Fresh audit and full exact-head CI required.
+
 # 2026-10-17 — Exact 36-finding reduction and next reference-method batch
 
 - Source `2c62f3f0202b7a3c86666ff5683fda50108c23ee` passed read-only naming audit run `39038797537`, artifact `12103386238`, SHA-256 `0950ce512c00c3460de991febabe79d60498fa986ccc0ecca8793d9a9082755b`. Naming findings **9,651 → 9,615**, framework PHPCS errors **54,727 → 54,691**, warnings **5,104 → 5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.

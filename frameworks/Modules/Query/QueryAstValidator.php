@@ -250,38 +250,38 @@ final class QueryAstValidator
 		}
 
 		$this->assertAllowedKeys($raw, ['source_ref', 'source_type', 'capability_version'], $path, $issues);
-		$sourceRef = $raw['source_ref'] ?? null;
-		$sourceType = $raw['source_type'] ?? null;
-		$capabilityVersion = $raw['capability_version'] ?? null;
+		$source_ref = $raw['source_ref'] ?? null;
+		$source_type = $raw['source_type'] ?? null;
+		$capability_version = $raw['capability_version'] ?? null;
 
-		if ( !$this->isSemanticIdentifier( $sourceRef ) ) {
+		if ( !$this->isSemanticIdentifier( $source_ref ) ) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path . '.source_ref', 'Source reference must be a stable semantic identifier.');
 		}
-		if ( !$this->isSemanticIdentifier( $sourceType ) ) {
+		if ( !$this->isSemanticIdentifier( $source_type ) ) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path . '.source_type', 'Source type must be a stable semantic identifier.');
 		}
-		if ( !is_int( $capabilityVersion ) || $capabilityVersion < 1 ) {
+		if ( !is_int( $capability_version ) || $capability_version < 1 ) {
 			$this->issue($issues, 'wpe_query_type_mismatch', $path . '.capability_version', 'Capability version must be a positive integer.');
 		}
 
-		if ( !is_string( $sourceRef ) || !is_string( $sourceType ) || !is_int( $capabilityVersion ) ) {
+		if ( !is_string( $source_ref ) || !is_string( $source_type ) || !is_int( $capability_version ) ) {
 			return [null, null];
 		}
 
-		$descriptor = $this->dataSources->find( $sourceRef );
+		$descriptor = $this->dataSources->find( $source_ref );
 		if ( $descriptor === null ) {
 			$this->issue($issues, 'wpe_query_unknown_source', $path . '.source_ref', 'Data Source is not registered in the canonical registry.');
-			return [new QuerySourceReference( $sourceRef, $sourceType, $capabilityVersion ), null];
+			return [new QuerySourceReference( $source_ref, $source_type, $capability_version ), null];
 		}
 
-		if ( $descriptor->sourceType !== $sourceType || $descriptor->capabilityVersion !== $capabilityVersion ) {
+		if ( $descriptor->sourceType !== $source_type || $descriptor->capabilityVersion !== $capability_version ) {
 			$this->issue($issues, 'wpe_query_dependency_unavailable', $path, 'Data Source type or capability version does not match the registered descriptor.');
 		}
 		if ( !$descriptor->isAvailable() ) {
 			$this->issue($issues, 'wpe_query_dependency_unavailable', $path, 'Data Source is currently degraded and unavailable for execution.');
 		}
 
-		return [new QuerySourceReference( $sourceRef, $sourceType, $capabilityVersion ), $descriptor];
+		return [new QuerySourceReference( $source_ref, $source_type, $capability_version ), $descriptor];
 	}
 
 	/**
