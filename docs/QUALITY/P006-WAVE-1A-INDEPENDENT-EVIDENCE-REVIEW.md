@@ -1,7 +1,7 @@
 # P-006 Wave 1A — independent evidence integrity review
 
-Status: **REVIEWED, BOUNDED STATIC EVIDENCE ONLY**  
-Issue: [#947](https://github.com/Vertex-Systems-Network/wpessential/issues/947) (independent Worker); source execution [#945](https://github.com/Vertex-Systems-Network/wpessential/issues/945), parent [#939](https://github.com/Vertex-Systems-Network/wpessential/issues/939)  
+Status: **REVIEWED, BOUNDED STATIC EVIDENCE ONLY**
+Issue: [#947](https://github.com/Vertex-Systems-Network/wpessential/issues/947) (independent Worker); source execution [#945](https://github.com/Vertex-Systems-Network/wpessential/issues/945), parent [#939](https://github.com/Vertex-Systems-Network/wpessential/issues/939)
 Review base: `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30` (current main at branch claim). Historical Wave 1A is assessed at its original source head, regardless of later P-006 waves.
 
 ## Sources and method
