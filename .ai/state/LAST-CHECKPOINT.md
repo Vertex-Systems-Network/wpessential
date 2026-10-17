@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 44-finding reduction and next registration compiler batch
+
+- Source `51991d75354cfe33068ddbfe46e92a593d38d16a` passed read-only naming audit run `39037663759`, artifact `12102238683`, SHA-256 `09ffa45df4dd26ea385e8a3754c67a44a3d11477ff20b0f912e7a0690c30547a`. Naming findings **9,695 → 9,651** and framework PHPCS errors **54,771 → 54,727**; warnings **5,103 → 5,104** from a line-length warning at `DashboardWidgetRegistrationCompiler.php:579`. Full-tree WPCS remains red.
+- `RB-0136` proposes 14 local names in public `compile()` (36 prior naming findings) while preserving its signature, properties, descriptor named argument labels, payload keys and values. A scoped condition wrap addresses the new line-length warning. Fresh audit and exact-head full CI are mandatory; local PHP/Composer unavailable. PR stays open/unmerged.
+
 # 2026-10-17 — Exact 211-finding reduction and registration target candidate
 
 - Exact source `aaccde6540e4ec619aeb310a69c71760f6446195` passed read-only naming audit run `39037320723`, artifact `12102517969`, SHA-256 `8f6ab7e5dd6fe4ad474c9bf688f60c843ed464a6fdbc1a79c551b0653429320e`. Naming findings **9,906 → 9,695**, framework PHPCS errors **54,982 → 54,771**, warnings **5,105 → 5,103**. All 211 removed naming findings were `VariableNotSnakeCase` in `DashboardWidgetsModule::register()`. Framework scan is not whole-repository WPCS or a merge gate pass.

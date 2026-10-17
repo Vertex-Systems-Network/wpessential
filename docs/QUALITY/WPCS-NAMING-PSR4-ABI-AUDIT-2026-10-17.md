@@ -1,3 +1,9 @@
+## Exact source naming improvement — 44 more verified findings removed
+
+The [read-only audit run 39037663759](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39037663759) succeeded on `51991d75354cfe33068ddbfe46e92a593d38d16a`; artifact `12102238683` has SHA-256 `09ffa45df4dd26ea385e8a3754c67a44a3d11477ff20b0f912e7a0690c30547a`. Naming findings **9,695 → 9,651**, `VariableNotSnakeCase` **6,581 → 6,537**, framework PHPCS errors **54,771 → 54,727**, and warnings **5,103 → 5,104**. All 44 removed naming findings were in the private `compileTarget()` method. The extra warning is `Generic.Files.LineLength.TooLong` at its renamed network-target condition, line 579. A scoped line wrap accompanies the next candidate and requires fresh verification.
+
+The next bounded candidate changes 14 method-local names in `DashboardWidgetRegistrationCompiler::compile()` (36 prior findings); named argument labels in the descriptor constructor, properties and payload keys remain unchanged. `RB-0136` tracks the exact-head audit and full CI. No improvement or warning correction is claimed until fresh results.
+
 ## Exact source naming improvement — 211 more verified findings removed
 
 The [read-only audit run 39037320723](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39037320723) succeeded on `aaccde6540e4ec619aeb310a69c71760f6446195`; artifact `12102517969` has SHA-256 `8f6ab7e5dd6fe4ad474c9bf688f60c843ed464a6fdbc1a79c551b0653429320e`. Naming findings **9,906 → 9,695**, `VariableNotSnakeCase` **6,792 → 6,581**, and framework PHPCS errors **54,982 → 54,771**: exactly 211 fewer. Framework warnings **5,105 → 5,103** after the two compiler alignment corrections. `DashboardWidgetsModule.php` has eight remaining naming findings tied to constructor/API and member naming; those contracts are preserved. This audit is framework-scope diagnostic evidence, not a full-tree WPCS pass.

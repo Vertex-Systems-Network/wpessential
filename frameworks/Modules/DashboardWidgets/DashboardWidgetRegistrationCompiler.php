@@ -101,11 +101,11 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 		$this->assertKnownKeys($widget, self::WIDGET_KEYS, 'Dashboard Widget registration metadata');
 
-		$contentClass = $this->contentClassCompiler->compile( $definition );
+		$content_class = $this->contentClassCompiler->compile( $definition );
 		$this->visibilityCompiler->compile( $definition );
-		$manualRefresh = $this->compileManualRefresh( $widget );
-		if ( $contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION ) {
-			if ( $manualRefresh ) {
+		$manual_refresh = $this->compileManualRefresh( $widget );
+		if ( $content_class->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION ) {
+			if ( $manual_refresh ) {
 				throw new InvalidArgumentException('Dashboard Widget form_action does not support manual refresh V1.');
 			}
 			if (array_key_exists('render_source', $widget)) {
@@ -115,11 +115,11 @@ final readonly class DashboardWidgetRegistrationCompiler
 			if ( $this->renderSourceCompiler === null ) {
 				throw new InvalidArgumentException('Dashboard Widget trusted render-source compiler is required for registration compilation.');
 			}
-			$compiledRenderSource = $this->renderSourceCompiler->compile( $definition );
-			if ( $manualRefresh && $compiledRenderSource->loadingState === null ) {
+			$compiled_render_source = $this->renderSourceCompiler->compile( $definition );
+			if ( $manual_refresh && $compiled_render_source->loadingState === null ) {
 				throw new InvalidArgumentException('Dashboard Widget manual refresh requires a trusted loading_state.');
 			}
-			if ( !$manualRefresh && $compiledRenderSource->loadingState !== null ) {
+			if ( !$manual_refresh && $compiled_render_source->loadingState !== null ) {
 				throw new InvalidArgumentException('Dashboard Widget loading_state requires refresh.manual=true in bounded V1.');
 			}
 		}
@@ -151,20 +151,20 @@ final readonly class DashboardWidgetRegistrationCompiler
 			throw new InvalidArgumentException('Dashboard Widget priority is unsupported.');
 		}
 
-		[$networkDashboard, $siteScope, $siteIds] = $this->compileTarget( $widget );
-		$defaultHidden = $this->compileDefaultHidden( $widget );
+		[$network_dashboard, $site_scope, $site_ids] = $this->compileTarget( $widget );
+		$default_hidden = $this->compileDefaultHidden( $widget );
 		$this->assertNativeCollapsibleCapability( $widget );
-		$defaultCollapsed = $this->compileDefaultCollapsed( $widget );
+		$default_collapsed = $this->compileDefaultCollapsed( $widget );
 		$dismissible = $this->compileDismissible( $widget );
-		[$scheduleStartAt, $scheduleEndAt] = $this->compileLifecycle( $widget );
-		$backgroundJobId = $this->compileBackgroundJobReference( $widget );
-		$actionAbilityId = $this->compileFormsActionAbilityReference( $widget );
-		$actionConfirmation = $this->compileActionConfirmation( $widget );
-		$actionInput = $this->compileActionInput( $definition, $widget );
+		[$schedule_start_at, $schedule_end_at] = $this->compileLifecycle( $widget );
+		$background_job_id = $this->compileBackgroundJobReference( $widget );
+		$action_ability_id = $this->compileFormsActionAbilityReference( $widget );
+		$action_confirmation = $this->compileActionConfirmation( $widget );
+		$action_input = $this->compileActionInput( $definition, $widget );
 
 		if (
-			$contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION
-			&& ($actionAbilityId === null || $actionConfirmation === null || $actionInput === null)
+			$content_class->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION
+			&& ($action_ability_id === null || $action_confirmation === null || $action_input === null)
 		) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget form_action requires canonical action Ability, confirmation and non-empty input descriptors.',
@@ -178,19 +178,19 @@ final readonly class DashboardWidgetRegistrationCompiler
 			title: $title,
 			context: $context,
 			priority: $priority,
-			networkDashboard: $networkDashboard,
-			defaultHidden: $defaultHidden,
-			defaultCollapsed: $defaultCollapsed,
+			networkDashboard: $network_dashboard,
+			defaultHidden: $default_hidden,
+			defaultCollapsed: $default_collapsed,
 			dismissible: $dismissible,
-			siteScope: $siteScope,
-			siteIds: $siteIds,
-			backgroundJobId: $backgroundJobId,
-			actionAbilityId: $actionAbilityId,
-			actionConfirmation: $actionConfirmation,
-			actionInput: $actionInput,
-			scheduleStartAt: $scheduleStartAt,
-			scheduleEndAt: $scheduleEndAt,
-			manualRefresh: $manualRefresh,
+			siteScope: $site_scope,
+			siteIds: $site_ids,
+			backgroundJobId: $background_job_id,
+			actionAbilityId: $action_ability_id,
+			actionConfirmation: $action_confirmation,
+			actionInput: $action_input,
+			scheduleStartAt: $schedule_start_at,
+			scheduleEndAt: $schedule_end_at,
+			manualRefresh: $manual_refresh,
 		);
 	}
 
@@ -576,7 +576,8 @@ final readonly class DashboardWidgetRegistrationCompiler
 		if ( !is_bool( $target_network_dashboard ) ) {
 			throw new InvalidArgumentException('Dashboard Widget target.network_dashboard must be boolean.');
 		}
-		if ( $legacy_network_present && $target_network_present && $legacy_network_dashboard !== $target_network_dashboard ) {
+		if ( $legacy_network_present && $target_network_present
+			&& $legacy_network_dashboard !== $target_network_dashboard ) {
 			throw new InvalidArgumentException('Dashboard Widget network target declarations conflict.');
 		}
 
