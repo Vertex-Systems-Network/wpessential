@@ -10,8 +10,8 @@ active_branch: agent/local-phpunit-bootstrap-repair-v1
 current_milestone: "PR #1416 / Issue #1417 WPCS remediation; bounded local-only naming cleanup in AdminColumnsCsvExportService."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Audit the one-line spacing correction at CSV export service line 95; check exact-head full CI, retaining all quality gates."
-waiting_external: "RB-0144 read-only audit on c5a9ff35 passed with artifact 12112993399: 29 fewer naming findings/framework errors, one new alignment warning. Correction awaits audit; full CI pending/red. #858 admin, #1102 authorization-gated P-006, #947 independent Worker parked."
+next_safe_action: "Check exact-head full CI and select the next bounded local-only WPCS fix, retaining all quality gates."
+waiting_external: "RB-0144 read-only audit on c5a9ff35 passed with artifact 12112993399: 29 fewer naming findings/framework errors, one new alignment warning. Correction audited at d201d446: warnings restored to 5,103; full CI pending/red. #858 admin, #1102 authorization-gated P-006, #947 independent Worker parked."
 next_planned_slot: RB-0144
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
