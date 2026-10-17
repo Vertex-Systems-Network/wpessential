@@ -738,10 +738,10 @@ final class QueryAstValidator
 	private function parseProviderExtensionPredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'namespaced_type', 'payload'], $path, $issues);
-		$namespacedType = $raw['namespaced_type'] ?? null;
-		if (!$this->isSemanticIdentifier($namespacedType) || !is_string($namespacedType) || !str_contains($namespacedType, '.')) {
+		$namespaced_type = $raw['namespaced_type'] ?? null;
+		if (!$this->isSemanticIdentifier($namespaced_type) || !is_string($namespaced_type) || !str_contains($namespaced_type, '.')) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path . '.namespaced_type', 'Provider extension type must be a namespaced semantic identifier.');
-		} elseif ( $descriptor !== null && !in_array( $namespacedType, $descriptor->predicates, true ) ) {
+		} elseif ( $descriptor !== null && !in_array( $namespaced_type, $descriptor->predicates, true ) ) {
 			$this->issue($issues, 'wpe_query_unsupported_operator', $path . '.namespaced_type', 'Provider extension is not advertised by the Data Source.');
 		}
 		$payload = $raw['payload'] ?? null;
@@ -751,7 +751,7 @@ final class QueryAstValidator
 		}
 
 		return new QueryPredicate(QueryPredicateType::ProviderExtension, [
-			'namespaced_type' => $namespacedType,
+			'namespaced_type' => $namespaced_type,
 			'payload' => $payload,
 		]);
 	}
@@ -772,7 +772,7 @@ final class QueryAstValidator
 			$this->issue($issues, 'wpe_query_unsupported_operator', '$.order_by', 'Data Source does not advertise field sorting.');
 		}
 
-		$orderBy = [];
+		$order_by = [];
 		foreach ( $raw as $index => $item ) {
 			$path = '$.order_by[' . $index . ']';
 			if ( !is_array( $item ) ) {
@@ -780,19 +780,19 @@ final class QueryAstValidator
 				continue;
 			}
 			$this->assertAllowedKeys($item, ['field_ref', 'direction'], $path, $issues);
-			$fieldRef = $item['field_ref'] ?? null;
+			$field_ref = $item['field_ref'] ?? null;
 			$direction = $item['direction'] ?? null;
-			$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+			$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 			if (!in_array($direction, ['asc', 'desc'], true)) {
 				$this->issue($issues, 'wpe_query_invalid_ast', $path . '.direction', 'Sort direction must be asc or desc.');
 				continue;
 			}
-			if ( is_string( $fieldRef ) ) {
-				$orderBy[] = new QueryOrderClause( $fieldRef, $direction );
+			if ( is_string( $field_ref ) ) {
+				$order_by[] = new QueryOrderClause( $field_ref, $direction );
 			}
 		}
 
-		return $orderBy;
+		return $order_by;
 	}
 
 	/**
@@ -909,17 +909,17 @@ final class QueryAstValidator
 	{
 		if ( is_array( $value ) ) {
 			foreach ( $value as $key => $child ) {
-				$childPath = $path . '.' . (string) $key;
+				$child_path = $path . '.' . (string) $key;
 				if ( is_string( $key ) ) {
-					$normalizedKey = strtolower( $key );
+					$normalized_key = strtolower( $key );
 					foreach ( self::FORBIDDEN_KEY_FRAGMENTS as $fragment ) {
-						if ( str_contains( $normalizedKey, $fragment ) ) {
-							$this->issue($issues, 'wpe_query_invalid_ast', $childPath, 'Executable, raw SQL, credential, endpoint, or unchecked identifier payloads are forbidden.');
+						if ( str_contains( $normalized_key, $fragment ) ) {
+							$this->issue($issues, 'wpe_query_invalid_ast', $child_path, 'Executable, raw SQL, credential, endpoint, or unchecked identifier payloads are forbidden.');
 							break;
 						}
 					}
 				}
-				$this->scanUnsafePayload( $child, $childPath, $issues );
+				$this->scanUnsafePayload( $child, $child_path, $issues );
 			}
 			return;
 		}
@@ -928,14 +928,14 @@ final class QueryAstValidator
 			return;
 		}
 
-		$unsafePatterns = [
+		$unsafe_patterns = [
 			'/<\?(?:php|=)?/i',
 			'/\beval\s*\(/i',
 			'/\b(?:shell_exec|system|exec|passthru)\s*\(/i',
 			'/\b(?:select|insert|update|delete|drop|alter|union)\b[\s\S]{0,80}\b(?:from|into|table|set|select)\b/i',
 			'/;\s*(?:select|insert|update|delete|drop|alter)\b/i',
 		];
-		foreach ( $unsafePatterns as $pattern ) {
+		foreach ( $unsafe_patterns as $pattern ) {
 			if ( preg_match( $pattern, $value ) === 1 ) {
 				$this->issue($issues, 'wpe_query_invalid_ast', $path, 'Executable or raw SQL payload is forbidden.');
 				return;

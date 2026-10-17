@@ -4211,7 +4211,7 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "AUDIT_PASS_CI_PENDING",
       "evidence": [
-        "Prior exact source artifact reports 19 VariableNotSnakeCase findings across four local names in private compileFormsActionAbilityReference and compileBackgroundJobReference.",
+        "Prior exact source artifact reports 20 VariableNotSnakeCase findings across four local names in private compileFormsActionAbilityReference and compileBackgroundJobReference.",
         "Only those local references change; callable properties, payload keys, public API and exception behavior remain intact.",
         "Existing DashboardWidgetRegistrationCompilerTest covers Ability and Cron reference paths; local PHP/Composer unavailable.",
         "Read-only audit 39039076369 PASS; artifact 12103665548 sha256:e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3 confirms naming 9,615 → 9,596, framework errors 54,691 → 54,672, warnings stable 5,103."
@@ -4237,7 +4237,7 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "AUDIT_PASS_CI_PENDING",
       "evidence": [
-        "Prior exact source artifact reports 19 VariableNotSnakeCase findings across three local names in private QueryAstValidator::parseSource().",
+        "Prior exact source artifact reports 20 VariableNotSnakeCase findings across three local names in private QueryAstValidator::parseSource().",
         "Only method-local identifiers change; AST keys, descriptor properties and validation issue codes preserved.",
         "Existing QueryAstValidatorTest covers source validation; local PHP/Composer unavailable.",
         "Read-only audit 39039355431 PASS; artifact 12103750714 sha256:9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13 confirms naming 9,596 → 9,577, framework errors 54,672 → 54,653, warnings stable 5,103."
@@ -4399,6 +4399,28 @@
         "Read-only audit 39066717128 PASS; artifact 12112993399 sha256:5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf confirms naming 9,466 → 9,437, framework errors 54,542 → 54,513, warnings 5,103 → 5,104 (line 95 alignment). Blank-line correction passed exact-head audit 39066980663, artifact 12113358765, sha256:66cee3d1926eee62400074eeff708f2c4cddc5894b121537f8516bea2d4263ed; warnings restored to 5,103."
       ],
       "note": "29 naming findings removed; alignment-warning correction audited, full merge gates pending/red."
+    },
+    {
+      "id": "RB-0145",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
+      "category": "WPCS_QUERY_VALIDATOR_LOCAL_NAMES_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture and read-only WPCS Naming ABI Audit for Query validator locals",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after d92c05585078060b5cb90aa68769c19859e13bcc; PHP 8.2 GitHub runner",
+      "dependencies": ["RB-0144 read-only audit PASS on d201d446; full merge matrix red", "PR #1416 remains open under Issue #1417"],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no API, AST contract, WPCS rule, provider, production, release or deployment change",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-query-validator-local-names|pr1416|rb0145",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Read-only artifact 12113358765 reports 20 VariableNotSnakeCase findings across six locals in provider extension, order-by and unsafe-payload scan methods.",
+        "Exact d92c0558 PR workflow matrix 11/15 pass; four failures at PHP quality enforcement; job logs unavailable via connector.",
+        "QueryAstValidatorTest covers AST validation; local PHP/Composer unavailable."
+      ],
+      "note": "Audit exact candidate findings and warnings; retain full merge gates."
     }
   ],
   "last_reconciled_issue": "#1417",

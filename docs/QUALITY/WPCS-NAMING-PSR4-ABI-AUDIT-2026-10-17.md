@@ -1,3 +1,7 @@
+## Query validator local-only candidate — 20 prior findings
+
+`RB-0145` selects six locals in `parseProviderExtensionPredicate()`, `parseOrderBy()` and `scanUnsafePayload()`. Prior artifact `12113358765` identifies 20 `VariableNotSnakeCase` findings for those locals. Parameter names, AST keys, return values and diagnostic strings remain unchanged. Fresh exact-head audit must verify the reduction and warning stability; full quality gates remain red.
+
 ## Exact source naming improvement — 29 CSV export-scope findings removed; alignment correction verified
 
 The [read-only audit run 39066717128](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39066717128) succeeded on `c5a9ff35580df1fcfe6c7e2db01fd9d71092a427`; artifact `12112993399` has SHA-256 `5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf`. Naming findings **9,466 → 9,437**, `VariableNotSnakeCase` **6,352 → 6,323**, framework errors **54,542 → 54,513**, warnings **5,103 → 5,104**. The additional `Generic.Formatting.MultipleStatementAlignment.NotSameWarning` is at `AdminColumnsCsvExportService.php:95`. A blank line before that assignment removed the warning in [exact-head audit run 39066980663](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39066980663) on `d201d446de4b4796f65e56895ccec226ffd222cb`: artifact `12113358765`, SHA-256 `66cee3d1926eee62400074eeff708f2c4cddc5894b121537f8516bea2d4263ed`. Naming **9,437**, framework errors **54,513**, warnings **5,103**. Full-tree quality gates remain red/pending.
@@ -42,13 +46,13 @@ The next bounded candidate changes nine local names (26 prior findings) in `Quer
 
 The [read-only audit run 39039076369](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39039076369) succeeded on `a0a2620027eae33057bb3d541baa1f5182c06068`; artifact `12103665548` has SHA-256 `e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3`. Naming findings **9,615 → 9,596**, `VariableNotSnakeCase` **6,501 → 6,482**, framework PHPCS errors **54,691 → 54,672**, with warnings stable at **5,103**. The 19 reductions were four locals in the Dashboard Widget registration Ability and Cron reference methods. These diagnostic totals do not establish a green full-tree quality gate.
 
-Next bounded candidate changes only three locals in private `QueryAstValidator::parseSource()` (19 prior findings). The AST keys, descriptor properties and validation issue codes remain unchanged. Existing `QueryAstValidatorTest` covers source validation. `RB-0138` tracks fresh audit and required CI; no reduction is claimed before the new artifact.
+Next bounded candidate changes only three locals in private `QueryAstValidator::parseSource()` (20 prior findings). The AST keys, descriptor properties and validation issue codes remain unchanged. Existing `QueryAstValidatorTest` covers source validation. `RB-0138` tracks fresh audit and required CI; no reduction is claimed before the new artifact.
 
 ## Exact source naming improvement — 36 more verified findings removed
 
 The [read-only audit run 39038797537](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39038797537) succeeded on `2c62f3f0202b7a3c86666ff5683fda50108c23ee`; artifact `12103386238` has SHA-256 `0950ce512c00c3460de991febabe79d60498fa986ccc0ecca8793d9a9082755b`. Naming findings **9,651 → 9,615**, `VariableNotSnakeCase` **6,537 → 6,501**, framework PHPCS errors **54,727 → 54,691**, and warnings **5,104 → 5,103**. All 36 naming reductions were local names in public `compile()`; the previous line-length warning was removed by the scoped condition wrap. These are framework-scope diagnostic totals; full-tree merge enforcement remains separate.
 
-Next bounded candidate normalizes four local identifiers (19 prior findings) in private `compileFormsActionAbilityReference()` and `compileBackgroundJobReference()`. Property/callable names, payload keys and public API stay intact. `RB-0137` requires a fresh exact-head audit and full CI before a reduction is claimed.
+Next bounded candidate normalizes four local identifiers (20 prior findings) in private `compileFormsActionAbilityReference()` and `compileBackgroundJobReference()`. Property/callable names, payload keys and public API stay intact. `RB-0137` requires a fresh exact-head audit and full CI before a reduction is claimed.
 
 ## Exact source naming improvement — 44 more verified findings removed
 

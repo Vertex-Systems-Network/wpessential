@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — Query validator local-only candidate
+
+- Exact PR head `d92c05585078060b5cb90aa68769c19859e13bcc` has 11/15 required PR workflows successful; PHP Quality Toolchain, CPT Runtime, Taxonomy Runtime and Architecture Guards failed at PHP quality enforcement. Job logs connector returned Transport closed; step summaries alone do not prove the underlying command outcomes.
+- `RB-0145` selects six method-local names in QueryAstValidator provider extension, ordering and unsafe-payload scan methods, 20 prior VariableNotSnakeCase findings. Public/private method parameters, AST keys, semantics and diagnostics remain unchanged. Fresh exact-head read-only audit and CI required; local PHP/Composer unavailable.
+
 # 2026-10-17 — Exact 29 CSV export-scope findings removed; warning correction verified
 
 - Source `c5a9ff35580df1fcfe6c7e2db01fd9d71092a427` passed read-only audit run `39066717128`, artifact `12112993399`, SHA-256 `5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf`. Naming findings **9,466 → 9,437**, framework errors **54,542 → 54,513**, warnings **5,103 → 5,104**. Blank-line correction passed exact-head audit `39066980663` on `d201d446`, artifact `12113358765`, SHA-256 `66cee3d1926eee62400074eeff708f2c4cddc5894b121537f8516bea2d4263ed`; naming **9,437**, errors **54,513**, warnings restored **5,103**. Full quality gates remain red/pending, PR open/unmerged.
@@ -42,12 +47,12 @@
 # 2026-10-17 — Exact 19-finding reduction and Query source candidate
 
 - Source `a0a2620027eae33057bb3d541baa1f5182c06068` passed read-only naming audit run `39039076369`, artifact `12103665548`, SHA-256 `e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3`. Naming findings **9,615 → 9,596**, framework errors **54,691 → 54,672**, warnings stable **5,103**. Full-tree quality enforcement still blocks PR merge.
-- `RB-0138` proposes three local names in private `QueryAstValidator::parseSource()` (19 prior findings), preserving AST keys, descriptor properties and validation issue codes. Existing QueryAstValidatorTest covers source behavior; local PHP/Composer unavailable. Fresh audit and full exact-head CI required.
+- `RB-0138` proposes three local names in private `QueryAstValidator::parseSource()` (20 prior findings), preserving AST keys, descriptor properties and validation issue codes. Existing QueryAstValidatorTest covers source behavior; local PHP/Composer unavailable. Fresh audit and full exact-head CI required.
 
 # 2026-10-17 — Exact 36-finding reduction and next reference-method batch
 
 - Source `2c62f3f0202b7a3c86666ff5683fda50108c23ee` passed read-only naming audit run `39038797537`, artifact `12103386238`, SHA-256 `0950ce512c00c3460de991febabe79d60498fa986ccc0ecca8793d9a9082755b`. Naming findings **9,651 → 9,615**, framework PHPCS errors **54,727 → 54,691**, warnings **5,104 → 5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.
-- `RB-0137` proposes four local identifiers in two private Dashboard Widget registration reference methods (19 prior findings), preserving callable properties, public API and serialized keys. Fresh audit and full CI remain mandatory; local PHP/Composer unavailable. PR stays open/unmerged.
+- `RB-0137` proposes four local identifiers in two private Dashboard Widget registration reference methods (20 prior findings), preserving callable properties, public API and serialized keys. Fresh audit and full CI remain mandatory; local PHP/Composer unavailable. PR stays open/unmerged.
 
 # 2026-10-17 — Exact 44-finding reduction and next registration compiler batch
 
