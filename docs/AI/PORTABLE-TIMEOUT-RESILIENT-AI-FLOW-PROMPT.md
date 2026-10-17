@@ -32,7 +32,9 @@ TIMEOUT / REMOTE-CALL BUDGET
 - NEVER tight-poll CI, workflows, deployments, providers, or status endpoints.
 - Before the final exact-head CI observation, persist VERIFYING/WAITING_EXTERNAL state so a later state-only commit does not invalidate the head being certified.
 - If required CI is still running after the consolidated refresh, do not create another source commit only to record that fact. Keep the pre-persisted waiting state, record run IDs in a PR/Issue status surface when possible without mutating the certified head, mark that lane WAITING_EXTERNAL, and park it.
-- Continue the next dependency-ready conflict-safe authorized lane instead of ending the workspace. Revisit the waiting lane only after useful independent work, a meaningful external transition, or another natural reconciliation boundary.
+- Continue the next dependency-ready conflict-safe authorized lane instead of ending the workspace.
+- If that waiting PR is the only remaining lane, do NOT end the workspace: wait with bounded backoff (about 2, 4, 8, then every 10 minutes; max 12 observations), then merge when green or repair when red. An open AI-owned PR always counts as safe remaining work.
+- "Execution/session/tool/token boundary" means the platform actually stopped you, never a voluntary pause after opening a PR. Revisit the waiting lane only after useful independent work, a meaningful external transition, or another natural reconciliation boundary.
 - A second same-milestone refresh is allowed only for a documented security, merge, incident/recovery, or provider state transition that is required for a safe decision.
 
 RUNNER BENCHMARK
