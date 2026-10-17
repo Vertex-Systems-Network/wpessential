@@ -4478,8 +4478,8 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": ["Twelve preexisting PHPStan diagnostics in DashboardWidgetActionInputDescriptor report already-narrowed validation guards.", "Local array<string,mixed> view retains existing shape guards and precise public property PHPDoc for downstream consumers.",
-        "Exact 5c74d5c4 PHP Quality run 39073644628 artifact 12115833369 sha256:843da1d1833d5f704f8f7cfae80aad4388766040285f815063b5e5aa2faaa012: PHPStan 438 → 426, descriptor 12 → 0. WPCS audit 39073644634 artifact 12115659882 sha256:8d96569811950d1a1d5db1947e09fbb110239d53f28cddc55587aef42f7d95b0: one new MissingShort doc error; expanded docblock awaits audit."],
-      "note": "Twelve PHPStan errors removed; doc-comment error correction pending fresh audit, full gate red."
+        "Exact 5c74d5c4 PHP Quality run 39073644628 artifact 12115833369 sha256:843da1d1833d5f704f8f7cfae80aad4388766040285f815063b5e5aa2faaa012: PHPStan 438 → 426, descriptor 12 → 0. WPCS audit 39073644634 artifact 12115659882 sha256:8d96569811950d1a1d5db1947e09fbb110239d53f28cddc55587aef42f7d95b0: one new MissingShort doc error; expanded docblock passed exact-head WPCS audit 39073950043 artifact 12116272493 sha256:f30989cfada588d3bfa39bd2dae144765a5efecb12d13fb7876d705cbf2288f7: errors restored 54,490, warnings 5,102, naming 9,417. PHP Quality 39073953853 artifact 12116406748 sha256:2f49e5c9a55adebaf28fac05d152c99ea2aaeb07fda32dd0e32f514e8fa815c4 confirms PHPStan 426, descriptor 0."],
+      "note": "Twelve PHPStan errors removed, doc-comment regression corrected and audited; full gate red."
     }
   ],
   "last_reconciled_issue": "#1417",
