@@ -4422,6 +4422,24 @@
         "Read-only audit 39070950046 PASS on aa153c43; artifact 12115087720 sha256:a1011133e320ecd261e3cf84bbeb43bb36f7f10c0c928d464b3f1276d8f30bd4: naming 9,437 → 9,417, framework errors 54,513 → 54,493, warnings 5,103 → 5,102."
       ],
       "note": "20 naming findings removed and one warning removed; exact-head full CI pending/red."
+    },
+    {
+      "id": "RB-0146",
+      "source": "Issue #1417 / PR #1416 PHP quality failure diagnosis",
+      "category": "PHP_QUALITY_OUTCOME_EVIDENCE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality Toolchain and full PR matrix; inspect php-quality-outcomes artifact",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; PHP 8.2 GitHub runner",
+      "dependencies": ["RB-0145 read-only audit PASS on aa153c43", "Exact 37226d66 PR matrix 11/15 pass, four quality enforcement failures"],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; additive diagnostic evidence, unchanged quality enforcement",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|php-outcome-evidence|pr1416|rb0146",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": ["Prior PHP Quality job 117497337266 failed at Enforce PHP quality outcomes; job logs connector returned Transport closed.", "The diagnostic artifact records exact source SHA and PHPCS, PHPStan, PHPUnit outcomes, with unchanged enforcement."],
+      "note": "Inspect new exact-head artifact to identify actual failing PHP command; do not infer from continue-on-error step conclusion."
     }
   ],
   "last_reconciled_issue": "#1417",

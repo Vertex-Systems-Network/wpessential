@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — PHP quality outcome diagnosis candidate
+
+- Exact PR head `37226d669338dbacc6d742cfdba6100f97b82883` finished 11/15 required PR workflows successful. PHP Quality Toolchain (`39071169990`), CPT Runtime (`39071169974`), Taxonomy Runtime (`39071170020`) and Architecture Guards (`39071169985`) failed at quality enforcement. The `continue-on-error` step summaries do not identify which underlying PHP command failed; job logs connector returned Transport closed.
+- `RB-0146` adds a small outcome artifact to the PHP Quality Toolchain workflow, recording exact PR source SHA and PHPCS/PHPStan/PHPUnit step outcomes before unchanged enforcement. CI must validate the artifact; no quality requirement is relaxed.
+
 # 2026-10-18 — Query validator local-only reduction verified
 
 - Exact PR head `d92c05585078060b5cb90aa68769c19859e13bcc` has 11/15 required PR workflows successful; PHP Quality Toolchain, CPT Runtime, Taxonomy Runtime and Architecture Guards failed at PHP quality enforcement. Job logs connector returned Transport closed; step summaries alone do not prove the underlying command outcomes.

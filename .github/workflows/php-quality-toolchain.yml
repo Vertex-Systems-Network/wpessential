@@ -114,6 +114,29 @@ jobs:
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
 
+      - name: Record PHP quality outcomes
+        if: always()
+        shell: bash
+        env:
+          WPE_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+          PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+          PHPUNIT_OUTCOME: ${{ steps.phpunit.outcome }}
+        run: |
+          printf 'head=%s\nphpcs=%s\nphpstan=%s\nphpunit=%s\n' \
+            "${WPE_SOURCE_SHA}" "${PHPCS_OUTCOME}" "${PHPSTAN_OUTCOME}" "${PHPUNIT_OUTCOME}" \
+            > php-quality-outcomes.txt
+          cat php-quality-outcomes.txt >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload PHP quality outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: php-quality-outcomes-${{ github.run_id }}
+          path: php-quality-outcomes.txt
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Enforce PHP quality outcomes
         if: always()
         shell: bash
