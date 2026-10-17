@@ -4461,6 +4461,24 @@
       "evidence": ["Eight PHPStan errors in AdminColumnsCsvExportEncoder concern input guards that PHPDoc incorrectly declares always narrowed.", "Only encode and normalizeColumns input annotations widen to match the existing runtime validation; no PHP signature or CSV logic changes.",
         "Exact e2ba5832 PHP Quality run 39073152084 artifact 12115204198 sha256:0d35bad1bd47c1fcafbd6ecd8329bcf285314cdb7d3b355cf87f1a02f974e485: PHPStan 446 → 438 and encoder 8 → 0. WPCS audit 39073148859 artifact 12115763037 sha256:90d7a7c0d23b0083431364935dc74a1cb40f1bbdc17af522ac15a46c50dc7f29: errors 54,493 → 54,490, warnings 5,102 stable, naming 9,417 stable."],
       "note": "Eight encoder PHPStan errors resolved with no new diagnostics; full merge gates still red."
+    },
+    {
+      "id": "RB-0148",
+      "source": "Issue #1417 / PR #1416 PHPStan Dashboard Widget guard remediation",
+      "category": "PHPSTAN_DASHBOARD_WIDGET_UNTRUSTED_BINDINGS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality Toolchain, WPCS Naming ABI Audit and Dashboard Widget unit suite",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; PHP 8.2 GitHub runner",
+      "dependencies": ["RB-0147 exact e2ba5832 PHPStan 446 to 438; full merge gates red", "PR #1416 remains open under Issue #1417"],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; validation-local type view only, unchanged public shape and quality gates",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 20,
+      "dedup_key": "quality|phpstan-dashboard-binding-guards|pr1416|rb0148",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": ["Twelve preexisting PHPStan diagnostics in DashboardWidgetActionInputDescriptor report already-narrowed validation guards.", "Local array<string,mixed> view retains existing shape guards and precise public property PHPDoc for downstream consumers."],
+      "note": "Compare exact-head PHPStan file/global errors, WPCS warnings and unit suite; full gate required."
     }
   ],
   "last_reconciled_issue": "#1417",

@@ -1,5 +1,9 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — Dashboard Widget dynamic-binding guard candidate
+
+- `RB-0148` selects 12 preexisting PHPStan always-narrowed errors in `DashboardWidgetActionInputDescriptor` dynamic-binding validation. A local untrusted array view makes the existing shape/value guards statically meaningful while keeping its public property PHPDoc, constructor signature, serialized values and rejection behavior unchanged. Exact-head PHPStan, WPCS and tests required.
+
 # 2026-10-18 — PHPStan CSV encoder input-contract candidate
 
 - Exact `2bed6b36a80fe7f342fb7be363134789039ef6a5` PHP Quality run `39072891772` uploaded diagnostic artifact `12116380050`, SHA-256 `c42ab098e1ab1dc859c318efd4ef53c85b4b486ff8746b6a1ff13d1c924d2e0a`. PHPStan reports 446 errors; PHPCS reports broad legacy violations.

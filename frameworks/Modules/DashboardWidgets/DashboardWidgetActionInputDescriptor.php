@@ -48,7 +48,9 @@ final readonly class DashboardWidgetActionInputDescriptor
 			}
 		}
 
-		foreach ( $this->dynamicBindings as $key => $binding ) {
+		/** @var array<string,mixed> $untrusted_bindings */
+		$untrusted_bindings = $this->dynamicBindings;
+		foreach ( $untrusted_bindings as $key => $binding ) {
 			$this->assertBindingKey( $key );
 			$this->assertNonSensitiveKey( $key );
 
