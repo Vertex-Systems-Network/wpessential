@@ -281,7 +281,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1417 / PR #1416 remains actionable. RB-0133 read-only audit passed on ad53f5e, artifact 12100593982: 104 fewer naming and framework errors, net +1 alignment warning. Submit RB-0134 bounded DashboardWidgetsModule::register() local-only batch plus scoped compiler alignment correction; verify next exact-head audit and all protected gates. #858, #947 and #1102 remain parked.",
+    "next_safe_action": "Issue #1417 / PR #1416 remains actionable. RB-0134 read-only audit passed on aaccde65, artifact 12102517969: 211 fewer naming and framework errors, two fewer warnings; full CI pending/red. Submit RB-0135 bounded DashboardWidgetRegistrationCompiler::compileTarget() local-only batch and verify fresh exact-head audit/all protected gates. #858, #947 and #1102 remain parked.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,

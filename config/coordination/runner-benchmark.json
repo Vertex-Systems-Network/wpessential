@@ -4129,14 +4129,40 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-dashboard-module-register-locals|pr1416|rb0134",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "AUDIT_PASS_CI_PENDING",
       "evidence": [
         "Exact prior artifact reports 211 VariableNotSnakeCase findings in DashboardWidgetsModule::register() across 56 method-local symbols; constructor/API params remain unchanged.",
         "All 865 module source lines pass reverse-mapping equality against prior source; only selected locals changed within register().",
         "Two compiler assignment spacings address net +1 alignment warning on ad53f5e; fresh audit needed to measure actual outcome.",
-        "Existing DashboardWidgetsModuleTest covers module registration/service contracts; local PHP/Composer unavailable."
+        "Existing DashboardWidgetsModuleTest covers module registration/service contracts; local PHP/Composer unavailable.",
+        "Read-only audit 39037320723 PASS; artifact 12102517969 sha256:8f6ab7e5dd6fe4ad474c9bf688f60c843ed464a6fdbc1a79c551b0653429320e confirms naming 9,906 → 9,695, framework errors 54,982 → 54,771, warnings 5,105 → 5,103."
       ],
-      "note": "Measure actual naming, errors, and warnings in next artifact; full quality gates remain mandatory."
+      "note": "Naming and warning improvement verified; full merge gate remains pending/red."
+    },
+    {
+      "id": "RB-0135",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
+      "category": "WPCS_DASHBOARD_REGISTRATION_TARGET_LOCALS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for Dashboard Widget target compiler locals",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after aaccde6540e4ec619aeb310a69c71760f6446195; PHP 8.2 GitHub runner",
+      "dependencies": [
+        "RB-0134 read-only audit PASS on aaccde65, full merge matrix pending/red",
+        "PR #1416 remains open under Issue #1417"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no public ABI, WPCS rule, provider, production, release or deployment change",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-dashboard-registration-target-locals|pr1416|rb0135",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Prior exact source artifact reports 44 VariableNotSnakeCase findings in private DashboardWidgetRegistrationCompiler::compileTarget() across ten method-local identifiers.",
+        "Only those local identifiers and two PHPDoc local-variable annotations changed within compileTarget; public API, constructor parameters and payload keys preserved.",
+        "Existing DashboardWidgetRegistrationCompilerTest covers registration target paths; local PHP/Composer unavailable."
+      ],
+      "note": "Measure actual naming/errors/warnings from next artifact; full quality gates remain mandatory."
     }
   ],
   "last_reconciled_issue": "#1417",

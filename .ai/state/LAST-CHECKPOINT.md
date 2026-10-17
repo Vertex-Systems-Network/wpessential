@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 211-finding reduction and registration target candidate
+
+- Exact source `aaccde6540e4ec619aeb310a69c71760f6446195` passed read-only naming audit run `39037320723`, artifact `12102517969`, SHA-256 `8f6ab7e5dd6fe4ad474c9bf688f60c843ed464a6fdbc1a79c551b0653429320e`. Naming findings **9,906 → 9,695**, framework PHPCS errors **54,982 → 54,771**, warnings **5,105 → 5,103**. All 211 removed naming findings were `VariableNotSnakeCase` in `DashboardWidgetsModule::register()`. Framework scan is not whole-repository WPCS or a merge gate pass.
+- `RB-0135` proposes ten method-local names in `DashboardWidgetRegistrationCompiler::compileTarget()` (44 prior findings), including synchronized PHPDoc local annotations. Its result requires a new exact-head audit. `RB-0134` full CI remains pending/red, with CPT Runtime's quality enforcement failing. Local PHP/Composer are unavailable; preserve all full quality gates and keep PR open.
+
 # 2026-10-17 — Exact 104-finding reduction and next module batch
 
 - Exact source `ad53f5e75a6965839b43a2f1276b9827596623fa` passed read-only WPCS naming audit run `39032138538`, artifact `12100593982`, SHA-256 `d38822bd5d7ae6bda7dae1f0f07e0628b3c3c96e4a70c89445f615faae11b2a7`. Naming findings **10,010 → 9,906** (104 fewer `VariableNotSnakeCase`), framework PHPCS errors **55,086 → 54,982**, warnings **5,104 → 5,105**. Two new compiler assignment-alignment warnings and one removed warning produce net +1; the next batch corrects those two alignments, pending fresh audit. No whole-tree WPCS pass is claimed.
