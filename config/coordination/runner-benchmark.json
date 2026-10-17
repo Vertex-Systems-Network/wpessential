@@ -3901,9 +3901,34 @@
         "Corrected head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 exact-head CI PASS (PHP Quality, Governance, Distributable, Architecture, Platform 10/10); 7 authorized paths, 0 behind and unresolved reviews; protected merged d85f3183e2684a94c0f654fd191d7185dbda1929. Initial Architecture checkpoint size limit fixed and revalidated."
       ],
       "note": "PASS_DASHBOARD_DRAFT_REVIEW_POSTREAD_AUTH_V1: read-only positive-hint caller recheck, not publishing, provider, full runtime/parity, production or GA."
+    },
+    {
+      "id": "RB-0126",
+      "source": "Issue #1417 / PR #1416 WPCS-first continuation",
+      "category": "WPCS_SEMANTICS_PRESERVING_REMEDIATION_MERGE_GATE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy, Governance, Distributable and applicable Platform/contract checks",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1 after checkpoint dff57012f81cb54a731f8de6c9a572d65f224f20",
+      "dependencies": [
+        "main 93f40a70f329d8d825826233694a1cfe3c10ad34",
+        "PR #1416 current head"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001, Issue #1417 WPCS-first source remediation; no policy bypass, provider, production, release or deployment",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-first|pr1416|rb0126",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Semantics-preserving AssetDescriptor whitespace/docblock correction committed on PR branch.",
+        "README and compact state reconciled; exact-head CI must be evaluated on the resulting branch head.",
+        "No runtime/API/authorization behavior intentionally changed; no merge-readiness or green-gate claim."
+      ],
+      "note": "WPCS debt reduction only; full-tree WPCS/PHPStan baselines and protected merge gates remain authoritative."
     }
   ],
-  "last_reconciled_issue": "#1413",
+  "last_reconciled_issue": "#1417",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
