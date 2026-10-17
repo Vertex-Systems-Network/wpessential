@@ -712,3 +712,10 @@ Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibili
 - `docs/QUALITY/POST-P0-MODULE-OPTION-UI-SYSTEM-INTEGRITY-AUDIT.md`
 
 Repository evidence and accepted ADRs override stale conversational summaries.
+
+
+## Live development checkpoint — 2026-10-17
+
+- PR #1416 remains open and protected checks remain mandatory; the current branch is continuing WPCS-first remediation without policy bypass.
+- Commit `312d54a2fd65d3842c6b143f6c258b64e4618b15` applies a semantics-preserving formatting/docblock correction to `frameworks/Platform/Assets/AssetDescriptor.php`. No runtime/API/authorization behavior was intentionally changed.
+- Exact-head CI and the full-tree WPCS gate are not claimed green until GitHub reports the result for this new commit. No merge, release, deployment, production data, or GA claim is made.
