@@ -1,5 +1,11 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Second bounded local-only naming remediation
+
+- Exact head `8d64df8966e1ef602a78d80b8b6a6cacc063edc9` completed **55 checks: 51 passed / 4 failed**. The failures remain only the required PHP quality, Architecture, CPT and Taxonomy enforcement outcomes; their underlying syntax, PHPCS/PHPStan/PHPUnit and runtime steps passed.
+- The first bounded rename `$slug_order` → `$slugOrder` in `DashboardWidgetPresetReadService.php` introduced no contract regression. A second manually classified local-only rename is now staged in `DashboardWidgetMultisitePolicyReadService.php`, changing only `$slug_order` → `$slugOrder` inside a local comparator callback.
+- No public/promoted property, method, interface, payload key, WordPress identifier, PSR-4 class path or WPCS rule is changed. `git diff --check` remains required before publication. Local PHP/Composer remain unavailable; exact-head GitHub CI is the validation path.
+
 # 2026-10-17 — Bounded local-only naming remediation submitted
 
 - Exact PR head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1` completed 55 checks: 51 passed and 4 failed only at required quality-enforcement outcomes (PHP Quality, Architecture, CPT, Taxonomy); all underlying PHPCS/PHPStan/PHPUnit, syntax, architecture smoke and runtime steps reported success before the enforcement gate.

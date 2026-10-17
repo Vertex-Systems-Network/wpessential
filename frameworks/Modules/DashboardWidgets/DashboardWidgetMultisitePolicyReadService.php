@@ -68,8 +68,8 @@ final readonly class DashboardWidgetMultisitePolicyReadService {
 		usort(
 			$definitions,
 			static function ( Definition $a, Definition $b ): int {
-				$slug_order = $a->slug <=> $b->slug;
-				return 0 !== $slug_order ? $slug_order : ( $a->id <=> $b->id );
+				$slugOrder = $a->slug <=> $b->slug;
+				return 0 !== $slugOrder ? $slugOrder : ( $a->id <=> $b->id );
 			}
 		);
 		return array_map(

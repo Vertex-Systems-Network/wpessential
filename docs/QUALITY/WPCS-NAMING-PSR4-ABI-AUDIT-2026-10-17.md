@@ -10,7 +10,7 @@ Runner `RB-0127` was triggered at exact head `423fde866f963d9f5ca21b39f0efb3f038
 
 This audit addresses the naming-related WPCS findings identified during Issue #1417's quality-gate reconciliation. It is diagnostic evidence and a governance input; it does not change `phpcs.xml.dist`, waive a required check, or authorize a merge.
 
-The retained report source head is `21fa582724250c6d3fd40aa299447d872a661f39`; current PR head is `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`. Its latest exact-head CI completed with the full-tree WPCS outcome still failing, while the separately executed PHPStan, PHPUnit, syntax, architecture, engineering and focused runtime steps passed. The current guarded evidence reports **55,287 PHPCS errors / 5,104 warnings** across **578 framework PHP files**.
+The retained report source head is `21fa582724250c6d3fd40aa299447d872a661f39`; current PR work continues after exact-head `8d64df8966e1ef602a78d80b8b6a6cacc063edc9`. Its latest exact-head CI completed with the full-tree WPCS outcome still failing, while the separately executed PHPStan, PHPUnit, syntax, architecture, engineering and focused runtime steps passed. The current guarded evidence reports **55,287 PHPCS errors / 5,104 warnings** across **578 framework PHP files**.
 
 ## Ruleset and loader facts
 
@@ -82,6 +82,7 @@ Option B is a proposal only. It is not an active bypass or merge permission. Any
 - Do not mass-rename camelCase properties, methods, DTO fields or external identifiers.
 - Do not alter the PSR-4 exception or introduce a broad naming exclusion.
 - Treat local-only variable remediation as the only immediately safe candidate, subject to a bounded diff and exact-head CI.
+- The second bounded candidate is `$slug_order` → `$slugOrder` in `DashboardWidgetMultisitePolicyReadService.php`, confined to a local comparator callback.
 - Keep PR #1416 open and unmerged until all required checks are green.
 
 This audit does not certify product milestones, release readiness, production deployment or GA.
