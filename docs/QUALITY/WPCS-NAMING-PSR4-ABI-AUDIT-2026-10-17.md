@@ -1,8 +1,8 @@
-## Fresh exact-head re-audit — pending
+## Fresh exact-head re-audit — RB-0127 infrastructure failure; bounded fix submitted
 
 The previous retained naming report is from source head `21fa582724250c6d3fd40aa299447d872a661f39` (55,287 full-tree PHPCS errors / 5,104 warnings). Subsequent PR commits applied bounded local-only naming fixes in `AdminAssetManifest.php`, `RuntimeDiagnosticsSnapshot.php`, and `WpdbJobAttemptStore.php`, plus whitespace-only `AssetDescriptor.php`; therefore the old finding inventory is stale for selecting another edit. The latest integrated branch head before this diagnostic refresh is `78660165dcc8be6c9259ada5f060ee3c32367f91`, based on current main `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30`.
 
-Runner `RB-0127` triggers a fresh read-only naming/PSR-4 ABI audit at the resulting exact PR head. Until its artifact is reviewed, no new naming source candidate is selected. The audit will not rename public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers, or alter WPCS rules.
+Runner `RB-0127` was triggered at exact head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`, but run `39026004530` failed before creating a job or artifact. Therefore it supplies no new finding inventory. The next bounded candidate is the local-only `$slug_order` variable in `DashboardWidgetPresetReadService.php`, renamed to `$slugOrder` with no public or external contract change. The audit will not rename public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers, or alter WPCS rules.
 
 # WPCS naming, PSR-4 and public-ABI audit — 2026-10-17
 
@@ -10,7 +10,7 @@ Runner `RB-0127` triggers a fresh read-only naming/PSR-4 ABI audit at the result
 
 This audit addresses the naming-related WPCS findings identified during Issue #1417's quality-gate reconciliation. It is diagnostic evidence and a governance input; it does not change `phpcs.xml.dist`, waive a required check, or authorize a merge.
 
-The current PR #1416 source head is `21fa582724250c6d3fd40aa299447d872a661f39`. Its latest exact-head CI completed with the full-tree WPCS outcome still failing, while the separately executed PHPStan, PHPUnit, syntax, architecture, engineering and focused runtime steps passed. The current guarded evidence reports **55,287 PHPCS errors / 5,104 warnings** across **578 framework PHP files**.
+The retained report source head is `21fa582724250c6d3fd40aa299447d872a661f39`; current PR head is `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`. Its latest exact-head CI completed with the full-tree WPCS outcome still failing, while the separately executed PHPStan, PHPUnit, syntax, architecture, engineering and focused runtime steps passed. The current guarded evidence reports **55,287 PHPCS errors / 5,104 warnings** across **578 framework PHP files**.
 
 ## Ruleset and loader facts
 
