@@ -27,9 +27,9 @@ final readonly class RuntimeDiagnosticsSnapshot
 	/** @return array<string,mixed> */
 	public function build(): array
 	{
-		$allTraces = $this->traces->all();
-		$visibleTraces = array_slice($allTraces, -max(1, $this->maxTraces));
-		$moduleInventory = $this->moduleInventory();
+		$all_traces = $this->traces->all();
+		$visible_traces = array_slice($all_traces, -max(1, $this->maxTraces));
+		$module_inventory = $this->moduleInventory();
 
 		return [
 			'app' => [
@@ -56,16 +56,16 @@ final readonly class RuntimeDiagnosticsSnapshot
 				'trace_capture' => $this->debugEnabled ? 'bounded_in_memory' : 'disabled',
 			],
 			'modules' => [
-				'count' => count($moduleInventory),
-				'inventory' => $moduleInventory,
+				'count' => count($module_inventory),
+				'inventory' => $module_inventory,
 				'pro_compatibility' => $this->proCompatibility(),
 				'compatibility_certification' => 'adr_0010_not_certified',
 				'read_only' => true,
 			],
 			'observability' => [
-				'captured_trace_count' => count($allTraces),
-				'visible_trace_count' => count($visibleTraces),
-				'traces' => $visibleTraces,
+				'captured_trace_count' => count($all_traces),
+				'visible_trace_count' => count($visible_traces),
+				'traces' => $visible_traces,
 				'retention' => 'request_bounded_non_authoritative',
 			],
 			'capabilities' => [
@@ -123,8 +123,8 @@ final readonly class RuntimeDiagnosticsSnapshot
 			return 'incompatible_wordpress';
 		}
 
-		$platformApi = defined('WPE_PLATFORM_API_VERSION') ? (string) WPE_PLATFORM_API_VERSION : '';
-		if ($platformApi !== '' && version_compare($platformApi, $manifest->minimumPlatformVersion, '<')) {
+		$platform_api = defined('WPE_PLATFORM_API_VERSION') ? (string) WPE_PLATFORM_API_VERSION : '';
+		if ($platform_api !== '' && version_compare($platform_api, $manifest->minimumPlatformVersion, '<')) {
 			return 'incompatible_platform_api';
 		}
 
@@ -172,12 +172,12 @@ final readonly class RuntimeDiagnosticsSnapshot
 			return 'booted';
 		}
 
-		$activeMutationStates = [
+		$active_mutation_states = [
 			ProductEntitlementState::TrialActive->value,
 			ProductEntitlementState::ProActive->value,
 			ProductEntitlementState::Grace->value,
 		];
-		if (!in_array($entitlement, $activeMutationStates, true)) {
+		if (!in_array($entitlement, $active_mutation_states, true)) {
 			return 'read_safe_entitlement_' . $entitlement;
 		}
 
