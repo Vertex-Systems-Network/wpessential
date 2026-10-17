@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 tools/*)", "Bash(php *)", "Bash(composer *)", "Bash(vendor/bin/*)",
+      "Bash(npm run *)", "Bash(npx *)", "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)",
+      "Bash(git add*)", "Bash(git commit*)", "Bash(git checkout*)", "Bash(git switch*)",
+      "Bash(git fetch*)", "Bash(git pull*)", "Bash(git merge*)", "Bash(git push -u origin *)",
+      "Edit", "Write"
+    ],
+    "deny": ["Bash(git push --force*)", "Bash(git push -f*)", "Bash(git reset --hard*)"]
+  },
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command",
+      "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/ai/ai_continue.py\" >/dev/null || exit 0; [ -f \"$CLAUDE_PROJECT_DIR/.claude/.allow-stop\" ] && exit 0; echo '{\"decision\":\"block\",\"reason\":\"Autonomous execution active: continue per AGENTS.md Non-stop enforcement.\"}'",
+      "timeout": 30}]}]
+  }
+}
