@@ -4365,11 +4365,37 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-admin-columns-csv-selection-locals|pr1416|rb0143",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "AUDIT_PASS_CI_PENDING",
       "evidence": [
         "Prior exact artifact reports 33 VariableNotSnakeCase findings across seven locals in private exactSelectedRows() and selectColumns().",
         "Four method parameter names remain unchanged, as do CSV column keys, row membership and return ordering.",
-        "Existing AdminColumnsCsvExportServiceTest covers selected row and column behavior; local PHP/Composer unavailable."
+        "Existing AdminColumnsCsvExportServiceTest covers selected row and column behavior; local PHP/Composer unavailable.",
+        "Read-only audit 39051322816 PASS; artifact 12108046642 sha256:9d5c0a070f4a6edbf73454524468ec7a7a51544d5de88d51e7fba59be17194d8 confirms naming 9,499 → 9,466, framework errors 54,575 → 54,542, warnings stable 5,103."
+      ],
+      "note": "33-finding CSV selection reduction verified; full quality gate pending/red."
+    },
+    {
+      "id": "RB-0144",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
+      "category": "WPCS_ADMIN_COLUMNS_CSV_EXPORT_SCOPE_LOCALS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for CSV export-scope locals",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after f5ab9368a52c6c2198d28757fc3ec28959307908; PHP 8.2 GitHub runner",
+      "dependencies": [
+        "RB-0143 read-only audit PASS on f5ab9368; full merge matrix pending/red",
+        "PR #1416 remains open under Issue #1417"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no public ABI, WPCS rule, provider, production, release or deployment change",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-admin-columns-csv-export-scope-locals|pr1416|rb0144",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Prior artifact reports 29 VariableNotSnakeCase findings across seven locals in exportScoped, exportCurrentPage, exportSelectedRows and exportAllMatchingScope.",
+        "Public signatures and private parameter names remain unchanged, as do CSV column keys, row membership and ordering.",
+        "Existing AdminColumnsCsvExportServiceTest covers scoped export modes; local PHP/Composer unavailable."
       ],
       "note": "Measure naming/errors/warnings on next artifact; preserve full merge gates."
     }

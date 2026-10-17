@@ -86,20 +86,20 @@ final readonly class AdminColumnsCsvExportService
 		$this->assertControls( $controls );
 
 		$views = $this->requiredViews();
-		$scopePolicy = $this->requiredScopePolicy();
+		$scope_policy = $this->requiredScopePolicy();
 		$view = $views->get( $viewId );
 		$this->assertViewRevision( $view->revision, $expectedViewRevision );
 
-		$enabledColumnKeys = $this->enabledViewColumnKeys( $view );
-		$scope = $scopePolicy->normalize( $scopeRequest, $enabledColumnKeys, self::SUPPORTED_SCOPES );
-		$effectiveControls = $this->effectiveControls( $controls, $scope );
+		$enabled_column_keys = $this->enabledViewColumnKeys( $view );
+		$scope = $scope_policy->normalize( $scopeRequest, $enabled_column_keys, self::SUPPORTED_SCOPES );
+		$effective_controls = $this->effectiveControls( $controls, $scope );
 
 		return match ($scope['scope']) {
 			'current_page' => $this->exportCurrentPage(
 				$viewId,
 				$expectedViewRevision,
 				$scope['selected_columns'],
-				$effectiveControls,
+				$effective_controls,
 				$runtime,
 				$context,
 			),
@@ -109,7 +109,7 @@ final readonly class AdminColumnsCsvExportService
 				$scope['selected_row_ids'],
 				$scope['selected_columns'],
 				$scope['respect_sort'],
-				$effectiveControls,
+				$effective_controls,
 				$runtime,
 				$context,
 			),
@@ -117,7 +117,7 @@ final readonly class AdminColumnsCsvExportService
 				$viewId,
 				$expectedViewRevision,
 				$scope['selected_columns'],
-				$effectiveControls,
+				$effective_controls,
 				$runtime,
 				$context,
 			),
@@ -138,12 +138,12 @@ final readonly class AdminColumnsCsvExportService
 		array $runtime,
 		ExecutionContext $context,
 	): string {
-		[$pageSize, $offset] = $this->currentPageRuntime( $runtime );
-		$page = $this->readPage( $viewId, $controls, $pageSize, $offset, $context );
+		[$page_size, $offset] = $this->currentPageRuntime( $runtime );
+		$page = $this->readPage( $viewId, $controls, $page_size, $offset, $context );
 		[$revision, , $columns] = $this->assertStablePage(
 			$page,
 			$viewId,
-			$pageSize,
+			$page_size,
 			null,
 			null,
 			null,
@@ -152,9 +152,9 @@ final readonly class AdminColumnsCsvExportService
 
 		/** @var list<array<string,scalar|null>> $rows */
 		$rows = $page['rows'];
-		[$selectedMetadata, $selectedRows] = $this->selectColumns( $columns, $rows, $selectedColumns );
+		[$selected_metadata, $selected_rows] = $this->selectColumns( $columns, $rows, $selectedColumns );
 
-		return $this->encoder->encode( $selectedMetadata, $selectedRows );
+		return $this->encoder->encode( $selected_metadata, $selected_rows );
 	}
 
 	/**
@@ -174,14 +174,14 @@ final readonly class AdminColumnsCsvExportService
 		ExecutionContext $context,
 	): string {
 		$this->assertNoRuntime($runtime, 'selected_rows');
-		$idColumnKey = $this->postIdColumnKey( $view );
-		$controls = $this->withSelectedRowFilter( $controls, $idColumnKey, $selectedRowIds );
-		$pageSize = count( $selectedRowIds );
-		$page = $this->readPage( $view->id, $controls, $pageSize, 0, $context );
+		$id_column_key = $this->postIdColumnKey( $view );
+		$controls = $this->withSelectedRowFilter( $controls, $id_column_key, $selectedRowIds );
+		$page_size = count( $selectedRowIds );
+		$page = $this->readPage( $view->id, $controls, $page_size, 0, $context );
 		[$revision, , $columns] = $this->assertStablePage(
 			$page,
 			$view->id,
-			$pageSize,
+			$page_size,
 			null,
 			null,
 			null,
@@ -190,10 +190,10 @@ final readonly class AdminColumnsCsvExportService
 
 		/** @var list<array<string,scalar|null>> $rows */
 		$rows = $page['rows'];
-		$rows = $this->exactSelectedRows( $rows, $idColumnKey, $selectedRowIds, $respectSort );
-		[$selectedMetadata, $selectedRows] = $this->selectColumns( $columns, $rows, $selectedColumns );
+		$rows = $this->exactSelectedRows( $rows, $id_column_key, $selectedRowIds, $respectSort );
+		[$selected_metadata, $selected_rows] = $this->selectColumns( $columns, $rows, $selectedColumns );
 
-		return $this->encoder->encode( $selectedMetadata, $selectedRows );
+		return $this->encoder->encode( $selected_metadata, $selected_rows );
 	}
 
 	/**
@@ -216,9 +216,9 @@ final readonly class AdminColumnsCsvExportService
 			$context,
 			$expectedViewRevision,
 		);
-		[$selectedMetadata, $selectedRows] = $this->selectColumns( $columns, $rows, $selectedColumns );
+		[$selected_metadata, $selected_rows] = $this->selectColumns( $columns, $rows, $selectedColumns );
 
-		return $this->encoder->encode( $selectedMetadata, $selectedRows );
+		return $this->encoder->encode( $selected_metadata, $selected_rows );
 	}
 
 	/**

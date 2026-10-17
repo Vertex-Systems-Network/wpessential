@@ -1,3 +1,9 @@
+## Exact source naming improvement — 33 CSV selection findings removed
+
+The [read-only audit run 39051322816](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39051322816) succeeded on `f5ab9368a52c6c2198d28757fc3ec28959307908`; artifact `12108046642` has SHA-256 `9d5c0a070f4a6edbf73454524468ec7a7a51544d5de88d51e7fba59be17194d8`. Naming findings **9,499 → 9,466**, `VariableNotSnakeCase` **6,385 → 6,352**, framework PHPCS errors **54,575 → 54,542**, warnings stable **5,103**. All 33 reductions were method-local names in `AdminColumnsCsvExportService::exactSelectedRows()` and `selectColumns()`. The full-tree quality gate remains separate and red.
+
+Next candidate normalizes seven locals across `exportScoped()`, `exportCurrentPage()`, `exportSelectedRows()` and `exportAllMatchingScope()` (29 prior findings). Public signatures, private method parameters, selection keys, CSV encoding, row membership and ordering stay unchanged. `RB-0144` requires fresh exact-head audit and CI before any reduction is claimed.
+
 ## Exact source naming improvement — 24 CSV collection findings removed
 
 The [read-only audit run 39050644066](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39050644066) succeeded on `d6d9964774160ce998d1c0857045f152c4e3f2ac`; artifact `12107503073` has SHA-256 `da455b19b56dae2536a6f93f471bdc0afa2ad3eb6f3d091a9cc65f11af7980b9`. Naming findings **9,523 → 9,499**, `VariableNotSnakeCase` **6,409 → 6,385**, framework errors **54,599 → 54,575**, warnings stable at **5,103**. All 24 reductions were selected locals in `AdminColumnsCsvExportService::collectAllMatching()`. These framework-scope counts do not establish a full-tree quality pass.

@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 33 CSV selection findings removed
+
+- Source `f5ab9368a52c6c2198d28757fc3ec28959307908` passed read-only naming audit run `39051322816`, artifact `12108046642`, SHA-256 `9d5c0a070f4a6edbf73454524468ec7a7a51544d5de88d51e7fba59be17194d8`. Naming findings **9,499 → 9,466**, framework errors **54,575 → 54,542**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending; PR open/unmerged.
+- `RB-0144` proposes seven locals across four CSV export-scope methods (29 prior findings), retaining signatures, private parameter names, CSV keys and ordering. Fresh exact-head audit/full CI required; local PHP/Composer unavailable.
+
 # 2026-10-17 — Exact 24 CSV collection findings removed
 
 - Source `d6d9964774160ce998d1c0857045f152c4e3f2ac` passed read-only naming audit run `39050644066`, artifact `12107503073`, SHA-256 `da455b19b56dae2536a6f93f471bdc0afa2ad3eb6f3d091a9cc65f11af7980b9`. Naming findings **9,523 → 9,499**, framework errors **54,599 → 54,575**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending; PR #1416 open/unmerged.
