@@ -10,9 +10,9 @@ active_branch: agent/local-phpunit-bootstrap-repair-v1
 current_milestone: "PR #1416 / Issue #1417 WPCS remediation; bounded local-only naming cleanup in AdminColumnsCsvExportService."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Validate six local names in AdminColumnsCsvExportService::collectAllMatching() on the next PR head, preserving method parameters, CSV contracts and all full quality gates."
-waiting_external: "RB-0141 audit passed and 359ec47c full PR matrix completed 11 success / 4 quality-enforcement failures. RB-0142 tracks the bounded CSV local-name source batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker parked."
-next_planned_slot: RB-0142
+next_safe_action: "Validate seven method-local names across AdminColumnsCsvExportService::exactSelectedRows() and selectColumns() on the next PR head, retaining CSV parameters/contracts and full quality gates."
+waiting_external: "RB-0142 read-only audit on d6d99647 passed with artifact 12107503073: 24 fewer naming findings/framework errors and stable warnings. Exact-head full CI pending/red; RB-0143 tracks the next batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker parked."
+next_planned_slot: RB-0143
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

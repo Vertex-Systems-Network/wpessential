@@ -281,7 +281,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1417 / PR #1416 remains actionable. 359ec47c exact full PR matrix completed 11 success / four quality-enforcement failures. RB-0141 audit confirmed naming 9,523, framework errors 54,599, warnings 5,103. Submit RB-0142 bounded Admin Columns CSV collection locals and verify fresh exact-head audit/all protected gates. #858, #947 and #1102 parked.",
+    "next_safe_action": "Issue #1417 / PR #1416 remains actionable. RB-0142 read-only audit passed on d6d99647, artifact 12107503073: 24 fewer naming/framework errors, stable warnings; full CI pending/red. Submit RB-0143 bounded CSV row/column selection locals, verify fresh exact-head audit and protected gates. #858, #947 and #1102 parked.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,

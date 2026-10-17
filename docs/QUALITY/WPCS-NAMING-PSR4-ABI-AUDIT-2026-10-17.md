@@ -1,3 +1,9 @@
+## Exact source naming improvement — 24 CSV collection findings removed
+
+The [read-only audit run 39050644066](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39050644066) succeeded on `d6d9964774160ce998d1c0857045f152c4e3f2ac`; artifact `12107503073` has SHA-256 `da455b19b56dae2536a6f93f471bdc0afa2ad3eb6f3d091a9cc65f11af7980b9`. Naming findings **9,523 → 9,499**, `VariableNotSnakeCase` **6,409 → 6,385**, framework errors **54,599 → 54,575**, warnings stable at **5,103**. All 24 reductions were selected locals in `AdminColumnsCsvExportService::collectAllMatching()`. These framework-scope counts do not establish a full-tree quality pass.
+
+Next candidate changes seven local identifiers across private `exactSelectedRows()` and `selectColumns()` (33 prior findings), preserving four method parameter names, CSV column keys, row membership and output ordering. `RB-0143` tracks fresh audit/full CI; no new reduction is claimed before that result.
+
 ## Next bounded source candidate — Admin Columns CSV collection locals
 
 The exact `9c87fc8` read-only inventory reports 34 `VariableNotSnakeCase` findings in `AdminColumnsCsvExportService::collectAllMatching()`. Ten are references to the private method's existing `viewId` and `expectedViewRevision` parameters; those parameter names remain unchanged. The candidate normalizes **24 findings** across six method-local symbols (`baselineRevision`, `baselineColumns`, `encoderColumns`, `pageSize`, `pageRows`, `probeRevision`) and synchronizes the `pageRows` PHPDoc local annotation. A reverse-mapping check must preserve every other line and all CSV output/contract identifiers. `RB-0142` requires fresh source audit and exact-head CI before any reduction is claimed.

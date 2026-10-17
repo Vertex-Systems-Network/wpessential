@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 24 CSV collection findings removed
+
+- Source `d6d9964774160ce998d1c0857045f152c4e3f2ac` passed read-only naming audit run `39050644066`, artifact `12107503073`, SHA-256 `da455b19b56dae2536a6f93f471bdc0afa2ad3eb6f3d091a9cc65f11af7980b9`. Naming findings **9,523 → 9,499**, framework errors **54,599 → 54,575**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending; PR #1416 open/unmerged.
+- `RB-0143` proposes seven locals across private `exactSelectedRows()` and `selectColumns()` (33 prior findings). Four parameter names, CSV keys, row membership and ordering remain unchanged. Fresh exact-head audit/full CI required; local PHP/Composer unavailable.
+
 # 2026-10-17 — Exact-head CI reconciled and CSV collection candidate
 
 - On PR head `359ec47c792624f4dc8d05584bdbcd90b683b39c`, all 15 pull-request workflow runs completed: 11 success, four quality-enforcement failures in PHP Quality Toolchain (`39050053011`), Taxonomy Runtime (`39050053048`), CPT Runtime (`39050053009`) and Architecture Guards (`39050053035`). Each failed job reports an `Enforce PHP quality outcome(s)` step; individual underlying command conclusions are not proven by `continue-on-error` step status, and job logs could not be fetched. PR remains open/unmerged.

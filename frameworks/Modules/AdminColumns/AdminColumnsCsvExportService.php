@@ -444,15 +444,15 @@ final readonly class AdminColumnsCsvExportService
 		bool $respectSort,
 	): array {
 		$requested = array_fill_keys( $selectedRowIds, true );
-		$byId = [];
+		$by_id = [];
 		foreach ( $rows as $row ) {
-			$rowId = $row[$idColumnKey] ?? null;
-			if ( !is_int( $rowId ) || $rowId < 1 || !isset( $requested[$rowId] ) || isset( $byId[$rowId] ) ) {
+			$row_id = $row[$idColumnKey] ?? null;
+			if ( !is_int( $row_id ) || $row_id < 1 || !isset( $requested[$row_id] ) || isset( $by_id[$row_id] ) ) {
 				throw new RuntimeException('Admin Columns selected-row export returned invalid authoritative row identity.');
 			}
-			$byId[$rowId] = $row;
+			$by_id[$row_id] = $row;
 		}
-		if ( count( $byId ) !== count( $selectedRowIds ) ) {
+		if ( count( $by_id ) !== count( $selectedRowIds ) ) {
 			throw new RuntimeException('Admin Columns selected-row export did not return the exact requested row membership.');
 		}
 		if ( $respectSort ) {
@@ -460,8 +460,8 @@ final readonly class AdminColumnsCsvExportService
 		}
 
 		$ordered = [];
-		foreach ( $selectedRowIds as $rowId ) {
-			$ordered[] = $byId[$rowId];
+		foreach ( $selectedRowIds as $row_id ) {
+			$ordered[] = $by_id[$row_id];
 		}
 
 		return $ordered;
@@ -475,32 +475,32 @@ final readonly class AdminColumnsCsvExportService
 	 */
 	private function selectColumns( array $columns, array $rows, array $selectedColumnKeys ): array
 	{
-		$metadataByKey = [];
+		$metadata_by_key = [];
 		foreach ( $columns as $column ) {
-			$metadataByKey[$column['key']] = $column;
+			$metadata_by_key[$column['key']] = $column;
 		}
 
-		$selectedMetadata = [];
-		foreach ( $selectedColumnKeys as $columnKey ) {
-			if ( !isset( $metadataByKey[$columnKey] ) ) {
+		$selected_metadata = [];
+		foreach ( $selectedColumnKeys as $column_key ) {
+			if ( !isset( $metadata_by_key[$column_key] ) ) {
 				throw new RuntimeException('Admin Columns CSV export selected Column is absent from the authoritative read contract.');
 			}
-			$selectedMetadata[] = $metadataByKey[$columnKey];
+			$selected_metadata[] = $metadata_by_key[$column_key];
 		}
 
-		$selectedRows = [];
+		$selected_rows = [];
 		foreach ( $rows as $row ) {
-			$selectedRow = [];
-			foreach ( $selectedColumnKeys as $columnKey ) {
-				if ( !array_key_exists( $columnKey, $row ) ) {
+			$selected_row = [];
+			foreach ( $selectedColumnKeys as $column_key ) {
+				if ( !array_key_exists( $column_key, $row ) ) {
 					throw new RuntimeException('Admin Columns CSV export row is missing a selected Column value.');
 				}
-				$selectedRow[$columnKey] = $row[$columnKey];
+				$selected_row[$column_key] = $row[$column_key];
 			}
-			$selectedRows[] = $selectedRow;
+			$selected_rows[] = $selected_row;
 		}
 
-		return [$selectedMetadata, $selectedRows];
+		return [$selected_metadata, $selected_rows];
 	}
 
 	/** @return array{0:int,1:int} */
