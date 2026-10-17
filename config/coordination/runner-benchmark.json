@@ -4418,9 +4418,10 @@
       "evidence": [
         "Read-only artifact 12113358765 reports 20 VariableNotSnakeCase findings across six locals in provider extension, order-by and unsafe-payload scan methods.",
         "Exact d92c0558 PR workflow matrix 11/15 pass; four failures at PHP quality enforcement; job logs unavailable via connector.",
-        "QueryAstValidatorTest covers AST validation; local PHP/Composer unavailable."
+        "QueryAstValidatorTest covers AST validation; local PHP/Composer unavailable.",
+        "Read-only audit 39070950046 PASS on aa153c43; artifact 12115087720 sha256:a1011133e320ecd261e3cf84bbeb43bb36f7f10c0c928d464b3f1276d8f30bd4: naming 9,437 → 9,417, framework errors 54,513 → 54,493, warnings 5,103 → 5,102."
       ],
-      "note": "Audit exact candidate findings and warnings; retain full merge gates."
+      "note": "20 naming findings removed and one warning removed; exact-head full CI pending/red."
     }
   ],
   "last_reconciled_issue": "#1417",

@@ -1,9 +1,9 @@
 # AI Durable Last Checkpoint
 
-# 2026-10-18 — Query validator local-only candidate
+# 2026-10-18 — Query validator local-only reduction verified
 
 - Exact PR head `d92c05585078060b5cb90aa68769c19859e13bcc` has 11/15 required PR workflows successful; PHP Quality Toolchain, CPT Runtime, Taxonomy Runtime and Architecture Guards failed at PHP quality enforcement. Job logs connector returned Transport closed; step summaries alone do not prove the underlying command outcomes.
-- `RB-0145` selects six method-local names in QueryAstValidator provider extension, ordering and unsafe-payload scan methods, 20 prior VariableNotSnakeCase findings. Public/private method parameters, AST keys, semantics and diagnostics remain unchanged. Fresh exact-head read-only audit and CI required; local PHP/Composer unavailable.
+- `RB-0145` selects six method-local names in QueryAstValidator provider extension, ordering and unsafe-payload scan methods, 20 prior VariableNotSnakeCase findings. Public/private method parameters, AST keys, semantics and diagnostics remain unchanged. Read-only audit `39070950046` passed on `aa153c433c1728a60b8d06fc7adf3a16e3fa1554`, artifact `12115087720`, SHA-256 `a1011133e320ecd261e3cf84bbeb43bb36f7f10c0c928d464b3f1276d8f30bd4`: naming **9,437 → 9,417**, errors **54,513 → 54,493**, warnings **5,103 → 5,102**. Full CI pending/red; local PHP/Composer unavailable.
 
 # 2026-10-17 — Exact 29 CSV export-scope findings removed; warning correction verified
 

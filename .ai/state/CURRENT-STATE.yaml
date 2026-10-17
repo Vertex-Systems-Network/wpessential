@@ -10,8 +10,8 @@ active_branch: agent/local-phpunit-bootstrap-repair-v1
 current_milestone: "PR #1416 / Issue #1417 WPCS remediation; bounded local-only naming cleanup in QueryAstValidator."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Audit 20 QueryAstValidator method-local naming findings; verify exact-head CI and retain all quality gates."
-waiting_external: "RB-0144 read-only audit on c5a9ff35 passed with artifact 12112993399: 29 fewer naming findings/framework errors, one new alignment warning. Correction audited at d201d446: warnings restored to 5,103; exact d92c0558 PR CI 11/15 pass, four PHP quality enforcement failures. RB-0145 Query batch pending audit. #858 admin, #1102 authorization-gated P-006, #947 independent Worker parked."
+next_safe_action: "Verify exact-head full CI after Query validator 20-finding reduction; retain all quality gates."
+waiting_external: "RB-0144 read-only audit on c5a9ff35 passed with artifact 12112993399: 29 fewer naming findings/framework errors, one new alignment warning. Correction audited at d201d446: warnings restored to 5,103; exact d92c0558 PR CI 11/15 pass, four PHP quality enforcement failures. RB-0145 Query audit 39070950046 passed on aa153c43: 20 fewer naming/framework errors and one fewer warning; exact-head CI pending/red. #858 admin, #1102 authorization-gated P-006, #947 independent Worker parked."
 next_planned_slot: RB-0145
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true

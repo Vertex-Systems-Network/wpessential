@@ -1,6 +1,6 @@
-## Query validator local-only candidate — 20 prior findings
+## Query validator local-only reduction — 20 findings removed
 
-`RB-0145` selects six locals in `parseProviderExtensionPredicate()`, `parseOrderBy()` and `scanUnsafePayload()`. Prior artifact `12113358765` identifies 20 `VariableNotSnakeCase` findings for those locals. Parameter names, AST keys, return values and diagnostic strings remain unchanged. Fresh exact-head audit must verify the reduction and warning stability; full quality gates remain red.
+`RB-0145` selects six locals in `parseProviderExtensionPredicate()`, `parseOrderBy()` and `scanUnsafePayload()`. Prior artifact `12113358765` identifies 20 `VariableNotSnakeCase` findings for those locals. Parameter names, AST keys, return values and diagnostic strings remain unchanged. [Read-only audit run 39070950046](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39070950046) passed on `aa153c433c1728a60b8d06fc7adf3a16e3fa1554`; artifact `12115087720` has SHA-256 `a1011133e320ecd261e3cf84bbeb43bb36f7f10c0c928d464b3f1276d8f30bd4`. Naming **9,437 → 9,417**, `VariableNotSnakeCase` **6,323 → 6,303**, framework errors **54,513 → 54,493**, warnings **5,103 → 5,102**. No added Query-file warnings; its prior line-783 assignment-alignment warning disappeared. Full quality gates remain red/pending.
 
 ## Exact source naming improvement — 29 CSV export-scope findings removed; alignment correction verified
 
