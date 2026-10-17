@@ -4261,13 +4261,39 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-query-ast-validation-locals|pr1416|rb0139",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "AUDIT_PASS_CI_PENDING",
       "evidence": [
         "Prior artifact reports 26 VariableNotSnakeCase findings across nine local names in validate(), parseProjection() and parsePagination().",
         "Only method-local references change; signatures, AST keys, descriptor properties, issue codes and QueryDefinition named labels preserved.",
-        "Existing QueryAstValidatorTest covers validation and pagination/projection; local PHP/Composer unavailable."
+        "Existing QueryAstValidatorTest covers validation and pagination/projection; local PHP/Composer unavailable.",
+        "Read-only audit 39049237625 PASS; artifact 12107490225 sha256:2f0acbd76cd938b6ebc46c9a8902dca0c68254c371e160cb40c8a958a5a4641a confirms naming 9,577 → 9,551, framework errors 54,653 → 54,627, warnings stable 5,103."
       ],
-      "note": "Measure exact naming/errors/warnings on next artifact; preserve full merge gates."
+      "note": "26-finding Query reduction verified; full quality gate pending/red."
+    },
+    {
+      "id": "RB-0140",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
+      "category": "WPCS_QUERY_AST_PREDICATE_LOCALS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for Query AST predicate local names",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after d0c2c0ad49c214d4f6daf78bddfa5ac1e4640744; PHP 8.2 GitHub runner",
+      "dependencies": [
+        "RB-0139 read-only audit PASS on d0c2c0ad, full merge matrix pending/red",
+        "PR #1416 remains open under Issue #1417"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no public ABI, WPCS rule, provider, production, release or deployment change",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-query-ast-predicate-locals|pr1416|rb0140",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Prior artifact reports 28 VariableNotSnakeCase findings on fieldRef/searchScope local names across private predicate parsers.",
+        "Only local variable references change; signatures, AST keys, descriptor properties and issue codes preserved.",
+        "Existing QueryAstValidatorTest covers predicate variants; local PHP/Composer unavailable."
+      ],
+      "note": "Measure naming/errors/warnings from next artifact; preserve full merge gates."
     }
   ],
   "last_reconciled_issue": "#1417",

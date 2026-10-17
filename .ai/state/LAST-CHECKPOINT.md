@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 26 Query findings removed; predicate-local candidate
+
+- Source `d0c2c0ad49c214d4f6daf78bddfa5ac1e4640744` passed read-only naming audit run `39049237625`, artifact `12107490225`, SHA-256 `2f0acbd76cd938b6ebc46c9a8902dca0c68254c371e160cb40c8a958a5a4641a`. Naming findings **9,577 → 9,551**, framework errors **54,653 → 54,627**, warnings stable **5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.
+- `RB-0140` proposes two local names across private Query AST predicate methods (28 prior findings), retaining method signatures, AST keys, descriptor properties and issue codes. Fresh audit/full CI required; local PHP/Composer unavailable. PR open/unmerged.
+
 # 2026-10-17 — Exact 19 Query source findings removed; next three-method candidate
 
 - Source `81cfe04be23edf3337cb7cafb3ed911fd6169d23` passed read-only naming audit run `39039355431`, artifact `12103750714`, SHA-256 `9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13`. Naming findings **9,596 → 9,577**, framework errors **54,672 → 54,653**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending.

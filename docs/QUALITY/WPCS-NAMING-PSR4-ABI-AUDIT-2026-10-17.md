@@ -1,3 +1,9 @@
+## Exact source naming improvement — 26 more Query findings removed
+
+The [read-only audit run 39049237625](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39049237625) succeeded on `d0c2c0ad49c214d4f6daf78bddfa5ac1e4640744`; artifact `12107490225` has SHA-256 `2f0acbd76cd938b6ebc46c9a8902dca0c68254c371e160cb40c8a958a5a4641a`. Naming findings **9,577 → 9,551**, `VariableNotSnakeCase` **6,463 → 6,437**, framework PHPCS errors **54,653 → 54,627**, warnings stable **5,103**. The 26 reductions were local variables in `QueryAstValidator::validate()`, `parseProjection()` and `parsePagination()`. No full-tree WPCS success is implied.
+
+Next bounded candidate changes only `$fieldRef` and `$searchScope` method-local names across private comparison, existence, range, set, text, taxonomy, datetime and field predicate parsers (28 prior findings). Query AST keys, method signatures, descriptor properties and issue codes remain unchanged. `RB-0140` tracks fresh audit and required CI; no reduction is claimed before that artifact.
+
 ## Exact source naming improvement — 19 more Query findings removed
 
 The [read-only audit run 39039355431](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39039355431) succeeded on `81cfe04be23edf3337cb7cafb3ed911fd6169d23`; artifact `12103750714` has SHA-256 `9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13`. Naming findings **9,596 → 9,577**, `VariableNotSnakeCase` **6,482 → 6,463**, framework PHPCS errors **54,672 → 54,653**, and warnings remain **5,103**. All 19 reductions were local variables in private `QueryAstValidator::parseSource()`; no full-tree quality pass is implied.

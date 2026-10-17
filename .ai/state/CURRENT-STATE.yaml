@@ -10,9 +10,9 @@ active_branch: agent/local-phpunit-bootstrap-repair-v1
 current_milestone: "PR #1416 / Issue #1417 WPCS remediation; bounded local-only naming cleanup in QueryAstValidator."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Validate bounded local names in QueryAstValidator::validate(), parseProjection() and parsePagination() on the next PR head, preserving signatures, named labels and full quality gates."
-waiting_external: "RB-0138 read-only audit on 81cfe04b passed with artifact 12103750714: 19 fewer naming findings/framework errors, stable warnings. Exact-head full CI remains pending/red; RB-0139 tracks the next bounded batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
-next_planned_slot: RB-0139
+next_safe_action: "Validate fieldRef/searchScope local names in bounded Query AST predicate methods on the next PR head, preserving signatures, AST keys and full quality gates."
+waiting_external: "RB-0139 read-only audit on d0c2c0ad passed with artifact 12107490225: 26 fewer naming findings/framework errors, stable warnings. Exact-head full CI remains pending/red; RB-0140 tracks the next bounded batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
+next_planned_slot: RB-0140
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

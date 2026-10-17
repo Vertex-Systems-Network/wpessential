@@ -478,16 +478,16 @@ final class QueryAstValidator
 	private function parseComparisonPredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator', 'value'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
+		$field_ref = $raw['field_ref'] ?? null;
 		$operator = $raw['operator'] ?? null;
-		$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		$this->validateOperator($operator, $path . '.operator', $descriptor, $issues);
 		if (!array_key_exists('value', $raw)) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path . '.value', 'Comparison value is required.');
 		}
 
 		return new QueryPredicate(QueryPredicateType::Comparison, [
-			'field_ref' => $fieldRef,
+			'field_ref' => $field_ref,
 			'operator' => $operator,
 			'value' => $raw['value'] ?? null,
 		]);
@@ -497,24 +497,24 @@ final class QueryAstValidator
 	private function parseExistencePredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
+		$field_ref = $raw['field_ref'] ?? null;
 		$operator = $raw['operator'] ?? null;
-		$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		if (!in_array($operator, ['exists', 'not_exists'], true)) {
 			$this->issue($issues, 'wpe_query_unsupported_operator', $path . '.operator', 'Existence operator must be exists or not_exists.');
 		} else {
 			$this->validateOperator($operator, $path . '.operator', $descriptor, $issues);
 		}
 
-		return new QueryPredicate(QueryPredicateType::Existence, ['field_ref' => $fieldRef, 'operator' => $operator]);
+		return new QueryPredicate(QueryPredicateType::Existence, ['field_ref' => $field_ref, 'operator' => $operator]);
 	}
 
 	/** @param list<QueryValidationIssue> $issues */
 	private function parseRangePredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'lower', 'upper', 'inclusive'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
-		$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		$field_ref = $raw['field_ref'] ?? null;
+		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		if (!array_key_exists('lower', $raw) && !array_key_exists('upper', $raw)) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path, 'Range requires a lower or upper bound.');
 		}
@@ -526,7 +526,7 @@ final class QueryAstValidator
 		}
 
 		return new QueryPredicate(QueryPredicateType::Range, [
-			'field_ref' => $fieldRef,
+			'field_ref' => $field_ref,
 			'lower' => $raw['lower'] ?? null,
 			'upper' => $raw['upper'] ?? null,
 			'inclusive' => $raw['inclusive'] ?? true,
@@ -537,10 +537,10 @@ final class QueryAstValidator
 	private function parseSetPredicate( array $raw, string $path, QueryValidationBudget $budget, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator', 'values'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
+		$field_ref = $raw['field_ref'] ?? null;
 		$operator = $raw['operator'] ?? null;
 		$values = $raw['values'] ?? null;
-		$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		if (!in_array($operator, ['in', 'not_in'], true)) {
 			$this->issue($issues, 'wpe_query_unsupported_operator', $path . '.operator', 'Set operator must be in or not_in.');
 		} else {
@@ -554,7 +554,7 @@ final class QueryAstValidator
 		}
 
 		return new QueryPredicate(QueryPredicateType::SetMembership, [
-			'field_ref' => $fieldRef,
+			'field_ref' => $field_ref,
 			'operator' => $operator,
 			'values' => $values,
 		]);
@@ -564,16 +564,16 @@ final class QueryAstValidator
 	private function parseTextPredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'search_scope', 'mode', 'value'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
-		$searchScope = $raw['search_scope'] ?? null;
+		$field_ref = $raw['field_ref'] ?? null;
+		$search_scope = $raw['search_scope'] ?? null;
 		$mode = $raw['mode'] ?? null;
-		if ( $fieldRef === null && $searchScope === null ) {
+		if ( $field_ref === null && $search_scope === null ) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path, 'Text predicate requires field_ref or search_scope.');
 		}
-		if ( $fieldRef !== null ) {
-			$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		if ( $field_ref !== null ) {
+			$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		}
-		if ( $searchScope !== null && !$this->isSemanticIdentifier( $searchScope ) ) {
+		if ( $search_scope !== null && !$this->isSemanticIdentifier( $search_scope ) ) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path . '.search_scope', 'Search scope must be a stable semantic identifier.');
 		}
 		if ( !$this->isSemanticIdentifier( $mode ) ) {
@@ -586,8 +586,8 @@ final class QueryAstValidator
 		}
 
 		return new QueryPredicate(QueryPredicateType::Text, [
-			'field_ref' => $fieldRef,
-			'search_scope' => $searchScope,
+			'field_ref' => $field_ref,
+			'search_scope' => $search_scope,
 			'mode' => $mode,
 			'value' => $raw['value'] ?? null,
 		]);
@@ -624,31 +624,31 @@ final class QueryAstValidator
 	private function parseDateTimePredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'constraint'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
+		$field_ref = $raw['field_ref'] ?? null;
 		$constraint = $raw['constraint'] ?? null;
-		$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		if ( !is_array( $constraint ) || $constraint === [] ) {
 			$this->issue($issues, 'wpe_query_type_mismatch', $path . '.constraint', 'DateTime constraint must be a non-empty object.');
 			$constraint = [];
 		}
 
-		return new QueryPredicate(QueryPredicateType::DateTime, ['field_ref' => $fieldRef, 'constraint' => $constraint]);
+		return new QueryPredicate(QueryPredicateType::DateTime, ['field_ref' => $field_ref, 'constraint' => $constraint]);
 	}
 
 	/** @param list<QueryValidationIssue> $issues */
 	private function parseFieldPredicate( array $raw, string $path, ?DataSourceDescriptor $descriptor, array &$issues ): QueryPredicate
 	{
 		$this->assertAllowedKeys($raw, ['type', 'field_ref', 'operator', 'value'], $path, $issues);
-		$fieldRef = $raw['field_ref'] ?? null;
+		$field_ref = $raw['field_ref'] ?? null;
 		$operator = $raw['operator'] ?? null;
-		$this->validateField($fieldRef, $path . '.field_ref', $descriptor, $issues);
+		$this->validateField($field_ref, $path . '.field_ref', $descriptor, $issues);
 		$this->validateOperator($operator, $path . '.operator', $descriptor, $issues);
 		if (!array_key_exists('value', $raw)) {
 			$this->issue($issues, 'wpe_query_invalid_ast', $path . '.value', 'Field predicate value is required.');
 		}
 
 		return new QueryPredicate(QueryPredicateType::Field, [
-			'field_ref' => $fieldRef,
+			'field_ref' => $field_ref,
 			'operator' => $operator,
 			'value' => $raw['value'] ?? null,
 		]);
