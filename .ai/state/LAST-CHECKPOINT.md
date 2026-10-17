@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — PHPStan CSV encoder input-contract candidate
+
+- Exact `2bed6b36a80fe7f342fb7be363134789039ef6a5` PHP Quality run `39072891772` uploaded diagnostic artifact `12116380050`, SHA-256 `c42ab098e1ab1dc859c318efd4ef53c85b4b486ff8746b6a1ff13d1c924d2e0a`. PHPStan reports 446 errors; PHPCS reports broad legacy violations.
+- `RB-0147` widens only the PHPDoc input types of AdminColumnsCsvExportEncoder::encode() and normalizeColumns() to reflect untrusted values checked at runtime. Eight preexisting PHPStan errors in that file concern always-narrowed validation guards. Exact-head PHPStan and WPCS audit required; public PHP signatures, guards, CSV keys and output stay unchanged.
+
 # 2026-10-18 — Exact PHP quality failure attribution
 
 - Exact source `a641cd28e6e1bb1e3dee7410c015fddac628cfd8` PHP Quality run `39072610269` failed at unchanged enforcement. Outcome artifact `12115618299`, SHA-256 `fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a`, records PHPCS=failure, PHPStan=failure, PHPUnit=success. The diagnostic artifact step passed.

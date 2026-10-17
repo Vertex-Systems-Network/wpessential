@@ -32,8 +32,8 @@ final class AdminColumnsCsvExportEncoder
 	}
 
 	/**
-	 * @param array<int,array{key:string,label:string}> $columns
-	 * @param array<int,array<string,scalar|null>> $rows
+	 * @param array<array-key,mixed> $columns Untrusted descriptors validated before encoding.
+	 * @param array<array-key,mixed> $rows Untrusted rows validated against the column contract.
 	 */
 	public function encode(array $columns, array $rows): string
 	{
@@ -83,7 +83,7 @@ final class AdminColumnsCsvExportEncoder
 	}
 
 	/**
-	 * @param array<int,array{key:string,label:string}> $columns
+	 * @param array<array-key,mixed> $columns
 	 * @return array<int,array{key:string,label:string}>
 	 */
 	private function normalizeColumns(array $columns): array

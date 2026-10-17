@@ -1,3 +1,7 @@
+## PHPStan input contract candidate
+
+The [diagnostic run 39072891772](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39072891772) on `2bed6b36` uploaded artifact `12116380050` (SHA-256 `c42ab098e1ab1dc859c318efd4ef53c85b4b486ff8746b6a1ff13d1c924d2e0a`). PHPStan has **446 errors**. Eight in `AdminColumnsCsvExportEncoder.php` call validation guards always true/false because the input PHPDoc already asserts fully valid column and row shapes. `RB-0147` widens only those input annotations to match runtime validation; its effect requires fresh exact-head CI. PHPCS remains a separate full-tree blocker.
+
 ## Exact PHP command outcomes
 
 [PHP Quality run 39072610269](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39072610269) on `a641cd28e6e1bb1e3dee7410c015fddac628cfd8` uploaded outcome artifact `12115618299` (SHA-256 `fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a`): PHPCS failed, PHPStan failed, PHPUnit passed. The next diagnostic step captures both command logs for targeted repair; quality enforcement stays unchanged.

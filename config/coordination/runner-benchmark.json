@@ -4439,8 +4439,27 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": ["Prior PHP Quality job 117497337266 failed at Enforce PHP quality outcomes; job logs connector returned Transport closed.", "The diagnostic artifact records exact source SHA and PHPCS, PHPStan, PHPUnit outcomes, with unchanged enforcement.",
-        "Exact a641cd28 PHP Quality run 39072610269 uploaded artifact 12115618299 sha256:fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a: PHPCS failure, PHPStan failure, PHPUnit success."],
+        "Exact a641cd28 PHP Quality run 39072610269 uploaded artifact 12115618299 sha256:fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a: PHPCS failure, PHPStan failure, PHPUnit success.",
+        "Exact 2bed6b36 run 39072891772 uploaded diagnostic artifact 12116380050 sha256:c42ab098e1ab1dc859c318efd4ef53c85b4b486ff8746b6a1ff13d1c924d2e0a: PHPStan 446 errors, broad PHPCS violations."],
       "note": "PHPCS and PHPStan failures attributed; capture both command logs for targeted repair, with unchanged gate."
+    },
+    {
+      "id": "RB-0147",
+      "source": "Issue #1417 / PR #1416 PHPStan input contract remediation",
+      "category": "PHPSTAN_CSV_ENCODER_UNTRUSTED_INPUT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality Toolchain, WPCS Naming ABI Audit and relevant Admin Columns unit suite",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; PHP 8.2 GitHub runner",
+      "dependencies": ["RB-0146 diagnostic artifact 12116380050 confirms 446 PHPStan errors and broad PHPCS violations", "PR #1416 remains open under Issue #1417"],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; input PHPDoc only, unchanged runtime validation and quality gates",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 20,
+      "dedup_key": "quality|phpstan-csv-encoder-input-contract|pr1416|rb0147",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": ["Eight PHPStan errors in AdminColumnsCsvExportEncoder concern input guards that PHPDoc incorrectly declares always narrowed.", "Only encode and normalizeColumns input annotations widen to match the existing runtime validation; no PHP signature or CSV logic changes."],
+      "note": "Compare exact-head PHPStan error count and audit warnings; full merge gates remain required."
     }
   ],
   "last_reconciled_issue": "#1417",
