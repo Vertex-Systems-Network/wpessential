@@ -90,14 +90,14 @@ final class QueryAstValidator
 
 		$this->scanUnsafePayload($ast, '$', $issues);
 		$this->assertAllowedKeys($ast, self::TOP_LEVEL_KEYS, '$', $issues);
-		foreach ( self::REQUIRED_TOP_LEVEL_KEYS as $requiredKey ) {
-			if ( !array_key_exists( $requiredKey, $ast ) ) {
-				$this->issue($issues, 'wpe_query_invalid_ast', '$.' . $requiredKey, 'Required semantic node is missing.');
+		foreach ( self::REQUIRED_TOP_LEVEL_KEYS as $required_key ) {
+			if ( !array_key_exists( $required_key, $ast ) ) {
+				$this->issue($issues, 'wpe_query_invalid_ast', '$.' . $required_key, 'Required semantic node is missing.');
 			}
 		}
 
 		$identity = $this->parseIdentity($ast['identity'] ?? null, $issues);
-		$astVersion = $this->parseAstVersion($ast['ast_version'] ?? null, $issues);
+		$ast_version = $this->parseAstVersion($ast['ast_version'] ?? null, $issues);
 		[$source, $descriptor] = $this->parseSource($ast['source'] ?? null, $issues);
 
 		$operation = $ast['operation'] ?? null;
@@ -109,7 +109,7 @@ final class QueryAstValidator
 		$projection = $this->parseProjection($ast['projection'] ?? null, $descriptor, $issues);
 		$parameters = $this->parseParameters($ast['parameters'] ?? null, $issues);
 
-		$predicateCount = 0;
+		$predicate_count = 0;
 		$filter = null;
 		if (array_key_exists('filter', $ast) && $ast['filter'] !== null) {
 			$filter = $this->parsePredicate(
@@ -120,12 +120,12 @@ final class QueryAstValidator
 				$budget,
 				$descriptor,
 				$context,
-				$predicateCount,
+				$predicate_count,
 				$issues,
 			);
 		}
 
-		$orderBy = $this->parseOrderBy($ast['order_by'] ?? null, $descriptor, $issues);
+		$order_by = $this->parseOrderBy($ast['order_by'] ?? null, $descriptor, $issues);
 		$pagination = $this->parsePagination($ast['pagination'] ?? null, $budget, $descriptor, $issues);
 
 		$distinct = $ast['distinct'] ?? false;
@@ -134,8 +134,8 @@ final class QueryAstValidator
 			$distinct = false;
 		}
 
-		$executionPolicy = $this->parsePolicy($ast['execution_policy'] ?? null, '$.execution_policy', $issues);
-		$cachePolicy = $this->parsePolicy($ast['cache_policy'] ?? null, '$.cache_policy', $issues);
+		$execution_policy = $this->parsePolicy($ast['execution_policy'] ?? null, '$.execution_policy', $issues);
+		$cache_policy = $this->parsePolicy($ast['cache_policy'] ?? null, '$.cache_policy', $issues);
 
 		$metadata = $ast['metadata'] ?? null;
 		if ( $metadata !== null && !is_array( $metadata ) ) {
@@ -150,17 +150,17 @@ final class QueryAstValidator
 		return new QueryValidationResult(
 			new QueryDefinition(
 				identity: $identity,
-				astVersion: $astVersion,
+				astVersion: $ast_version,
 				source: $source,
 				operation: $operation,
 				projection: $projection,
 				parameters: $parameters,
 				filter: $filter,
-				orderBy: $orderBy,
+				orderBy: $order_by,
 				pagination: $pagination,
 				distinct: $distinct,
-				executionPolicy: $executionPolicy,
-				cachePolicy: $cachePolicy,
+				executionPolicy: $execution_policy,
+				cachePolicy: $cache_policy,
 				metadata: $metadata,
 			),
 			[],
@@ -297,17 +297,17 @@ final class QueryAstValidator
 		}
 
 		$projection = [];
-		foreach ( $raw as $index => $fieldRef ) {
+		foreach ( $raw as $index => $field_ref ) {
 			$path = '$.projection[' . $index . ']';
-			if ( !$this->isSemanticIdentifier( $fieldRef ) ) {
+			if ( !$this->isSemanticIdentifier( $field_ref ) ) {
 				$this->issue($issues, 'wpe_query_invalid_ast', $path, 'Projection field must be a stable semantic identifier.');
 				continue;
 			}
-			if ( $descriptor !== null && !array_key_exists( $fieldRef, $descriptor->fieldSchema ) ) {
+			if ( $descriptor !== null && !array_key_exists( $field_ref, $descriptor->fieldSchema ) ) {
 				$this->issue($issues, 'wpe_query_invalid_ast', $path, 'Projection field is not declared by the Data Source.');
 				continue;
 			}
-			$projection[] = $fieldRef;
+			$projection[] = $field_ref;
 		}
 
 		return $projection;
@@ -813,7 +813,7 @@ final class QueryAstValidator
 		$this->assertAllowedKeys($raw, ['mode', 'page_size', 'offset', 'cursor'], $path, $issues);
 
 		$mode = $raw['mode'] ?? null;
-		$pageSize = $raw['page_size'] ?? null;
+		$page_size = $raw['page_size'] ?? null;
 		$offset = $raw['offset'] ?? 0;
 		$cursor = $raw['cursor'] ?? null;
 		if ( !$this->isSemanticIdentifier( $mode ) ) {
@@ -821,11 +821,11 @@ final class QueryAstValidator
 		} elseif ( $descriptor !== null && !in_array( $mode, $descriptor->paginationModes, true ) ) {
 			$this->issue($issues, 'wpe_query_unsupported_operator', $path . '.mode', 'Pagination mode is not advertised by the Data Source.');
 		}
-		if ( !is_int( $pageSize ) || $pageSize < 1 ) {
+		if ( !is_int( $page_size ) || $page_size < 1 ) {
 			$this->issue($issues, 'wpe_query_type_mismatch', $path . '.page_size', 'Page size must be a positive integer.');
 		} else {
-			$sourceLimit = $descriptor?->maxPageSize ?? $budget->maxPageSize;
-			if ( $pageSize > $budget->maxPageSize || $pageSize > $sourceLimit ) {
+			$source_limit = $descriptor?->maxPageSize ?? $budget->maxPageSize;
+			if ( $page_size > $budget->maxPageSize || $page_size > $source_limit ) {
 				$this->issue($issues, 'wpe_query_cost_blocked', $path . '.page_size', 'Page size exceeds the configured or Data Source limit.');
 			}
 		}
@@ -839,11 +839,11 @@ final class QueryAstValidator
 			$this->issue($issues, 'wpe_query_cursor_invalid', $path . '.cursor', 'Cursor pagination requires a non-empty cursor token.');
 		}
 
-		if (!is_string($mode) || !is_int($pageSize) || !is_int($offset) || ($cursor !== null && !is_string($cursor))) {
+		if (!is_string($mode) || !is_int($page_size) || !is_int($offset) || ($cursor !== null && !is_string($cursor))) {
 			return null;
 		}
 
-		return new QueryPagination( $mode, $pageSize, $offset, $cursor );
+		return new QueryPagination( $mode, $page_size, $offset, $cursor );
 	}
 
 	/**

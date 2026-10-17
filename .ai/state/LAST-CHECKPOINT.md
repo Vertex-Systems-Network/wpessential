@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 19 Query source findings removed; next three-method candidate
+
+- Source `81cfe04be23edf3337cb7cafb3ed911fd6169d23` passed read-only naming audit run `39039355431`, artifact `12103750714`, SHA-256 `9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13`. Naming findings **9,596 → 9,577**, framework errors **54,672 → 54,653**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending.
+- `RB-0139` proposes nine local names across public `validate()` and two private Query AST parse methods (26 prior findings), retaining signatures, AST keys and named constructor labels. Fresh exact-head audit/full CI required. Local PHP/Composer unavailable; PR open/unmerged.
+
 # 2026-10-17 — Exact 19-finding reduction and Query source candidate
 
 - Source `a0a2620027eae33057bb3d541baa1f5182c06068` passed read-only naming audit run `39039076369`, artifact `12103665548`, SHA-256 `e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3`. Naming findings **9,615 → 9,596**, framework errors **54,691 → 54,672**, warnings stable **5,103**. Full-tree quality enforcement still blocks PR merge.

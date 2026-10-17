@@ -1,3 +1,9 @@
+## Exact source naming improvement — 19 more Query findings removed
+
+The [read-only audit run 39039355431](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39039355431) succeeded on `81cfe04be23edf3337cb7cafb3ed911fd6169d23`; artifact `12103750714` has SHA-256 `9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13`. Naming findings **9,596 → 9,577**, `VariableNotSnakeCase` **6,482 → 6,463**, framework PHPCS errors **54,672 → 54,653**, and warnings remain **5,103**. All 19 reductions were local variables in private `QueryAstValidator::parseSource()`; no full-tree quality pass is implied.
+
+The next bounded candidate changes nine local names (26 prior findings) in `QueryAstValidator::validate()`, `parseProjection()` and `parsePagination()`. Signatures, QueryDefinition constructor named labels, AST keys, budget/descriptor properties and issue codes remain intact. `RB-0139` tracks fresh audit and full CI; no result is claimed before that artifact.
+
 ## Exact source naming improvement — 19 more verified findings removed
 
 The [read-only audit run 39039076369](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39039076369) succeeded on `a0a2620027eae33057bb3d541baa1f5182c06068`; artifact `12103665548` has SHA-256 `e6295123ce4c655dd2669ec5a9bbb5b1a74d0eb15b204978401a4c6509593db3`. Naming findings **9,615 → 9,596**, `VariableNotSnakeCase` **6,501 → 6,482**, framework PHPCS errors **54,691 → 54,672**, with warnings stable at **5,103**. The 19 reductions were four locals in the Dashboard Widget registration Ability and Cron reference methods. These diagnostic totals do not establish a green full-tree quality gate.

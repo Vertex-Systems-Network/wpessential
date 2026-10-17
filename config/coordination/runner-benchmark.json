@@ -4235,13 +4235,39 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-query-ast-source-locals|pr1416|rb0138",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "AUDIT_PASS_CI_PENDING",
       "evidence": [
         "Prior exact source artifact reports 19 VariableNotSnakeCase findings across three local names in private QueryAstValidator::parseSource().",
         "Only method-local identifiers change; AST keys, descriptor properties and validation issue codes preserved.",
-        "Existing QueryAstValidatorTest covers source validation; local PHP/Composer unavailable."
+        "Existing QueryAstValidatorTest covers source validation; local PHP/Composer unavailable.",
+        "Read-only audit 39039355431 PASS; artifact 12103750714 sha256:9398fae1516da4dd5c198e4a7baeac0ddc34614b5fd1a47258dc492a0c259d13 confirms naming 9,596 → 9,577, framework errors 54,672 → 54,653, warnings stable 5,103."
       ],
-      "note": "Measure actual naming/errors/warnings from next artifact; preserve full merge gates."
+      "note": "19-finding Query source reduction verified; full quality gate pending/red."
+    },
+    {
+      "id": "RB-0139",
+      "source": "Issue #1417 / PR #1416 WPCS naming audit continuation",
+      "category": "WPCS_QUERY_AST_VALIDATION_LOCALS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for Query AST validation locals",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after 81cfe04be23edf3337cb7cafb3ed911fd6169d23; PHP 8.2 GitHub runner",
+      "dependencies": [
+        "RB-0138 read-only audit PASS on 81cfe04b, full merge matrix pending/red",
+        "PR #1416 remains open under Issue #1417"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; method-local names only, no public ABI, WPCS rule, provider, production, release or deployment change",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-query-ast-validation-locals|pr1416|rb0139",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Prior artifact reports 26 VariableNotSnakeCase findings across nine local names in validate(), parseProjection() and parsePagination().",
+        "Only method-local references change; signatures, AST keys, descriptor properties, issue codes and QueryDefinition named labels preserved.",
+        "Existing QueryAstValidatorTest covers validation and pagination/projection; local PHP/Composer unavailable."
+      ],
+      "note": "Measure exact naming/errors/warnings on next artifact; preserve full merge gates."
     }
   ],
   "last_reconciled_issue": "#1417",
