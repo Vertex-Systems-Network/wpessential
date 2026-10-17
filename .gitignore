@@ -7,3 +7,6 @@
 /js-lint.log
 /npm-audit.json
 /npm-audit-distributable.json
+
+# Claude Code Stop-hook off-switch
+.claude/.allow-stop

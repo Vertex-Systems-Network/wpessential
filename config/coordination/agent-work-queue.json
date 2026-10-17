@@ -8689,21 +8689,20 @@
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
     "enabled": true,
     "default_delivery_cycle": {
-      "turn_a": [
+      "single_turn": [
         "exact_main_audit",
         "issue_claim_or_create",
         "implementation",
         "focused_tests",
         "readme_and_shared_truth",
-        "pr_open"
-      ],
-      "turn_b": [
+        "pr_open",
         "consolidated_ci_review_refresh",
         "required_fixes_when_real",
         "expected_head_merge",
         "resulting_main_verification",
         "next_safe_milestone_without_owner_continue"
       ],
+      "turn_boundary": "NONE_PR_OPEN_CI_PENDING_AND_MERGE_ARE_NOT_TURN_BOUNDARIES",
       "after_each_milestone": "RECONCILE_README_AND_STATE_THEN_CONTINUE_SAFE_READY_LANE",
       "after_merge": "VERIFY_RESULTING_MAIN_AND_RECONCILE_COMPACT_STATE_AND_README_BEFORE_NEXT_SAFE_LANE"
     },
@@ -8729,6 +8728,12 @@
       "pr_open",
       "merge_complete"
     ],
-    "security_invariants_preserved": true
+    "security_invariants_preserved": true,
+    "user_updates_are_nonterminal": true,
+    "stop_modes": [
+      "NO_SAFE_AUTHORIZED_WORK",
+      "OWNER_AUTHORITY_REQUIRED",
+      "PAUSED_BY_OWNER"
+    ]
   }
 }
