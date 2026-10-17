@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — P-006 Wave 1A independent review merged; shared-truth closeout
+
+- Issue #947 / one-file PR #1422 merged as `db38d64f278767e8cc1d933b0258e1bf2d06566f` after exact-head Governance run `39078236308` PASS; #947 closed. The independent review reconciles historical run `34902018141` and FP-01/02/05/07/08 PASS without new execution. Original 14-day artifact expired, so no fresh archive-byte rehash. No pair/runtime/ADR-0010 certification; P-006 remains 144/57/57/0/0 with zero certified pairs/runtime.
+- Issue #1423 owns README/queue/compact-state reconciliation. #1416 remains open with four required quality failures at last observed head; owner has paused that remediation. #1102 is authorization-gated; #858 external-admin. No eligible implementation slot remains after this closeout unless direction or authorization changes.
+
 ## 2026-10-13 — RB-0125 terminal read-only review PASS
 
 - Issue #1411 / PR #1412 corrected exact head `c24c97eed560f206cd1ab8ad177882ba78fd0f0b`: **14/14** exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform 10/10; 7 scoped files, zero behind/review threads; protected merge `d85f3183e2684a94c0f654fd191d7185dbda1929`. Initial Architecture failure was compact checkpoint >16KiB; repaired and reran green.
