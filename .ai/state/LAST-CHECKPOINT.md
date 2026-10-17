@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Correct WPCS naming direction after exact CI
+
+- Exact PR head `8bd51fcf162d46548cb005fb3e066c213692038e`: 55 checks completed, 51 success and 4 failures at quality enforcement (PHP Quality, Architecture, CPT, Taxonomy). PHPStan, PHPUnit and runtime steps completed, but the quality gate remains red.
+- The two recent `$slug_order` → `$slugOrder` edits were mistaken: the retained WPCS sniff `WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase` requires snake_case local variables. Restored both comparator locals to `$slug_order` and corrected the progress record. No claim of a fresh full-tree WPCS count.
+- The next bounded source fix is three constructor-only local names in `DashboardWidgetEmptyStateDescriptor.php`: `$expectedKeys`, `$actualKeys`, `$normalizedBindings` become snake_case. Promoted properties, serialized keys, methods and component identifiers are preserved. `RB-0128` is terminal failed; `RB-0129` tracks required CI for this corrected batch. Local PHP/Composer remain unavailable; `git diff --check` passes.
+
+
 # 2026-10-17 — Second bounded local-only naming remediation
 
 - Exact head `8d64df8966e1ef602a78d80b8b6a6cacc063edc9` completed **55 checks: 51 passed / 4 failed**. The failures remain only the required PHP quality, Architecture, CPT and Taxonomy enforcement outcomes; their underlying syntax, PHPCS/PHPStan/PHPUnit and runtime steps passed.

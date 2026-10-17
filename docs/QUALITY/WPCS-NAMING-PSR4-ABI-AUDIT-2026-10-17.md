@@ -1,8 +1,8 @@
-## Fresh exact-head re-audit — RB-0127 infrastructure failure; bounded fix submitted
+## Fresh exact-head re-audit — RB-0127 did not produce a job
 
 The previous retained naming report is from source head `21fa582724250c6d3fd40aa299447d872a661f39` (55,287 full-tree PHPCS errors / 5,104 warnings). Subsequent PR commits applied bounded local-only naming fixes in `AdminAssetManifest.php`, `RuntimeDiagnosticsSnapshot.php`, and `WpdbJobAttemptStore.php`, plus whitespace-only `AssetDescriptor.php`; therefore the old finding inventory is stale for selecting another edit. The latest integrated branch head before this diagnostic refresh is `78660165dcc8be6c9259ada5f060ee3c32367f91`, based on current main `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30`.
 
-Runner `RB-0127` was triggered at exact head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`, but run `39026004530` failed before creating a job or artifact. Therefore it supplies no new finding inventory. The next bounded candidate is the local-only `$slug_order` variable in `DashboardWidgetPresetReadService.php`, renamed to `$slugOrder` with no public or external contract change. The audit will not rename public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers, or alter WPCS rules.
+Runner `RB-0127` was triggered at exact head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`, but run `39026004530` failed before creating a job or artifact. Therefore it supplies no new finding inventory. The subsequent `$slug_order` → `$slugOrder` comparator edits were in the wrong direction for the recorded `VariableNotSnakeCase` WPCS sniff. They are restored at the next source head. The new candidate changes three constructor-only camelCase locals in `DashboardWidgetEmptyStateDescriptor.php` to snake_case. Public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers and WPCS rules are preserved.
 
 # WPCS naming, PSR-4 and public-ABI audit — 2026-10-17
 
@@ -82,7 +82,7 @@ Option B is a proposal only. It is not an active bypass or merge permission. Any
 - Do not mass-rename camelCase properties, methods, DTO fields or external identifiers.
 - Do not alter the PSR-4 exception or introduce a broad naming exclusion.
 - Treat local-only variable remediation as the only immediately safe candidate, subject to a bounded diff and exact-head CI.
-- The second bounded candidate is `$slug_order` → `$slugOrder` in `DashboardWidgetMultisitePolicyReadService.php`, confined to a local comparator callback.
+- The two comparator callbacks retain their originally compliant `$slug_order` local. Three empty-state constructor locals are normalized to snake_case in a bounded change.
 - Keep PR #1416 open and unmerged until all required checks are green.
 
 This audit does not certify product milestones, release readiness, production deployment or GA.

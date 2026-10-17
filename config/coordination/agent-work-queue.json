@@ -281,7 +281,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1417 / PR #1416 remains the only actionable existing source path. Exact head 78660165: 55 checks complete, 51 pass / 4 quality-enforcement failures; state-contract smoke passes. Run the registered RB-0127 read-only naming/ABI audit before the next bounded local-only remediation. Do not open duplicate development work or bypass WPCS/protected checks; #858, #947 and #1102 remain parked.",
+    "next_safe_action": "Issue #1417 / PR #1416 remains the actionable source path. Exact head 8bd51fcf: 55 checks complete, 51 pass / 4 quality-enforcement failures; RB-0127 naming audit produced no job or artifact. Restore two comparator locals to snake_case and validate three local-only empty-state names via RB-0129 exact-head CI. Preserve WPCS/protected checks; #858, #947 and #1102 remain parked.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,

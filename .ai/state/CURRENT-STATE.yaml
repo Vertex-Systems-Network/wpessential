@@ -7,12 +7,12 @@ observed_main_source: "Fresh exact-main audit 2026-10-17: main 6fd97dc2f8fc1c2a8
 active_issue: "#1417"
 active_pr: "#1416"
 active_branch: agent/local-phpunit-bootstrap-repair-v1
-current_milestone: "PR #1416 / Issue #1417 WPCS remediation; second bounded local-only naming fix submitted for exact-head validation."
+current_milestone: "PR #1416 / Issue #1417 WPCS remediation; correct naming direction and normalize Dashboard Widget empty-state local variables."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Validate the bounded local-only $slugOrder rename in DashboardWidgetMultisitePolicyReadService.php on the next exact PR head; preserve full-tree WPCS and all protected checks."
-waiting_external: "Exact-head GitHub CI for the second bounded naming fix; the push-triggered RB-0127 audit produced no jobs/artifact and is recorded as failed infrastructure evidence; #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
-next_planned_slot: RB-0128
+next_safe_action: "Validate restored snake_case comparators and three local-only empty-state names on the next PR head; compare required quality outcomes without changing public contracts or gates."
+waiting_external: "RB-0129 exact-head CI after the corrected local-variable batch; #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
+next_planned_slot: RB-0129
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

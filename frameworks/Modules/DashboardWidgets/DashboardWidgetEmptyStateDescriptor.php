@@ -27,7 +27,7 @@ final readonly class DashboardWidgetEmptyStateDescriptor
 		public int $blueprintRevision,
 		public array $bindings,
 	) {
-		$expectedKeys = match ($this->blueprintId) {
+		$expected_keys = match ($this->blueprintId) {
 			self::RICH_TEXT_BLUEPRINT_ID => ['content'],
 			self::ANNOUNCEMENT_BLUEPRINT_ID => ['text', 'title'],
 			default => throw new InvalidArgumentException(
@@ -39,16 +39,16 @@ final readonly class DashboardWidgetEmptyStateDescriptor
 			throw new InvalidArgumentException('Dashboard Widget empty-state Blueprint revision must equal canonical revision 1.');
 		}
 
-		$actualKeys = array_keys($this->bindings);
-		sort($actualKeys, SORT_STRING);
-		sort($expectedKeys, SORT_STRING);
-		if ($actualKeys !== $expectedKeys) {
+		$actual_keys = array_keys($this->bindings);
+		sort($actual_keys, SORT_STRING);
+		sort($expected_keys, SORT_STRING);
+		if ($actual_keys !== $expected_keys) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget empty-state bindings must exactly match the trusted Blueprint schema.',
 			);
 		}
 
-		$normalizedBindings = [];
+		$normalized_bindings = [];
 		foreach ($this->bindings as $key => $value) {
 			if (!is_string($key) || !is_string($value)) {
 				throw new InvalidArgumentException('Dashboard Widget empty-state bindings must be string values.');
@@ -67,15 +67,15 @@ final readonly class DashboardWidgetEmptyStateDescriptor
 					'Executable authored channels are not accepted as Dashboard Widget empty-state bindings.',
 				);
 			}
-			$normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
+			$normalized_bindings[$key] = ['source' => 'literal', 'value' => $value];
 		}
-		ksort($normalizedBindings, SORT_STRING);
+		ksort($normalized_bindings, SORT_STRING);
 
 		$encoded = json_encode([
 			'kind' => 'component_blueprint',
 			'blueprint_id' => $this->blueprintId,
 			'blueprint_revision' => $this->blueprintRevision,
-			'bindings' => $normalizedBindings,
+			'bindings' => $normalized_bindings,
 		], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		if (!is_string($encoded) || strlen($encoded) > self::MAX_ENCODED_BYTES) {
 			throw new InvalidArgumentException('Dashboard Widget empty-state object exceeds the bounded 4096-byte limit.');

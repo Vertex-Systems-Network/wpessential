@@ -3958,7 +3958,7 @@
       "category": "WPCS_LOCAL_ONLY_VARIABLE_REMEDIATION_MERGE_GATE_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and applicable contract checks after bounded local-only variable renames",
-      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source 423fde866f963d9f5ca21b39f0efb3f0388fdfb1; main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30; PHP 8.2 CI",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source 8bd51fcf162d46548cb005fb3e066c213692038e; main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30; PHP 8.2 CI",
       "dependencies": [
         "RB-0126 terminal failed quality gate",
         "RB-0127 terminal failed before job/artifact",
@@ -3969,15 +3969,41 @@
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-local-only-variable|pr1416|rb0128",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "disposition": "TERMINAL_FAILED",
+      "status": "FAIL",
       "evidence": [
         "Renamed only local callback variable `$slug_order` to `$slugOrder` in DashboardWidgetPresetReadService.php; the resulting exact head 8d64df8 completed 55 checks with 51 pass and 4 quality-enforcement failures.",
         "A second local callback variable `$slug_order` → `$slugOrder` is staged in DashboardWidgetMultisitePolicyReadService.php for the next exact head.",
         "No public/promoted property, method, interface, payload key, WordPress identifier, class path or WPCS rule changed.",
-        "git diff --check passes; local PHP/Composer unavailable."
+        "git diff --check passes; local PHP/Composer unavailable.",
+        "Exact head 8bd51fcf162d46548cb005fb3e066c213692038e completed 55 checks: 51 success, 4 quality-enforcement failures. The comparator edits moved snake_case locals to camelCase, contrary to WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase; both are restored in the next bounded batch."
       ],
-      "note": "Exact-head CI must establish no syntax, contract, runtime or quality regression; full-tree WPCS remains required and may continue to fail baseline debt."
+      "note": "The purported WPCS cleanup was directionally wrong despite passing other runtime steps. Preserve its terminal evidence; restore the comparator names and validate a true snake_case local-only batch."
+    },
+    {
+      "id": "RB-0129",
+      "source": "Issue #1417 / PR #1416 WPCS-first continuation",
+      "category": "WPCS_LOCAL_ONLY_VARIABLE_CORRECTION_MERGE_GATE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and applicable contract checks after corrected local-only snake_case changes",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source after 8bd51fcf162d46548cb005fb3e066c213692038e; main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30; PHP 8.2 CI",
+      "dependencies": [
+        "RB-0128 terminal failed at the required full-tree quality gate",
+        "Issue #1417 WPCS naming classification and protected PR #1416"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417 WPCS-first remediation; no ruleset bypass, public ABI rename, provider, production, release or deployment",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-snake-case-corrected|pr1416|rb0129",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Restore two pre-existing comparator locals to $slug_order; no behavior change.",
+        "Normalize only $expectedKeys, $actualKeys and $normalizedBindings inside DashboardWidgetEmptyStateDescriptor::__construct to snake_case. Public promoted fields and serialized binding keys remain unchanged.",
+        "Local PHP/Composer unavailable; git diff --check passes, exact-head CI needed."
+      ],
+      "note": "Required quality outcome and downstream contracts must be evaluated on the new exact PR head. No full-tree PHPCS pass or current count is inferred from historical evidence."
     }
   ],
   "last_reconciled_issue": "#1417",
