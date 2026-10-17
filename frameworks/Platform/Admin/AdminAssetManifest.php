@@ -23,11 +23,11 @@ final readonly class AdminAssetManifest
 			return null;
 		}
 
-		$styleName = $styleEntry !== null && $this->validEntryName( $styleEntry )
+		$style_name = $styleEntry !== null && $this->validEntryName( $styleEntry )
 			? $styleEntry
 			: $entry;
-		$style = $this->style( $styleName );
-		if ( $style === null && $styleName !== $entry ) {
+		$style = $this->style( $style_name );
+		if ( $style === null && $style_name !== $entry ) {
 			$style = $this->style( $entry );
 		}
 
@@ -46,15 +46,15 @@ final readonly class AdminAssetManifest
 			return null;
 		}
 
-		$assetRoot = $this->assetRoot();
-		$scriptPath = $assetRoot . '/' . $entry . '.js';
-		$metadataPath = $assetRoot . '/' . $entry . '.asset.php';
+		$asset_root = $this->assetRoot();
+		$script_path = $asset_root . '/' . $entry . '.js';
+		$metadata_path = $asset_root . '/' . $entry . '.asset.php';
 
-		if ( ! is_readable( $scriptPath ) || ! is_readable( $metadataPath ) ) {
+		if ( ! is_readable( $script_path ) || ! is_readable( $metadata_path ) ) {
 			return null;
 		}
 
-		$metadata = require $metadataPath;
+		$metadata = require $metadata_path;
 		if ( ! is_array( $metadata ) ) {
 			return null;
 		}
@@ -86,8 +86,8 @@ final readonly class AdminAssetManifest
 			return null;
 		}
 
-		$stylePath = $this->assetRoot() . '/' . $entry . '.css';
-		if ( ! is_readable( $stylePath ) ) {
+		$style_path = $this->assetRoot() . '/' . $entry . '.css';
+		if ( ! is_readable( $style_path ) ) {
 			return null;
 		}
 
