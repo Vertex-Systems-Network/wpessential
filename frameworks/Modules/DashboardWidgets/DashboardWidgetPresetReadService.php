@@ -69,8 +69,8 @@ final readonly class DashboardWidgetPresetReadService {
 		usort(
 			$definitions,
 			static function ( Definition $left, Definition $right ): int {
-				$slug_order = $left->slug <=> $right->slug;
-				return 0 !== $slug_order ? $slug_order : ( $left->id <=> $right->id );
+				$slugOrder = $left->slug <=> $right->slug;
+				return 0 !== $slugOrder ? $slugOrder : ( $left->id <=> $right->id );
 			}
 		);
 
