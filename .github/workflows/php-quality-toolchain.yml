@@ -96,13 +96,17 @@ jobs:
         id: phpcs
         continue-on-error: true
         shell: bash
-        run: composer quality:phpcs
+        run: |
+          set -o pipefail
+          composer quality:phpcs 2>&1 | tee phpcs.log
 
       - name: WordPress-aware PHPStan
         id: phpstan
         continue-on-error: true
         shell: bash
-        run: composer quality:phpstan
+        run: |
+          set -o pipefail
+          composer quality:phpstan 2>&1 | tee phpstan.log
 
       - name: PHPUnit unit suite
         id: phpunit
@@ -113,6 +117,17 @@ jobs:
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Upload failing PHP diagnostics
+        if: always() && (steps.phpcs.outcome == 'failure' || steps.phpstan.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: php-quality-diagnostics-${{ github.run_id }}
+          path: |
+            phpcs.log
+            phpstan.log
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Record PHP quality outcomes
         if: always()

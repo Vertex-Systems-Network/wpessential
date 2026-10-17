@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — Exact PHP quality failure attribution
+
+- Exact source `a641cd28e6e1bb1e3dee7410c015fddac628cfd8` PHP Quality run `39072610269` failed at unchanged enforcement. Outcome artifact `12115618299`, SHA-256 `fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a`, records PHPCS=failure, PHPStan=failure, PHPUnit=success. The diagnostic artifact step passed.
+- Follow-on captures complete PHPCS/PHPStan command logs as an artifact on failure; fresh exact-head CI required before targeting individual errors.
+
 # 2026-10-18 — PHP quality outcome diagnosis candidate
 
 - Exact PR head `37226d669338dbacc6d742cfdba6100f97b82883` finished 11/15 required PR workflows successful. PHP Quality Toolchain (`39071169990`), CPT Runtime (`39071169974`), Taxonomy Runtime (`39071170020`) and Architecture Guards (`39071169985`) failed at quality enforcement. The `continue-on-error` step summaries do not identify which underlying PHP command failed; job logs connector returned Transport closed.

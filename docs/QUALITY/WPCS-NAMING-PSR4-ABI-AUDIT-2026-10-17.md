@@ -1,3 +1,7 @@
+## Exact PHP command outcomes
+
+[PHP Quality run 39072610269](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39072610269) on `a641cd28e6e1bb1e3dee7410c015fddac628cfd8` uploaded outcome artifact `12115618299` (SHA-256 `fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a`): PHPCS failed, PHPStan failed, PHPUnit passed. The next diagnostic step captures both command logs for targeted repair; quality enforcement stays unchanged.
+
 ## PHP quality failure diagnosis candidate
 
 The exact `37226d66` PR matrix completed 11/15 required workflows with four PHP quality enforcement failures. Since job logs are unavailable through the connector and `continue-on-error` masks individual step conclusions, `RB-0146` records the three actual step outcomes in a short artifact from PHP Quality Toolchain before the existing gate. The artifact must be inspected on the new exact head; it does not imply a quality pass.

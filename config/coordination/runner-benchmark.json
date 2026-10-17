@@ -4438,8 +4438,9 @@
       "dedup_key": "quality|php-outcome-evidence|pr1416|rb0146",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
-      "evidence": ["Prior PHP Quality job 117497337266 failed at Enforce PHP quality outcomes; job logs connector returned Transport closed.", "The diagnostic artifact records exact source SHA and PHPCS, PHPStan, PHPUnit outcomes, with unchanged enforcement."],
-      "note": "Inspect new exact-head artifact to identify actual failing PHP command; do not infer from continue-on-error step conclusion."
+      "evidence": ["Prior PHP Quality job 117497337266 failed at Enforce PHP quality outcomes; job logs connector returned Transport closed.", "The diagnostic artifact records exact source SHA and PHPCS, PHPStan, PHPUnit outcomes, with unchanged enforcement.",
+        "Exact a641cd28 PHP Quality run 39072610269 uploaded artifact 12115618299 sha256:fbaabb761c545ae0f8c3a86b7bd80975eb45b4823212d85e11c2d181ece8022a: PHPCS failure, PHPStan failure, PHPUnit success."],
+      "note": "PHPCS and PHPStan failures attributed; capture both command logs for targeted repair, with unchanged gate."
     }
   ],
   "last_reconciled_issue": "#1417",
