@@ -1,3 +1,7 @@
+## Exact warning correction — four alignment findings removed
+
+The [read-only audit run 39049801229](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39049801229) succeeded on `9c87fc8fec05879a01a9e4b89cc28a5499455f43`; artifact `12107032077` has SHA-256 `ef9fa8e6e599d157197031e2964cfdb2ae9e804e6f0c9262746a25878659ed10`. Framework-scope warnings **5,107 → 5,103**, with naming findings stable **9,523** and framework errors stable **54,599**. All four new assignment-alignment warnings introduced at the prior source were removed. The full-tree WPCS merge gate remains red; this report is read-only framework-scope evidence.
+
 ## Exact source naming improvement — 28 more predicate findings removed; alignment correction pending
 
 The [read-only audit run 39049530316](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39049530316) succeeded on `e7a16d2b152cd96819649381d73c4538cd4d6e07`; artifact `12106079996` has SHA-256 `43882c08edeb09b21fb70b38b285596b8dcd151f284c5179c787513f115cae62`. Naming findings **9,551 → 9,523**, `VariableNotSnakeCase` **6,437 → 6,409**, framework errors **54,627 → 54,599**, but warnings **5,103 → 5,107**. Four new `Generic.Formatting.MultipleStatementAlignment.NotSameWarning` findings are at `QueryAstValidator.php` lines 482, 501, 541 and 643. A four-line assignment-spacing correction is the next `RB-0141` candidate; its outcome requires a fresh audit. Full-tree WPCS remains red.

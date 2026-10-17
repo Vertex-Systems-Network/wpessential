@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Warning regression corrected at exact head
+
+- Source `9c87fc8fec05879a01a9e4b89cc28a5499455f43` passed read-only naming audit run `39049801229`, artifact `12107032077`, SHA-256 `ef9fa8e6e599d157197031e2964cfdb2ae9e804e6f0c9262746a25878659ed10`. Framework warnings **5,107 → 5,103**, naming findings stable **9,523**, framework errors stable **54,599**. The four predicate assignment warnings from the previous batch are gone.
+- PR #1416 remains open under Issue #1417. On the exact `9c87fc8` head, PHP Quality Toolchain run `39049804633` failed while other checks were still queued/running at last read (15 pull-request workflow runs: 5 success, 1 failure, 9 incomplete). Full-tree WPCS quality enforcement is not green. No merge, deployment or release. Local PHP/Composer unavailable.
+
 # 2026-10-17 — Predicate naming reduction and four warning regressions
 
 - Source `e7a16d2b152cd96819649381d73c4538cd4d6e07` passed read-only naming audit run `39049530316`, artifact `12106079996`, SHA-256 `43882c08edeb09b21fb70b38b285596b8dcd151f284c5179c787513f115cae62`. Naming findings **9,551 → 9,523**, framework errors **54,627 → 54,599**, warnings **5,103 → 5,107**. Four new assignment alignment warnings at QueryAstValidator lines 482, 501, 541, 643 require correction. Full quality gate red.
