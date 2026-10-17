@@ -1,4 +1,18 @@
-## Fresh exact-head re-audit — YAML parse repair
+## Fresh exact-head naming audit — verified
+
+The repaired [GitHub Actions run 39031345857](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39031345857) finished successfully on source `5aa3b516a94474c0734a6f48cfb1ef53327f2806`. Artifact `12100651533` has SHA-256 `a4a9aaa3d691d7ceb8b099620b01852abb36fbe624246dec7ee871c78ed485b8` and contains the original PHPCS JSON, a naming-only JSON classification, and a summary. The source remained clean after the read-only scan.
+
+| Findings | Naming sniff | Disposition |
+|---:|---|---|
+| 6,992 | `VariableNotSnakeCase` | Classify method locals separately from constructor/API parameters. |
+| 2,055 | `UsedPropertyNotSnakeCase` | Preserve public and promoted property contracts. |
+| 908 | `MethodNameInvalid` | Preserve public/interface methods pending explicit migration. |
+| 127 | `PropertyNotSnakeCase` | Review visibility and reflection/serialization before any change. |
+| 24 | `InterpolatedVariableNotSnakeCase` | Review string semantics before changing. |
+
+These **10,106 naming findings** are a subset of WPCS; they are not a current whole-repository PHPCS total. `DashboardWidgetRenderSourceCompiler.php` has 238 naming findings. The three private loading/error/empty state compiler methods each contain 32 `VariableNotSnakeCase` findings on eight method-local symbols. A bounded next batch changes only those locals, preserving the `blueprintId`/`blueprintRevision` named argument labels, response keys, public properties and class filenames. The 96 findings are a candidate reduction; it remains unverified until a fresh source audit.
+
+## Earlier re-audit failure — YAML parse repair
 
 The previous retained naming report is from source head `21fa582724250c6d3fd40aa299447d872a661f39` (55,287 full-tree PHPCS errors / 5,104 warnings). Subsequent PR commits applied bounded local-only naming fixes in `AdminAssetManifest.php`, `RuntimeDiagnosticsSnapshot.php`, and `WpdbJobAttemptStore.php`, plus whitespace-only `AssetDescriptor.php`; therefore the old finding inventory is stale for selecting another edit. The latest integrated branch head before this diagnostic refresh is `78660165dcc8be6c9259ada5f060ee3c32367f91`, based on current main `6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30`.
 

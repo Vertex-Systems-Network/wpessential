@@ -7,12 +7,12 @@ observed_main_source: "Fresh exact-main audit 2026-10-17: main 6fd97dc2f8fc1c2a8
 active_issue: "#1417"
 active_pr: "#1416"
 active_branch: agent/local-phpunit-bootstrap-repair-v1
-current_milestone: "PR #1416 / Issue #1417 WPCS remediation; repair the naming audit workflow YAML to obtain exact source findings."
+current_milestone: "PR #1416 / Issue #1417 WPCS remediation; classify fresh naming findings and normalize three local-only state compiler methods."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Run the repaired read-only WPCS naming audit on the exact PR source, inspect its artifact and classify safe local-only findings; retain all full-tree quality gates."
-waiting_external: "RB-0130 exact-head CI on diagnostics source cec20f0a is in progress; RB-0131 naming-audit YAML repair must produce an actual job/artifact. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
-next_planned_slot: RB-0131
+next_safe_action: "Validate one bounded 96-finding local-variable candidate in DashboardWidgetRenderSourceCompiler loading/error/empty methods on the next PR head; retain public properties, named argument labels and all full-tree quality gates."
+waiting_external: "RB-0132 exact-head CI after the bounded compiler source batch; PR #1416 remains open and blocked by required quality outcomes. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
+next_planned_slot: RB-0132
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
