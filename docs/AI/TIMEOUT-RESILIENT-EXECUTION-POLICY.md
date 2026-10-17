@@ -46,6 +46,9 @@ The overall workspace/turn may end only when:
 - a genuine stop-the-line safety condition applies; or
 - the current execution/session/tool/token boundary is reached.
 
+- **Sole-lane CI wait is not a stop.** If the only remaining dependency-ready lane is the PR whose required CI is still running, the AI MUST keep that lane active instead of ending the workspace: wait with bounded backoff (about 2, 4, 8 then every 10 minutes; never tight polling) up to 12 observations, then merge the expected head when green or repair it when red. Pending required CI on the AI's own PR is a merge-decision transition, so these observations are within the status budget. "No safe authorized lane remains" is never true while an open AI-owned PR can still be observed, repaired or merged.
+- **Execution boundary means actual exhaustion.** "Execution/session/tool/token boundary" means the platform actually stopped the AI (context or credit exhausted, tool unavailable); it is never a voluntary stopping point after opening a PR or starting CI.
+
 Ordinary errors, failed tests, merge conflicts, stale state, recoverable tool failures, or routine implementation choices are not user-confirmation gates. Diagnose, repair, replan, or park the affected lane autonomously inside existing authority.
 
 ## Remote-operation and CI status budget

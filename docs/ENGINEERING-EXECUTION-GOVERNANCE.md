@@ -68,6 +68,9 @@ Default execution boundary:
 - revisit a waiting lane only after useful independent work, a meaningful external transition, or another natural reconciliation boundary;
 - before reporting completion/blocked/waiting, update compact durable AI state, README live progress when repository truth changed, and any changed queue/Runner Benchmark truth.
 
+- **Sole-lane CI wait is not a stop.** If the only remaining dependency-ready lane is the PR whose required CI is still running, the AI MUST keep that lane active instead of ending the workspace: wait with bounded backoff (about 2, 4, 8 then every 10 minutes; never tight polling) up to 12 observations, then merge the expected head when green or repair it when red. Pending required CI on the AI's own PR is a merge-decision transition, so these observations are within the status budget. "No safe authorized lane remains" is never true while an open AI-owned PR can still be observed, repaired or merged.
+- **Execution boundary means actual exhaustion.** "Execution/session/tool/token boundary" means the platform actually stopped the AI (context or credit exhausted, tool unavailable); it is never a voluntary stopping point after opening a PR or starting CI.
+
 A second status refresh in the same milestone is exceptional and must be justified by a material security, merge, incident/recovery, or provider state transition required for a safe decision.
 
 A message-delivery timeout never proves that a repository action failed and never authorizes repeating it. Verify repository evidence first.
