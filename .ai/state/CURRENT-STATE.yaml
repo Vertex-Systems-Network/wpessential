@@ -5,7 +5,7 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: db38d64f278767e8cc1d933b0258e1bf2d06566f
 observed_main_source: "Fresh exact-main audit 2026-10-17: independent #947 review merged by PR #1422 as db38d64f278767e8cc1d933b0258e1bf2d06566f."
 active_issue: "#1423"
-active_pr: "shared-truth closeout PR pending"
+active_pr: "#1424"
 active_branch: supervisor/p006-wave1a-review-closeout-20261017
 current_milestone: "Reconcile README, queue and compact state after #947 independent P-006 Wave 1A review."
 milestone_status: IN_PROGRESS

@@ -105,16 +105,6 @@
 - Terminal evidence only: `PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1`. No full Surface 10 runtime parity, native layout preference application, deployment or GA.
 - Issue #1333 records material README/state/queue/benchmark divergence after the merge. This narrow reconciliation does not introduce runtime source changes. Future safe source milestone must be freshly selected and scoped; #858/#1102/#947 remain parked.
 
-## 2026-10-08 — Continuous governance closed; RB-0097 next
-
-- Last verified main before this checkpoint PR: `cd4af50f70386f73cb2c89101de484c941b7d2b4`.
-- Issue #1328 / PR #1329 exact head `231311e2cbb2ece9f94e1a6d75201aa32d221650`: 12/12 PASS; squash merged to the main SHA above; #1328 closed.
-- PR #1330 earlier merged autonomous continuity and README progress rules; PR #1329 reconciled all affected policies and coordination queue.
-- Issue #1327 / RB-0097 Dashboard Multisite preset-policy foundation: next dependency-ready source task, subject to fresh main/issues/PR/claim reconciliation and its strict 18-file contract. The AI chooses and progresses it without routine owner prompting.
-- #858 remains repository-admin only; #1102 needs separate privileged P-006 authorization; #947 is independent Worker-only. Park these lanes rather than idling authorized work.
-- For every later commit, re-resolve actual main; `observed_main_sha` is a historical resume anchor, not a current-head claim. Refresh this file and README's concise progress view after significant integrations.
-- Preserve exact-head checks, review, file allowlists, production/credential/privileged boundaries. Continuous execution is limited to the actual running workspace/session; it cannot outlive that runtime without an independent orchestrator.
-
 ## Recent certified milestones
 
 | Track | Terminal evidence | Status |
