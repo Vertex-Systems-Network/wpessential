@@ -1,3 +1,7 @@
+## Exact source naming improvement — 29 CSV export-scope findings removed; alignment correction pending
+
+The [read-only audit run 39066717128](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39066717128) succeeded on `c5a9ff35580df1fcfe6c7e2db01fd9d71092a427`; artifact `12112993399` has SHA-256 `5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf`. Naming findings **9,466 → 9,437**, `VariableNotSnakeCase` **6,352 → 6,323**, framework errors **54,542 → 54,513**, warnings **5,103 → 5,104**. The additional `Generic.Formatting.MultipleStatementAlignment.NotSameWarning` is at `AdminColumnsCsvExportService.php:95`. A blank line before that assignment is the next bounded correction; fresh audit required before claiming warning stability. Full-tree quality gates remain red/pending.
+
 ## Exact source naming improvement — 33 CSV selection findings removed
 
 The [read-only audit run 39051322816](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39051322816) succeeded on `f5ab9368a52c6c2198d28757fc3ec28959307908`; artifact `12108046642` has SHA-256 `9d5c0a070f4a6edbf73454524468ec7a7a51544d5de88d51e7fba59be17194d8`. Naming findings **9,499 → 9,466**, `VariableNotSnakeCase` **6,385 → 6,352**, framework PHPCS errors **54,575 → 54,542**, warnings stable **5,103**. All 33 reductions were method-local names in `AdminColumnsCsvExportService::exactSelectedRows()` and `selectColumns()`. The full-tree quality gate remains separate and red.

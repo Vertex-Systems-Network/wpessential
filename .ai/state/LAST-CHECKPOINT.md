@@ -1,5 +1,9 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 29 CSV export-scope findings removed; warning correction pending
+
+- Source `c5a9ff35580df1fcfe6c7e2db01fd9d71092a427` passed read-only audit run `39066717128`, artifact `12112993399`, SHA-256 `5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf`. Naming findings **9,466 → 9,437**, framework errors **54,542 → 54,513**, warnings **5,103 → 5,104**. New alignment warning at CSV export service line 95; blank-line correction awaits fresh exact-head audit. Full quality gates remain red/pending, PR open/unmerged.
+
 # 2026-10-17 — Exact 33 CSV selection findings removed
 
 - Source `f5ab9368a52c6c2198d28757fc3ec28959307908` passed read-only naming audit run `39051322816`, artifact `12108046642`, SHA-256 `9d5c0a070f4a6edbf73454524468ec7a7a51544d5de88d51e7fba59be17194d8`. Naming findings **9,499 → 9,466**, framework errors **54,575 → 54,542**, warnings stable **5,103**. Full-tree quality enforcement remains red/pending; PR open/unmerged.

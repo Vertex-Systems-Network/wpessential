@@ -92,6 +92,7 @@ final readonly class AdminColumnsCsvExportService
 
 		$enabled_column_keys = $this->enabledViewColumnKeys( $view );
 		$scope = $scope_policy->normalize( $scopeRequest, $enabled_column_keys, self::SUPPORTED_SCOPES );
+
 		$effective_controls = $this->effectiveControls( $controls, $scope );
 
 		return match ($scope['scope']) {

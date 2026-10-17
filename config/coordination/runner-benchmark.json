@@ -4380,7 +4380,7 @@
       "category": "WPCS_ADMIN_COLUMNS_CSV_EXPORT_SCOPE_LOCALS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and read-only WPCS Naming ABI Audit for CSV export-scope locals",
-      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed PR source after f5ab9368a52c6c2198d28757fc3ec28959307908; PHP 8.2 GitHub runner",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; audited source c5a9ff35580df1fcfe6c7e2db01fd9d71092a427; PHP 8.2 GitHub runner",
       "dependencies": [
         "RB-0143 read-only audit PASS on f5ab9368; full merge matrix pending/red",
         "PR #1416 remains open under Issue #1417"
@@ -4395,9 +4395,10 @@
       "evidence": [
         "Prior artifact reports 29 VariableNotSnakeCase findings across seven locals in exportScoped, exportCurrentPage, exportSelectedRows and exportAllMatchingScope.",
         "Public signatures and private parameter names remain unchanged, as do CSV column keys, row membership and ordering.",
-        "Existing AdminColumnsCsvExportServiceTest covers scoped export modes; local PHP/Composer unavailable."
+        "Existing AdminColumnsCsvExportServiceTest covers scoped export modes; local PHP/Composer unavailable.",
+        "Read-only audit 39066717128 PASS; artifact 12112993399 sha256:5b6bd14275f032be71b97eadcfb19b1f873c89db279c6acf990bbac4a6a898bf confirms naming 9,466 → 9,437, framework errors 54,542 → 54,513, warnings 5,103 → 5,104 (line 95 alignment). Blank-line correction pending fresh audit."
       ],
-      "note": "Measure naming/errors/warnings on next artifact; preserve full merge gates."
+      "note": "29 naming findings removed; alignment-warning correction requires fresh audit and full merge gates remain pending/red."
     }
   ],
   "last_reconciled_issue": "#1417",
