@@ -3,7 +3,7 @@
 # 2026-10-18 — PHPStan CSV encoder input-contract candidate
 
 - Exact `2bed6b36a80fe7f342fb7be363134789039ef6a5` PHP Quality run `39072891772` uploaded diagnostic artifact `12116380050`, SHA-256 `c42ab098e1ab1dc859c318efd4ef53c85b4b486ff8746b6a1ff13d1c924d2e0a`. PHPStan reports 446 errors; PHPCS reports broad legacy violations.
-- `RB-0147` widens only the PHPDoc input types of AdminColumnsCsvExportEncoder::encode() and normalizeColumns() to reflect untrusted values checked at runtime. Eight preexisting PHPStan errors in that file concern always-narrowed validation guards. Exact-head PHPStan and WPCS audit required; public PHP signatures, guards, CSV keys and output stay unchanged.
+- `RB-0147` widens only the PHPDoc input types of AdminColumnsCsvExportEncoder::encode() and normalizeColumns() to reflect untrusted values checked at runtime. Eight preexisting PHPStan errors in that file concern always-narrowed validation guards. Exact-head PHP Quality run `39073152084`, diagnostic artifact `12115204198` SHA-256 `0d35bad1bd47c1fcafbd6ecd8329bcf285314cdb7d3b355cf87f1a02f974e485`, reduced PHPStan errors **446 → 438** and encoder errors **8 → 0**. Read-only WPCS audit `39073148859`, artifact `12115763037` SHA-256 `90d7a7c0d23b0083431364935dc74a1cb40f1bbdc17af522ac15a46c50dc7f29`, reports framework errors **54,493 → 54,490**, warnings **5,102**, naming **9,417**. Full gate red; public PHP signatures, guards, CSV keys and output unchanged.
 
 # 2026-10-18 — Exact PHP quality failure attribution
 
