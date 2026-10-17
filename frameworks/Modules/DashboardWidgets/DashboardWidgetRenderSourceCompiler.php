@@ -601,7 +601,7 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			throw new InvalidArgumentException('Dashboard Widget Query source_ref must be a stable Data Source identifier.');
 		}
 
-		$filters = $this->filters($raw['filters'] ?? []);
+		$filters  = $this->filters($raw['filters'] ?? []);
 		$order_by = $this->orderBy($raw['order_by'] ?? []);
 
 		$page_size = $raw['page_size'] ?? 20;
@@ -653,7 +653,7 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			}
 
 			$field_ref = $this->fieldReference($filter['field_ref'] ?? null, sprintf('Dashboard Widget Query filter %d field_ref', $index));
-			$operator = $filter['operator'] ?? null;
+			$operator  = $filter['operator'] ?? null;
 			if ( !is_string( $operator ) || !in_array( $operator, self::FILTER_OPERATORS, true ) ) {
 				throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d operator is unsupported.', $index));
 			}

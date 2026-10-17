@@ -7,12 +7,12 @@ observed_main_source: "Fresh exact-main audit 2026-10-17: main 6fd97dc2f8fc1c2a8
 active_issue: "#1417"
 active_pr: "#1416"
 active_branch: agent/local-phpunit-bootstrap-repair-v1
-current_milestone: "PR #1416 / Issue #1417 WPCS remediation; finish bounded local-only naming cleanup in DashboardWidgetRenderSourceCompiler."
+current_milestone: "PR #1416 / Issue #1417 WPCS remediation; bounded local-only naming cleanup in DashboardWidgetsModule."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Validate the remaining 104 method-local naming candidates in DashboardWidgetRenderSourceCompiler on the next PR head, retaining four constructor/API parameters and all required full-tree checks."
-waiting_external: "RB-0132 exact-head matrix on 20af6758 is still queued/running; its read-only audit passed with artifact 12100573107. RB-0133 follows for the next bounded source batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
-next_planned_slot: RB-0133
+next_safe_action: "Publish and validate the bounded DashboardWidgetsModule register() local-name candidate and compiler alignment correction on the next PR head; retain public/API symbols and all required full-tree checks."
+waiting_external: "RB-0133 read-only audit on ad53f5e passed with artifact 12100593982: 104 fewer naming findings, 104 fewer framework errors, one more alignment warning. RB-0134 must verify the next bounded source candidate and warning correction. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
+next_planned_slot: RB-0134
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

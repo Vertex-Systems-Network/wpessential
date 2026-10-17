@@ -141,10 +141,10 @@ final class DashboardWidgetsModule implements ModuleInterface
 		$definitions = $services->get('platform.definitions');
 		$abilities = $services->get('platform.abilities');
 		$bridge = $services->get('platform.abilities.wordpress');
-		$capabilityChecker = $services->get( WordPressAuthorizationServices::CAPABILITY_CHECKER );
-		$dataSources = $services->get('platform.data-sources');
-		$queryReadConsumer = $services->get( QueryModule::SERVICE_READ_CONSUMER );
-		$dynamicValues = $services->get( RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES );
+		$capability_checker = $services->get( WordPressAuthorizationServices::CAPABILITY_CHECKER );
+		$data_sources = $services->get('platform.data-sources');
+		$query_read_consumer = $services->get( QueryModule::SERVICE_READ_CONSUMER );
+		$dynamic_values = $services->get( RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES );
 
 		foreach ( [
 			'platform.abilities.contexts',
@@ -154,29 +154,29 @@ final class DashboardWidgetsModule implements ModuleInterface
 			AssetServices::REGISTRY,
 			AssetServices::BUILD_ENTRIES,
 			AuditServices::LOGGER,
-		] as $serviceId ) {
-			if ( !$services->has( $serviceId ) ) {
+		] as $service_id ) {
+			if ( !$services->has( $service_id ) ) {
 				throw new LogicException(sprintf(
 					'Dashboard Widgets form-action preflight requires canonical shared service "%s".',
-					$serviceId,
+					$service_id,
 				));
 			}
 		}
 		$contexts = $services->get('platform.abilities.contexts');
-		$ajaxRoutes = $services->get('platform.ajax.routes');
-		$ajaxDispatcher = $services->get('platform.ajax.dispatcher');
-		$ajaxGateway = $services->get('platform.ajax.gateway');
-		$assetRegistry = $services->get( AssetServices::REGISTRY );
-		$assetBuildEntries = $services->get( AssetServices::BUILD_ENTRIES );
+		$ajax_routes = $services->get('platform.ajax.routes');
+		$ajax_dispatcher = $services->get('platform.ajax.dispatcher');
+		$ajax_gateway = $services->get('platform.ajax.gateway');
+		$asset_registry = $services->get( AssetServices::REGISTRY );
+		$asset_build_entries = $services->get( AssetServices::BUILD_ENTRIES );
 		$audit = $services->get( AuditServices::LOGGER );
 
 		if (
 			!$contexts instanceof WordPressExecutionContextFactory
-			|| !$ajaxRoutes instanceof AjaxRouteRegistry
-			|| !$ajaxDispatcher instanceof AjaxDispatcher
-			|| !$ajaxGateway instanceof WordPressAjaxGateway
-			|| !$assetRegistry instanceof AssetRegistry
-			|| !$assetBuildEntries instanceof TrustedAssetBuildEntryRegistry
+			|| !$ajax_routes instanceof AjaxRouteRegistry
+			|| !$ajax_dispatcher instanceof AjaxDispatcher
+			|| !$ajax_gateway instanceof WordPressAjaxGateway
+			|| !$asset_registry instanceof AssetRegistry
+			|| !$asset_build_entries instanceof TrustedAssetBuildEntryRegistry
 			|| !$audit instanceof AuditLoggerInterface
 		) {
 			throw new LogicException(
@@ -184,13 +184,13 @@ final class DashboardWidgetsModule implements ModuleInterface
 			);
 		}
 
-		$cronRead = null;
+		$cron_read = null;
 		if ( $services->has( CronModule::SERVICE_READ ) ) {
-			$candidateCronRead = $services->get( CronModule::SERVICE_READ );
-			if ( !$candidateCronRead instanceof CronReadService ) {
+			$candidate_cron_read = $services->get( CronModule::SERVICE_READ );
+			if ( !$candidate_cron_read instanceof CronReadService ) {
 				throw new LogicException('Dashboard Widgets optional Cron integration requires the canonical Cron read service.');
 			}
-			$cronRead = $candidateCronRead;
+			$cron_read = $candidate_cron_read;
 		}
 
 		if (
@@ -211,7 +211,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 		if ( !$bridge instanceof WordPressAbilityBridge ) {
 			throw new LogicException('Dashboard Widgets requires the shared WordPress Ability bridge.');
 		}
-		if ( !$capabilityChecker instanceof CapabilityCheckerInterface ) {
+		if ( !$capability_checker instanceof CapabilityCheckerInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical WordPress capability checker.');
 		}
 		if ( !$blueprints instanceof ComponentBlueprintRegistry ) {
@@ -220,17 +220,17 @@ final class DashboardWidgetsModule implements ModuleInterface
 		if ( !$dispatcher instanceof BlueprintRendererDispatcher ) {
 			throw new LogicException('Dashboard Widgets requires the canonical Blueprint Renderer dispatcher.');
 		}
-		if ( !$dataSources instanceof DataSourceRegistryInterface ) {
+		if ( !$data_sources instanceof DataSourceRegistryInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical Data Source Registry.');
 		}
-		if ( !$queryReadConsumer instanceof QueryReadConsumerInterface ) {
+		if ( !$query_read_consumer instanceof QueryReadConsumerInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical Query read-consumer service.');
 		}
-		if ( !$dynamicValues instanceof DynamicValueResolverInterface ) {
+		if ( !$dynamic_values instanceof DynamicValueResolverInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical shared Dynamic Value resolver.');
 		}
 
-		$assetRegistry->register(new AssetDescriptor(
+		$asset_registry->register(new AssetDescriptor(
 			handle: 'wpe-dashboard-form-action',
 			ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
 			scope: AssetScope::Admin,
@@ -240,69 +240,69 @@ final class DashboardWidgetsModule implements ModuleInterface
 				'/wp-admin/network/index.php',
 			],
 		));
-		$assetBuildEntries->register(new TrustedAssetBuildEntry(
+		$asset_build_entries->register(new TrustedAssetBuildEntry(
 			assetHandle: 'wpe-dashboard-form-action',
 			scriptEntry: 'main',
 		));
 
 		$read = new DashboardWidgetsReadService( $definitions );
-		$contentClassCompiler = new DashboardWidgetContentClassCompiler();
-		$componentCatalog = new DashboardWidgetComponentBlueprintCatalog();
-		$renderSourceCompiler = new DashboardWidgetRenderSourceCompiler(
+		$content_class_compiler = new DashboardWidgetContentClassCompiler();
+		$component_catalog = new DashboardWidgetComponentBlueprintCatalog();
+		$render_source_compiler = new DashboardWidgetRenderSourceCompiler(
 			$blueprints,
-			$contentClassCompiler,
-			$componentCatalog,
+			$content_class_compiler,
+			$component_catalog,
 		);
-		$queryBindingExecutor = new DashboardWidgetQueryBindingExecutor( $dataSources, $queryReadConsumer );
-		$dynamicBindingExecutor = new DashboardWidgetDynamicBindingExecutor( $dynamicValues );
-		$trustedComponentRenderer = new DashboardWidgetTrustedComponentRenderer( $componentCatalog );
-		$componentRegistrar = new DashboardWidgetComponentRegistrar(
+		$query_binding_executor = new DashboardWidgetQueryBindingExecutor( $data_sources, $query_read_consumer );
+		$dynamic_binding_executor = new DashboardWidgetDynamicBindingExecutor( $dynamic_values );
+		$trusted_component_renderer = new DashboardWidgetTrustedComponentRenderer( $component_catalog );
+		$component_registrar = new DashboardWidgetComponentRegistrar(
 			$blueprints,
 			$dispatcher,
-			$componentCatalog,
-			$trustedComponentRenderer,
+			$component_catalog,
+			$trusted_component_renderer,
 		);
-		$visibilityCompiler = new DashboardWidgetVisibilityCompiler();
-		$roleMemberships = new WordPressDashboardWidgetRoleMembershipProvider();
-		$visibilityEvaluator = new DashboardWidgetVisibilityEvaluator(
-			$capabilityChecker,
-			$roleMemberships,
+		$visibility_compiler = new DashboardWidgetVisibilityCompiler();
+		$role_memberships = new WordPressDashboardWidgetRoleMembershipProvider();
+		$visibility_evaluator = new DashboardWidgetVisibilityEvaluator(
+			$capability_checker,
+			$role_memberships,
 		);
-		$presetCompiler = new DashboardWidgetPresetCompiler( $definitions );
-		$presetResolver = new DashboardWidgetPresetResolver(
+		$preset_compiler = new DashboardWidgetPresetCompiler( $definitions );
+		$preset_resolver = new DashboardWidgetPresetResolver(
 			$definitions,
-			$presetCompiler,
-			$roleMemberships,
+			$preset_compiler,
+			$role_memberships,
 		);
-		$presetRead = new DashboardWidgetPresetReadService(
+		$preset_read = new DashboardWidgetPresetReadService(
 			$definitions,
-			$presetCompiler,
-			$presetResolver,
+			$preset_compiler,
+			$preset_resolver,
 		);
-		$presetPortability = new DashboardWidgetPresetPortabilityReadService( $presetRead );
-		$presetPortabilityFreshness = new DashboardWidgetPresetPortabilityFreshnessService( $presetPortability );
-		$presetImportPreflight = new DashboardWidgetPresetImportPreflightService( $definitions, $presetCompiler );
-		$presetMappingPreview = new DashboardWidgetPresetPortabilityMappingPreviewService( $presetImportPreflight );
-		$multisitePolicyCompiler = new DashboardWidgetMultisitePolicyCompiler( $definitions, $presetCompiler );
-		$multisitePolicyResolver = new DashboardWidgetMultisitePolicyResolver(
+		$preset_portability = new DashboardWidgetPresetPortabilityReadService( $preset_read );
+		$preset_portability_freshness = new DashboardWidgetPresetPortabilityFreshnessService( $preset_portability );
+		$preset_import_preflight = new DashboardWidgetPresetImportPreflightService( $definitions, $preset_compiler );
+		$preset_mapping_preview = new DashboardWidgetPresetPortabilityMappingPreviewService( $preset_import_preflight );
+		$multisite_policy_compiler = new DashboardWidgetMultisitePolicyCompiler( $definitions, $preset_compiler );
+		$multisite_policy_resolver = new DashboardWidgetMultisitePolicyResolver(
 			$definitions,
-			$multisitePolicyCompiler,
-			$roleMemberships,
-			$capabilityChecker,
+			$multisite_policy_compiler,
+			$role_memberships,
+			$capability_checker,
 		);
-		$multisitePolicyRead = new DashboardWidgetMultisitePolicyReadService(
+		$multisite_policy_read = new DashboardWidgetMultisitePolicyReadService(
 			$definitions,
-			$multisitePolicyCompiler,
-			$multisitePolicyResolver,
+			$multisite_policy_compiler,
+			$multisite_policy_resolver,
 		);
-		$subsiteOverrideCompiler = new DashboardWidgetSubsitePresetOverrideCompiler( $definitions, $presetCompiler );
-		$effectiveMultisitePreset = new DashboardWidgetMultisiteEffectivePresetResolver(
-			$multisitePolicyResolver,
+		$subsite_override_compiler = new DashboardWidgetSubsitePresetOverrideCompiler( $definitions, $preset_compiler );
+		$effective_multisite_preset = new DashboardWidgetMultisiteEffectivePresetResolver(
+			$multisite_policy_resolver,
 			$definitions,
-			$subsiteOverrideCompiler,
+			$subsite_override_compiler,
 		);
-		$actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator( $abilities );
-		$abilityResolver = static function ( string $name ) use ( $abilities ): ?array {
+		$action_authorization_evaluator = new DashboardWidgetActionAuthorizationEvaluator( $abilities );
+		$ability_resolver = static function ( string $name ) use ( $abilities ): ?array {
 			$descriptor = $abilities->descriptor( $name );
 			if ( !$descriptor instanceof AbilityDescriptor ) {
 				return null;
@@ -316,186 +316,186 @@ final class DashboardWidgetsModule implements ModuleInterface
 				'input_schema' => $descriptor->inputSchema,
 			];
 		};
-		$registrationCompiler = new DashboardWidgetRegistrationCompiler(
-			$visibilityCompiler,
-			$contentClassCompiler,
-			$renderSourceCompiler,
-			$cronRead !== null
-				? static fn ( string $id ): ?array => $cronRead->get( $id )
+		$registration_compiler = new DashboardWidgetRegistrationCompiler(
+			$visibility_compiler,
+			$content_class_compiler,
+			$render_source_compiler,
+			$cron_read !== null
+				? static fn ( string $id ): ?array => $cron_read->get( $id )
 				: null,
-			$abilityResolver,
+			$ability_resolver,
 		);
-		$runtimeClock = $this->runtimeClock ?? new DashboardWidgetRuntimeClock();
-		$actionInputBinder = new DashboardWidgetActionInputBinder(
+		$runtime_clock = $this->runtimeClock ?? new DashboardWidgetRuntimeClock();
+		$action_input_binder = new DashboardWidgetActionInputBinder(
 			new AbilityInputValidator(),
-			$dynamicValues,
-			$abilityResolver,
+			$dynamic_values,
+			$ability_resolver,
 		);
 		$diagnostics = new DashboardWidgetDiagnosticsAbilityHandler(
 			$definitions,
-			$contentClassCompiler,
-			$registrationCompiler,
-			$runtimeClock,
+			$content_class_compiler,
+			$registration_compiler,
+			$runtime_clock,
 		);
-		$personalPreferences = new DashboardWidgetPersonalPreferenceStore();
-		$runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
+		$personal_preferences = new DashboardWidgetPersonalPreferenceStore();
+		$runtime_render_executor = new DashboardWidgetRuntimeRenderExecutor(
 			$definitions,
-			$registrationCompiler,
-			$visibilityCompiler,
-			$visibilityEvaluator,
-			$renderSourceCompiler,
+			$registration_compiler,
+			$visibility_compiler,
+			$visibility_evaluator,
+			$render_source_compiler,
 			$dispatcher,
-			$queryBindingExecutor,
-			$dynamicBindingExecutor,
-			$runtimeClock,
+			$query_binding_executor,
+			$dynamic_binding_executor,
+			$runtime_clock,
 		);
-		$manualRefreshHandler = new DashboardWidgetManualRefreshAjaxHandler(
+		$manual_refresh_handler = new DashboardWidgetManualRefreshAjaxHandler(
 			$definitions,
-			$registrationCompiler,
-			$runtimeRenderExecutor,
+			$registration_compiler,
+			$runtime_render_executor,
 			$contexts,
 		);
-		$ajaxRoutes->register(new AjaxRoute(
+		$ajax_routes->register(new AjaxRoute(
 			type: DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE,
-			handler: $manualRefreshHandler,
+			handler: $manual_refresh_handler,
 			operation: NonceOperation::Apply,
 			capability: null,
 			allowGuests: false,
 			requiresNonce: true,
 		));
-		$manualRefreshPresenter = new DashboardWidgetManualRefreshPresenter(
-			$ajaxGateway->action(),
-			static fn (): string => $ajaxDispatcher->createNonce(
+		$manual_refresh_presenter = new DashboardWidgetManualRefreshPresenter(
+			$ajax_gateway->action(),
+			static fn (): string => $ajax_dispatcher->createNonce(
 				DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE,
 			),
 		);
 
-		$preflightHandler = new DashboardWidgetFormActionPreflightAjaxHandler(
+		$preflight_handler = new DashboardWidgetFormActionPreflightAjaxHandler(
 			$definitions,
-			$contentClassCompiler,
-			$registrationCompiler,
-			$actionInputBinder,
-			$actionAuthorizationEvaluator,
+			$content_class_compiler,
+			$registration_compiler,
+			$action_input_binder,
+			$action_authorization_evaluator,
 			$contexts,
 			$audit,
-			$runtimeClock,
+			$runtime_clock,
 		);
-		$ajaxRoutes->register(new AjaxRoute(
+		$ajax_routes->register(new AjaxRoute(
 			type: DashboardWidgetFormActionPresenter::ROUTE_TYPE,
-			handler: $preflightHandler,
+			handler: $preflight_handler,
 			operation: NonceOperation::Apply,
 			capability: null,
 			allowGuests: false,
 			requiresNonce: true,
 		));
-		$executionResultAdapter = new DashboardWidgetFormActionExecutionResultAdapter();
-		$executionHandler = new DashboardWidgetFormActionExecutionAjaxHandler(
+		$execution_result_adapter = new DashboardWidgetFormActionExecutionResultAdapter();
+		$execution_handler = new DashboardWidgetFormActionExecutionAjaxHandler(
 			$definitions,
-			$contentClassCompiler,
-			$registrationCompiler,
-			$actionInputBinder,
-			$actionAuthorizationEvaluator,
+			$content_class_compiler,
+			$registration_compiler,
+			$action_input_binder,
+			$action_authorization_evaluator,
 			$contexts,
 			$audit,
 			$abilities,
-			$executionResultAdapter,
-			$runtimeClock,
+			$execution_result_adapter,
+			$runtime_clock,
 		);
-		$ajaxRoutes->register(new AjaxRoute(
+		$ajax_routes->register(new AjaxRoute(
 			type: DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
-			handler: $executionHandler,
+			handler: $execution_handler,
 			operation: NonceOperation::Apply,
 			capability: null,
 			allowGuests: false,
 			requiresNonce: true,
 		));
-		$formActionPresenter = new DashboardWidgetFormActionPresenter(
-			$ajaxGateway->action(),
-			static fn (): string => $ajaxDispatcher->createNonce(
+		$form_action_presenter = new DashboardWidgetFormActionPresenter(
+			$ajax_gateway->action(),
+			static fn (): string => $ajax_dispatcher->createNonce(
 				DashboardWidgetFormActionPresenter::ROUTE_TYPE,
 			),
-			static fn (): string => $ajaxDispatcher->createNonce(
+			static fn (): string => $ajax_dispatcher->createNonce(
 				DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
 			),
 		);
-		$dashboardEnvironment = $this->dashboardEnvironment
+		$dashboard_environment = $this->dashboardEnvironment
 			?? new NativeWordPressDashboardWidgetEnvironment();
-		$wordpressAdapter = new DashboardWidgetWordPressAdapter(
+		$wordpress_adapter = new DashboardWidgetWordPressAdapter(
 			$definitions,
-			$registrationCompiler,
-			$runtimeRenderExecutor,
-			$dashboardEnvironment,
-			$contentClassCompiler,
-			$formActionPresenter,
-			$personalPreferences,
-			$runtimeClock,
-			$manualRefreshPresenter,
+			$registration_compiler,
+			$runtime_render_executor,
+			$dashboard_environment,
+			$content_class_compiler,
+			$form_action_presenter,
+			$personal_preferences,
+			$runtime_clock,
+			$manual_refresh_presenter,
 		);
 
-		$componentRegistrar->register();
+		$component_registrar->register();
 
 		$services->set( self::SERVICE_READ, $read );
 		$services->set( self::SERVICE_DIAGNOSTICS, $diagnostics );
-		$services->set( self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences );
-		$services->set( self::SERVICE_PRESET_COMPILER, $presetCompiler );
-		$services->set( self::SERVICE_PRESET_RESOLVER, $presetResolver );
-		$services->set( self::SERVICE_PRESET_READ, $presetRead );
-		$services->set( self::SERVICE_PRESET_PORTABILITY, $presetPortability );
-		$services->set( self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $presetPortabilityFreshness );
-		$services->set( self::SERVICE_PRESET_IMPORT_PREFLIGHT, $presetImportPreflight );
+		$services->set( self::SERVICE_PERSONAL_PREFERENCES, $personal_preferences );
+		$services->set( self::SERVICE_PRESET_COMPILER, $preset_compiler );
+		$services->set( self::SERVICE_PRESET_RESOLVER, $preset_resolver );
+		$services->set( self::SERVICE_PRESET_READ, $preset_read );
+		$services->set( self::SERVICE_PRESET_PORTABILITY, $preset_portability );
+		$services->set( self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $preset_portability_freshness );
+		$services->set( self::SERVICE_PRESET_IMPORT_PREFLIGHT, $preset_import_preflight );
 		if ( $definitions instanceof DefinitionCreateOnlyRepositoryInterface ) {
-			$draftImporter = new DashboardWidgetPresetDraftImportService(
+			$draft_importer = new DashboardWidgetPresetDraftImportService(
 				$definitions,
-				$presetImportPreflight,
-				$capabilityChecker,
+				$preset_import_preflight,
+				$capability_checker,
 			);
-			$services->set( self::SERVICE_PRESET_DRAFT_IMPORT, $draftImporter );
+			$services->set( self::SERVICE_PRESET_DRAFT_IMPORT, $draft_importer );
 			// Internal-only Draft eligibility assessment. Never grant publish
 			// permissions or register an Ability/UI/REST/AJAX route.
 			$services->set(
 				self::SERVICE_PRESET_DRAFT_PUBLISH_REVIEW,
 				new DashboardWidgetPresetDraftPublishReviewService(
 					$definitions,
-					$presetCompiler,
-					$draftImporter,
+					$preset_compiler,
+					$draft_importer,
 				),
 			);
 			// Service-only. No REST/UI/CLI/AI/WordPress Ability registration.
 			$services->set(
 				self::SERVICE_PRESET_MAPPED_DRAFT_IMPORT,
 				new DashboardWidgetPresetMappedDraftImportService(
-					$presetMappingPreview,
-					$draftImporter,
+					$preset_mapping_preview,
+					$draft_importer,
 				),
 			);
 		}
-		$services->set( self::SERVICE_PRESET_MAPPING_PREVIEW, $presetMappingPreview );
-		$services->set( self::SERVICE_MULTISITE_POLICY_COMPILER, $multisitePolicyCompiler );
-		$services->set( self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisitePolicyResolver );
-		$services->set( self::SERVICE_MULTISITE_POLICY_READ, $multisitePolicyRead );
-		$services->set( self::SERVICE_SUBSITE_PRESET_OVERRIDE_COMPILER, $subsiteOverrideCompiler );
-		$services->set( self::SERVICE_EFFECTIVE_MULTISITE_PRESET, $effectiveMultisitePreset );
-		$services->set( self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler );
-		$services->set( self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler );
-		$services->set( self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor );
-		$services->set( self::SERVICE_DYNAMIC_BINDING_EXECUTOR, $dynamicBindingExecutor );
-		$services->set( self::SERVICE_COMPONENT_CATALOG, $componentCatalog );
-		$services->set( self::SERVICE_TRUSTED_COMPONENT_RENDERER, $trustedComponentRenderer );
-		$services->set( self::SERVICE_COMPONENT_REGISTRAR, $componentRegistrar );
-		$services->set( self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler );
-		$services->set( self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler );
-		$services->set( self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator );
-		$services->set( self::SERVICE_ACTION_AUTHORIZATION_EVALUATOR, $actionAuthorizationEvaluator );
-		$services->set( self::SERVICE_ACTION_INPUT_BINDER, $actionInputBinder );
-		$services->set( self::SERVICE_FORM_ACTION_PRESENTER, $formActionPresenter );
-		$services->set( self::SERVICE_FORM_ACTION_PREFLIGHT, $preflightHandler );
-		$services->set( self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $executionResultAdapter );
-		$services->set( self::SERVICE_FORM_ACTION_EXECUTION, $executionHandler );
-		$services->set( self::SERVICE_MANUAL_REFRESH_PRESENTER, $manualRefreshPresenter );
-		$services->set( self::SERVICE_MANUAL_REFRESH_HANDLER, $manualRefreshHandler );
-		$services->set( self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor );
-		$services->set( self::SERVICE_RUNTIME_CLOCK, $runtimeClock );
-		$services->set( self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter );
+		$services->set( self::SERVICE_PRESET_MAPPING_PREVIEW, $preset_mapping_preview );
+		$services->set( self::SERVICE_MULTISITE_POLICY_COMPILER, $multisite_policy_compiler );
+		$services->set( self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisite_policy_resolver );
+		$services->set( self::SERVICE_MULTISITE_POLICY_READ, $multisite_policy_read );
+		$services->set( self::SERVICE_SUBSITE_PRESET_OVERRIDE_COMPILER, $subsite_override_compiler );
+		$services->set( self::SERVICE_EFFECTIVE_MULTISITE_PRESET, $effective_multisite_preset );
+		$services->set( self::SERVICE_CONTENT_CLASS_COMPILER, $content_class_compiler );
+		$services->set( self::SERVICE_RENDER_SOURCE_COMPILER, $render_source_compiler );
+		$services->set( self::SERVICE_QUERY_BINDING_EXECUTOR, $query_binding_executor );
+		$services->set( self::SERVICE_DYNAMIC_BINDING_EXECUTOR, $dynamic_binding_executor );
+		$services->set( self::SERVICE_COMPONENT_CATALOG, $component_catalog );
+		$services->set( self::SERVICE_TRUSTED_COMPONENT_RENDERER, $trusted_component_renderer );
+		$services->set( self::SERVICE_COMPONENT_REGISTRAR, $component_registrar );
+		$services->set( self::SERVICE_VISIBILITY_COMPILER, $visibility_compiler );
+		$services->set( self::SERVICE_REGISTRATION_COMPILER, $registration_compiler );
+		$services->set( self::SERVICE_VISIBILITY_EVALUATOR, $visibility_evaluator );
+		$services->set( self::SERVICE_ACTION_AUTHORIZATION_EVALUATOR, $action_authorization_evaluator );
+		$services->set( self::SERVICE_ACTION_INPUT_BINDER, $action_input_binder );
+		$services->set( self::SERVICE_FORM_ACTION_PRESENTER, $form_action_presenter );
+		$services->set( self::SERVICE_FORM_ACTION_PREFLIGHT, $preflight_handler );
+		$services->set( self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $execution_result_adapter );
+		$services->set( self::SERVICE_FORM_ACTION_EXECUTION, $execution_handler );
+		$services->set( self::SERVICE_MANUAL_REFRESH_PRESENTER, $manual_refresh_presenter );
+		$services->set( self::SERVICE_MANUAL_REFRESH_HANDLER, $manual_refresh_handler );
+		$services->set( self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtime_render_executor );
+		$services->set( self::SERVICE_RUNTIME_CLOCK, $runtime_clock );
+		$services->set( self::SERVICE_WORDPRESS_ADAPTER, $wordpress_adapter );
 
 		$channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
 		$this->registerAbility(
@@ -555,7 +555,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				outputSchema: ['type' => ['object', 'null']],
 			),
 			new DashboardWidgetPresetReadAbilityHandler(
-				$presetRead,
+				$preset_read,
 				DashboardWidgetPresetReadAbilityHandler::GET,
 			),
 			'Read Dashboard Widget preset',
@@ -580,7 +580,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => ['object', 'null']],
 			),
-			new DashboardWidgetPresetPortabilityAbilityHandler( $presetPortability ),
+			new DashboardWidgetPresetPortabilityAbilityHandler( $preset_portability ),
 			'Read Dashboard preset portability snapshot',
 			'Exports only validated Published Dashboard preset fields with a non-authenticating SHA-256 fingerprint.',
 		);
@@ -604,7 +604,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetPresetPortabilityFreshnessAbilityHandler( $presetPortabilityFreshness ),
+			new DashboardWidgetPresetPortabilityFreshnessAbilityHandler( $preset_portability_freshness ),
 			'Read Dashboard preset fingerprint freshness',
 			'Compares a non-authenticating fingerprint to a canonical current Published preset without returning raw payload or changing layout.',
 		);
@@ -627,7 +627,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetPresetImportPreflightAbilityHandler( $presetImportPreflight ),
+			new DashboardWidgetPresetImportPreflightAbilityHandler( $preset_import_preflight ),
 			'Read Dashboard preset import compatibility preflight',
 			'Checks a bounded portability envelope and Published widget references without importing, writing, signing or applying a preset.',
 		);
@@ -652,7 +652,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetPresetPortabilityMappingPreviewAbilityHandler( $presetMappingPreview ),
+			new DashboardWidgetPresetPortabilityMappingPreviewAbilityHandler( $preset_mapping_preview ),
 			'Preview Dashboard preset cross-site widget UUID mapping',
 			'Maps validated export UUIDs into a destination candidate and rechecks its Published widgets without importing, trusting, or writing WordPress preferences.',
 		);
@@ -669,7 +669,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				outputSchema: ['type' => 'array'],
 			),
 			new DashboardWidgetPresetReadAbilityHandler(
-				$presetRead,
+				$preset_read,
 				DashboardWidgetPresetReadAbilityHandler::CATALOG,
 			),
 			'Read Dashboard Widget preset catalog',
@@ -688,14 +688,14 @@ final class DashboardWidgetsModule implements ModuleInterface
 				outputSchema: ['type' => 'object'],
 			),
 			new DashboardWidgetPresetReadAbilityHandler(
-				$presetRead,
+				$preset_read,
 				DashboardWidgetPresetReadAbilityHandler::EFFECTIVE,
 			),
 			'Read effective Dashboard Widget preset',
 			'Resolves current-user role-default then network-default preset evidence without mutating WordPress layout or preferences.',
 		);
 
-		$policyAbilities = [
+		$policy_abilities = [
 			[self::ABILITY_MULTISITE_POLICY_GET, DashboardWidgetMultisitePolicyReadAbilityHandler::GET,
 				['type' => 'object', 'required' => ['id'], 'properties' => [
 					'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
@@ -708,7 +708,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				['type' => 'object', 'additionalProperties' => false],
 				['type' => 'object'], 'Read effective Dashboard Multisite policy'],
 		];
-		foreach ( $policyAbilities as [$name, $action, $inputSchema, $outputSchema, $label] ) {
+		foreach ( $policy_abilities as [$name, $action, $input_schema, $output_schema, $label] ) {
 			$this->registerAbility(
 				$abilities,
 				$bridge,
@@ -718,10 +718,10 @@ final class DashboardWidgetsModule implements ModuleInterface
 					capability: self::CAPABILITY,
 					mutates: false,
 					channels: $channels,
-					inputSchema: $inputSchema,
-					outputSchema: $outputSchema,
+					inputSchema: $input_schema,
+					outputSchema: $output_schema,
 				),
-				new DashboardWidgetMultisitePolicyReadAbilityHandler( $multisitePolicyRead, $action ),
+				new DashboardWidgetMultisitePolicyReadAbilityHandler( $multisite_policy_read, $action ),
 				$label,
 				'Reads bounded Surface-10 Multisite policy evidence without mutating WordPress Dashboard preferences.',
 			);
@@ -739,7 +739,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetMultisiteEffectivePresetAbilityHandler( $effectiveMultisitePreset ),
+			new DashboardWidgetMultisiteEffectivePresetAbilityHandler( $effective_multisite_preset ),
 			'Read effective Dashboard Multisite inherited preset',
 			'Resolves read-only network inherited versus explicitly scoped subsite preset; does not mutate WordPress layout.',
 		);
@@ -771,7 +771,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 			'Reads a bounded safe Dashboard Widgets runtime-readiness snapshot without exposing raw payloads or mutating state.',
 		);
 
-		$preferenceActions = [
+		$preference_actions = [
 			DashboardWidgetPersonalPreferenceAbilityHandler::DISMISS => [
 				self::ABILITY_DISMISS,
 				DashboardWidgetPersonalPreferenceAbilityHandler::AJAX_DISMISS,
@@ -799,20 +799,20 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 			],
 		];
-		foreach ( $preferenceActions as $action => [$abilityName, $ajaxType, $inputSchema] ) {
+		foreach ( $preference_actions as $action => [$ability_name, $ajax_type, $input_schema] ) {
 			$descriptor = new AbilityDescriptor(
-				name: $abilityName,
+				name: $ability_name,
 				ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: true,
 				channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
-				inputSchema: $inputSchema,
+				inputSchema: $input_schema,
 				outputSchema: ['type' => 'object'],
 			);
 			$handler = new DashboardWidgetPersonalPreferenceAbilityHandler(
 				$definitions,
-				$registrationCompiler,
-				$personalPreferences,
+				$registration_compiler,
+				$personal_preferences,
 				$action,
 			);
 			$this->registerAbility(
@@ -828,8 +828,8 @@ final class DashboardWidgetsModule implements ModuleInterface
 					: 'Resets only WPE-owned Dashboard Widget preferences while preserving core and third-party state.',
 				false,
 			);
-			$ajaxRoutes->register(new AjaxRoute(
-				type: $ajaxType,
+			$ajax_routes->register(new AjaxRoute(
+				type: $ajax_type,
 				handler: new AbilityAjaxHandler( $abilities, $descriptor->name, $contexts ),
 				operation: NonceOperation::Update,
 			));

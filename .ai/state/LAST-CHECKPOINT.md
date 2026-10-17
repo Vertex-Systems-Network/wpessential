@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 104-finding reduction and next module batch
+
+- Exact source `ad53f5e75a6965839b43a2f1276b9827596623fa` passed read-only WPCS naming audit run `39032138538`, artifact `12100593982`, SHA-256 `d38822bd5d7ae6bda7dae1f0f07e0628b3c3c96e4a70c89445f615faae11b2a7`. Naming findings **10,010 → 9,906** (104 fewer `VariableNotSnakeCase`), framework PHPCS errors **55,086 → 54,982**, warnings **5,104 → 5,105**. Two new compiler assignment-alignment warnings and one removed warning produce net +1; the next batch corrects those two alignments, pending fresh audit. No whole-tree WPCS pass is claimed.
+- Next candidate changes 56 selected local symbols in `DashboardWidgetsModule::register()` (211 prior naming findings) and only two assignment spacings in the compiler. Reverse-mapping all 865 module lines to the previous source confirms no other text changes. Constructor/API parameters, properties, named labels, identifiers and payload keys remain untouched. `RB-0134` records required exact-head audit and CI. Local PHP/Composer unavailable; keep PR open until required gates pass.
+
 # 2026-10-17 — Exact 96-finding reduction and next compiler batch
 
 - Exact source `20af6758c7d0ae0b30fa8a5be544577a0625c293` passed the read-only WPCS naming audit (run `39031820547`, artifact `12100573107`, SHA-256 `1709c4056c090642714d1d8b8c1414d0f79612ecd524522ff79f01b696e29788`). Compared with prior source `5aa3b516`, naming findings are **10,106 → 10,010**, all 96 removed from `VariableNotSnakeCase`; other naming sniff counts and warnings are unchanged. Framework-scope PHPCS JSON totals are **55,182 errors / 5,104 warnings → 55,086 / 5,104**. This does not certify whole-repository PHPCS or a green merge gate.
