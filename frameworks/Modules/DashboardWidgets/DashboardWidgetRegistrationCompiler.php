@@ -279,10 +279,10 @@ final readonly class DashboardWidgetRegistrationCompiler
 			return null;
 		}
 
-		$abilityId = $action['ability_id'];
+		$ability_id = $action['ability_id'];
 		if (
-			!is_string( $abilityId )
-			|| preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId) !== 1
+			!is_string( $ability_id )
+			|| preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $ability_id) !== 1
 		) {
 			throw new InvalidArgumentException('Dashboard Widget action.ability_id must use the canonical ability name shape.');
 		}
@@ -291,31 +291,31 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		try {
-			$record = ( $this->formActionAbilityResolver )( $abilityId );
+			$record = ( $this->formActionAbilityResolver )( $ability_id );
 		} catch ( Throwable ) {
 			throw new InvalidArgumentException('Dashboard Widget action ability reference could not be resolved.');
 		}
 
-		$inputSchema = is_array($record) ? ($record['input_schema'] ?? null) : null;
+		$input_schema = is_array($record) ? ($record['input_schema'] ?? null) : null;
 		if (
 			!is_array( $record )
-			|| ($record['name'] ?? null) !== $abilityId
+			|| ($record['name'] ?? null) !== $ability_id
 			|| ($record['owner_surface_id'] ?? null) !== FormWorkflowDefinition::OWNER_SURFACE_ID
 			|| ($record['mutates'] ?? null) !== true
 			|| ($record['ui_allowed'] ?? null) !== true
-			|| !is_array( $inputSchema )
+			|| !is_array( $input_schema )
 		) {
 			throw new InvalidArgumentException('Dashboard Widget action ability must be a mutating Forms & Workflows UI ability.');
 		}
 
-		$hasAuthoredInput = array_key_exists('input', $action) && $action['input'] !== [];
-		if ( ( $hasAuthoredInput && $inputSchema === [] ) || ( !$hasAuthoredInput && $inputSchema !== [] ) ) {
+		$has_authored_input = array_key_exists('input', $action) && $action['input'] !== [];
+		if ( ( $has_authored_input && $input_schema === [] ) || ( !$has_authored_input && $input_schema !== [] ) ) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget action Ability input schema must match whether bounded action.input is authored.',
 			);
 		}
 
-		return $abilityId;
+		return $ability_id;
 	}
 
 	/**
@@ -362,10 +362,10 @@ final readonly class DashboardWidgetRegistrationCompiler
 			return null;
 		}
 
-		$backgroundJobId = $refresh['background_job'];
+		$background_job_id = $refresh['background_job'];
 		if (
-			!is_string( $backgroundJobId )
-			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $backgroundJobId) !== 1
+			!is_string( $background_job_id )
+			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $background_job_id) !== 1
 		) {
 			throw new InvalidArgumentException('Dashboard Widget refresh.background_job must be a lowercase RFC 4122 UUID.');
 		}
@@ -374,14 +374,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		try {
-			$record = ( $this->backgroundJobResolver )( $backgroundJobId );
+			$record = ( $this->backgroundJobResolver )( $background_job_id );
 		} catch ( Throwable ) {
 			throw new InvalidArgumentException('Dashboard Widget background job reference could not be resolved.');
 		}
 
 		if (
 			!is_array( $record )
-			|| ($record['id'] ?? null) !== $backgroundJobId
+			|| ($record['id'] ?? null) !== $background_job_id
 			|| ($record['type'] ?? null) !== CronDefinition::TYPE
 			|| ($record['owner_surface_id'] ?? null) !== CronDefinition::OWNER_SURFACE_ID
 			|| ($record['status'] ?? null) !== DefinitionStatus::Published->value
@@ -389,7 +389,7 @@ final readonly class DashboardWidgetRegistrationCompiler
 			throw new InvalidArgumentException('Dashboard Widget background job reference must resolve to a Published canonical Cron definition.');
 		}
 
-		return $backgroundJobId;
+		return $background_job_id;
 	}
 
 	/**

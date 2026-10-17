@@ -10,9 +10,9 @@ active_branch: agent/local-phpunit-bootstrap-repair-v1
 current_milestone: "PR #1416 / Issue #1417 WPCS remediation; bounded local-only naming cleanup in DashboardWidgetRegistrationCompiler."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Validate fourteen method-local names in DashboardWidgetRegistrationCompiler::compile() and the compileTarget line wrap on the next PR head; retain named argument labels/public API and full quality gates."
-waiting_external: "RB-0135 read-only audit on 51991d75 passed with artifact 12102238683: 44 fewer naming findings/framework errors, one added line-length warning. Exact-head full CI remains pending/red; RB-0136 tracks the next bounded source batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
-next_planned_slot: RB-0136
+next_safe_action: "Validate four local-name candidates in two private DashboardWidgetRegistrationCompiler reference methods on the next PR head; retain property/callable API and full quality gates."
+waiting_external: "RB-0136 read-only audit on 2c62f3f passed with artifact 12103386238: 36 fewer naming findings/framework errors, one fewer warning. Exact-head full CI remains pending/red; RB-0137 tracks the next bounded batch. #858 admin, #1102 authorization-gated P-006, #947 independent Worker remain parked."
+next_planned_slot: RB-0137
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

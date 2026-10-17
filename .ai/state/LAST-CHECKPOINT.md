@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-17 — Exact 36-finding reduction and next reference-method batch
+
+- Source `2c62f3f0202b7a3c86666ff5683fda50108c23ee` passed read-only naming audit run `39038797537`, artifact `12103386238`, SHA-256 `0950ce512c00c3460de991febabe79d60498fa986ccc0ecca8793d9a9082755b`. Naming findings **9,651 → 9,615**, framework PHPCS errors **54,727 → 54,691**, warnings **5,104 → 5,103**. Full-tree WPCS and exact-head merge gate remain red/pending.
+- `RB-0137` proposes four local identifiers in two private Dashboard Widget registration reference methods (19 prior findings), preserving callable properties, public API and serialized keys. Fresh audit and full CI remain mandatory; local PHP/Composer unavailable. PR stays open/unmerged.
+
 # 2026-10-17 — Exact 44-finding reduction and next registration compiler batch
 
 - Source `51991d75354cfe33068ddbfe46e92a593d38d16a` passed read-only naming audit run `39037663759`, artifact `12102238683`, SHA-256 `09ffa45df4dd26ea385e8a3754c67a44a3d11477ff20b0f912e7a0690c30547a`. Naming findings **9,695 → 9,651** and framework PHPCS errors **54,771 → 54,727**; warnings **5,103 → 5,104** from a line-length warning at `DashboardWidgetRegistrationCompiler.php:579`. Full-tree WPCS remains red.
@@ -9,59 +14,6 @@
 
 - Exact source `aaccde6540e4ec619aeb310a69c71760f6446195` passed read-only naming audit run `39037320723`, artifact `12102517969`, SHA-256 `8f6ab7e5dd6fe4ad474c9bf688f60c843ed464a6fdbc1a79c551b0653429320e`. Naming findings **9,906 → 9,695**, framework PHPCS errors **54,982 → 54,771**, warnings **5,105 → 5,103**. All 211 removed naming findings were `VariableNotSnakeCase` in `DashboardWidgetsModule::register()`. Framework scan is not whole-repository WPCS or a merge gate pass.
 - `RB-0135` proposes ten method-local names in `DashboardWidgetRegistrationCompiler::compileTarget()` (44 prior findings), including synchronized PHPDoc local annotations. Its result requires a new exact-head audit. `RB-0134` full CI remains pending/red, with CPT Runtime's quality enforcement failing. Local PHP/Composer are unavailable; preserve all full quality gates and keep PR open.
-
-# 2026-10-17 — Exact 104-finding reduction and next module batch
-
-- Exact source `ad53f5e75a6965839b43a2f1276b9827596623fa` passed read-only WPCS naming audit run `39032138538`, artifact `12100593982`, SHA-256 `d38822bd5d7ae6bda7dae1f0f07e0628b3c3c96e4a70c89445f615faae11b2a7`. Naming findings **10,010 → 9,906** (104 fewer `VariableNotSnakeCase`), framework PHPCS errors **55,086 → 54,982**, warnings **5,104 → 5,105**. Two new compiler assignment-alignment warnings and one removed warning produce net +1; the next batch corrects those two alignments, pending fresh audit. No whole-tree WPCS pass is claimed.
-- Next candidate changes 56 selected local symbols in `DashboardWidgetsModule::register()` (211 prior naming findings) and only two assignment spacings in the compiler. Reverse-mapping all 865 module lines to the previous source confirms no other text changes. Constructor/API parameters, properties, named labels, identifiers and payload keys remain untouched. `RB-0134` records required exact-head audit and CI. Local PHP/Composer unavailable; keep PR open until required gates pass.
-
-# 2026-10-17 — Exact 96-finding reduction and next compiler batch
-
-- Exact source `20af6758c7d0ae0b30fa8a5be544577a0625c293` passed the read-only WPCS naming audit (run `39031820547`, artifact `12100573107`, SHA-256 `1709c4056c090642714d1d8b8c1414d0f79612ecd524522ff79f01b696e29788`). Compared with prior source `5aa3b516`, naming findings are **10,106 → 10,010**, all 96 removed from `VariableNotSnakeCase`; other naming sniff counts and warnings are unchanged. Framework-scope PHPCS JSON totals are **55,182 errors / 5,104 warnings → 55,086 / 5,104**. This does not certify whole-repository PHPCS or a green merge gate.
-- The same source file has 108 remaining `VariableNotSnakeCase` findings: 104 within four private methods (`compile`, `compileQuery`, `filters`, `orderBy`) and four constructor parameter uses tied to property/API names. The next bounded batch changes only those 104 method-local occurrences; a byte-for-byte reverse-mapping check across all 797 lines passes, and response/serialized keys plus named argument labels are unchanged. `RB-0133` tracks the next audit and required CI.
-- `RB-0132` full CI is still queued/running at last check. Keep PR #1416 open and preserve full WPCS, PHPStan, PHPUnit and protection gates.
-
-
-# 2026-10-17 — Fresh naming inventory and bounded state compiler batch
-
-- Repaired WPCS Naming ABI Audit run `39031345857` completed successfully on exact source `5aa3b516a94474c0734a6f48cfb1ef53327f2806`. Artifact `12100651533` (SHA-256 `a4a9aaa3d691d7ceb8b099620b01852abb36fbe624246dec7ee871c78ed485b8`) reports **10,106 naming findings**: 6,992 local-variable snake_case, 2,055 used-property, 908 method-name, 127 property, 24 interpolated-variable. This is naming-only, not the full-tree WPCS total.
-- `DashboardWidgetRenderSourceCompiler.php` has 238 naming findings. Its three private loading/error/empty state compiler methods contain **32 local-variable naming findings each**, 96 total. The next candidate normalizes eight method-local symbols per method while preserving public properties, serialized keys and named argument labels. Existing unit tests cover accepted/rejected state variants. `git diff --check` passes; PHP/Composer are unavailable locally.
-- Diagnostics source `cec20f0a` completed 55 checks with 49 success, 4 quality-enforcement failures and 2 cancelled after the audit workflow repair. `RB-0130` is terminal failed/superseded, `RB-0131` is a successful read-only audit, and `RB-0132` tracks the next source check. PR remains open/unmerged.
-
-
-# 2026-10-17 — Naming audit YAML parse repair
-
-- The prior WPCS Naming ABI Audit runs failed immediately with zero jobs because `.github/workflows/wpcs-naming-abi-audit.yml` ended with an unindented stray SHA line (`635b851...`) after the artifact path list. A local YAML parser reproduced the failure at line 160. Removing that one line makes the workflow parse with its `naming-abi-audit` job intact; `git diff --check` passes.
-- `RB-0127` is a failed workflow-parse attempt, not PHP/runner evidence. `RB-0131` registers the next read-only exact-source naming audit. The audit artifact is required before using any newly inferred naming count or selecting another signature-sensitive source candidate.
-- The previous corrected source `702ab7a3` finished 55 checks with 51 success / 4 quality-enforcement failures. Dashboard diagnostics source `cec20f0a` is the active PR head and its CI is in progress.
-
-
-# 2026-10-17 — Dashboard diagnostics local naming batch prepared
-
-- Exact PR head `702ab7a39c74e462ad41182ce153467ff5bfdea5` restored the two comparators and normalized three private empty-state locals. Its 55 checks were 50 success, 4 failures at PHP quality/Architecture/CPT/Taxonomy enforcement and one browser E2E still running at the last read. PHP quality capture steps use `continue-on-error`; command outcomes cannot be inferred from their displayed success. Full-tree WPCS remains unpassed and no current numeric total is claimed.
-- The next separate change normalizes five local variables in `DashboardWidgetDiagnosticsAbilityHandler.php` (`definitionId`, `checksumStatus`, `runtimeState`, `contentType`, `contentClass`). Returned keys and public constructor property names remain unchanged. Existing diagnostics tests cover the response statuses and keys; local PHP/Composer are unavailable.
-- `RB-0130` will track the next mandatory CI. The PR remains open and blocked for merge.
-
-
-# 2026-10-17 — Correct WPCS naming direction after exact CI
-
-- Exact PR head `8bd51fcf162d46548cb005fb3e066c213692038e`: 55 checks completed, 51 success and 4 failures at quality enforcement (PHP Quality, Architecture, CPT, Taxonomy). PHPStan, PHPUnit and runtime steps completed, but the quality gate remains red.
-- The two recent `$slug_order` → `$slugOrder` edits were mistaken: the retained WPCS sniff `WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase` requires snake_case local variables. Restored both comparator locals to `$slug_order` and corrected the progress record. No claim of a fresh full-tree WPCS count.
-- The next bounded source fix is three constructor-only local names in `DashboardWidgetEmptyStateDescriptor.php`: `$expectedKeys`, `$actualKeys`, `$normalizedBindings` become snake_case. Promoted properties, serialized keys, methods and component identifiers are preserved. `RB-0128` is terminal failed; `RB-0129` tracks required CI for this corrected batch. Local PHP/Composer remain unavailable; `git diff --check` passes.
-
-
-# 2026-10-17 — Second bounded local-only naming remediation
-
-- Exact head `8d64df8966e1ef602a78d80b8b6a6cacc063edc9` completed **55 checks: 51 passed / 4 failed** at PHP quality, Architecture, CPT and Taxonomy enforcement. The PHPCS/PHPStan/PHPUnit capture steps use `continue-on-error`; their displayed conclusions do not establish individual command success.
-- The first bounded rename `$slug_order` → `$slugOrder` in `DashboardWidgetPresetReadService.php` introduced no contract regression. A second manually classified local-only rename is now staged in `DashboardWidgetMultisitePolicyReadService.php`, changing only `$slug_order` → `$slugOrder` inside a local comparator callback.
-- No public/promoted property, method, interface, payload key, WordPress identifier, PSR-4 class path or WPCS rule is changed. `git diff --check` remains required before publication. Local PHP/Composer remain unavailable; exact-head GitHub CI is the validation path.
-
-# 2026-10-17 — Bounded local-only naming remediation submitted
-
-- Exact PR head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1` completed 55 checks: 51 passed and 4 failed at required quality-enforcement outcomes (PHP Quality, Architecture, CPT, Taxonomy). The capture steps reported success under `continue-on-error`; their underlying command outcomes were not recovered from job logs.
-- The push-triggered WPCS Naming ABI Audit run `39026004530` failed before creating a job or artifact; this is recorded as an infrastructure diagnostic limitation, not as a naming result.
-- Based on the retained naming classification, one local-only variable was renamed in `frameworks/Modules/DashboardWidgets/DashboardWidgetPresetReadService.php`: `$slug_order` → `$slugOrder`. No public property, method, interface, payload key, WordPress identifier, PSR-4 class path or WPCS rule changed. `git diff --check` passes.
-- Local PHP/Composer remain unavailable; exact-head GitHub CI is the validation path. PR #1416 stays open, zero behind current main, and unmerged.
 
 # 2026-10-17 — Fresh-main reconciliation and PR #1416 continuation
 

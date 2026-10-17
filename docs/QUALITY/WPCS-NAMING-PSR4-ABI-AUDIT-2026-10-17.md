@@ -1,3 +1,9 @@
+## Exact source naming improvement — 36 more verified findings removed
+
+The [read-only audit run 39038797537](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39038797537) succeeded on `2c62f3f0202b7a3c86666ff5683fda50108c23ee`; artifact `12103386238` has SHA-256 `0950ce512c00c3460de991febabe79d60498fa986ccc0ecca8793d9a9082755b`. Naming findings **9,651 → 9,615**, `VariableNotSnakeCase` **6,537 → 6,501**, framework PHPCS errors **54,727 → 54,691**, and warnings **5,104 → 5,103**. All 36 naming reductions were local names in public `compile()`; the previous line-length warning was removed by the scoped condition wrap. These are framework-scope diagnostic totals; full-tree merge enforcement remains separate.
+
+Next bounded candidate normalizes four local identifiers (19 prior findings) in private `compileFormsActionAbilityReference()` and `compileBackgroundJobReference()`. Property/callable names, payload keys and public API stay intact. `RB-0137` requires a fresh exact-head audit and full CI before a reduction is claimed.
+
 ## Exact source naming improvement — 44 more verified findings removed
 
 The [read-only audit run 39037663759](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39037663759) succeeded on `51991d75354cfe33068ddbfe46e92a593d38d16a`; artifact `12102238683` has SHA-256 `09ffa45df4dd26ea385e8a3754c67a44a3d11477ff20b0f912e7a0690c30547a`. Naming findings **9,695 → 9,651**, `VariableNotSnakeCase` **6,581 → 6,537**, framework PHPCS errors **54,771 → 54,727**, and warnings **5,103 → 5,104**. All 44 removed naming findings were in the private `compileTarget()` method. The extra warning is `Generic.Files.LineLength.TooLong` at its renamed network-target condition, line 579. A scoped line wrap accompanies the next candidate and requires fresh verification.
