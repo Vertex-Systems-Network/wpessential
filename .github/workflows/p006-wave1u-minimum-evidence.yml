@@ -1,0 +1,145 @@
+name: P-006 Wave 1U Minimum-Cell Evidence
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/p006-wave1u-minimum-evidence.yml
+      - tools/p006/p006-wave1u-authorized-identity.php
+      - tools/p006/p006-b6a-fp89-platform-api-candidate.php
+      - tools/release/build-distributable.php
+      - tools/release/build-free-pro-distributables.php
+      - package.json
+      - package-lock.json
+      - admin-ui/**
+      - wpessential.php
+      - wpessential-pro.php
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-wave1u-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  change-gate:
+    name: Wave 1U latest-change gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      run_candidates: ${{ steps.gate.outputs.run_candidates }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check latest-change scope
+        id: gate
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          run_candidates=true
+          if [ "$EVENT_NAME" = pull_request ] && [ "$ACTION" = synchronize ] && [ -n "$BEFORE_SHA" ]; then
+            git cat-file -e "$BEFORE_SHA^{commit}"
+            changed="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+            if ! printf '%s\n' "$changed" | grep -Eq '^(\.github/workflows/p006-wave1u-minimum-evidence\.yml|tools/p006/p006-wave1u-|tools/p006/p006-b6a-fp89-|tools/release/|wpessential(-pro)?\.php|package(-lock)?\.json|admin-ui/)'; then
+              run_candidates=false
+            fi
+          fi
+          echo "run_candidates=$run_candidates" >> "$GITHUB_OUTPUT"
+
+  candidate-identity:
+    name: Prepare exact candidate identities (no formal fixtures)
+    needs: change-gate
+    if: needs.change-gate.outputs.run_candidates == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_AUTHORIZATION: GOV-P001-CF-TEMP-019
+      WPE_P006_CELL: minimum
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source head and clean tracked tree
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$WPE_P006_SOURCE_SHA"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Build admin assets
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run lint:package
+          npm run build:admin
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+      - name: Validate preflight tooling
+        run: |
+          set -euo pipefail
+          php -l tools/p006/p006-wave1u-authorized-identity.php
+          php -l tools/p006/p006-b6a-fp89-platform-api-candidate.php
+          php -l tools/release/build-distributable.php
+      - name: Build canonical pair twice
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cp artifacts/wpessential.zip /tmp/p006-u-f0.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-u-p0.zip
+          php tools/release/build-distributable.php
+          cmp --silent /tmp/p006-u-f0.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-u-p0.zip artifacts/wpessential-pro.zip
+      - name: Derive isolated P-API candidate twice
+        env:
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/p006-wave1u/a artifacts/p006-wave1u/b
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-wave1u/a" php tools/p006/p006-b6a-fp89-platform-api-candidate.php
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-wave1u/b" php tools/p006/p006-b6a-fp89-platform-api-candidate.php
+          for file in f0.zip p0.zip p-api.zip candidate-identity.json; do
+            cmp --silent "artifacts/p006-wave1u/a/$file" "artifacts/p006-wave1u/b/$file"
+          done
+      - name: Verify one-time grant and exact pair identities
+        env:
+          WPE_P006_CANDIDATE_IDENTITY: ${{ github.workspace }}/artifacts/p006-wave1u/a/candidate-identity.json
+          WPE_P006_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-wave1u/a
+          WPE_P006_IDENTITY_OUTPUT: ${{ github.workspace }}/artifacts/p006-wave1u/authorized-identity.json
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-wave1u-authorized-identity.php
+          test "$(jq -r '.formal_fixture_executed' artifacts/p006-wave1u/authorized-identity.json)" = false
+          test "$(jq -r '.required_older_snapshot_sha256' artifacts/p006-wave1u/authorized-identity.json)" = 24178a1289fb5929eda850f488d932c94bbbddc5936a82cc26cb83979823b058
+      - name: Upload immutable preflight identity
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1u-preflight-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1u/a/candidate-identity.json
+            artifacts/p006-wave1u/authorized-identity.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
