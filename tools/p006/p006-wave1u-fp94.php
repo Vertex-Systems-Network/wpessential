@@ -56,7 +56,11 @@ try {
         fp94Require(is_string($bytes), 'Unreadable captured surface: ' . $label);
         $surfaces[$label] = $bytes;
     }
-    $secretClass = dirname(__DIR__, 2) . '/frameworks/Platform/Secrets/SensitiveValue.php';
+    $repoRoot = dirname(__DIR__, 2);
+    if (!defined('ABSPATH')) {
+        define('ABSPATH', $repoRoot . '/');
+    }
+    $secretClass = $repoRoot . '/frameworks/Platform/Secrets/SensitiveValue.php';
     require_once $secretClass;
     $secret = new \WPEssential\Platform\Secrets\SensitiveValue($canaries['vault_plaintext']);
     $json = json_encode($secret, JSON_THROW_ON_ERROR);
