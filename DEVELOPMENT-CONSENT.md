@@ -39,7 +39,11 @@ While `GOV-OWNER-CONSENT-001` (or a narrower active milestone grant) covers the 
 
 One explicit development instruction may drive successive bounded milestones continuously in the same workspace/session. Each milestone still obeys its own scope, tests, security, data, merge and recovery gates.
 
-If one lane reaches a credential, legal, destructive, production, deployment/release, chargeable-provider, or other separately privileged boundary, record and park that lane. Do not reinterpret the missing authority as approval, but also do not halt unrelated safe work that is already authorized. Ask the owner only when the privileged decision itself is necessary and no other safe authorized work can continue.
+## Full autonomy — `GOV-OWNER-CONSENT-002` (2026-10-18)
+
+Owner instruction: "AI ne hi kaam krna ha, insan se koi consent ni lena, khud krna ha jo bhi krna ha." AI agents take every project decision and action themselves — including merges, closing PRs, product/legal-scope decisions inside the 56-surface architecture, releases and deployments through repository tooling — and record each decision in an ADR or `docs/APPROVAL-LEDGER.md` instead of asking.
+
+Only `EXTERNAL_HUMAN_ONLY` items are parked: things an AI cannot physically provide (new credentials/secrets, paid account sign-up, repository-admin settings). Parking one lane never halts other work. Technical safety practice remains mandatory: green exact-head CI before merge, backup and rollback before destructive data operations, no secret leakage, no weakening of branch protection.
 
 Issue #1328 defines execution cadence only; it does not broaden `GOV-OWNER-CONSENT-001` privileges.
 
