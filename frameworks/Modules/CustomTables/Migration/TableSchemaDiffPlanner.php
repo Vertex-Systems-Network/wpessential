@@ -180,7 +180,7 @@ final readonly class TableSchemaDiffPlanner {
 			);
 		}
 
-		if ( $source->hasDefault !== $target->hasDefault || $source->defaultValue !== $target->defaultValue ) {
+		if ( $this->effectiveDefault( $source ) !== $this->effectiveDefault( $target ) ) {
 			$operations[] = new MigrationOperation(
 				type: 'alter_column_default',
 				target: 'columns.' . $target->key,
@@ -451,5 +451,20 @@ final readonly class TableSchemaDiffPlanner {
 			substr( $hex, 16, 4 ),
 			substr( $hex, 20, 12 ),
 		);
+	}
+
+	/**
+	 * A nullable column without an explicit default is DEFAULT NULL in MySQL/MariaDB, which is also
+	 * how introspection reports it; compare defaults by that effective value so a freshly created
+	 * nullable column does not produce a spurious alter_column_default.
+	 *
+	 * @return array{0:bool,1:mixed}
+	 */
+	private function effectiveDefault( TableColumnDescriptor $column ): array {
+		if ( $column->nullable && ! $column->hasDefault ) {
+			return [ true, null ];
+		}
+
+		return [ $column->hasDefault, $column->defaultValue ];
 	}
 }

@@ -23,8 +23,17 @@ final readonly class ProviderDdlPreviewCompiler {
 		TableSchemaDescriptor $desired,
 		Ct1ManagedTableIdentity $identity,
 		ProviderCapabilityProfile $capabilities,
+		string $tableCharsetCollate = '',
 	): ProviderMigrationPreview {
 		$this->assertAligned( $plan, $desired, $identity );
+		$tableCharsetCollate = trim( $tableCharsetCollate );
+		// Trusted WordPress charset/collation clause supplied by the executing caller; the V1 'inherit' policy means the
+		// table must take the canonical WordPress collation, not whatever the server/database default happens to be.
+		if ( $tableCharsetCollate !== ''
+			&& preg_match( '/^DEFAULT CHARACTER SET [A-Za-z0-9_]+( COLLATE [A-Za-z0-9_]+)?$/', $tableCharsetCollate ) !== 1
+		) {
+			throw new InvalidArgumentException( 'Custom Tables table charset/collation clause is invalid.' );
+		}
 
 		if ( $plan->blocked
 			|| $plan->recoveryRequired
@@ -53,6 +62,7 @@ final readonly class ProviderDdlPreviewCompiler {
 				$capabilities,
 				$columns,
 				$indexes,
+				$tableCharsetCollate,
 			);
 		}
 
@@ -93,13 +103,14 @@ final readonly class ProviderDdlPreviewCompiler {
 		ProviderCapabilityProfile $capabilities,
 		array $columns,
 		array $indexes,
+		string $tableCharsetCollate,
 	): ProviderStatementPreview {
 		$table = $this->quoteIdentifier( $identity->physicalName );
 
 		return match ( $operation->type ) {
 			'create_table' => $this->preview(
 				$operation,
-				$this->createTableSql( $desired, $table ),
+				$this->createTableSql( $desired, $table, $tableCharsetCollate ),
 				'not_applicable',
 				'not_applicable',
 			),
@@ -181,7 +192,7 @@ final readonly class ProviderDdlPreviewCompiler {
 		);
 	}
 
-	private function createTableSql( TableSchemaDescriptor $desired, string $table ): string {
+	private function createTableSql( TableSchemaDescriptor $desired, string $table, string $tableCharsetCollate ): string {
 		$parts = [];
 		foreach ( $desired->columns as $column ) {
 			$parts[] = $this->quoteIdentifier( $column->key ) . ' ' . $this->columnDefinition( $column );
@@ -195,7 +206,8 @@ final readonly class ProviderDdlPreviewCompiler {
 				. ' (' . $columns . ')';
 		}
 
-		return 'CREATE TABLE ' . $table . ' (' . implode( ', ', $parts ) . ') ENGINE=InnoDB';
+		return 'CREATE TABLE ' . $table . ' (' . implode( ', ', $parts ) . ') ENGINE=InnoDB'
+			. ( $tableCharsetCollate === '' ? '' : ' ' . $tableCharsetCollate );
 	}
 
 	private function columnDefinition( TableColumnDescriptor $column ): string {
