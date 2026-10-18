@@ -7,6 +7,8 @@ on:
       - .github/workflows/p006-wave1u-minimum-evidence.yml
       - tools/p006/p006-wave1u-authorized-identity.php
       - tools/p006/p006-wave1u-fp86.php
+      - tools/p006/p006-wave1u-fp89.php
+      - tools/p006/p006-wave1u-wordpress-setup.sh
       - tools/p006/p006-b6a-fp89-platform-api-candidate.php
       - tools/release/build-distributable.php
       - tools/release/build-free-pro-distributables.php
@@ -139,7 +141,99 @@ jobs:
           name: p006-wave1u-preflight-${{ github.run_id }}
           path: |
             artifacts/p006-wave1u/a/candidate-identity.json
+            artifacts/p006-wave1u/a/f0.zip
+            artifacts/p006-wave1u/a/p0.zip
+            artifacts/p006-wave1u/a/p-api.zip
             artifacts/p006-wave1u/authorized-identity.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  fp89:
+    name: FP-89 incompatible Pro boot / disposable minimum cell
+    needs: [change-gate, candidate-identity]
+    if: needs.change-gate.outputs.run_candidates == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_AUTHORIZATION: GOV-P001-CF-TEMP-019
+      WPE_P006_CELL: minimum
+      WPE_P006_EXPECTED_WP: '6.9'
+      WPE_P006_EXPECTED_PHP: '8.2'
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_TABLE_PREFIX: wpep006u89_
+      WPE_P006_LOCAL_ENTITLEMENT_STATE: pro_active
+      WPE_P006_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-wave1u/a
+      WPE_P006_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-wave1u/a/candidate-identity.json
+      WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1u/a/f0.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1u/a/p0.zip
+      WPE_P006_P_API_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1u/a/p-api.zip
+      WPE_P006_EXPECTED_FREE_NODE: F0
+      WPE_P006_EXPECTED_PRO_NODE: P_API
+      WPE_P006_NETWORK_LOG: /tmp/p006-wave1u-fp89-network.log
+      WPE_P006_SQL_LOG: /tmp/p006-wave1u-fp89-sql.log
+      WPE_P006_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-wave1u/fp89
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$WPE_P006_SOURCE_SHA"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: mysqli, zip
+          coverage: none
+      - name: Validate fixture tooling
+        run: |
+          set -euo pipefail
+          php -l tools/p006/p006-wave1u-fp89.php
+          bash -n tools/p006/p006-wave1u-wordpress-setup.sh
+      - name: Download exact candidate ZIPs and identity
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-wave1u-preflight-${{ github.run_id }}
+          path: artifacts/p006-wave1u
+      - name: Prepare isolated WordPress and deny outbound HTTP
+        run: bash tools/p006/p006-wave1u-wordpress-setup.sh
+      - name: Install, activate, and run FP-89 in separate fresh requests
+        run: |
+          set -euo pipefail
+          mkdir -p "$WPE_P006_EVIDENCE_DIR"
+          WPE_P006_EXECUTION_MODE=install WPE_P006_EVIDENCE_FILE=install.json php tools/p006/p006-wave1u-fp89.php
+          WPE_P006_EXECUTION_MODE=activate-both WPE_P006_EVIDENCE_FILE=fp89-before.json php tools/p006/p006-wave1u-fp89.php
+          WPE_P006_EXECUTION_MODE=fp89 WPE_P006_EVIDENCE_FILE=fp89.json php tools/p006/p006-wave1u-fp89.php
+          jq -e '.status == "PASS" and .fixture_id == "FP-89" and .formal_fixture_executed == true and .authorization == "GOV-P001-CF-TEMP-019" and .compatibility.state == "platform_api_too_old" and .pro_migrations_absent == true and .premium_modules == [] and .network_attempt_count == 0' "$WPE_P006_EVIDENCE_DIR/fp89.json"
+      - name: Upload immutable FP-89 evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1u-fp89-${{ github.run_id }}
+          path: artifacts/p006-wave1u/fp89/*.json
           if-no-files-found: error
           retention-days: 14
       - name: Verify tracked source remains clean
