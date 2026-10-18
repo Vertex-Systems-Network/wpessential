@@ -16,7 +16,11 @@ use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\RuntimeCompositionReadinessService;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
+use WPEssential\Modules\CustomTables\Migration\Review\R1ExecutionRequestResolver;
+use WPEssential\Modules\CustomTables\Migration\Review\R1MigrationRunLifecycleService;
 use WPEssential\Modules\CustomTables\Migration\Review\R1MigrationRunPreparationService;
+use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilityProfileResolver;
+use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
@@ -58,6 +62,23 @@ final class CustomTablesRuntimeCompositionFactoryTest extends TestCase
 
         self::assertInstanceOf(R1AdditiveExecutionCoordinator::class, $factory->createR1AdditiveExecutionCoordinator($introspector));
         self::assertInstanceOf(R1MigrationRunPreparationService::class, $factory->createR1MigrationRunPreparationService($introspector));
+        self::assertInstanceOf(R1MigrationRunLifecycleService::class, $factory->createR1MigrationRunLifecycleService());
+
+        $profiles = new WordPressProviderCapabilityProfileResolver(new RuntimeCompositionWpdbFake());
+        self::assertInstanceOf(
+            R1ExecutionRequestResolver::class,
+            $factory->createR1ExecutionRequestResolver($introspector, $profiles, new InMemoryDefinitionRepository(), 'wp_'),
+        );
+        foreach (['schema' => WordPressCt1SchemaIntrospector::class, 'profiles' => WordPressProviderCapabilityProfileResolver::class] as $name => $class) {
+            $parameter = array_values(array_filter(
+                (new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'createR1ExecutionRequestResolver'))->getParameters(),
+                static fn (\ReflectionParameter $p): bool => $p->getName() === $name,
+            ))[0];
+            $type = $parameter->getType();
+            self::assertInstanceOf(\ReflectionNamedType::class, $type);
+            self::assertSame($class, $type->getName());
+            self::assertTrue((new ReflectionClass($class))->isFinal());
+        }
 
         $preparation = (new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'createR1MigrationRunPreparationService'))->getParameters();
         self::assertCount(1, $preparation);
