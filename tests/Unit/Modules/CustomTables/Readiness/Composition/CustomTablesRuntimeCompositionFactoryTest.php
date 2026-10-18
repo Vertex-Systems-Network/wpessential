@@ -49,6 +49,28 @@ final class CustomTablesRuntimeCompositionFactoryTest extends TestCase
         self::assertTrue($constructor->isPrivate());
     }
 
+    public function testProductionFactoryAcceptsOnlyFinalRepositoryOwnedTrustProviders(): void
+    {
+        $production = new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'production');
+        $expected = [
+            'recoveryVerification' => FailClosedRecoveryVerificationProvider::class,
+            'confirmations' => WpdbMigrationExecutionConfirmationProvider::class,
+        ];
+
+        foreach ($production->getParameters() as $parameter) {
+            if (!isset($expected[$parameter->getName()])) {
+                continue;
+            }
+            $type = $parameter->getType();
+            self::assertInstanceOf(\ReflectionNamedType::class, $type);
+            self::assertSame($expected[$parameter->getName()], $type->getName());
+            self::assertTrue((new ReflectionClass($type->getName()))->isFinal());
+            unset($expected[$parameter->getName()]);
+        }
+
+        self::assertSame([], $expected);
+    }
+
     public function testProductionFactoryRejectsInvalidScope(): void
     {
         $database = new RuntimeCompositionDatabaseFake();
