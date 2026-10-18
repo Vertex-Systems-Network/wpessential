@@ -131,3 +131,10 @@ A green CPT Runtime or Taxonomy Runtime workflow alone is regression evidence, n
 6. Preserve the complete README 56/56 dashboard and machine lifecycle distinctions.
 
 Repository evidence overrides conversational memory.
+## Blocker resolution update — 2026-10-18 (`GOV-OWNER-CONSENT-002`)
+
+1. **Exclusive trust root — RESOLVED (#1429).** `CustomTablesRuntimeCompositionFactory::production()` accepts only final, repository-owned trusted providers; a reflection test pins the parameter types.
+2. **Real recovery verification source — RESOLVED.** `LocalBackupRecoveryVerificationProvider` verifies an existing local Backup Set under the server-owned root `WP_CONTENT_DIR/wpessential-backups/<uuid>/` through `Modules\Backup\Verification\LocalBackupManifestVerifier`: strict manifest V1 parsing, `completed_verified` with no failed items and full requested scope, `database` scope captured, manifest bound to the reviewed plan fingerprint, same site, and every artifact matched by realpath containment (no traversal/symlink escape), size and SHA-256. Read-only; it never creates, restores or deletes. Without `WP_CONTENT_DIR` the bootstrap keeps `FailClosedRecoveryVerificationProvider`.
+3. **Confirmation issuance — RESOLVED (#1430).** `WpdbMigrationExecutionConfirmationIssuer` records one authorized, readback-verified user confirmation per site/run.
+
+Readiness can now be satisfied by real evidence. Physical managed-table statement execution (R1/R2 coordinator) is still not implemented; that is the next Custom Tables lane, not a consent gate.

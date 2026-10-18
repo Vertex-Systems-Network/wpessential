@@ -21,6 +21,8 @@ use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationIssuer;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
+use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
+use WPEssential\Modules\Backup\Verification\LocalBackupManifestVerifier;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRunStoreMigration;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
@@ -202,7 +204,11 @@ final class Plugin {
 						database: $database,
 						policy: $abilityPolicy,
 						metadataFacts: $metadataFacts,
-						recoveryVerification: new FailClosedRecoveryVerificationProvider(),
+						recoveryVerification: defined( 'WP_CONTENT_DIR' )
+							? new LocalBackupRecoveryVerificationProvider(
+								new LocalBackupManifestVerifier( WP_CONTENT_DIR . '/wpessential-backups', $siteId ),
+							)
+							: new FailClosedRecoveryVerificationProvider(),
 						confirmations: $confirmations,
 						networkId: $networkId,
 						siteId: $siteId,
@@ -321,6 +327,8 @@ final class Plugin {
 			WpdbMigrationExecutionConfirmationProvider::class,
 			WpdbMigrationExecutionConfirmationIssuer::class,
 			FailClosedRecoveryVerificationProvider::class,
+			LocalBackupRecoveryVerificationProvider::class,
+			LocalBackupManifestVerifier::class,
 			CreateMigrationRunStoreMigration::class,
 			WordPressCt1SchemaIntrospector::class,
 		] as $class ) {
