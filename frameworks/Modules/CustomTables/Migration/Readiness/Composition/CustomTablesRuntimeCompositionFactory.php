@@ -13,6 +13,7 @@ use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetad
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\Policy\MigrationExecutionAuthorizationPolicyAdapter;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
+use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\TrustedRecoveryVerificationProviderInterface;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\MigrationRunRecordCodec;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\WpdbMigrationRunRepository;
@@ -43,7 +44,7 @@ final readonly class CustomTablesRuntimeCompositionFactory {
 		DatabaseAdapterInterface $database,
 		PolicyEngine $policy,
 		WordPressMetadataPreconditionFactsProvider $metadataFacts,
-		FailClosedRecoveryVerificationProvider $recoveryVerification,
+		FailClosedRecoveryVerificationProvider|LocalBackupRecoveryVerificationProvider $recoveryVerification,
 		WpdbMigrationExecutionConfirmationProvider $confirmations,
 		int $networkId,
 		int $siteId,

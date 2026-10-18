@@ -14,6 +14,7 @@ use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTable
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\RuntimeCompositionReadinessService;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
+use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
@@ -53,8 +54,8 @@ final class CustomTablesRuntimeCompositionFactoryTest extends TestCase
     {
         $production = new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'production');
         $expected = [
-            'recoveryVerification' => FailClosedRecoveryVerificationProvider::class,
-            'confirmations' => WpdbMigrationExecutionConfirmationProvider::class,
+            'recoveryVerification' => [FailClosedRecoveryVerificationProvider::class, LocalBackupRecoveryVerificationProvider::class],
+            'confirmations' => [WpdbMigrationExecutionConfirmationProvider::class],
         ];
 
         foreach ($production->getParameters() as $parameter) {
@@ -62,9 +63,17 @@ final class CustomTablesRuntimeCompositionFactoryTest extends TestCase
                 continue;
             }
             $type = $parameter->getType();
-            self::assertInstanceOf(\ReflectionNamedType::class, $type);
-            self::assertSame($expected[$parameter->getName()], $type->getName());
-            self::assertTrue((new ReflectionClass($type->getName()))->isFinal());
+            $types = $type instanceof \ReflectionUnionType ? $type->getTypes() : [$type];
+            $names = [];
+            foreach ($types as $named) {
+                self::assertInstanceOf(\ReflectionNamedType::class, $named);
+                self::assertTrue((new ReflectionClass($named->getName()))->isFinal());
+                $names[] = $named->getName();
+            }
+            sort($names);
+            $want = $expected[$parameter->getName()];
+            sort($want);
+            self::assertSame($want, $names);
             unset($expected[$parameter->getName()]);
         }
 
