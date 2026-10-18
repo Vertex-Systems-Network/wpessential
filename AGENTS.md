@@ -430,7 +430,8 @@ Local-first delivery (owner directive, saves CI runner minutes):
 - develop, fix and commit locally; do not push intermediate or checkpoint-only commits;
 - before any push run `composer gate:local` (syntax, architecture, engineering, smoke, PHPCS, PHPStan, PHPUnit) on a clean tree; `composer hooks:install` enables the pre-push hook that refuses an un-gated HEAD;
 - push once per completed milestone, so CI runs once to confirm, not to discover; a CI failure after a green local gate is an environment difference to fix in the gate, not a reason to iterate on the remote;
-- never push README/state/checkpoint-only commits separately; fold them into the milestone push.
+- never push README/state/checkpoint-only commits separately; fold them into the milestone push;
+- when a milestone PR is green and mergeable and only the owner's protected merge remains, record queue `mode: OWNER_AUTHORITY_REQUIRED` with `stop_reason` naming the PR, instead of looping on the Stop hook; the next agent restores an active mode after the merge.
 
 ## UI/UX/accessibility
 
