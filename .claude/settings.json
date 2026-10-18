@@ -11,7 +11,7 @@
   },
   "hooks": {
     "Stop": [{"hooks": [{"type": "command",
-      "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/ai/ai_continue.py\" >/dev/null || exit 0; [ -f \"$CLAUDE_PROJECT_DIR/.claude/.allow-stop\" ] && exit 0; echo '{\"decision\":\"block\",\"reason\":\"Autonomous execution active: continue per AGENTS.md Non-stop enforcement.\"}'",
+      "command": "[ -f \"$CLAUDE_PROJECT_DIR/.claude/.allow-stop\" ] && exit 0; python3 \"$CLAUDE_PROJECT_DIR/tools/ai/ai_continue.py\" --stop-hook",
       "timeout": 30}]}]
   }
 }
