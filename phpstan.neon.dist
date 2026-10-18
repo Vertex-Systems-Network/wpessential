@@ -1,5 +1,6 @@
 includes:
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
+    - phpstan-baseline.neon
 
 parameters:
     level: 5
@@ -8,3 +9,5 @@ parameters:
         - frameworks
     tmpDir: var/phpstan
     reportUnmatchedIgnoredErrors: true
+    # ADR-0223: fail-closed runtime guards re-check PHPDoc-only types on untrusted WordPress input.
+    treatPhpDocTypesAsCertain: false

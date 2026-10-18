@@ -4,63 +4,60 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 
-final readonly class TaxonomyCptUiImportPreviewAdminBridge
-{
-    private const CAPABILITY = 'manage_options';
+final readonly class TaxonomyCptUiImportPreviewAdminBridge {
 
-    public function __construct(private AjaxDispatcher $ajax) {}
+	private const CAPABILITY = 'manage_options';
 
-    public function register(): void
-    {
-        if (!function_exists('add_action')) {
-            return;
-        }
-        add_action('admin_footer', [$this, 'renderBootstrap']);
-    }
+	public function __construct( private AjaxDispatcher $ajax ) {}
 
-    public function renderBootstrap(): void
-    {
-        if (!$this->isTaxonomyPage()
-            || !function_exists('current_user_can')
-            || !current_user_can(self::CAPABILITY)
-        ) {
-            return;
-        }
+	public function register(): void {
+		if ( ! function_exists( 'add_action' ) ) {
+			return;
+		}
+		add_action( 'admin_footer', [ $this, 'renderBootstrap' ] );
+	}
 
-        $bootstrap = [
-            'type' => 'taxonomy.import_preview',
-            'nonce' => $this->ajax->createNonce('taxonomy.import_preview'),
-            'commit_type' => 'taxonomy.import_commit',
-            'commit_nonce' => $this->ajax->createNonce('taxonomy.import_commit'),
-        ];
-        $json = function_exists('wp_json_encode')
-            ? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
-            : json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-        if (!is_string($json)) {
-            return;
-        }
+	public function renderBootstrap(): void {
+		if ( ! $this->isTaxonomyPage()
+			|| ! function_exists( 'current_user_can' )
+			|| ! current_user_can( self::CAPABILITY )
+		) {
+			return;
+		}
 
-        echo '<script id="wpessential-taxonomy-import-preview-bootstrap" type="application/json">' . $json . '</script>';
-    }
+		$bootstrap = [
+			'type'         => 'taxonomy.import_preview',
+			'nonce'        => $this->ajax->createNonce( 'taxonomy.import_preview' ),
+			'commit_type'  => 'taxonomy.import_commit',
+			'commit_nonce' => $this->ajax->createNonce( 'taxonomy.import_commit' ),
+		];
+		$json      = function_exists( 'wp_json_encode' )
+			? wp_json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )
+			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+		if ( ! is_string( $json ) ) {
+			return;
+		}
 
-    private function isTaxonomyPage(): bool
-    {
-        $page = $_GET['page'] ?? null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only page routing check.
-        if (!is_string($page)) {
-            return false;
-        }
-        if (function_exists('wp_unslash')) {
-            $page = wp_unslash($page);
-        }
-        if (function_exists('sanitize_key')) {
-            $page = sanitize_key($page);
-        }
-        return $page === TaxonomyAdminController::PAGE_SLUG;
-    }
+		echo '<script id="wpessential-taxonomy-import-preview-bootstrap" type="application/json">' . $json . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON encoded with JSON_HEX_* flags.
+	}
+
+	private function isTaxonomyPage(): bool {
+		$page = $_GET['page'] ?? null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput -- read-only routing check; unslashed and sanitized below.
+		if ( ! is_string( $page ) ) {
+			return false;
+		}
+		if ( function_exists( 'wp_unslash' ) ) {
+			$page = wp_unslash( $page );
+		}
+		if ( function_exists( 'sanitize_key' ) ) {
+			$page = sanitize_key( $page );
+		}
+		return $page === TaxonomyAdminController::PAGE_SLUG;
+	}
 }

@@ -2,17 +2,17 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: db38d64f278767e8cc1d933b0258e1bf2d06566f
-observed_main_source: "Fresh exact-main audit 2026-10-17: independent #947 review merged by PR #1422 as db38d64f278767e8cc1d933b0258e1bf2d06566f."
-active_issue: "#1423"
-active_pr: "#1424"
-active_branch: supervisor/p006-wave1a-review-closeout-20261017
-current_milestone: "Reconcile README, queue and compact state after #947 independent P-006 Wave 1A review."
+observed_main_sha: 30ad00cb8aa740e3e48646e0c2ba99cc45f0eafc
+observed_main_source: "2026-10-18 owner-directed AI plan audit on main 30ad00c (PR #1424 merged)."
+active_issue: "#1417"
+active_pr: null
+active_branch: claude/pensive-wozniak-qbgl24
+current_milestone: "ADR-0223 PHP quality gate + #1415 PHPUnit recovery re-applied: PHPCS 0 errors, PHPStan 0, PHPUnit 1421/1421 local."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Complete #1423 shared-truth closeout under exact-head Governance; then report NO_VALID_WORK_SLOT while #1416 is owner-paused, #1102 authorization-gated and #858 external-admin."
-waiting_external: "#1416 quality remediation paused by owner with four required gates failing at last observed head; #1102 authorization-gated P-006; #858 external-admin. #947 independent review merged and closed."
-next_planned_slot: NO_VALID_WORK_SLOT
+next_safe_action: "Open PR for claude/pensive-wozniak-qbgl24, verify exact-head CI on PHP 8.2; then close #1416 as superseded and resume the next safe source milestone from the queue."
+waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
+next_planned_slot: EXACT_HEAD_CI_VERIFICATION
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

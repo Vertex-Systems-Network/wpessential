@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use Closure;
@@ -14,84 +14,81 @@ use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
-final class FieldGroupRuntimeRegistrar
-{
-    private bool $processed = false;
+final class FieldGroupRuntimeRegistrar {
 
-    /** @var list<string> */
-    private array $bound = [];
+	private bool $processed = false;
 
-    /** @var array<string,string> */
-    private array $errors = [];
+	/** @var list<string> */
+	private array $bound = [];
 
-    /** @var Closure(string,callable,int):void */
-    private Closure $addAction;
+	/** @var array<string,string> */
+	private array $errors = [];
 
-    /** @param null|callable(string,callable,int):void $addAction */
-    public function __construct(
-        private readonly DefinitionRepositoryInterface $definitions,
-        private readonly FieldGroupPostMetaBinder $binder,
-        ?callable $addAction = null,
-    ) {
-        $this->addAction = $addAction !== null
-            ? Closure::fromCallable($addAction)
-            : static function (string $hook, callable $callback, int $priority): void {
-                if (function_exists('add_action')) {
-                    add_action($hook, $callback, $priority);
-                }
-            };
-    }
+	/** @var Closure(string,callable,int):void */
+	private Closure $addAction;
 
-    public function register(): void
-    {
-        ($this->addAction)('init', [$this, 'registerActive'], 30);
-    }
+	/** @param null|callable(string,callable,int):void $addAction */
+	public function __construct(
+		private readonly DefinitionRepositoryInterface $definitions,
+		private readonly FieldGroupPostMetaBinder $binder,
+		?callable $addAction = null,
+	) {
+		$this->addAction = $addAction !== null
+			? Closure::fromCallable( $addAction )
+			: static function ( string $hook, callable $callback, int $priority ): void {
+				if ( function_exists( 'add_action' ) ) {
+					add_action( $hook, $callback, $priority );
+				}
+			};
+	}
 
-    public function registerActive(): void
-    {
-        if ($this->processed) {
-            return;
-        }
-        $this->processed = true;
+	public function register(): void {
+		( $this->addAction )( 'init', [ $this, 'registerActive' ], 30 );
+	}
 
-        try {
-            $definitions = array_values(array_filter(
-                $this->definitions->byType(FieldGroupDefinitionNormalizer::DEFINITION_TYPE),
-                static fn (Definition $definition): bool =>
-                    $definition->ownerSurfaceId === FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID
-                    && $definition->status === DefinitionStatus::Published,
-            ));
+	public function registerActive(): void {
+		if ( $this->processed ) {
+			return;
+		}
+		$this->processed = true;
 
-            usort(
-                $definitions,
-                static fn (Definition $left, Definition $right): int =>
-                    [$left->slug, $left->id] <=> [$right->slug, $right->id],
-            );
+		try {
+			$definitions = array_values(
+				array_filter(
+					$this->definitions->byType( FieldGroupDefinitionNormalizer::DEFINITION_TYPE ),
+					static fn ( Definition $definition ): bool =>
+					$definition->ownerSurfaceId === FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID
+					&& $definition->status === DefinitionStatus::Published,
+				)
+			);
 
-            $this->binder->bindAll($definitions);
-            $this->bound = array_map(
-                static fn (Definition $definition): string => $definition->id,
-                $definitions,
-            );
-        } catch (Throwable $error) {
-            $this->errors['runtime'] = $error->getMessage();
-        }
-    }
+			usort(
+				$definitions,
+				static fn ( Definition $left, Definition $right ): int =>
+					[ $left->slug, $left->id ] <=> [ $right->slug, $right->id ],
+			);
 
-    public function processed(): bool
-    {
-        return $this->processed;
-    }
+			$this->binder->bindAll( $definitions );
+			$this->bound = array_map(
+				static fn ( Definition $definition ): string => $definition->id,
+				$definitions,
+			);
+		} catch ( Throwable $error ) {
+			$this->errors['runtime'] = $error->getMessage();
+		}
+	}
 
-    /** @return list<string> */
-    public function bound(): array
-    {
-        return $this->bound;
-    }
+	public function processed(): bool {
+		return $this->processed;
+	}
 
-    /** @return array<string,string> */
-    public function errors(): array
-    {
-        return $this->errors;
-    }
+	/** @return list<string> */
+	public function bound(): array {
+		return $this->bound;
+	}
+
+	/** @return array<string,string> */
+	public function errors(): array {
+		return $this->errors;
+	}
 }

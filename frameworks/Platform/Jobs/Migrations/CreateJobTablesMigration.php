@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Jobs\Migrations;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
@@ -13,41 +13,35 @@ use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 use WPEssential\Platform\Jobs\JobTableNames;
 
-final class CreateJobTablesMigration implements MigrationInterface
-{
-    private readonly JobTableNames $tables;
+final class CreateJobTablesMigration implements MigrationInterface {
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new JobTableNames($database);
-    }
+	private readonly JobTableNames $tables;
 
-    public function id(): string
-    {
-        return '009.create-job-persistence';
-    }
+	public function __construct( private readonly DatabaseAdapterInterface $database ) {
+		$this->tables = new JobTableNames( $database );
+	}
 
-    public function sequence(): int
-    {
-        return 90;
-    }
+	public function id(): string {
+		return '009.create-job-persistence';
+	}
 
-    public function isDestructive(): bool
-    {
-        return false;
-    }
+	public function sequence(): int {
+		return 90;
+	}
 
-    public function recoveryPlan(): ?string
-    {
-        return null;
-    }
+	public function isDestructive(): bool {
+		return false;
+	}
 
-    public function apply(): void
-    {
-        $charset = trim($this->database->charsetCollate());
-        $charsetSql = $charset === '' ? '' : ' ' . $charset;
+	public function recoveryPlan(): ?string {
+		return null;
+	}
 
-        $jobsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->jobs}` (
+	public function apply(): void {
+		$charset    = trim( $this->database->charsetCollate() );
+		$charsetSql = $charset === '' ? '' : ' ' . $charset;
+
+		$jobsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->jobs}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL,
             id CHAR(36) NOT NULL,
@@ -67,7 +61,7 @@ final class CreateJobTablesMigration implements MigrationInterface
             KEY scope_type_created (network_id, site_id, type_key, created_at)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        $attemptsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->attempts}` (
+		$attemptsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->attempts}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL,
             attempt_id CHAR(36) NOT NULL,
@@ -91,10 +85,10 @@ final class CreateJobTablesMigration implements MigrationInterface
             KEY job_attempt_lookup (network_id, site_id, job_id, attempt_no)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        foreach ([$jobsSql, $attemptsSql] as $sql) {
-            if ($this->database->query($sql) === false) {
-                throw new RuntimeException('Failed to create durable JobService tables: ' . $this->database->lastError());
-            }
-        }
-    }
+		foreach ( [ $jobsSql, $attemptsSql ] as $sql ) {
+			if ( $this->database->query( $sql ) === false ) {
+				throw new RuntimeException( 'Failed to create durable JobService tables: ' . $this->database->lastError() );
+			}
+		}
+	}
 }

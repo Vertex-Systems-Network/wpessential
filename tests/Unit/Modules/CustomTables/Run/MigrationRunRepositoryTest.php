@@ -16,7 +16,7 @@ final class MigrationRunRepositoryTest extends TestCase
     public function testCreateAndGetPreserveCanonicalRun(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = $this->run();
+        $run = $this->fixtureRun();
 
         self::assertSame($run, $repository->create($run));
         self::assertSame($run, $repository->get($run->id));
@@ -25,7 +25,7 @@ final class MigrationRunRepositoryTest extends TestCase
     public function testDuplicateCreateFailsClosed(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = $this->run();
+        $run = $this->fixtureRun();
         $repository->create($run);
 
         $this->expectException(RuntimeException::class);
@@ -35,7 +35,7 @@ final class MigrationRunRepositoryTest extends TestCase
     public function testCompareAndSwapAcceptsLegalNextRevision(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = $repository->create($this->run());
+        $run = $repository->create($this->fixtureRun());
         $next = $run->transition(MigrationRunState::AwaitingReview);
 
         self::assertSame($next, $repository->compareAndSwap($next, 1));
@@ -45,7 +45,7 @@ final class MigrationRunRepositoryTest extends TestCase
     public function testCompareAndSwapRejectsStaleExpectedRevision(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = $repository->create($this->run());
+        $run = $repository->create($this->fixtureRun());
         $next = $run->transition(MigrationRunState::AwaitingReview);
         $repository->compareAndSwap($next, 1);
 
@@ -56,7 +56,7 @@ final class MigrationRunRepositoryTest extends TestCase
     public function testCompareAndSwapRejectsImmutableIdentityMutation(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = $repository->create($this->run());
+        $run = $repository->create($this->fixtureRun());
 
         $mutated = new MigrationRun(
             id: $run->id,
@@ -73,7 +73,7 @@ final class MigrationRunRepositoryTest extends TestCase
         $repository->compareAndSwap($mutated, 1);
     }
 
-    private function run(): MigrationRun
+    private function fixtureRun(): MigrationRun
     {
         return new MigrationRun(
             id: '123e4567-e89b-42d3-a456-426614174000',

@@ -10,6 +10,19 @@ use WPEssential\Modules\Fields\FieldGroupDefinitionNormalizer;
 
 final class FieldGroupDefinitionNormalizerTest extends TestCase
 {
+    public function testEmptyPresentationAndStorageMapsUseSafeDraftDefaults(): void
+    {
+        $group = (new FieldGroupDefinitionNormalizer())->normalize([
+            'group_key' => 'draft_group',
+            'title' => 'Draft group',
+            'presentation' => [],
+            'storage' => [],
+        ]);
+        self::assertSame('draft_group', $group['group_key']);
+        self::assertSame('unconfigured', $group['storage']['mode']);
+        self::assertIsBool($group['presentation']['collapsible']);
+    }
+
     public function testNormalizesNestedFieldsLocationsAndPresentation(): void
     {
         $group = (new FieldGroupDefinitionNormalizer())->normalize([

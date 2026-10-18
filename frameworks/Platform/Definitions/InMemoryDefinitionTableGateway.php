@@ -4,86 +4,80 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Definitions;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
 use WPEssential\Contracts\DefinitionTableGatewayInterface;
 
-final class InMemoryDefinitionTableGateway implements DefinitionTableGatewayInterface
-{
-    /** @var array<string, array<string, scalar|null>> */
-    private array $rows = [];
+final class InMemoryDefinitionTableGateway implements DefinitionTableGatewayInterface {
 
-    /** @var array<string, list<string>> */
-    private array $dependencies = [];
+	/** @var array<string, array<string, scalar|null>> */
+	private array $rows = [];
 
-    public function find(string $id): ?array
-    {
-        $row = $this->rows[$id] ?? null;
-        if ($row === null) {
-            return null;
-        }
-        $row['_dependencies_json'] = json_encode($this->dependencies[$id] ?? [], JSON_THROW_ON_ERROR);
-        return $row;
-    }
+	/** @var array<string, list<string>> */
+	private array $dependencies = [];
 
-    public function insert(array $row, array $dependencies): void
-    {
-        $id = (string) ($row['id'] ?? '');
-        if ($id === '' || isset($this->rows[$id])) {
-            throw new RuntimeException('Definition row already exists or has invalid id.');
-        }
+	public function find( string $id ): ?array {
+		$row = $this->rows[ $id ] ?? null;
+		if ( $row === null ) {
+			return null;
+		}
+		$row['_dependencies_json'] = json_encode( $this->dependencies[ $id ] ?? [], JSON_THROW_ON_ERROR );
+		return $row;
+	}
 
-        // Mirror the physical scope_type_slug UNIQUE KEY enforced in MySQL.
-        // This disposable gateway instance represents one scoped table view.
-        foreach ($this->rows as $existing) {
-            if (
-                ($existing['type'] ?? null) === ($row['type'] ?? null)
-                && ($existing['slug'] ?? null) === ($row['slug'] ?? null)
-            ) {
-                throw new RuntimeException('Definition type and slug already exist.');
-            }
-        }
+	public function insert( array $row, array $dependencies ): void {
+		$id = (string) ( $row['id'] ?? '' );
+		if ( $id === '' || isset( $this->rows[ $id ] ) ) {
+			throw new RuntimeException( 'Definition row already exists or has invalid id.' );
+		}
 
-        $this->rows[$id] = $row;
-        $this->dependencies[$id] = array_values($dependencies);
-    }
+		// Mirror the physical scope_type_slug UNIQUE KEY enforced in MySQL.
+		// This disposable gateway instance represents one scoped table view.
+		foreach ( $this->rows as $existing ) {
+			if (
+				( $existing['type'] ?? null ) === ( $row['type'] ?? null )
+				&& ( $existing['slug'] ?? null ) === ( $row['slug'] ?? null )
+			) {
+				throw new RuntimeException( 'Definition type and slug already exist.' );
+			}
+		}
 
-    public function updateIfCurrentRevision(string $id, int $expectedRevision, array $row, array $dependencies): bool
-    {
-        $current = $this->rows[$id] ?? null;
-        if ($current === null || (int) ($current['revision'] ?? 0) !== $expectedRevision) {
-            return false;
-        }
-        $this->rows[$id] = $row;
-        $this->dependencies[$id] = array_values($dependencies);
-        return true;
-    }
+		$this->rows[ $id ]         = $row;
+		$this->dependencies[ $id ] = array_values( $dependencies );
+	}
 
-    public function findByType(string $type): array
-    {
-        $rows = [];
-        foreach ($this->rows as $id => $row) {
-            if (($row['type'] ?? null) === $type) {
-                $row['_dependencies_json'] = json_encode($this->dependencies[$id] ?? [], JSON_THROW_ON_ERROR);
-                $rows[] = $row;
-            }
-        }
-        return $rows;
-    }
+	public function updateIfCurrentRevision( string $id, int $expectedRevision, array $row, array $dependencies ): bool {
+		$current = $this->rows[ $id ] ?? null;
+		if ( $current === null || (int) ( $current['revision'] ?? 0 ) !== $expectedRevision ) {
+			return false;
+		}
+		$this->rows[ $id ]         = $row;
+		$this->dependencies[ $id ] = array_values( $dependencies );
+		return true;
+	}
 
-    public function findDependents(string $id): array
-    {
-        $rows = [];
-        foreach ($this->rows as $definitionId => $row) {
-            if (in_array($id, $this->dependencies[$definitionId] ?? [], true)) {
-                $row['_dependencies_json'] = json_encode($this->dependencies[$definitionId] ?? [], JSON_THROW_ON_ERROR);
-                $rows[] = $row;
-            }
-        }
-        return $rows;
-    }
+	public function findByType( string $type ): array {
+		$rows = [];
+		foreach ( $this->rows as $id => $row ) {
+			if ( ( $row['type'] ?? null ) === $type ) {
+				$row['_dependencies_json'] = json_encode( $this->dependencies[ $id ] ?? [], JSON_THROW_ON_ERROR );
+				$rows[]                    = $row;
+			}
+		}
+		return $rows;
+	}
+
+	public function findDependents( string $id ): array {
+		$rows = [];
+		foreach ( $this->rows as $definitionId => $row ) {
+			if ( in_array( $id, $this->dependencies[ $definitionId ] ?? [], true ) ) {
+				$row['_dependencies_json'] = json_encode( $this->dependencies[ $definitionId ] ?? [], JSON_THROW_ON_ERROR );
+				$rows[]                    = $row;
+			}
+		}
+		return $rows;
+	}
 }

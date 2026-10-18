@@ -21,10 +21,10 @@ final class WordPressAuthorizationServiceWiringTest extends TestCase
         $source = file_get_contents($pluginPath);
 
         self::assertIsString($source);
-        self::assertSame(1, substr_count($source, 'new WordPressCapabilityChecker($abilityEnvironment)'));
-        self::assertStringContainsString('$abilityPolicy = new PolicyEngine($capabilityChecker);', $source);
+        self::assertSame(1, substr_count($source, 'new WordPressCapabilityChecker( $abilityEnvironment )'));
+        self::assertStringContainsString('$abilityPolicy          = new PolicyEngine( $capabilityChecker );', $source);
         self::assertStringContainsString(
-            '$services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);',
+            '$services->set( WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker );',
             $source,
         );
     }
@@ -37,7 +37,7 @@ final class WordPressAuthorizationServiceWiringTest extends TestCase
         self::assertIsString($source);
         self::assertSame(1, substr_count($source, 'new WordPressPostResourceAuthorizer()'));
         self::assertStringContainsString(
-            '$services->set(WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer);',
+            '$services->set( WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer );',
             $source,
         );
         self::assertStringNotContainsString('Modules\\Status', $source);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Readiness\Composition;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use InvalidArgumentException;
@@ -37,294 +37,291 @@ use WPEssential\Modules\CustomTables\Migration\Run\MigrationRun;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunRepositoryInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 
-final readonly class RuntimeCompositionReadinessService
-{
-    public function __construct(
-        private MigrationRunRepositoryInterface $runs,
-        private MetadataPreconditionFactsProviderInterface $metadataFacts,
-        private RecoveryVerificationProviderInterface $recoveryVerification,
-        private MigrationExecutionConfirmationProviderInterface $confirmations,
-        private MigrationExecutionAuthorizationPolicyAdapter $authorizationPolicy,
-        private int $networkId,
-        private int $siteId,
-    ) {
-        if ($this->networkId < 1 || $this->siteId < 1) {
-            throw new InvalidArgumentException('Custom Tables runtime composition scope ids must be positive.');
-        }
-    }
+final readonly class RuntimeCompositionReadinessService {
 
-    /** @param list<PreconditionRequirement> $requirements */
-    public function evaluate(
-        MigrationRun $run,
-        array $requirements,
-        TableSchemaDescriptor $descriptor,
-        MigrationGenerationStamp $reviewedGeneration,
-        MigrationGenerationStamp $currentGeneration,
-        RecoveryRequirement $recoveryRequirement,
-        string $recoveryArtifactId,
-        int $maxRecoveryEvidenceAgeHours,
-        ProviderMigrationPreview $preview,
-        ExecutionContext $context,
-        MigrationRisk $risk,
-    ): RuntimeCompositionReadinessPackage {
-        if ($maxRecoveryEvidenceAgeHours < 0) {
-            throw new InvalidArgumentException('Custom Tables runtime composition recovery evidence age cannot be negative.');
-        }
+	public function __construct(
+		private MigrationRunRepositoryInterface $runs,
+		private MetadataPreconditionFactsProviderInterface $metadataFacts,
+		private RecoveryVerificationProviderInterface $recoveryVerification,
+		private MigrationExecutionConfirmationProviderInterface $confirmations,
+		private MigrationExecutionAuthorizationPolicyAdapter $authorizationPolicy,
+		private int $networkId,
+		private int $siteId,
+	) {
+		if ( $this->networkId < 1 || $this->siteId < 1 ) {
+			throw new InvalidArgumentException( 'Custom Tables runtime composition scope ids must be positive.' );
+		}
+	}
 
-        $reasons = [];
-        $stored = null;
-        try {
-            $stored = $this->runs->get($run->id);
-        } catch (RuntimeException) {
-            $reasons[] = 'run_repository_failed';
-        }
-        if (!$stored instanceof MigrationRun) {
-            $reasons[] = 'run_not_persisted';
-        } elseif ($stored->fingerprint() !== $run->fingerprint()) {
-            $reasons[] = 'persisted_run_mismatch';
-        }
+	/** @param list<PreconditionRequirement> $requirements */
+	public function evaluate(
+		MigrationRun $run,
+		array $requirements,
+		TableSchemaDescriptor $descriptor,
+		MigrationGenerationStamp $reviewedGeneration,
+		MigrationGenerationStamp $currentGeneration,
+		RecoveryRequirement $recoveryRequirement,
+		string $recoveryArtifactId,
+		int $maxRecoveryEvidenceAgeHours,
+		ProviderMigrationPreview $preview,
+		ExecutionContext $context,
+		MigrationRisk $risk,
+	): RuntimeCompositionReadinessPackage {
+		if ( $maxRecoveryEvidenceAgeHours < 0 ) {
+			throw new InvalidArgumentException( 'Custom Tables runtime composition recovery evidence age cannot be negative.' );
+		}
 
-        if ($context->siteId !== $this->siteId) {
-            $reasons[] = 'site_scope_mismatch';
-        }
-        if ($context->networkId === null) {
-            $reasons[] = 'network_scope_missing';
-        } elseif ($context->networkId !== $this->networkId) {
-            $reasons[] = 'network_scope_mismatch';
-        }
+		$reasons = [];
+		$stored  = null;
+		try {
+			$stored = $this->runs->get( $run->id );
+		} catch ( RuntimeException ) {
+			$reasons[] = 'run_repository_failed';
+		}
+		if ( ! $stored instanceof MigrationRun ) {
+			$reasons[] = 'run_not_persisted';
+		} elseif ( $stored->fingerprint() !== $run->fingerprint() ) {
+			$reasons[] = 'persisted_run_mismatch';
+		}
 
-        $descriptorMatches = $this->descriptorMatchesRun($descriptor, $run);
-        if (!$descriptorMatches) {
-            $reasons[] = 'descriptor_run_mismatch';
-        }
+		if ( $context->siteId !== $this->siteId ) {
+			$reasons[] = 'site_scope_mismatch';
+		}
+		if ( $context->networkId === null ) {
+			$reasons[] = 'network_scope_missing';
+		} elseif ( $context->networkId !== $this->networkId ) {
+			$reasons[] = 'network_scope_mismatch';
+		}
 
-        if (!$this->generationMatchesRun($reviewedGeneration, $run)) {
-            $reasons[] = 'reviewed_generation_run_mismatch';
-        }
-        if (!$this->generationMatchesRun($currentGeneration, $run)) {
-            $reasons[] = 'current_generation_run_mismatch';
-        }
-        if ($preview->planFingerprint !== $run->planFingerprint
-            || $preview->capabilities->provider !== $currentGeneration->provider
-            || $preview->capabilities->version !== $currentGeneration->providerVersion
-        ) {
-            $reasons[] = 'preview_generation_mismatch';
-        }
-        if ($preview->executionAllowed) {
-            $reasons[] = 'preview_execution_enabled';
-        }
+		$descriptorMatches = $this->descriptorMatchesRun( $descriptor, $run );
+		if ( ! $descriptorMatches ) {
+			$reasons[] = 'descriptor_run_mismatch';
+		}
 
-        $metadataFacts = new MetadataPreconditionFacts(false);
-        if ($descriptorMatches) {
-            try {
-                $metadataFacts = $this->metadataFacts->facts($descriptor, $preview->capabilities);
-            } catch (Throwable) {
-                $reasons[] = 'metadata_facts_unavailable';
-            }
-        }
-        $preconditions = $this->evaluateMetadataPreconditions($requirements, $metadataFacts, $reasons);
-        $revalidation = MigrationRevalidationDecision::evaluate($reviewedGeneration, $currentGeneration);
+		if ( ! $this->generationMatchesRun( $reviewedGeneration, $run ) ) {
+			$reasons[] = 'reviewed_generation_run_mismatch';
+		}
+		if ( ! $this->generationMatchesRun( $currentGeneration, $run ) ) {
+			$reasons[] = 'current_generation_run_mismatch';
+		}
+		if ( $preview->planFingerprint !== $run->planFingerprint
+			|| $preview->capabilities->provider !== $currentGeneration->provider
+			|| $preview->capabilities->version !== $currentGeneration->providerVersion
+		) {
+			$reasons[] = 'preview_generation_mismatch';
+		}
+		if ( $preview->executionAllowed ) {
+			$reasons[] = 'preview_execution_enabled';
+		}
 
-        $boundRecovery = null;
-        try {
-            $boundRecovery = $this->recoveryVerification->verify($recoveryArtifactId, $run->planFingerprint);
-        } catch (Throwable) {
-            $reasons[] = 'recovery_verification_failed';
-        }
+		$metadataFacts = new MetadataPreconditionFacts( false );
+		if ( $descriptorMatches ) {
+			try {
+				$metadataFacts = $this->metadataFacts->facts( $descriptor, $preview->capabilities );
+			} catch ( Throwable ) {
+				$reasons[] = 'metadata_facts_unavailable';
+			}
+		}
+		$preconditions = $this->evaluateMetadataPreconditions( $requirements, $metadataFacts, $reasons );
+		$revalidation  = MigrationRevalidationDecision::evaluate( $reviewedGeneration, $currentGeneration );
 
-        $recoveryBinding = RecoveryEvidenceBindingDecision::evaluate(
-            $reviewedGeneration,
-            $boundRecovery,
-            $maxRecoveryEvidenceAgeHours,
-        );
-        foreach ($recoveryBinding->reasons as $reason) {
-            $reasons[] = 'recovery_binding_' . $reason;
-        }
+		$boundRecovery = null;
+		try {
+			$boundRecovery = $this->recoveryVerification->verify( $recoveryArtifactId, $run->planFingerprint );
+		} catch ( Throwable ) {
+			$reasons[] = 'recovery_verification_failed';
+		}
 
-        $recovery = null;
-        if ($boundRecovery !== null) {
-            $recovery = RecoveryReadinessDecision::evaluate(
-                $recoveryRequirement,
-                $boundRecovery->evidence,
-                $run->planFingerprint,
-            );
-        } else {
-            $reasons[] = 'recovery_evidence_missing';
-        }
+		$recoveryBinding = RecoveryEvidenceBindingDecision::evaluate(
+			$reviewedGeneration,
+			$boundRecovery,
+			$maxRecoveryEvidenceAgeHours,
+		);
+		foreach ( $recoveryBinding->reasons as $reason ) {
+			$reasons[] = 'recovery_binding_' . $reason;
+		}
 
-        $readiness = null;
-        if ($recovery instanceof RecoveryReadinessDecision) {
-            $readiness = MigrationExecutionReadinessDecision::evaluate(
-                $run,
-                $preconditions,
-                $revalidation,
-                $recovery,
-                $preview,
-            );
-            foreach ($readiness->reasons as $reason) {
-                $reasons[] = 'readiness_' . $reason;
-            }
-        } else {
-            $reasons[] = 'readiness_incomplete';
-        }
+		$recovery = null;
+		if ( $boundRecovery !== null ) {
+			$recovery = RecoveryReadinessDecision::evaluate(
+				$recoveryRequirement,
+				$boundRecovery->evidence,
+				$run->planFingerprint,
+			);
+		} else {
+			$reasons[] = 'recovery_evidence_missing';
+		}
 
-        $confirmation = null;
-        try {
-            $confirmation = $this->confirmations->confirmationFor($run->id);
-        } catch (Throwable) {
-            $reasons[] = 'confirmation_source_failed';
-        }
-        $confirmationValid = $this->confirmationMatches($confirmation, $run, $context, $reasons);
+		$readiness = null;
+		if ( $recovery instanceof RecoveryReadinessDecision ) {
+			$readiness = MigrationExecutionReadinessDecision::evaluate(
+				$run,
+				$preconditions,
+				$revalidation,
+				$recovery,
+				$preview,
+			);
+			foreach ( $readiness->reasons as $reason ) {
+				$reasons[] = 'readiness_' . $reason;
+			}
+		} else {
+			$reasons[] = 'readiness_incomplete';
+		}
 
-        $authorizationRequest = $this->authorizationPolicy->request(
-            $context,
-            $run->id,
-            $run->stateRevision,
-            $confirmationValid,
-            $risk,
-        );
+		$confirmation = null;
+		try {
+			$confirmation = $this->confirmations->confirmationFor( $run->id );
+		} catch ( Throwable ) {
+			$reasons[] = 'confirmation_source_failed';
+		}
+		$confirmationValid = $this->confirmationMatches( $confirmation, $run, $context, $reasons );
 
-        if ($readiness instanceof MigrationExecutionReadinessDecision) {
-            $authorization = MigrationExecutionAuthorizationDecision::evaluate(
-                $run,
-                $readiness,
-                $authorizationRequest,
-            );
-            foreach ($authorization->reasons as $reason) {
-                $reasons[] = 'authorization_' . $reason;
-            }
-        } else {
-            if (!$authorizationRequest->capabilityAllowed) {
-                $reasons[] = 'authorization_capability_denied';
-            }
-            if (!$authorizationRequest->confirmationProvided) {
-                $reasons[] = 'authorization_confirmation_missing';
-            }
-            if (in_array($risk, [MigrationRisk::R3, MigrationRisk::R4], true)) {
-                $reasons[] = 'authorization_unsupported_risk';
-            }
-        }
+		$authorizationRequest = $this->authorizationPolicy->request(
+			$context,
+			$run->id,
+			$run->stateRevision,
+			$confirmationValid,
+			$risk,
+		);
 
-        $reasons = array_values(array_unique($reasons));
-        sort($reasons);
+		if ( $readiness instanceof MigrationExecutionReadinessDecision ) {
+			$authorization = MigrationExecutionAuthorizationDecision::evaluate(
+				$run,
+				$readiness,
+				$authorizationRequest,
+			);
+			foreach ( $authorization->reasons as $reason ) {
+				$reasons[] = 'authorization_' . $reason;
+			}
+		} else {
+			if ( ! $authorizationRequest->capabilityAllowed ) {
+				$reasons[] = 'authorization_capability_denied';
+			}
+			if ( ! $authorizationRequest->confirmationProvided ) {
+				$reasons[] = 'authorization_confirmation_missing';
+			}
+			if ( in_array( $risk, [ MigrationRisk::R3, MigrationRisk::R4 ], true ) ) {
+				$reasons[] = 'authorization_unsupported_risk';
+			}
+		}
 
-        return new RuntimeCompositionReadinessPackage(
-            runId: $run->id,
-            planFingerprint: $run->planFingerprint,
-            readinessStateRevision: $run->stateRevision,
-            compositionReady: $reasons === [],
-            reasons: $reasons,
-        );
-    }
+		$reasons = array_values( array_unique( $reasons ) );
+		sort( $reasons );
 
-    /**
-     * @param list<PreconditionRequirement> $requirements
-     * @param list<string> $reasons
-     */
-    private function evaluateMetadataPreconditions(
-        array $requirements,
-        MetadataPreconditionFacts $facts,
-        array &$reasons,
-    ): PreconditionReport {
-        $probe = new MetadataPreconditionProbe($facts);
-        $registry = new PreconditionProbeRegistry();
-        foreach ($this->allowedMetadataKinds() as $kind) {
-            $registry->register($kind, $probe);
-        }
+		return new RuntimeCompositionReadinessPackage(
+			runId: $run->id,
+			planFingerprint: $run->planFingerprint,
+			readinessStateRevision: $run->stateRevision,
+			compositionReady: $reasons === [],
+			reasons: $reasons,
+		);
+	}
 
-        $evaluations = [];
-        $ids = [];
-        foreach ($requirements as $requirement) {
-            if (!$requirement instanceof PreconditionRequirement) {
-                throw new InvalidArgumentException('Custom Tables runtime composition requires typed preconditions.');
-            }
-            if (isset($ids[$requirement->id])) {
-                throw new InvalidArgumentException('Custom Tables runtime composition contains duplicate precondition ids.');
-            }
-            $ids[$requirement->id] = true;
+	/**
+	 * @param list<PreconditionRequirement> $requirements
+	 * @param list<string> $reasons
+	 */
+	private function evaluateMetadataPreconditions(
+		array $requirements,
+		MetadataPreconditionFacts $facts,
+		array &$reasons,
+	): PreconditionReport {
+		$probe    = new MetadataPreconditionProbe( $facts );
+		$registry = new PreconditionProbeRegistry();
+		foreach ( $this->allowedMetadataKinds() as $kind ) {
+			$registry->register( $kind, $probe );
+		}
 
-            if (!$registry->has($requirement->kind)) {
-                $reasons[] = 'precondition_kind_not_allowlisted';
-                $evaluations[] = new PreconditionEvaluation(
-                    $requirement->id,
-                    PreconditionOutcome::Unsupported,
-                );
-                continue;
-            }
+		$evaluations = [];
+		$ids         = [];
+		foreach ( $requirements as $requirement ) {
+			if ( ! $requirement instanceof PreconditionRequirement ) {
+				throw new InvalidArgumentException( 'Custom Tables runtime composition requires typed preconditions.' );
+			}
+			if ( isset( $ids[ $requirement->id ] ) ) {
+				throw new InvalidArgumentException( 'Custom Tables runtime composition contains duplicate precondition ids.' );
+			}
+			$ids[ $requirement->id ] = true;
 
-            $evaluations[] = $registry->evaluate($requirement);
-        }
+			if ( ! $registry->has( $requirement->kind ) ) {
+				$reasons[]     = 'precondition_kind_not_allowlisted';
+				$evaluations[] = new PreconditionEvaluation(
+					$requirement->id,
+					PreconditionOutcome::Unsupported,
+				);
+				continue;
+			}
 
-        return new PreconditionReport($evaluations);
-    }
+			$evaluations[] = $registry->evaluate( $requirement );
+		}
 
-    /** @return list<PreconditionKind> */
-    private function allowedMetadataKinds(): array
-    {
-        return [
-            PreconditionKind::TableExists,
-            PreconditionKind::TableMissing,
-            PreconditionKind::ColumnMatchesFingerprint,
-            PreconditionKind::DatabaseFeatureAvailable,
-        ];
-    }
+		return new PreconditionReport( $evaluations );
+	}
 
-    private function descriptorMatchesRun(TableSchemaDescriptor $descriptor, MigrationRun $run): bool
-    {
-        return strtolower($descriptor->definitionId) === strtolower($run->targetDefinitionId)
-            && $descriptor->revision === $run->targetRevision
-            && $descriptor->tableKey === $run->tableKey
-            && $descriptor->desiredSchemaVersion === $run->targetSchemaVersion;
-    }
+	/** @return list<PreconditionKind> */
+	private function allowedMetadataKinds(): array {
+		return [
+			PreconditionKind::TableExists,
+			PreconditionKind::TableMissing,
+			PreconditionKind::ColumnMatchesFingerprint,
+			PreconditionKind::DatabaseFeatureAvailable,
+		];
+	}
 
-    private function generationMatchesRun(MigrationGenerationStamp $generation, MigrationRun $run): bool
-    {
-        return $generation->planFingerprint === $run->planFingerprint
-            && strtolower($generation->targetDefinitionId) === strtolower($run->targetDefinitionId)
-            && $generation->targetRevision === $run->targetRevision
-            && $generation->targetSchemaVersion === $run->targetSchemaVersion;
-    }
+	private function descriptorMatchesRun( TableSchemaDescriptor $descriptor, MigrationRun $run ): bool {
+		return strtolower( $descriptor->definitionId ) === strtolower( $run->targetDefinitionId )
+			&& $descriptor->revision === $run->targetRevision
+			&& $descriptor->tableKey === $run->tableKey
+			&& $descriptor->desiredSchemaVersion === $run->targetSchemaVersion;
+	}
 
-    /** @param list<string> $reasons */
-    private function confirmationMatches(
-        ?BoundMigrationExecutionConfirmation $confirmation,
-        MigrationRun $run,
-        ExecutionContext $context,
-        array &$reasons,
-    ): bool {
-        if (!$confirmation instanceof BoundMigrationExecutionConfirmation) {
-            $reasons[] = 'confirmation_missing';
-            return false;
-        }
+	private function generationMatchesRun( MigrationGenerationStamp $generation, MigrationRun $run ): bool {
+		return $generation->planFingerprint === $run->planFingerprint
+			&& strtolower( $generation->targetDefinitionId ) === strtolower( $run->targetDefinitionId )
+			&& $generation->targetRevision === $run->targetRevision
+			&& $generation->targetSchemaVersion === $run->targetSchemaVersion;
+	}
 
-        $valid = true;
-        if (strtolower($confirmation->runId) !== strtolower($run->id)) {
-            $reasons[] = 'confirmation_run_mismatch';
-            $valid = false;
-        }
-        if ($confirmation->planFingerprint !== $run->planFingerprint) {
-            $reasons[] = 'confirmation_plan_mismatch';
-            $valid = false;
-        }
-        if ($confirmation->readinessStateRevision !== $run->stateRevision) {
-            $reasons[] = 'confirmation_stale';
-            $valid = false;
-        }
+	/** @param list<string> $reasons */
+	private function confirmationMatches(
+		?BoundMigrationExecutionConfirmation $confirmation,
+		MigrationRun $run,
+		ExecutionContext $context,
+		array &$reasons,
+	): bool {
+		if ( ! $confirmation instanceof BoundMigrationExecutionConfirmation ) {
+			$reasons[] = 'confirmation_missing';
+			return false;
+		}
 
-        $expectedActorType = $context->principal->actorType === 'user'
-            ? ExecutionActorType::User
-            : ExecutionActorType::System;
-        $expectedActorUserId = $expectedActorType === ExecutionActorType::User
-            ? $context->principal->userId
-            : null;
+		$valid = true;
+		if ( strtolower( $confirmation->runId ) !== strtolower( $run->id ) ) {
+			$reasons[] = 'confirmation_run_mismatch';
+			$valid     = false;
+		}
+		if ( $confirmation->planFingerprint !== $run->planFingerprint ) {
+			$reasons[] = 'confirmation_plan_mismatch';
+			$valid     = false;
+		}
+		if ( $confirmation->readinessStateRevision !== $run->stateRevision ) {
+			$reasons[] = 'confirmation_stale';
+			$valid     = false;
+		}
 
-        if ($confirmation->actorType !== $expectedActorType
-            || $confirmation->actorUserId !== $expectedActorUserId
-        ) {
-            $reasons[] = 'confirmation_actor_mismatch';
-            $valid = false;
-        }
+		$expectedActorType   = $context->principal->actorType === 'user'
+			? ExecutionActorType::User
+			: ExecutionActorType::System;
+		$expectedActorUserId = $expectedActorType === ExecutionActorType::User
+			? $context->principal->userId
+			: null;
 
-        return $valid;
-    }
+		if ( $confirmation->actorType !== $expectedActorType
+			|| $confirmation->actorUserId !== $expectedActorUserId
+		) {
+			$reasons[] = 'confirmation_actor_mismatch';
+			$valid     = false;
+		}
+
+		return $valid;
+	}
 }

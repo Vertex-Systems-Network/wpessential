@@ -4,109 +4,103 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Secrets;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
 use WPEssential\Contracts\SecretVaultInterface;
 
-final class InMemorySecretVault implements SecretVaultInterface
-{
-    /**
-     * Reference/test implementation only.
-     * It intentionally does not claim at-rest encryption.
-     *
-     * @var array<string, array{reference:SecretReference, plaintext:string, revoked:bool}>
-     */
-    private array $records = [];
+final class InMemorySecretVault implements SecretVaultInterface {
 
-    public function __construct(private readonly SecretMetadataValidator $metadataValidator = new SecretMetadataValidator())
-    {
-    }
+	/**
+	 * Reference/test implementation only.
+	 * It intentionally does not claim at-rest encryption.
+	 *
+	 * @var array<string, array{reference:SecretReference, plaintext:string, revoked:bool}>
+	 */
+	private array $records = [];
 
-    public function store(string $name, int $ownerSurfaceId, string $plaintext, array $metadata = []): SecretReference
-    {
-        if ($plaintext === '') {
-            throw new RuntimeException('Secret plaintext cannot be empty.');
-        }
+	public function __construct( private readonly SecretMetadataValidator $metadataValidator = new SecretMetadataValidator() ) {
+	}
 
-        $this->metadataValidator->validate($metadata);
+	public function store( string $name, int $ownerSurfaceId, string $plaintext, array $metadata = [] ): SecretReference {
+		if ( $plaintext === '' ) {
+			throw new RuntimeException( 'Secret plaintext cannot be empty.' );
+		}
 
-        $reference = new SecretReference(
-            id: bin2hex(random_bytes(16)),
-            name: $name,
-            ownerSurfaceId: $ownerSurfaceId,
-            version: 1,
-            metadata: $metadata,
-        );
+		$this->metadataValidator->validate( $metadata );
 
-        $this->records[$reference->id] = [
-            'reference' => $reference,
-            'plaintext' => $plaintext,
-            'revoked' => false,
-        ];
+		$reference = new SecretReference(
+			id: bin2hex( random_bytes( 16 ) ),
+			name: $name,
+			ownerSurfaceId: $ownerSurfaceId,
+			version: 1,
+			metadata: $metadata,
+		);
 
-        return $reference;
-    }
+		$this->records[ $reference->id ] = [
+			'reference' => $reference,
+			'plaintext' => $plaintext,
+			'revoked'   => false,
+		];
 
-    public function resolve(SecretReference $reference): SensitiveValue
-    {
-        $record = $this->records[$reference->id] ?? null;
-        if ($record === null || $record['revoked']) {
-            throw new RuntimeException('Secret reference is unavailable or revoked.');
-        }
-        if ($record['reference']->version !== $reference->version) {
-            throw new RuntimeException('Secret reference version is stale.');
-        }
+		return $reference;
+	}
 
-        return new SensitiveValue($record['plaintext']);
-    }
+	public function resolve( SecretReference $reference ): SensitiveValue {
+		$record = $this->records[ $reference->id ] ?? null;
+		if ( $record === null || $record['revoked'] ) {
+			throw new RuntimeException( 'Secret reference is unavailable or revoked.' );
+		}
+		if ( $record['reference']->version !== $reference->version ) {
+			throw new RuntimeException( 'Secret reference version is stale.' );
+		}
 
-    public function rotate(SecretReference $reference, string $plaintext): SecretReference
-    {
-        if ($plaintext === '') {
-            throw new RuntimeException('Secret plaintext cannot be empty.');
-        }
+		return new SensitiveValue( $record['plaintext'] );
+	}
 
-        $record = $this->records[$reference->id] ?? null;
-        if ($record === null || $record['revoked']) {
-            throw new RuntimeException('Secret reference is unavailable or revoked.');
-        }
-        if ($record['reference']->version !== $reference->version) {
-            throw new RuntimeException('Secret reference version is stale.');
-        }
+	public function rotate( SecretReference $reference, string $plaintext ): SecretReference {
+		if ( $plaintext === '' ) {
+			throw new RuntimeException( 'Secret plaintext cannot be empty.' );
+		}
 
-        $rotated = new SecretReference(
-            id: $reference->id,
-            name: $reference->name,
-            ownerSurfaceId: $reference->ownerSurfaceId,
-            version: $reference->version + 1,
-            metadata: $reference->metadata,
-        );
+		$record = $this->records[ $reference->id ] ?? null;
+		if ( $record === null || $record['revoked'] ) {
+			throw new RuntimeException( 'Secret reference is unavailable or revoked.' );
+		}
+		if ( $record['reference']->version !== $reference->version ) {
+			throw new RuntimeException( 'Secret reference version is stale.' );
+		}
 
-        $this->records[$reference->id] = [
-            'reference' => $rotated,
-            'plaintext' => $plaintext,
-            'revoked' => false,
-        ];
+		$rotated = new SecretReference(
+			id: $reference->id,
+			name: $reference->name,
+			ownerSurfaceId: $reference->ownerSurfaceId,
+			version: $reference->version + 1,
+			metadata: $reference->metadata,
+		);
 
-        return $rotated;
-    }
+		$this->records[ $reference->id ] = [
+			'reference' => $rotated,
+			'plaintext' => $plaintext,
+			'revoked'   => false,
+		];
 
-    public function revoke(SecretReference $reference): void
-    {
-        $record = $this->records[$reference->id] ?? null;
-        if ($record === null) {
-            return;
-        }
-        if ($record['reference']->version !== $reference->version) {
-            throw new RuntimeException('Secret reference version is stale.');
-        }
+		return $rotated;
+	}
 
-        $record['plaintext'] = '';
-        $record['revoked'] = true;
-        $this->records[$reference->id] = $record;
-    }
+	public function revoke( SecretReference $reference ): void {
+		$record = $this->records[ $reference->id ] ?? null;
+		if ( $record === null ) {
+			return;
+		}
+		if ( $record['reference']->version !== $reference->version ) {
+			throw new RuntimeException( 'Secret reference version is stale.' );
+		}
+
+		$record['plaintext']             = '';
+		$record['revoked']               = true;
+		$this->records[ $reference->id ] = $record;
+	}
 }

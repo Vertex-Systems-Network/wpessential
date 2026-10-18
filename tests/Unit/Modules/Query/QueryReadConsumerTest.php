@@ -95,8 +95,8 @@ final class QueryReadConsumerTest extends TestCase
         self::assertInstanceOf(QueryProviderPlan::class, $provider->lastPlan);
         self::assertSame('publish', $provider->lastPlan->arguments['post_status']);
         self::assertSame('Alpha', $provider->lastPlan->arguments['s']);
-        self::assertSame('title', $provider->lastPlan->arguments['orderby']);
-        self::assertSame('ASC', $provider->lastPlan->arguments['order']);
+        self::assertSame(['title' => 'ASC'], $provider->lastPlan->arguments['orderby']);
+        self::assertArrayNotHasKey('order', $provider->lastPlan->arguments);
         self::assertSame(25, $provider->lastPlan->arguments['posts_per_page']);
         self::assertArrayNotHasKey('arguments', $result);
     }

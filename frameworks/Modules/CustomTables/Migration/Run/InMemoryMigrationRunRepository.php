@@ -4,70 +4,67 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Run;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use InvalidArgumentException;
 use RuntimeException;
 
-final class InMemoryMigrationRunRepository implements MigrationRunRepositoryInterface
-{
-    /** @var array<string,MigrationRun> */
-    private array $runs = [];
+final class InMemoryMigrationRunRepository implements MigrationRunRepositoryInterface {
 
-    public function create(MigrationRun $run): MigrationRun
-    {
-        $key = strtolower($run->id);
-        if (isset($this->runs[$key])) {
-            throw new RuntimeException('Custom Tables migration run already exists.');
-        }
+	/** @var array<string,MigrationRun> */
+	private array $runs = [];
 
-        $this->runs[$key] = $run;
+	public function create( MigrationRun $run ): MigrationRun {
+		$key = strtolower( $run->id );
+		if ( isset( $this->runs[ $key ] ) ) {
+			throw new RuntimeException( 'Custom Tables migration run already exists.' );
+		}
 
-        return $run;
-    }
+		$this->runs[ $key ] = $run;
 
-    public function get(string $id): ?MigrationRun
-    {
-        return $this->runs[strtolower($id)] ?? null;
-    }
+		return $run;
+	}
 
-    public function compareAndSwap(MigrationRun $next, int $expectedStateRevision): MigrationRun
-    {
-        if ($expectedStateRevision < 1) {
-            throw new InvalidArgumentException('Custom Tables migration run expected state revision must be positive.');
-        }
+	public function get( string $id ): ?MigrationRun {
+		return $this->runs[ strtolower( $id ) ] ?? null;
+	}
 
-        $key = strtolower($next->id);
-        $stored = $this->runs[$key] ?? null;
-        if (!$stored instanceof MigrationRun) {
-            throw new RuntimeException('Custom Tables migration run does not exist.');
-        }
+	public function compareAndSwap( MigrationRun $next, int $expectedStateRevision ): MigrationRun {
+		if ( $expectedStateRevision < 1 ) {
+			throw new InvalidArgumentException( 'Custom Tables migration run expected state revision must be positive.' );
+		}
 
-        if ($stored->stateRevision !== $expectedStateRevision) {
-            throw new RuntimeException('Custom Tables migration run state revision conflict.');
-        }
+		$key    = strtolower( $next->id );
+		$stored = $this->runs[ $key ] ?? null;
+		if ( ! $stored instanceof MigrationRun ) {
+			throw new RuntimeException( 'Custom Tables migration run does not exist.' );
+		}
 
-        if ($next->stateRevision !== $expectedStateRevision + 1) {
-            throw new InvalidArgumentException('Custom Tables migration run replacement state revision is invalid.');
-        }
+		if ( $stored->stateRevision !== $expectedStateRevision ) {
+			throw new RuntimeException( 'Custom Tables migration run state revision conflict.' );
+		}
 
-        if ($stored->planFingerprint !== $next->planFingerprint
-            || $stored->tableKey !== $next->tableKey
-            || strtolower($stored->targetDefinitionId) !== strtolower($next->targetDefinitionId)
-            || $stored->targetRevision !== $next->targetRevision
-            || $stored->targetSchemaVersion !== $next->targetSchemaVersion
-        ) {
-            throw new InvalidArgumentException('Custom Tables migration run immutable identity changed.');
-        }
+		if ( $next->stateRevision !== $expectedStateRevision + 1 ) {
+			throw new InvalidArgumentException( 'Custom Tables migration run replacement state revision is invalid.' );
+		}
 
-        if (!$stored->canTransitionTo($next->state)) {
-            throw new InvalidArgumentException('Custom Tables migration run replacement transition is illegal.');
-        }
+		if ( $stored->planFingerprint !== $next->planFingerprint
+			|| $stored->tableKey !== $next->tableKey
+			|| strtolower( $stored->targetDefinitionId ) !== strtolower( $next->targetDefinitionId )
+			|| $stored->targetRevision !== $next->targetRevision
+			|| $stored->targetSchemaVersion !== $next->targetSchemaVersion
+		) {
+			throw new InvalidArgumentException( 'Custom Tables migration run immutable identity changed.' );
+		}
 
-        $this->runs[$key] = $next;
+		if ( ! $stored->canTransitionTo( $next->state ) ) {
+			throw new InvalidArgumentException( 'Custom Tables migration run replacement transition is illegal.' );
+		}
 
-        return $next;
-    }
+		$this->runs[ $key ] = $next;
+
+		return $next;
+	}
 }

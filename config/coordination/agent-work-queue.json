@@ -2,7 +2,7 @@
   "schema_version": 208,
   "snapshot_date": "2026-10-17",
   "queue_anchor_main_sha": "db38d64f278767e8cc1d933b0258e1bf2d06566f",
-  "mode": "ACTIVE_SHARED_TRUTH_CLOSEOUT",
+  "mode": "OWNER_AUTHORITY_REQUIRED",
   "source_issue": "#1423",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -8741,5 +8741,6 @@
       "OWNER_AUTHORITY_REQUIRED",
       "PAUSED_BY_OWNER"
     ]
-  }
+  },
+  "stop_reason": "2026-10-18: PR #1427 (ADR-0223 quality gate + #1415 PHPUnit recovery + local-first gate) is green and mergeable; the only remaining action is the protected merge of PR #1427 and closing superseded PR #1416, which require the owner's merge authority. Next agent: after merge, set mode back to an active mode and resume from the queue."
 }

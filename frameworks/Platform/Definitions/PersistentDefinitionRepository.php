@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Definitions;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use JsonException;
@@ -14,93 +13,87 @@ use RuntimeException;
 use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
 use WPEssential\Contracts\DefinitionTableGatewayInterface;
 
-final class PersistentDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface
-{
-    public function __construct(
-        private readonly DefinitionTableGatewayInterface $gateway,
-        private readonly DefinitionRowCodec $codec = new DefinitionRowCodec(),
-    ) {
-    }
+final class PersistentDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface {
 
-    /**
-     * Atomic create-only: delegate directly to the transactional gateway
-     * INSERT and its physical (scope,id) / (scope,type,slug) unique keys.
-     * Never read then save, upsert or convert an insertion conflict to update.
-     */
-    public function create(Definition $definition): void
-    {
-        if ($definition->revision !== 1) {
-            throw new RuntimeException('Created persisted definitions must begin at revision 1.');
-        }
+	public function __construct(
+		private readonly DefinitionTableGatewayInterface $gateway,
+		private readonly DefinitionRowCodec $codec = new DefinitionRowCodec(),
+	) {
+	}
 
-        $row = $this->codec->encode($definition);
-        $this->gateway->insert($row, $definition->dependencies);
-    }
+	/**
+	 * Atomic create-only: delegate directly to the transactional gateway
+	 * INSERT and its physical (scope,id) / (scope,type,slug) unique keys.
+	 * Never read then save, upsert or convert an insertion conflict to update.
+	 */
+	public function create( Definition $definition ): void {
+		if ( $definition->revision !== 1 ) {
+			throw new RuntimeException( 'Created persisted definitions must begin at revision 1.' );
+		}
 
-    public function save(Definition $definition): void
-    {
-        $row = $this->codec->encode($definition);
-        $existingRow = $this->gateway->find($definition->id);
+		$row = $this->codec->encode( $definition );
+		$this->gateway->insert( $row, $definition->dependencies );
+	}
 
-        if ($existingRow === null) {
-            if ($definition->revision !== 1) {
-                throw new RuntimeException('New persisted definitions must begin at revision 1.');
-            }
-            $this->gateway->insert($row, $definition->dependencies);
-            return;
-        }
+	public function save( Definition $definition ): void {
+		$row         = $this->codec->encode( $definition );
+		$existingRow = $this->gateway->find( $definition->id );
 
-        $existing = $this->decodeGatewayRow($existingRow);
-        if ($definition->revision <= $existing->revision) {
-            throw new RuntimeException('Definition revision must advance monotonically.');
-        }
+		if ( $existingRow === null ) {
+			if ( $definition->revision !== 1 ) {
+				throw new RuntimeException( 'New persisted definitions must begin at revision 1.' );
+			}
+			$this->gateway->insert( $row, $definition->dependencies );
+			return;
+		}
 
-        if (!$this->gateway->updateIfCurrentRevision(
-            $definition->id,
-            $existing->revision,
-            $row,
-            $definition->dependencies,
-        )) {
-            throw new RuntimeException('Definition write conflict: persisted revision changed concurrently.');
-        }
-    }
+		$existing = $this->decodeGatewayRow( $existingRow );
+		if ( $definition->revision <= $existing->revision ) {
+			throw new RuntimeException( 'Definition revision must advance monotonically.' );
+		}
 
-    public function get(string $id): ?Definition
-    {
-        $row = $this->gateway->find($id);
-        return $row === null ? null : $this->decodeGatewayRow($row);
-    }
+		if ( ! $this->gateway->updateIfCurrentRevision(
+			$definition->id,
+			$existing->revision,
+			$row,
+			$definition->dependencies,
+		) ) {
+			throw new RuntimeException( 'Definition write conflict: persisted revision changed concurrently.' );
+		}
+	}
 
-    public function byType(string $type): array
-    {
-        return array_map($this->decodeGatewayRow(...), $this->gateway->findByType($type));
-    }
+	public function get( string $id ): ?Definition {
+		$row = $this->gateway->find( $id );
+		return $row === null ? null : $this->decodeGatewayRow( $row );
+	}
 
-    public function dependentsOf(string $id): array
-    {
-        return array_map($this->decodeGatewayRow(...), $this->gateway->findDependents($id));
-    }
+	public function byType( string $type ): array {
+		return array_map( $this->decodeGatewayRow( ... ), $this->gateway->findByType( $type ) );
+	}
 
-    /** @param array<string, scalar|null> $row */
-    private function decodeGatewayRow(array $row): Definition
-    {
-        $dependenciesJson = $row['_dependencies_json'] ?? '[]';
-        unset($row['_dependencies_json']);
+	public function dependentsOf( string $id ): array {
+		return array_map( $this->decodeGatewayRow( ... ), $this->gateway->findDependents( $id ) );
+	}
 
-        if (!is_string($dependenciesJson)) {
-            throw new RuntimeException('Persisted definition dependency projection is invalid.');
-        }
+	/** @param array<string, scalar|null> $row */
+	private function decodeGatewayRow( array $row ): Definition {
+		$dependenciesJson = $row['_dependencies_json'] ?? '[]';
+		unset( $row['_dependencies_json'] );
 
-        try {
-            $dependencies = json_decode($dependenciesJson, true, flags: JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            throw new RuntimeException('Persisted definition dependency projection is invalid.', 0, $exception);
-        }
+		if ( ! is_string( $dependenciesJson ) ) {
+			throw new RuntimeException( 'Persisted definition dependency projection is invalid.' );
+		}
 
-        if (!is_array($dependencies) || array_filter($dependencies, static fn ($item): bool => !is_string($item)) !== []) {
-            throw new RuntimeException('Persisted definition dependencies must be a list of UUID strings.');
-        }
+		try {
+			$dependencies = json_decode( $dependenciesJson, true, flags: JSON_THROW_ON_ERROR );
+		} catch ( JsonException $exception ) {
+			throw new RuntimeException( 'Persisted definition dependency projection is invalid.', 0, $exception );
+		}
 
-        return $this->codec->decode($row, array_values($dependencies));
-    }
+		if ( ! is_array( $dependencies ) || array_filter( $dependencies, static fn ( $item ): bool => ! is_string( $item ) ) !== [] ) {
+			throw new RuntimeException( 'Persisted definition dependencies must be a list of UUID strings.' );
+		}
+
+		return $this->codec->decode( $row, array_values( $dependencies ) );
+	}
 }

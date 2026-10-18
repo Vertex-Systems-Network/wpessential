@@ -4,35 +4,34 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Cache;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use InvalidArgumentException;
 
-final readonly class CacheDependencies
-{
-    private const GENERATION_PATTERN = '/^[a-z][a-z0-9._-]{1,127}$/';
+final readonly class CacheDependencies {
 
-    /** @var list<string> */
-    public array $generationKeys;
+	private const GENERATION_PATTERN = '/^[a-z][a-z0-9._-]{1,127}$/';
 
-    /** @param list<string> $generationKeys */
-    public function __construct(array $generationKeys = [])
-    {
-        $seen = [];
-        foreach ($generationKeys as $generationKey) {
-            if (!is_string($generationKey) || preg_match(self::GENERATION_PATTERN, $generationKey) !== 1) {
-                throw new InvalidArgumentException('Cache generation keys must be stable lowercase semantic identifiers.');
-            }
-            if (isset($seen[$generationKey])) {
-                throw new InvalidArgumentException('Cache generation keys must be unique.');
-            }
-            $seen[$generationKey] = true;
-        }
+	/** @var list<string> */
+	public array $generationKeys;
 
-        $normalized = array_keys($seen);
-        sort($normalized, SORT_STRING);
-        $this->generationKeys = $normalized;
-    }
+	/** @param list<string> $generationKeys */
+	public function __construct( array $generationKeys = [] ) {
+		$seen = [];
+		foreach ( $generationKeys as $generationKey ) {
+			if ( ! is_string( $generationKey ) || preg_match( self::GENERATION_PATTERN, $generationKey ) !== 1 ) {
+				throw new InvalidArgumentException( 'Cache generation keys must be stable lowercase semantic identifiers.' );
+			}
+			if ( isset( $seen[ $generationKey ] ) ) {
+				throw new InvalidArgumentException( 'Cache generation keys must be unique.' );
+			}
+			$seen[ $generationKey ] = true;
+		}
+
+		$normalized = array_keys( $seen );
+		sort( $normalized, SORT_STRING );
+		$this->generationKeys = $normalized;
+	}
 }

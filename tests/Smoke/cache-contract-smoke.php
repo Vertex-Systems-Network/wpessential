@@ -67,6 +67,6 @@ cacheExpect(!$cache->get($key, CachePolicy::ttl(5))->hit, 'expired cache entry m
 $bootstrap = file_get_contents(dirname(__DIR__, 2) . '/frameworks/Bootstrap/Plugin.php');
 cacheExpect(is_string($bootstrap), 'bootstrap source must be readable');
 cacheExpect(str_contains($bootstrap, 'new RequestLocalCache()'), 'bootstrap must construct canonical cache service');
-cacheExpect(str_contains($bootstrap, "set('platform.cache', \$cache)"), 'bootstrap must expose canonical cache service');
+cacheExpect(str_contains($bootstrap, "set( 'platform.cache', \$cache )"), 'bootstrap must expose canonical cache service');
 
 fwrite(STDOUT, "WPEssential shared cache contract smoke PASS\n");

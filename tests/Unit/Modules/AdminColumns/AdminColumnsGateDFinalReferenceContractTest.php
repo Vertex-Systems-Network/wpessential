@@ -13,15 +13,15 @@ final class AdminColumnsGateDFinalReferenceContractTest extends TestCase
         $module = $this->source('frameworks/Modules/AdminColumns/AdminColumnsModule.php');
 
         self::assertStringContainsString(
-            '$readAdapter = new AdminColumnsReadAdapter($views, $query, $fields);',
+            '$readAdapter         = new AdminColumnsReadAdapter( $views, $query, $fields );',
             $module,
         );
         self::assertStringContainsString(
-            '$fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter($views, $query, $fieldWrites);',
+            '$fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter( $views, $query, $fieldWrites );',
             $module,
         );
         self::assertStringContainsString(
-            '$csvExport = new AdminColumnsCsvExportService(',
+            '$csvExport           = new AdminColumnsCsvExportService(',
             $module,
         );
         self::assertStringContainsString("type: 'admin-columns.read.rows'", $module);
@@ -38,8 +38,8 @@ final class AdminColumnsGateDFinalReferenceContractTest extends TestCase
             'Admin Columns runtime reads require a published View.',
             'Admin Columns runtime reads require an enabled View.',
             'source owner is not readable in V1.',
-            '$result = $this->query->read($request, $context);',
-            '$result = $this->fields->readValues($fieldReference, $postIds, $context);',
+            '$result = $this->query->read( $request, $context );',
+            '$result = $this->fields->readValues( $fieldReference, $postIds, $context );',
         ] as $needle) {
             self::assertStringContainsString($needle, $read);
         }
@@ -48,7 +48,7 @@ final class AdminColumnsGateDFinalReferenceContractTest extends TestCase
             'Admin Columns runtime mutation requires a published View.',
             'Admin Columns runtime mutation requires an enabled View.',
             'Admin Columns mutation column is not owned by Fields.',
-            '$this->assertTargetRow($postId, $targetKey, $context);',
+            '$this->assertTargetRow( $postId, $targetKey, $context );',
             '$write = $this->fields->writeValue(',
         ] as $needle) {
             self::assertStringContainsString($needle, $write);
@@ -95,7 +95,7 @@ final class AdminColumnsGateDFinalReferenceContractTest extends TestCase
             $export,
         );
         self::assertStringContainsString('private AdminColumnsReadAdapter $reads,', $export);
-        self::assertStringContainsString('$page = $this->readPage(', $export);
+        self::assertStringContainsString('$page                   = $this->readPage(', $export);
 
         foreach ([$read, $write, $export] as $source) {
             self::assertStringNotContainsString('AdminColumnsPersonalPreferenceStore', $source);

@@ -105,7 +105,7 @@ final class DashboardWidgetPersonalPreferenceAbilityHandlerTest extends TestCase
     {
         $definitions = new InMemoryDefinitionRepository();
         $meta = [
-            '7:_wpessential_dashboard_widgets_dismissed_dashboard-network' => [
+            '7:_wpessential_dashboard_widgets_dismissed_dashboard_network' => [
                 'wpe_dashboard_widget_sales-overview',
             ],
         ];

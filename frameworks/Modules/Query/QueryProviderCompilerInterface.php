@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-interface QueryProviderCompilerInterface
-{
-    public function supports(QueryDefinition $definition): bool;
+interface QueryProviderCompilerInterface {
 
-    public function compile(QueryDefinition $definition): QueryProviderPlan;
+	public function supports( QueryDefinition $definition ): bool;
+
+	public function compile( QueryDefinition $definition ): QueryProviderPlan;
 }

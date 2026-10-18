@@ -161,8 +161,13 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
         $routes = $services->get('platform.ajax.routes');
         self::assertInstanceOf(AjaxRouteRegistry::class, $routes);
         self::assertSame([
+            'admin-columns.export.csv',
             'admin-columns.get.view',
+            'admin-columns.import.view',
             'admin-columns.list.views',
+            'admin-columns.personal.preference.load',
+            'admin-columns.personal.preference.reset',
+            'admin-columns.personal.preference.save',
             'admin-columns.read.rows',
             'admin-columns.save.view',
             'admin-columns.status.view',

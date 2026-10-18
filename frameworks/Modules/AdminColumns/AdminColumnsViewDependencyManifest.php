@@ -4,85 +4,83 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\AdminColumns;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-final readonly class AdminColumnsViewDependencyManifest
-{
-    public const CONTRACT_VERSION = 1;
+final readonly class AdminColumnsViewDependencyManifest {
 
-    public function __construct(private AdminColumnsViewDefinitionNormalizer $normalizer)
-    {
-    }
+	public const CONTRACT_VERSION = 1;
 
-    /**
-     * Project a deterministic, read-only dependency manifest from one canonical
-     * Admin Columns View payload.
-     *
-     * This method performs no provider discovery, persistence, authorization,
-     * Query execution or peer-private reads.
-     *
-     * @param array<string,mixed> $payload
-     * @return array{
-     *   contract_version:int,
-     *   view_key:string,
-     *   target:array{type:string,key:string},
-     *   sources:list<array{owner:string,reference:string,column_keys:list<string>}>,
-     *   assignments:array{roles:list<string>,users:list<int>,capabilities:list<string>}
-     * }
-     */
-    public function project(array $payload): array
-    {
-        $normalized = $this->normalizer->normalize($payload);
+	public function __construct( private AdminColumnsViewDefinitionNormalizer $normalizer ) {
+	}
 
-        /** @var string $viewKey */
-        $viewKey = $normalized['view_key'];
-        /** @var array{type:string,key:string} $target */
-        $target = $normalized['target'];
-        /** @var list<array{key:string,source:array{owner:string,reference:string}}> $columns */
-        $columns = $normalized['columns'];
+	/**
+	 * Project a deterministic, read-only dependency manifest from one canonical
+	 * Admin Columns View payload.
+	 *
+	 * This method performs no provider discovery, persistence, authorization,
+	 * Query execution or peer-private reads.
+	 *
+	 * @param array<string,mixed> $payload
+	 * @return array{
+	 *   contract_version:int,
+	 *   view_key:string,
+	 *   target:array{type:string,key:string},
+	 *   sources:list<array{owner:string,reference:string,column_keys:list<string>}>,
+	 *   assignments:array{roles:list<string>,users:list<int>,capabilities:list<string>}
+	 * }
+	 */
+	public function project( array $payload ): array {
+		$normalized = $this->normalizer->normalize( $payload );
 
-        $sources = [];
-        $sourceIndexes = [];
-        foreach ($columns as $column) {
-            $owner = $column['source']['owner'];
-            $reference = $column['source']['reference'];
-            $identity = $owner . "\x1f" . $reference;
+		/** @var string $viewKey */
+		$viewKey = $normalized['view_key'];
+		/** @var array{type:string,key:string} $target */
+		$target = $normalized['target'];
+		/** @var list<array{key:string,source:array{owner:string,reference:string}}> $columns */
+		$columns = $normalized['columns'];
 
-            if (!array_key_exists($identity, $sourceIndexes)) {
-                $sourceIndexes[$identity] = count($sources);
-                $sources[] = [
-                    'owner' => $owner,
-                    'reference' => $reference,
-                    'column_keys' => [],
-                ];
-            }
+		$sources       = [];
+		$sourceIndexes = [];
+		foreach ( $columns as $column ) {
+			$owner     = $column['source']['owner'];
+			$reference = $column['source']['reference'];
+			$identity  = $owner . "\x1f" . $reference;
 
-            $index = $sourceIndexes[$identity];
-            $sources[$index]['column_keys'][] = $column['key'];
-        }
+			if ( ! array_key_exists( $identity, $sourceIndexes ) ) {
+				$sourceIndexes[ $identity ] = count( $sources );
+				$sources[]                  = [
+					'owner'       => $owner,
+					'reference'   => $reference,
+					'column_keys' => [],
+				];
+			}
 
-        /** @var array{roles:list<string>,users:list<int>,capabilities:list<string>} $assignments */
-        $assignments = $normalized['assignment'] ?? [
-            'roles' => [],
-            'users' => [],
-            'capabilities' => [],
-        ];
+			$index                              = $sourceIndexes[ $identity ];
+			$sources[ $index ]['column_keys'][] = $column['key'];
+		}
 
-        return [
-            'contract_version' => self::CONTRACT_VERSION,
-            'view_key' => $viewKey,
-            'target' => [
-                'type' => $target['type'],
-                'key' => $target['key'],
-            ],
-            'sources' => $sources,
-            'assignments' => [
-                'roles' => $assignments['roles'],
-                'users' => $assignments['users'],
-                'capabilities' => $assignments['capabilities'],
-            ],
-        ];
-    }
+		/** @var array{roles:list<string>,users:list<int>,capabilities:list<string>} $assignments */
+		$assignments = $normalized['assignment'] ?? [
+			'roles'        => [],
+			'users'        => [],
+			'capabilities' => [],
+		];
+
+		return [
+			'contract_version' => self::CONTRACT_VERSION,
+			'view_key'         => $viewKey,
+			'target'           => [
+				'type' => $target['type'],
+				'key'  => $target['key'],
+			],
+			'sources'          => $sources,
+			'assignments'      => [
+				'roles'        => $assignments['roles'],
+				'users'        => $assignments['users'],
+				'capabilities' => $assignments['capabilities'],
+			],
+		];
+	}
 }

@@ -4,41 +4,42 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Assets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
 
-final class TrustedAssetBuildEntryRegistry
-{
-    /** @var array<string,TrustedAssetBuildEntry> */
-    private array $entries = [];
+final class TrustedAssetBuildEntryRegistry {
 
-    public function __construct(private readonly AssetRegistry $assets)
-    {
-    }
+	/** @var array<string,TrustedAssetBuildEntry> */
+	private array $entries = [];
 
-    public function register(TrustedAssetBuildEntry $entry): void
-    {
-        $this->assets->get($entry->assetHandle);
+	public function __construct( private readonly AssetRegistry $assets ) {
+	}
 
-        if (isset($this->entries[$entry->assetHandle])) {
-            throw new RuntimeException(sprintf(
-                'Trusted asset build mapping "%s" is already registered.',
-                $entry->assetHandle,
-            ));
-        }
+	public function register( TrustedAssetBuildEntry $entry ): void {
+		$this->assets->get( $entry->assetHandle );
 
-        $this->entries[$entry->assetHandle] = $entry;
-    }
+		if ( isset( $this->entries[ $entry->assetHandle ] ) ) {
+			throw new RuntimeException(
+				sprintf(
+					'Trusted asset build mapping "%s" is already registered.',
+					$entry->assetHandle,
+				)
+			);
+		}
 
-    public function get(string $assetHandle): TrustedAssetBuildEntry
-    {
-        return $this->entries[$assetHandle]
-            ?? throw new RuntimeException(sprintf(
-                'Trusted asset build mapping "%s" is not registered.',
-                $assetHandle,
-            ));
-    }
+		$this->entries[ $entry->assetHandle ] = $entry;
+	}
+
+	public function get( string $assetHandle ): TrustedAssetBuildEntry {
+		return $this->entries[ $assetHandle ]
+			?? throw new RuntimeException(
+				sprintf(
+					'Trusted asset build mapping "%s" is not registered.',
+					$assetHandle,
+				)
+			);
+	}
 }

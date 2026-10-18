@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use Closure;
@@ -15,270 +15,262 @@ use WPEssential\Modules\FormsWorkflows\FormWorkflowDefinition;
 use WPEssential\Platform\Abilities\InputValidation\AbilityInputValidator;
 use WPEssential\Platform\Definitions\Definition;
 
-final readonly class DashboardWidgetActionInputCompiler
-{
-    /** @var null|Closure */
-    private ?Closure $abilityResolver;
+final readonly class DashboardWidgetActionInputCompiler {
 
-    public function __construct(
-        private AbilityInputValidator $validator,
-        ?callable $abilityResolver,
-    ) {
-        $this->abilityResolver = $abilityResolver !== null
-            ? Closure::fromCallable($abilityResolver)
-            : null;
-    }
+	/** @var null|Closure */
+	private ?Closure $abilityResolver;
 
-    /** @param array<string,mixed> $widget */
-    public function compile(Definition $definition, array $widget): ?DashboardWidgetActionInputDescriptor
-    {
-        if (!array_key_exists('action', $widget)) {
-            return null;
-        }
+	public function __construct(
+		private AbilityInputValidator $validator,
+		?callable $abilityResolver,
+	) {
+		$this->abilityResolver = $abilityResolver !== null
+			? Closure::fromCallable( $abilityResolver )
+			: null;
+	}
 
-        $action = $widget['action'];
-        if (!is_array($action) || ($action !== [] && array_is_list($action))) {
-            throw new InvalidArgumentException('Dashboard Widget action metadata must be an object/map.');
-        }
+	/** @param array<string,mixed> $widget */
+	public function compile( Definition $definition, array $widget ): ?DashboardWidgetActionInputDescriptor {
+		if ( ! array_key_exists( 'action', $widget ) ) {
+			return null;
+		}
 
-        if (!array_key_exists('input', $action)) {
-            return null;
-        }
+		$action = $widget['action'];
+		if ( ! is_array( $action ) || ( $action !== [] && array_is_list( $action ) ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action metadata must be an object/map.' );
+		}
 
-        if (!array_key_exists('ability_id', $action)) {
-            throw new InvalidArgumentException('Dashboard Widget action.input requires action.ability_id.');
-        }
+		if ( ! array_key_exists( 'input', $action ) ) {
+			return null;
+		}
 
-        $input = $action['input'];
-        if (!is_array($input) || ($input !== [] && array_is_list($input))) {
-            throw new InvalidArgumentException('Dashboard Widget action.input must be an object/map.');
-        }
+		if ( ! array_key_exists( 'ability_id', $action ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action.input requires action.ability_id.' );
+		}
 
-        if ($input === []) {
-            return null;
-        }
+		$input = $action['input'];
+		if ( ! is_array( $input ) || ( $input !== [] && array_is_list( $input ) ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action.input must be an object/map.' );
+		}
 
-        if (count($input) > DashboardWidgetActionInputDescriptor::MAX_BINDINGS) {
-            throw new InvalidArgumentException('Dashboard Widget action.input exceeds the bounded binding limit.');
-        }
+		if ( $input === [] ) {
+			return null;
+		}
 
-        $encoded = json_encode($input, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        if (!is_string($encoded) || strlen($encoded) > DashboardWidgetActionInputDescriptor::MAX_ENCODED_BYTES) {
-            throw new InvalidArgumentException('Dashboard Widget action.input exceeds the bounded encoded size.');
-        }
+		if ( count( $input ) > DashboardWidgetActionInputDescriptor::MAX_BINDINGS ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action.input exceeds the bounded binding limit.' );
+		}
 
-        $abilityId = $action['ability_id'];
-        if (!is_string($abilityId) || preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId) !== 1) {
-            throw new InvalidArgumentException('Dashboard Widget action.ability_id must use the canonical ability name shape.');
-        }
+		$encoded = json_encode( $input, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		if ( ! is_string( $encoded ) || strlen( $encoded ) > DashboardWidgetActionInputDescriptor::MAX_ENCODED_BYTES ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action.input exceeds the bounded encoded size.' );
+		}
 
-        $record = $this->resolveAbility($abilityId);
-        $schema = $this->validInputSchema($record, $abilityId);
-        $properties = $schema['properties'] ?? [];
-        $required = $schema['required'] ?? [];
+		$abilityId = $action['ability_id'];
+		if ( ! is_string( $abilityId ) || preg_match( '#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId ) !== 1 ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action.ability_id must use the canonical ability name shape.' );
+		}
 
-        if (!is_array($properties) || ($properties !== [] && array_is_list($properties)) || !is_array($required)) {
-            throw new InvalidArgumentException('Dashboard Widget action Ability input schema is malformed.');
-        }
+		$record     = $this->resolveAbility( $abilityId );
+		$schema     = $this->validInputSchema( $record, $abilityId );
+		$properties = $schema['properties'] ?? [];
+		$required   = $schema['required'] ?? [];
 
-        foreach ($required as $requiredKey) {
-            if (!is_string($requiredKey) || !array_key_exists($requiredKey, $input)) {
-                throw new InvalidArgumentException('Dashboard Widget action.input must bind every required Ability input property.');
-            }
-        }
+		if ( ! is_array( $properties ) || ( $properties !== [] && array_is_list( $properties ) ) || ! is_array( $required ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action Ability input schema is malformed.' );
+		}
 
-        $literal = [];
-        $dynamic = [];
+		foreach ( $required as $requiredKey ) {
+			if ( ! is_string( $requiredKey ) || ! array_key_exists( $requiredKey, $input ) ) {
+				throw new InvalidArgumentException( 'Dashboard Widget action.input must bind every required Ability input property.' );
+			}
+		}
 
-        foreach ($input as $key => $envelope) {
-            $this->assertBindingKey($key);
-            $this->assertNonSensitiveKey($key);
+		$literal = [];
+		$dynamic = [];
 
-            if (!array_key_exists($key, $properties)) {
-                throw new InvalidArgumentException('Dashboard Widget action.input contains an unknown Ability input property.');
-            }
+		foreach ( $input as $key => $envelope ) {
+			$this->assertBindingKey( $key );
+			$this->assertNonSensitiveKey( $key );
 
-            $propertySchema = $properties[$key];
-            if (!is_array($propertySchema)) {
-                throw new InvalidArgumentException('Dashboard Widget action Ability property schema is malformed.');
-            }
+			if ( ! array_key_exists( $key, $properties ) ) {
+				throw new InvalidArgumentException( 'Dashboard Widget action.input contains an unknown Ability input property.' );
+			}
 
-            if (!is_array($envelope) || array_is_list($envelope)) {
-                throw new InvalidArgumentException('Dashboard Widget action.input binding must be an object/map.');
-            }
+			$propertySchema = $properties[ $key ];
+			if ( ! is_array( $propertySchema ) ) {
+				throw new InvalidArgumentException( 'Dashboard Widget action Ability property schema is malformed.' );
+			}
 
-            $source = $envelope['source'] ?? null;
-            if ($source === 'literal') {
-                $this->assertKnownKeys($envelope, ['source', 'value']);
-                if (!array_key_exists('value', $envelope)) {
-                    throw new InvalidArgumentException('Dashboard Widget literal action-input binding requires value.');
-                }
+			if ( ! is_array( $envelope ) || array_is_list( $envelope ) ) {
+				throw new InvalidArgumentException( 'Dashboard Widget action.input binding must be an object/map.' );
+			}
 
-                $synthetic = [
-                    'type' => 'object',
-                    'properties' => [$key => $propertySchema],
-                    'required' => [$key],
-                    'additionalProperties' => false,
-                ];
-                $result = $this->validator->validateInput($synthetic, [$key => $envelope['value']]);
-                if (!$result->valid) {
-                    throw new InvalidArgumentException('Dashboard Widget literal action-input binding does not satisfy the Ability input schema.');
-                }
+			$source = $envelope['source'] ?? null;
+			if ( $source === 'literal' ) {
+				$this->assertKnownKeys( $envelope, [ 'source', 'value' ] );
+				if ( ! array_key_exists( 'value', $envelope ) ) {
+					throw new InvalidArgumentException( 'Dashboard Widget literal action-input binding requires value.' );
+				}
 
-                $literal[$key] = $envelope['value'];
-                continue;
-            }
+				$synthetic = [
+					'type'                 => 'object',
+					'properties'           => [ $key => $propertySchema ],
+					'required'             => [ $key ],
+					'additionalProperties' => false,
+				];
+				$result    = $this->validator->validateInput( $synthetic, [ $key => $envelope['value'] ] );
+				if ( ! $result->valid ) {
+					throw new InvalidArgumentException( 'Dashboard Widget literal action-input binding does not satisfy the Ability input schema.' );
+				}
 
-            if ($source === 'dynamic') {
-                $this->assertKnownKeys($envelope, ['source', 'source_ref', 'value_ref', 'resource']);
-                $this->assertDynamicPropertySchema($propertySchema);
+				$literal[ $key ] = $envelope['value'];
+				continue;
+			}
 
-                $sourceRef = $this->semanticReference($envelope['source_ref'] ?? null);
-                $valueRef = $this->semanticReference($envelope['value_ref'] ?? null);
-                $resource = $envelope['resource'] ?? null;
-                if (!is_string($resource) || !in_array($resource, ['site', 'user', 'network'], true)) {
-                    throw new InvalidArgumentException('Dashboard Widget Dynamic action-input resource must be site, user or network.');
-                }
+			if ( $source === 'dynamic' ) {
+				$this->assertKnownKeys( $envelope, [ 'source', 'source_ref', 'value_ref', 'resource' ] );
+				$this->assertDynamicPropertySchema( $propertySchema );
 
-                $dynamic[$key] = [
-                    'source_ref' => $sourceRef,
-                    'value_ref' => $valueRef,
-                    'resource' => $resource,
-                ];
-                continue;
-            }
+				$sourceRef = $this->semanticReference( $envelope['source_ref'] ?? null );
+				$valueRef  = $this->semanticReference( $envelope['value_ref'] ?? null );
+				$resource  = $envelope['resource'] ?? null;
+				if ( ! is_string( $resource ) || ! in_array( $resource, [ 'site', 'user', 'network' ], true ) ) {
+					throw new InvalidArgumentException( 'Dashboard Widget Dynamic action-input resource must be site, user or network.' );
+				}
 
-            throw new InvalidArgumentException('Dashboard Widget action-input source must be literal or dynamic.');
-        }
+				$dynamic[ $key ] = [
+					'source_ref' => $sourceRef,
+					'value_ref'  => $valueRef,
+					'resource'   => $resource,
+				];
+				continue;
+			}
 
-        ksort($literal, SORT_STRING);
-        ksort($dynamic, SORT_STRING);
+			throw new InvalidArgumentException( 'Dashboard Widget action-input source must be literal or dynamic.' );
+		}
 
-        return new DashboardWidgetActionInputDescriptor(
-            definitionId: $definition->id,
-            definitionRevision: $definition->revision,
-            abilityId: $abilityId,
-            literalBindings: $literal,
-            dynamicBindings: $dynamic,
-        );
-    }
+		ksort( $literal, SORT_STRING );
+		ksort( $dynamic, SORT_STRING );
 
-    /** @return array<string,mixed> */
-    private function resolveAbility(string $abilityId): array
-    {
-        if ($this->abilityResolver === null) {
-            throw new InvalidArgumentException('Dashboard Widget action input requires the canonical Ability Registry.');
-        }
+		return new DashboardWidgetActionInputDescriptor(
+			definitionId: $definition->id,
+			definitionRevision: $definition->revision,
+			abilityId: $abilityId,
+			literalBindings: $literal,
+			dynamicBindings: $dynamic,
+		);
+	}
 
-        try {
-            $record = ($this->abilityResolver)($abilityId);
-        } catch (Throwable) {
-            throw new InvalidArgumentException('Dashboard Widget action Ability could not be resolved.');
-        }
+	/** @return array<string,mixed> */
+	private function resolveAbility( string $abilityId ): array {
+		if ( $this->abilityResolver === null ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action input requires the canonical Ability Registry.' );
+		}
 
-        if (!is_array($record)) {
-            throw new InvalidArgumentException('Dashboard Widget action Ability could not be resolved.');
-        }
+		try {
+			$record = ( $this->abilityResolver )( $abilityId );
+		} catch ( Throwable ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action Ability could not be resolved.' );
+		}
 
-        return $record;
-    }
+		if ( ! is_array( $record ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action Ability could not be resolved.' );
+		}
 
-    /**
-     * @param array<string,mixed> $record
-     * @return array<string,mixed>
-     */
-    private function validInputSchema(array $record, string $abilityId): array
-    {
-        $schema = $record['input_schema'] ?? null;
-        if (
-            ($record['name'] ?? null) !== $abilityId
-            || ($record['owner_surface_id'] ?? null) !== FormWorkflowDefinition::OWNER_SURFACE_ID
-            || ($record['mutates'] ?? null) !== true
-            || ($record['ui_allowed'] ?? null) !== true
-            || !is_array($schema)
-            || $schema === []
-        ) {
-            throw new InvalidArgumentException('Dashboard Widget action input requires a non-empty mutating Forms & Workflows UI Ability schema.');
-        }
+		return $record;
+	}
 
-        $schemaResult = $this->validator->validateSchema($schema);
-        if (!$schemaResult->valid || ($schema['type'] ?? null) !== 'object' || (($schema['additionalProperties'] ?? false) !== false)) {
-            throw new InvalidArgumentException('Dashboard Widget action Ability input schema is unsupported.');
-        }
+	/**
+	 * @param array<string,mixed> $record
+	 * @return array<string,mixed>
+	 */
+	private function validInputSchema( array $record, string $abilityId ): array {
+		$schema = $record['input_schema'] ?? null;
+		if (
+			( $record['name'] ?? null ) !== $abilityId
+			|| ( $record['owner_surface_id'] ?? null ) !== FormWorkflowDefinition::OWNER_SURFACE_ID
+			|| ( $record['mutates'] ?? null ) !== true
+			|| ( $record['ui_allowed'] ?? null ) !== true
+			|| ! is_array( $schema )
+			|| $schema === []
+		) {
+			throw new InvalidArgumentException( 'Dashboard Widget action input requires a non-empty mutating Forms & Workflows UI Ability schema.' );
+		}
 
-        return $schema;
-    }
+		$schemaResult = $this->validator->validateSchema( $schema );
+		if ( ! $schemaResult->valid || ( $schema['type'] ?? null ) !== 'object' || ( ( $schema['additionalProperties'] ?? false ) !== false ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action Ability input schema is unsupported.' );
+		}
 
-    /** @param array<string,mixed> $propertySchema */
-    private function assertDynamicPropertySchema(array $propertySchema): void
-    {
-        $type = $propertySchema['type'] ?? null;
-        if (in_array($type, ['string', 'integer', 'number', 'boolean'], true)) {
-            return;
-        }
+		return $schema;
+	}
 
-        if ($type === 'array') {
-            $items = $propertySchema['items'] ?? null;
-            if (
-                is_array($items)
-                && in_array($items['type'] ?? null, ['string', 'integer', 'number', 'boolean'], true)
-            ) {
-                return;
-            }
-        }
+	/** @param array<string,mixed> $propertySchema */
+	private function assertDynamicPropertySchema( array $propertySchema ): void {
+		$type = $propertySchema['type'] ?? null;
+		if ( in_array( $type, [ 'string', 'integer', 'number', 'boolean' ], true ) ) {
+			return;
+		}
 
-        throw new InvalidArgumentException('Dashboard Widget Dynamic action-input binding requires a scalar or scalar-list Ability property.');
-    }
+		if ( $type === 'array' ) {
+			$items = $propertySchema['items'] ?? null;
+			if (
+				is_array( $items )
+				&& in_array( $items['type'] ?? null, [ 'string', 'integer', 'number', 'boolean' ], true )
+			) {
+				return;
+			}
+		}
 
-    private function semanticReference(mixed $value): string
-    {
-        if (!is_string($value) || $value === '' || strlen($value) > 160 || preg_match('/^[a-zA-Z0-9_.:-]+$/', $value) !== 1) {
-            throw new InvalidArgumentException('Dashboard Widget Dynamic action-input reference must be a bounded semantic identifier.');
-        }
+		throw new InvalidArgumentException( 'Dashboard Widget Dynamic action-input binding requires a scalar or scalar-list Ability property.' );
+	}
 
-        return $value;
-    }
+	private function semanticReference( mixed $value ): string {
+		if ( ! is_string( $value ) || $value === '' || strlen( $value ) > 160 || preg_match( '/^[a-zA-Z0-9_.:-]+$/', $value ) !== 1 ) {
+			throw new InvalidArgumentException( 'Dashboard Widget Dynamic action-input reference must be a bounded semantic identifier.' );
+		}
 
-    private function assertBindingKey(mixed $key): void
-    {
-        if (!is_string($key) || preg_match('/^[A-Za-z_][A-Za-z0-9_-]{0,127}$/', $key) !== 1) {
-            throw new InvalidArgumentException('Dashboard Widget action-input binding key must be a bounded top-level semantic identifier.');
-        }
-    }
+		return $value;
+	}
 
-    private function assertNonSensitiveKey(string $key): void
-    {
-        $normalized = strtolower((string) preg_replace('/[^a-z0-9]/i', '', $key));
-        foreach ([
-            'password',
-            'passwd',
-            'secret',
-            'token',
-            'apikey',
-            'privatekey',
-            'authorization',
-            'cookie',
-            'credential',
-            'cardnumber',
-            'cvv',
-            'cvc',
-        ] as $fragment) {
-            if (str_contains($normalized, $fragment)) {
-                throw new InvalidArgumentException('Dashboard Widget action-input credential-bearing properties are unsupported in V1.');
-            }
-        }
-    }
+	private function assertBindingKey( mixed $key ): void {
+		if ( ! is_string( $key ) || preg_match( '/^[A-Za-z_][A-Za-z0-9_-]{0,127}$/', $key ) !== 1 ) {
+			throw new InvalidArgumentException( 'Dashboard Widget action-input binding key must be a bounded top-level semantic identifier.' );
+		}
+	}
 
-    /**
-     * @param array<string,mixed> $value
-     * @param list<string> $known
-     */
-    private function assertKnownKeys(array $value, array $known): void
-    {
-        foreach (array_keys($value) as $key) {
-            if (!is_string($key) || !in_array($key, $known, true)) {
-                throw new InvalidArgumentException('Dashboard Widget action-input binding contains an unsupported key.');
-            }
-        }
-    }
+	private function assertNonSensitiveKey( string $key ): void {
+		$normalized = strtolower( (string) preg_replace( '/[^a-z0-9]/i', '', $key ) );
+		foreach ( [
+			'password',
+			'passwd',
+			'secret',
+			'token',
+			'apikey',
+			'privatekey',
+			'authorization',
+			'cookie',
+			'credential',
+			'cardnumber',
+			'cvv',
+			'cvc',
+		] as $fragment ) {
+			if ( str_contains( $normalized, $fragment ) ) {
+				throw new InvalidArgumentException( 'Dashboard Widget action-input credential-bearing properties are unsupported in V1.' );
+			}
+		}
+	}
+
+	/**
+	 * @param array<string,mixed> $value
+	 * @param list<string> $known
+	 */
+	private function assertKnownKeys( array $value, array $known ): void {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( ! is_string( $key ) || ! in_array( $key, $known, true ) ) {
+				throw new InvalidArgumentException( 'Dashboard Widget action-input binding contains an unsupported key.' );
+			}
+		}
+	}
 }

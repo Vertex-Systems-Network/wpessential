@@ -72,6 +72,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         $presenter = new DashboardWidgetFormActionPresenter(
             'wpessential_dispatch',
             static fn (): string => 'test-nonce',
+            static fn (): string => 'execution-test-nonce',
         );
 
         [$adapter, , $environment, $renderer] = $this->harness(
@@ -120,6 +121,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         $presenter = new DashboardWidgetFormActionPresenter(
             'wpessential_dispatch',
             static fn (): string => 'test-nonce',
+            static fn (): string => 'execution-test-nonce',
         );
         $now = 1737000000;
         $clock = new DashboardWidgetRuntimeClock(static function () use (&$now): int {

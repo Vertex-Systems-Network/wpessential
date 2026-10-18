@@ -60,7 +60,7 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
         self::assertSame('Add Genre', $registration->payload['args']['labels']['add_new_item']);
         self::assertSame('Book Genres', $registration->payload['args']['labels']['menu_name']);
         self::assertSame('Genre Pattern', $registration->payload['args']['labels']['template_name']);
-        self::assertArrayNotHasKey('not_found', $registration->payload['args']['labels']);
+        self::assertNotEmpty($registration->payload['args']['labels']['not_found']);
         self::assertArrayNotHasKey('publicly_queryable', $registration->payload['args']);
         self::assertSame('library/genre', $registration->payload['args']['rewrite']['slug']);
         self::assertSame([

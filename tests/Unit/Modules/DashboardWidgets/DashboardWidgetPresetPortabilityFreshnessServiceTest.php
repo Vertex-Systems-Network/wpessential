@@ -87,7 +87,7 @@ final class DashboardWidgetPresetPortabilityFreshnessServiceTest extends TestCas
 
     private const WIDGET_A = '11111111-1111-4111-8111-111111111111';
     private const WIDGET_B = '22222222-2222-4222-8222-222222222222';
-    private const PRESET = '33333333-3333-4333-8333-333333333333';
+    private const PRESET = 'a3333333-3333-4333-8333-333333333333';
     private const DRAFT = '44444444-4444-4444-8444-444444444444';
 
     private function repository(): InMemoryDefinitionRepository

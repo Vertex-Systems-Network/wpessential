@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use Closure;
@@ -17,133 +17,131 @@ use WPEssential\Platform\Abilities\InputValidation\AbilityInputValidator;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\DynamicValues\DynamicValueRequest;
 
-final readonly class DashboardWidgetActionInputBinder
-{
-    /** @var Closure */
-    private Closure $abilityResolver;
+final readonly class DashboardWidgetActionInputBinder {
 
-    public function __construct(
-        private AbilityInputValidator $validator,
-        private DynamicValueResolverInterface $dynamicValues,
-        callable $abilityResolver,
-    ) {
-        $this->abilityResolver = Closure::fromCallable($abilityResolver);
-    }
+	/** @var Closure */
+	private Closure $abilityResolver;
 
-    /** @return array<string,mixed> */
-    public function bind(
-        DashboardWidgetActionInputDescriptor $descriptor,
-        ExecutionContext $context,
-    ): array {
-        $record = $this->resolveAbility($descriptor->abilityId);
-        $schema = $record['input_schema'] ?? null;
+	public function __construct(
+		private AbilityInputValidator $validator,
+		private DynamicValueResolverInterface $dynamicValues,
+		callable $abilityResolver,
+	) {
+		$this->abilityResolver = Closure::fromCallable( $abilityResolver );
+	}
 
-        if (
-            ($record['name'] ?? null) !== $descriptor->abilityId
-            || ($record['owner_surface_id'] ?? null) !== FormWorkflowDefinition::OWNER_SURFACE_ID
-            || ($record['mutates'] ?? null) !== true
-            || ($record['ui_allowed'] ?? null) !== true
-            || !is_array($schema)
-            || $schema === []
-        ) {
-            throw new RuntimeException('Dashboard Widget action Ability no longer matches the compiled input contract.');
-        }
+	/** @return array<string,mixed> */
+	public function bind(
+		DashboardWidgetActionInputDescriptor $descriptor,
+		ExecutionContext $context,
+	): array {
+		$record = $this->resolveAbility( $descriptor->abilityId );
+		$schema = $record['input_schema'] ?? null;
 
-        $schemaResult = $this->validator->validateSchema($schema);
-        if (!$schemaResult->valid || ($schema['type'] ?? null) !== 'object' || (($schema['additionalProperties'] ?? false) !== false)) {
-            throw new RuntimeException('Dashboard Widget action Ability input schema is no longer supported.');
-        }
+		if (
+			( $record['name'] ?? null ) !== $descriptor->abilityId
+			|| ( $record['owner_surface_id'] ?? null ) !== FormWorkflowDefinition::OWNER_SURFACE_ID
+			|| ( $record['mutates'] ?? null ) !== true
+			|| ( $record['ui_allowed'] ?? null ) !== true
+			|| ! is_array( $schema )
+			|| $schema === []
+		) {
+			throw new RuntimeException( 'Dashboard Widget action Ability no longer matches the compiled input contract.' );
+		}
 
-        $properties = $schema['properties'] ?? null;
-        if (!is_array($properties)) {
-            throw new RuntimeException('Dashboard Widget action Ability input schema is malformed.');
-        }
+		$schemaResult = $this->validator->validateSchema( $schema );
+		if ( ! $schemaResult->valid || ( $schema['type'] ?? null ) !== 'object' || ( ( $schema['additionalProperties'] ?? false ) !== false ) ) {
+			throw new RuntimeException( 'Dashboard Widget action Ability input schema is no longer supported.' );
+		}
 
-        $input = $descriptor->literalBindings;
+		$properties = $schema['properties'] ?? null;
+		if ( ! is_array( $properties ) ) {
+			throw new RuntimeException( 'Dashboard Widget action Ability input schema is malformed.' );
+		}
 
-        foreach ($descriptor->dynamicBindings as $key => $binding) {
-            $propertySchema = $properties[$key] ?? null;
-            if (!is_array($propertySchema) || !$this->dynamicPropertySupported($propertySchema)) {
-                throw new RuntimeException('Dashboard Widget Dynamic action-input schema drifted.');
-            }
+		$input = $descriptor->literalBindings;
 
-            $resourceId = match ($binding['resource']) {
-                'site' => $context->siteId,
-                'user' => $context->principal->userId
-                    ?? throw new RuntimeException('Dashboard Widget Dynamic action input requires an authenticated principal.'),
-                'network' => $context->networkId
-                    ?? throw new RuntimeException('Dashboard Widget Dynamic action input requires a network context.'),
-                default => throw new RuntimeException('Dashboard Widget Dynamic action-input resource is unsupported.'),
-            };
+		foreach ( $descriptor->dynamicBindings as $key => $binding ) {
+			$propertySchema = $properties[ $key ] ?? null;
+			if ( ! is_array( $propertySchema ) || ! $this->dynamicPropertySupported( $propertySchema ) ) {
+				throw new RuntimeException( 'Dashboard Widget Dynamic action-input schema drifted.' );
+			}
 
-            try {
-                $resolved = $this->dynamicValues->resolve(
-                    new DynamicValueRequest(
-                        sourceRef: $binding['source_ref'],
-                        valueRef: $binding['value_ref'],
-                        resourceType: $binding['resource'],
-                        resourceId: $resourceId,
-                    ),
-                    $context,
-                );
-            } catch (Throwable) {
-                throw new RuntimeException('Dashboard Widget Dynamic action-input value could not be resolved.');
-            }
+			$resourceId = match ( $binding['resource'] ) {
+				'site' => $context->siteId,
+				'user' => $context->principal->userId
+					?? throw new RuntimeException( 'Dashboard Widget Dynamic action input requires an authenticated principal.' ),
+				'network' => $context->networkId
+					?? throw new RuntimeException( 'Dashboard Widget Dynamic action input requires a network context.' ),
+				default => throw new RuntimeException( 'Dashboard Widget Dynamic action-input resource is unsupported.' ),
+			};
 
-            if (!$resolved->resolved || $resolved->failure !== null || $resolved->value === null) {
-                throw new RuntimeException('Dashboard Widget Dynamic action-input value could not be resolved.');
-            }
+			try {
+				$resolved = $this->dynamicValues->resolve(
+					new DynamicValueRequest(
+						sourceRef: $binding['source_ref'],
+						valueRef: $binding['value_ref'],
+						resourceType: $binding['resource'],
+						resourceId: $resourceId,
+					),
+					$context,
+				);
+			} catch ( Throwable ) {
+				throw new RuntimeException( 'Dashboard Widget Dynamic action-input value could not be resolved.' );
+			}
 
-            $input[$key] = $resolved->value;
-        }
+			if ( ! $resolved->resolved || $resolved->failure !== null || $resolved->value === null ) {
+				throw new RuntimeException( 'Dashboard Widget Dynamic action-input value could not be resolved.' );
+			}
 
-        ksort($input, SORT_STRING);
+			$input[ $key ] = $resolved->value;
+		}
 
-        $result = $this->validator->validateInput($schema, $input);
-        if (!$result->valid) {
-            throw new RuntimeException(
-                sprintf(
-                    'Dashboard Widget action input validation failed: %s at %s.',
-                    $result->code,
-                    $result->path,
-                ),
-            );
-        }
+		ksort( $input, SORT_STRING );
 
-        return $input;
-    }
+		$result = $this->validator->validateInput( $schema, $input );
+		if ( ! $result->valid ) {
+			throw new RuntimeException(
+				sprintf(
+					'Dashboard Widget action input validation failed: %s at %s.',
+					$result->code,
+					$result->path,
+				),
+			);
+		}
 
-    /** @return array<string,mixed> */
-    private function resolveAbility(string $abilityId): array
-    {
-        try {
-            $record = ($this->abilityResolver)($abilityId);
-        } catch (Throwable) {
-            throw new RuntimeException('Dashboard Widget action Ability could not be resolved.');
-        }
+		return $input;
+	}
 
-        if (!is_array($record)) {
-            throw new RuntimeException('Dashboard Widget action Ability could not be resolved.');
-        }
+	/** @return array<string,mixed> */
+	private function resolveAbility( string $abilityId ): array {
+		try {
+			$record = ( $this->abilityResolver )( $abilityId );
+		} catch ( Throwable ) {
+			throw new RuntimeException( 'Dashboard Widget action Ability could not be resolved.' );
+		}
 
-        return $record;
-    }
+		if ( ! is_array( $record ) ) {
+			throw new RuntimeException( 'Dashboard Widget action Ability could not be resolved.' );
+		}
 
-    /** @param array<string,mixed> $propertySchema */
-    private function dynamicPropertySupported(array $propertySchema): bool
-    {
-        $type = $propertySchema['type'] ?? null;
-        if (in_array($type, ['string', 'integer', 'number', 'boolean'], true)) {
-            return true;
-        }
+		return $record;
+	}
 
-        if ($type !== 'array') {
-            return false;
-        }
+	/** @param array<string,mixed> $propertySchema */
+	private function dynamicPropertySupported( array $propertySchema ): bool {
+		$type = $propertySchema['type'] ?? null;
+		if ( in_array( $type, [ 'string', 'integer', 'number', 'boolean' ], true ) ) {
+			return true;
+		}
 
-        $items = $propertySchema['items'] ?? null;
+		if ( $type !== 'array' ) {
+			return false;
+		}
 
-        return is_array($items)
-            && in_array($items['type'] ?? null, ['string', 'integer', 'number', 'boolean'], true);
-    }
+		$items = $propertySchema['items'] ?? null;
+
+		return is_array( $items )
+			&& in_array( $items['type'] ?? null, [ 'string', 'integer', 'number', 'boolean' ], true );
+	}
 }

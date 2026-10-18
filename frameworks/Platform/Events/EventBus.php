@@ -4,25 +4,22 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Events;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-final class EventBus
-{
-    /** @var array<string, list<callable(DomainEvent): void>> */
-    private array $listeners = [];
+final class EventBus {
 
-    public function listen(string $eventName, callable $listener): void
-    {
-        $this->listeners[$eventName][] = $listener;
-    }
+	/** @var array<string, list<callable(DomainEvent): void>> */
+	private array $listeners = [];
 
-    public function dispatch(DomainEvent $event): void
-    {
-        foreach ($this->listeners[$event->name] ?? [] as $listener) {
-            $listener($event);
-        }
-    }
+	public function listen( string $eventName, callable $listener ): void {
+		$this->listeners[ $eventName ][] = $listener;
+	}
+
+	public function dispatch( DomainEvent $event ): void {
+		foreach ( $this->listeners[ $event->name ] ?? [] as $listener ) {
+			$listener( $event );
+		}
+	}
 }

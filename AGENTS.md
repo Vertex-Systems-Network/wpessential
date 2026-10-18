@@ -420,6 +420,19 @@ A pre-existing failure is `BASELINE FAILURE`, not automatically a regression. A 
 
 If a check cannot run, record exactly what, why, and how it will be verified.
 
+PHP quality gates follow ADR-0223:
+- run `vendor/bin/phpcbf` for mechanical WPCS fixes; never hand-normalize formatting in batches;
+- never "fix" a sniff by renaming published camelCase APIs, DTO fields or PSR-4 files;
+- PHPCS errors and new PHPStan errors (outside `phpstan-baseline.neon`) block merge; shrink the baseline, never grow it;
+- a quality gate that cannot turn green by the chosen method within one milestone is a plan defect: stop, audit the method, record a decision, then continue — do not report `NO_VALID_WORK_SLOT` because of it.
+
+Local-first delivery (owner directive, saves CI runner minutes):
+- develop, fix and commit locally; do not push intermediate or checkpoint-only commits;
+- before any push run `composer gate:local` (syntax, architecture, engineering, smoke, PHPCS, PHPStan, PHPUnit) on a clean tree; `composer hooks:install` enables the pre-push hook that refuses an un-gated HEAD;
+- push once per completed milestone, so CI runs once to confirm, not to discover; a CI failure after a green local gate is an environment difference to fix in the gate, not a reason to iterate on the remote;
+- never push README/state/checkpoint-only commits separately; fold them into the milestone push;
+- when a milestone PR is green and mergeable and only the owner's protected merge remains, record queue `mode: OWNER_AUTHORITY_REQUIRED` with `stop_reason` naming the PR, instead of looping on the Stop hook; the next agent restores an active mode after the merge.
+
 ## UI/UX/accessibility
 
 User-facing work must include:

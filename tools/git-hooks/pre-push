@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Refuse pushes whose HEAD has not passed tools/quality/local-gate.sh (saves CI runner minutes).
+# Bypass only for docs-only emergencies: WPE_SKIP_LOCAL_GATE=1 git push ...
+set -euo pipefail
+[ "${WPE_SKIP_LOCAL_GATE:-0}" = "1" ] && exit 0
+
+stamp="$(git rev-parse --git-dir)/wpe-local-gate-pass"
+head="$(git rev-parse HEAD)"
+if [ ! -f "$stamp" ] || [ "$(cat "$stamp")" != "$head" ]; then
+    echo "pre-push: ${head} has not passed the local gate. Run: composer gate:local" >&2
+    exit 1
+fi

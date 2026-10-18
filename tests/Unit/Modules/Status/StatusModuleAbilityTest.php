@@ -77,7 +77,7 @@ final class StatusModuleAbilityTest extends TestCase
 
         $module->register($services);
         foreach (['list', 'get', 'save', 'status'] as $action) {
-            $admin = $abilities->descriptor('wpessential/status/admin/' . $action);
+            $admin = $abilities->descriptor('wpessential/status/admin-' . $action);
             self::assertNotNull($admin);
             self::assertSame(5, $admin->ownerSurfaceId);
             self::assertSame('manage_options', $admin->capability);

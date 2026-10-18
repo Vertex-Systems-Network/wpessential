@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Roles;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use LogicException;
@@ -21,99 +21,103 @@ use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 
-final class RolesModule implements ModuleInterface
-{
-    public const SERVICE_READ = RoleImpactReadServiceInterface::SERVICE_ID;
-    public const SERVICE_ENVIRONMENT = 'module.roles.runtime-environment';
+final class RolesModule implements ModuleInterface {
 
-    public function manifest(): ModuleManifest
-    {
-        return new ModuleManifest(
-            id: 'roles',
-            name: 'Roles & Capabilities',
-            version: '0.1.0',
-            edition: 'pro',
-        );
-    }
+	public const SERVICE_READ        = RoleImpactReadServiceInterface::SERVICE_ID;
+	public const SERVICE_ENVIRONMENT = 'module.roles.runtime-environment';
 
-    public function register(ServiceRegistryInterface $services): void
-    {
-        $abilities = $services->get('platform.abilities');
-        $bridge = $services->get('platform.abilities.wordpress');
-        $policy = $services->get('platform.abilities.policy');
+	public function manifest(): ModuleManifest {
+		return new ModuleManifest(
+			id: 'roles',
+			name: 'Roles & Capabilities',
+			version: '0.1.0',
+			edition: 'pro',
+		);
+	}
 
-        if (!$abilities instanceof AbilityRegistry) {
-            throw new LogicException('Roles requires the shared Ability Registry.');
-        }
-        if (!$bridge instanceof WordPressAbilityBridge) {
-            throw new LogicException('Roles requires the shared WordPress Ability bridge.');
-        }
-        if (!$policy instanceof PolicyEngine) {
-            throw new LogicException('Roles requires the shared Policy Engine.');
-        }
+	public function register( ServiceRegistryInterface $services ): void {
+		$abilities = $services->get( 'platform.abilities' );
+		$bridge    = $services->get( 'platform.abilities.wordpress' );
+		$policy    = $services->get( 'platform.abilities.policy' );
 
-        $environment = new WordPressRoleRuntimeEnvironment();
-        $read = new RolesReadService($policy, $environment);
-        $services->set(self::SERVICE_ENVIRONMENT, $environment);
-        $services->set(self::SERVICE_READ, $read);
+		if ( ! $abilities instanceof AbilityRegistry ) {
+			throw new LogicException( 'Roles requires the shared Ability Registry.' );
+		}
+		if ( ! $bridge instanceof WordPressAbilityBridge ) {
+			throw new LogicException( 'Roles requires the shared WordPress Ability bridge.' );
+		}
+		if ( ! $policy instanceof PolicyEngine ) {
+			throw new LogicException( 'Roles requires the shared Policy Engine.' );
+		}
 
-        $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: RolesReadService::ABILITY_CATALOG,
-                ownerSurfaceId: RolesReadService::OWNER_SURFACE_ID,
-                capability: RolesReadService::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: ['type' => 'object'],
-                outputSchema: ['type' => 'object'],
-            ),
-            new RolesReadAbilityHandler($read, RolesReadAbilityHandler::CATALOG),
-            'Read role catalog',
-            'Reads the canonical site-scoped Roles & Capabilities catalog without mutating WordPress role state.',
-        );
-        $this->registerAbility(
-            $abilities,
-            $bridge,
-            new AbilityDescriptor(
-                name: RolesReadService::ABILITY_IMPACT,
-                ownerSurfaceId: RolesReadService::OWNER_SURFACE_ID,
-                capability: RolesReadService::CAPABILITY,
-                mutates: false,
-                channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['capability'],
-                    'properties' => [
-                        'capability' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 191],
-                    ],
-                ],
-                outputSchema: ['type' => 'object'],
-            ),
-            new RolesReadAbilityHandler($read, RolesReadAbilityHandler::IMPACT),
-            'Read capability role impact',
-            'Returns explicit allow, explicit deny, and absent role-entry truth for one capability in the current site context.',
-        );
-    }
+		$environment = new WordPressRoleRuntimeEnvironment();
+		$read        = new RolesReadService( $policy, $environment );
+		$services->set( self::SERVICE_ENVIRONMENT, $environment );
+		$services->set( self::SERVICE_READ, $read );
 
-    public function boot(ServiceRegistryInterface $services): void {}
+		$channels = [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ];
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: RolesReadService::ABILITY_CATALOG,
+				ownerSurfaceId: RolesReadService::OWNER_SURFACE_ID,
+				capability: RolesReadService::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: [ 'type' => 'object' ],
+				outputSchema: [ 'type' => 'object' ],
+			),
+			new RolesReadAbilityHandler( $read, RolesReadAbilityHandler::CATALOG ),
+			'Read role catalog',
+			'Reads the canonical site-scoped Roles & Capabilities catalog without mutating WordPress role state.',
+		);
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: RolesReadService::ABILITY_IMPACT,
+				ownerSurfaceId: RolesReadService::OWNER_SURFACE_ID,
+				capability: RolesReadService::CAPABILITY,
+				mutates: false,
+				channels: $channels,
+				inputSchema: [
+					'type'       => 'object',
+					'required'   => [ 'capability' ],
+					'properties' => [
+						'capability' => [
+							'type'      => 'string',
+							'minLength' => 1,
+							'maxLength' => 191,
+						],
+					],
+				],
+				outputSchema: [ 'type' => 'object' ],
+			),
+			new RolesReadAbilityHandler( $read, RolesReadAbilityHandler::IMPACT ),
+			'Read capability role impact',
+			'Returns explicit allow, explicit deny, and absent role-entry truth for one capability in the current site context.',
+		);
+	}
 
-    private function registerAbility(
-        AbilityRegistry $abilities,
-        WordPressAbilityBridge $bridge,
-        AbilityDescriptor $descriptor,
-        AbilityHandlerInterface $handler,
-        string $label,
-        string $description,
-    ): void {
-        $abilities->register($descriptor, $handler);
-        $bridge->expose(new WordPressAbilityExposure(
-            internalName: $descriptor->name,
-            label: $label,
-            description: $description,
-            showInRest: true,
-        ));
-    }
+	public function boot( ServiceRegistryInterface $services ): void {}
+
+	private function registerAbility(
+		AbilityRegistry $abilities,
+		WordPressAbilityBridge $bridge,
+		AbilityDescriptor $descriptor,
+		AbilityHandlerInterface $handler,
+		string $label,
+		string $description,
+	): void {
+		$abilities->register( $descriptor, $handler );
+		$bridge->expose(
+			new WordPressAbilityExposure(
+				internalName: $descriptor->name,
+				label: $label,
+				description: $description,
+				showInRest: true,
+			)
+		);
+	}
 }

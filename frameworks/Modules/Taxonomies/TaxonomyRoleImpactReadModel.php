@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Contracts\RoleImpactReadServiceInterface;
@@ -13,145 +13,141 @@ use WPEssential\Contracts\ServiceRegistryInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
 
-final readonly class TaxonomyRoleImpactReadModel
-{
-    /** @var array<string,string> */
-    private const DEFAULT_CAPABILITIES = [
-        'manage_terms' => 'manage_categories',
-        'edit_terms' => 'manage_categories',
-        'delete_terms' => 'manage_categories',
-        'assign_terms' => 'edit_posts',
-    ];
+final readonly class TaxonomyRoleImpactReadModel {
 
-    public function __construct(
-        private ?RoleImpactReadServiceInterface $roles = null,
-        private ?ServiceRegistryInterface $services = null,
-    ) {}
+	/** @var array<string,string> */
+	private const DEFAULT_CAPABILITIES = [
+		'manage_terms' => 'manage_categories',
+		'edit_terms'   => 'manage_categories',
+		'delete_terms' => 'manage_categories',
+		'assign_terms' => 'edit_posts',
+	];
 
-    /**
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
-     *   caveats:list<string>
-     * }
-     */
-    public function forDefinition(Definition $definition, ?ExecutionContext $context = null): array
-    {
-        return $this->forCapabilities($this->effectiveCapabilities($definition->payload), $context);
-    }
+	public function __construct(
+		private ?RoleImpactReadServiceInterface $roles = null,
+		private ?ServiceRegistryInterface $services = null,
+	) {}
 
-    /**
-     * @param array<string,string> $capabilities
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
-     *   caveats:list<string>
-     * }
-     */
-    public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
-    {
-        $service = $this->roles ?? $this->rolesFromRegistry();
-        if (!$service instanceof RoleImpactReadServiceInterface || !$context instanceof ExecutionContext) {
-            return [
-                'state' => 'unavailable',
-                'operations' => array_map(
-                    static fn (string $operation, string $capability): array => [
-                        'operation' => $operation,
-                        'capability' => $capability,
-                        'impact' => [
-                            'state' => 'unavailable',
-                            'capability' => $capability,
-                            'explicit_allow_roles' => [],
-                            'explicit_deny_roles' => [],
-                            'absent_roles' => [],
-                            'caveats' => ['Canonical Surface 30 role-impact service or execution context is unavailable.'],
-                        ],
-                    ],
-                    array_keys($capabilities),
-                    array_values($capabilities),
-                ),
-                'caveats' => [
-                    'Canonical Surface 30 role-impact service or execution context is unavailable; Taxonomy does not fall back to direct WordPress role-store inspection.',
-                ],
-            ];
-        }
+	/**
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
+	 *   caveats:list<string>
+	 * }
+	 */
+	public function forDefinition( Definition $definition, ?ExecutionContext $context = null ): array {
+		return $this->forCapabilities( $this->effectiveCapabilities( $definition->payload ), $context );
+	}
 
-        /** @var array<string,array<string,mixed>> $byCapability */
-        $byCapability = [];
-        foreach ($capabilities as $capability) {
-            if (!isset($byCapability[$capability])) {
-                $byCapability[$capability] = $service->capabilityImpact($capability, $context);
-            }
-        }
+	/**
+	 * @param array<string,string> $capabilities
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
+	 *   caveats:list<string>
+	 * }
+	 */
+	public function forCapabilities( array $capabilities, ?ExecutionContext $context = null ): array {
+		$service = $this->roles ?? $this->rolesFromRegistry();
+		if ( ! $service instanceof RoleImpactReadServiceInterface || ! $context instanceof ExecutionContext ) {
+			return [
+				'state'      => 'unavailable',
+				'operations' => array_map(
+					static fn ( string $operation, string $capability ): array => [
+						'operation'  => $operation,
+						'capability' => $capability,
+						'impact'     => [
+							'state'                => 'unavailable',
+							'capability'           => $capability,
+							'explicit_allow_roles' => [],
+							'explicit_deny_roles'  => [],
+							'absent_roles'         => [],
+							'caveats'              => [ 'Canonical Surface 30 role-impact service or execution context is unavailable.' ],
+						],
+					],
+					array_keys( $capabilities ),
+					array_values( $capabilities ),
+				),
+				'caveats'    => [
+					'Canonical Surface 30 role-impact service or execution context is unavailable; Taxonomy does not fall back to direct WordPress role-store inspection.',
+				],
+			];
+		}
 
-        $operations = [];
-        $state = 'healthy';
-        $caveats = [
-            'Role impact is diagnostic role-entry truth from canonical Surface 30, not final user authorization.',
-        ];
-        foreach ($capabilities as $operation => $capability) {
-            $impact = $byCapability[$capability];
-            $impactState = $impact['state'] ?? 'unavailable';
-            if ($impactState === 'unavailable') {
-                $state = 'unavailable';
-            } elseif ($impactState === 'degraded' && $state === 'healthy') {
-                $state = 'degraded';
-            }
+		/** @var array<string,array<string,mixed>> $byCapability */
+		$byCapability = [];
+		foreach ( $capabilities as $capability ) {
+			if ( ! isset( $byCapability[ $capability ] ) ) {
+				$byCapability[ $capability ] = $service->capabilityImpact( $capability, $context );
+			}
+		}
 
-            $impactCaveats = $impact['caveats'] ?? [];
-            if (is_array($impactCaveats)) {
-                foreach ($impactCaveats as $caveat) {
-                    if (is_string($caveat) && $caveat !== '') {
-                        $caveats[] = $caveat;
-                    }
-                }
-            }
+		$operations = [];
+		$state      = 'healthy';
+		$caveats    = [
+			'Role impact is diagnostic role-entry truth from canonical Surface 30, not final user authorization.',
+		];
+		foreach ( $capabilities as $operation => $capability ) {
+			$impact      = $byCapability[ $capability ];
+			$impactState = $impact['state'] ?? 'unavailable';
+			if ( $impactState === 'unavailable' ) {
+				$state = 'unavailable';
+			} elseif ( $impactState === 'degraded' && $state === 'healthy' ) {
+				$state = 'degraded';
+			}
 
-            $operations[] = [
-                'operation' => $operation,
-                'capability' => $capability,
-                'impact' => $impact,
-            ];
-        }
+			$impactCaveats = $impact['caveats'] ?? [];
+			if ( is_array( $impactCaveats ) ) {
+				foreach ( $impactCaveats as $caveat ) {
+					if ( is_string( $caveat ) && $caveat !== '' ) {
+						$caveats[] = $caveat;
+					}
+				}
+			}
 
-        return [
-            'state' => $state,
-            'operations' => $operations,
-            'caveats' => array_values(array_unique($caveats)),
-        ];
-    }
+			$operations[] = [
+				'operation'  => $operation,
+				'capability' => $capability,
+				'impact'     => $impact,
+			];
+		}
 
-    /**
-     * @param array<string,mixed> $payload
-     * @return array<string,string>
-     */
-    public function effectiveCapabilities(array $payload): array
-    {
-        $effective = self::DEFAULT_CAPABILITIES;
-        $authored = $payload['capabilities'] ?? null;
-        if (!is_array($authored) || array_is_list($authored)) {
-            return $effective;
-        }
+		return [
+			'state'      => $state,
+			'operations' => $operations,
+			'caveats'    => array_values( array_unique( $caveats ) ),
+		];
+	}
 
-        foreach (array_keys(self::DEFAULT_CAPABILITIES) as $operation) {
-            $value = $authored[$operation] ?? null;
-            if (is_string($value) && trim($value) !== '') {
-                $effective[$operation] = trim($value);
-            }
-        }
+	/**
+	 * @param array<string,mixed> $payload
+	 * @return array<string,string>
+	 */
+	public function effectiveCapabilities( array $payload ): array {
+		$effective = self::DEFAULT_CAPABILITIES;
+		$authored  = $payload['capabilities'] ?? null;
+		if ( ! is_array( $authored ) || array_is_list( $authored ) ) {
+			return $effective;
+		}
 
-        return $effective;
-    }
+		foreach ( array_keys( self::DEFAULT_CAPABILITIES ) as $operation ) {
+			$value = $authored[ $operation ] ?? null;
+			if ( is_string( $value ) && trim( $value ) !== '' ) {
+				$effective[ $operation ] = trim( $value );
+			}
+		}
 
-    private function rolesFromRegistry(): ?RoleImpactReadServiceInterface
-    {
-        if (!$this->services instanceof ServiceRegistryInterface
-            || !$this->services->has(RoleImpactReadServiceInterface::SERVICE_ID)
-        ) {
-            return null;
-        }
+		return $effective;
+	}
 
-        $service = $this->services->get(RoleImpactReadServiceInterface::SERVICE_ID);
-        return $service instanceof RoleImpactReadServiceInterface ? $service : null;
-    }
+	private function rolesFromRegistry(): ?RoleImpactReadServiceInterface {
+		if ( ! $this->services instanceof ServiceRegistryInterface
+			|| ! $this->services->has( RoleImpactReadServiceInterface::SERVICE_ID )
+		) {
+			return null;
+		}
+
+		$service = $this->services->get( RoleImpactReadServiceInterface::SERVICE_ID );
+		return $service instanceof RoleImpactReadServiceInterface ? $service : null;
+	}
 }

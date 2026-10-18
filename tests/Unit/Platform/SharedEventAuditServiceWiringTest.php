@@ -22,13 +22,13 @@ final class SharedEventAuditServiceWiringTest extends TestCase
         $source = file_get_contents($pluginPath);
 
         self::assertIsString($source);
-        self::assertSame(1, substr_count($source, '$events = new EventBus();'));
-        self::assertSame(1, substr_count($source, '$services->set(EventServices::BUS, $events);'));
-        self::assertSame(1, substr_count($source, '$services->set(AuditServices::LOGGER, $audit);'));
+        self::assertSame(1, substr_count($source, '$events                = new EventBus();'));
+        self::assertSame(1, substr_count($source, '$services->set( EventServices::BUS, $events );'));
+        self::assertSame(1, substr_count($source, '$services->set( AuditServices::LOGGER, $audit );'));
 
-        $eventPublication = strpos($source, '$services->set(EventServices::BUS, $events);');
-        $auditPublication = strpos($source, '$services->set(AuditServices::LOGGER, $audit);');
-        $moduleRegistration = strpos($source, 'self::$kernel->registerModule(new CustomPostTypeModule());');
+        $eventPublication = strpos($source, '$services->set( EventServices::BUS, $events );');
+        $auditPublication = strpos($source, '$services->set( AuditServices::LOGGER, $audit );');
+        $moduleRegistration = strpos($source, 'self::$kernel->registerModule( new CustomPostTypeModule() );');
 
         self::assertIsInt($eventPublication);
         self::assertIsInt($auditPublication);
@@ -43,15 +43,15 @@ final class SharedEventAuditServiceWiringTest extends TestCase
         $source = file_get_contents($pluginPath);
 
         self::assertIsString($source);
-        self::assertStringContainsString('$audit = $database instanceof NativeWpdbAdapter', $source);
-        self::assertStringContainsString('? new PersistentAuditLogger($database)', $source);
+        self::assertStringContainsString('$audit                 = $database instanceof NativeWpdbAdapter', $source);
+        self::assertStringContainsString('? new PersistentAuditLogger( $database )', $source);
         self::assertStringContainsString(': new InMemoryAuditLogger();', $source);
         self::assertStringContainsString(
-            '$migrationCoordinator->register(new CreateAuditEventsTableMigration($database));',
+            '$migrationCoordinator->register( new CreateAuditEventsTableMigration( $database ) );',
             $source,
         );
 
-        $migration = strpos($source, '$migrationCoordinator->register(new CreateAuditEventsTableMigration($database));');
+        $migration = strpos($source, '$migrationCoordinator->register( new CreateAuditEventsTableMigration( $database ) );');
         $runPending = strpos($source, '$migrationCoordinator->runPending();');
         self::assertIsInt($migration);
         self::assertIsInt($runPending);

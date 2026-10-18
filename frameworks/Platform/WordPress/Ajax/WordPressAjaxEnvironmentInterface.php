@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-interface WordPressAjaxEnvironmentInterface
-{
-    public function registerAction(string $hook, callable $callback): void;
+interface WordPressAjaxEnvironmentInterface {
 
-    /** @return array<string,mixed> */
-    public function request(): array;
+	public function registerAction( string $hook, callable $callback ): void;
 
-    public function isAuthenticated(): bool;
+	/** @return array<string,mixed> */
+	public function request(): array;
 
-    public function currentUserCan(string $capability): bool;
+	public function isAuthenticated(): bool;
 
-    public function respond(AjaxResponse $response): void;
+	public function currentUserCan( string $capability ): bool;
+
+	public function respond( AjaxResponse $response ): void;
 }

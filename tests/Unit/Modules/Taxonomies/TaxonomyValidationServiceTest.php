@@ -52,8 +52,8 @@ final class TaxonomyValidationServiceTest extends TestCase
         self::assertSame('Book Genres', $diagnostics['overrides']['labels']['menu_name']);
         self::assertSame(['slug' => 'library/genre', 'hierarchical' => true], $diagnostics['overrides']['rewrite']);
         self::assertSame([
-            'meta_box' => 'wordpress.disabled',
             'rest_controller' => 'wordpress.terms',
+            'meta_box' => 'wordpress.disabled',
         ], $diagnostics['provider_ids']);
         self::assertSame('/wp/v2/genres', $diagnostics['previews']['rest']['route']);
         self::assertSame('/library/genre/{parent/.../}{term-slug}/', $diagnostics['previews']['rewrite']['path_pattern']);
@@ -155,7 +155,7 @@ final class TaxonomyValidationServiceTest extends TestCase
     {
         $repository = new InMemoryDefinitionRepository();
         $created = $this->save($repository, $this->payload());
-        $this->status($repository, $created['id'], 1, 'archived');
+        $this->transitionStatus($repository, $created['id'], 1, 'archived');
 
         $report = $this->validation($repository)->validate(['payload' => $this->payload()]);
 
@@ -186,7 +186,7 @@ final class TaxonomyValidationServiceTest extends TestCase
             'rewrite' => ['slug' => 'shared/topic'],
             'query_var' => 'shared_topic',
         ]));
-        $this->status($repository, $created['id'], 1, 'published');
+        $this->transitionStatus($repository, $created['id'], 1, 'published');
 
         $report = $this->validation($repository)->validate([
             'payload' => array_merge($this->payload(), [
@@ -218,7 +218,7 @@ final class TaxonomyValidationServiceTest extends TestCase
             'rest_base' => 'shared-terms',
             'rest_namespace' => 'acme/v1',
         ]));
-        $this->status($repository, $created['id'], 1, 'published');
+        $this->transitionStatus($repository, $created['id'], 1, 'published');
 
         $report = $this->validation($repository)->validate([
             'payload' => array_merge($this->payload(), [
@@ -277,7 +277,7 @@ final class TaxonomyValidationServiceTest extends TestCase
             'rest_base' => 'shared-terms',
             'rest_namespace' => 'acme/v1',
         ]));
-        $this->status($repository, $created['id'], 1, 'published');
+        $this->transitionStatus($repository, $created['id'], 1, 'published');
 
         $report = $this->validation($repository)->validate([
             'payload' => array_merge($this->payload(), [
@@ -346,7 +346,7 @@ final class TaxonomyValidationServiceTest extends TestCase
         $created = $this->save($repository, array_merge($this->payload(), [
             'query_var' => 'shared_topic',
         ]));
-        $this->status($repository, $created['id'], 1, 'published');
+        $this->transitionStatus($repository, $created['id'], 1, 'published');
 
         $report = $this->validation($repository)->validate([
             'payload' => array_merge($this->payload(), [
@@ -410,7 +410,7 @@ final class TaxonomyValidationServiceTest extends TestCase
             ->handle(['payload' => $payload], $this->context())['definition'];
     }
 
-    private function status(
+    private function transitionStatus(
         InMemoryDefinitionRepository $repository,
         string $id,
         int $revision,

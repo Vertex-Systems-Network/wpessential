@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\Fields;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
 use WPEssential\Modules\Fields\FieldValuePersistenceGuard;
@@ -20,7 +21,7 @@ final class FieldValuePersistenceGuardTest extends TestCase
         self::assertSame($value, $guard->assertSafe($value));
     }
 
-    /** @dataProvider unsafeValueProvider */
+    #[DataProvider('unsafeValueProvider')]
     public function testRejectsNonFiniteAndNonCanonicalPersistenceValues(mixed $value): void
     {
         $guard = new FieldValuePersistenceGuard();

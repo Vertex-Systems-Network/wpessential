@@ -4,27 +4,25 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Auth;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Contracts\CapabilityCheckerInterface;
 
-final readonly class PolicyEngine
-{
-    public function __construct(private CapabilityCheckerInterface $capabilities) {}
+final readonly class PolicyEngine {
 
-    public function authorize(AuthorizationRequest $request): PolicyDecision
-    {
-        if (!$request->context->principal->isAuthenticated()) {
-            return PolicyDecision::deny('unauthenticated');
-        }
+	public function __construct( private CapabilityCheckerInterface $capabilities ) {}
 
-        if (!$this->capabilities->can($request->context, $request->capability)) {
-            return PolicyDecision::deny('capability_denied');
-        }
+	public function authorize( AuthorizationRequest $request ): PolicyDecision {
+		if ( ! $request->context->principal->isAuthenticated() ) {
+			return PolicyDecision::deny( 'unauthenticated' );
+		}
 
-        return PolicyDecision::allow('capability_allowed');
-    }
+		if ( ! $this->capabilities->can( $request->context, $request->capability ) ) {
+			return PolicyDecision::deny( 'capability_denied' );
+		}
+
+		return PolicyDecision::allow( 'capability_allowed' );
+	}
 }

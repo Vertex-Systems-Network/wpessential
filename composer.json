@@ -148,7 +148,9 @@
       "@architecture:validate",
       "@engineering:validate",
       "@test:smoke"
-    ]
+    ],
+    "gate:local": "bash tools/quality/local-gate.sh",
+    "hooks:install": "git config core.hooksPath tools/git-hooks"
   },
   "config": {
     "sort-packages": true,

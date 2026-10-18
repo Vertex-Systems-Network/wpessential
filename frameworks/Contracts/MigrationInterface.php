@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace WPEssential\Contracts;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-interface MigrationInterface
-{
-    public function id(): string;
+interface MigrationInterface {
 
-    public function sequence(): int;
+	public function id(): string;
 
-    public function isDestructive(): bool;
+	public function sequence(): int;
 
-    public function recoveryPlan(): ?string;
+	public function isDestructive(): bool;
 
-    public function apply(): void;
+	public function recoveryPlan(): ?string;
+
+	public function apply(): void;
 }

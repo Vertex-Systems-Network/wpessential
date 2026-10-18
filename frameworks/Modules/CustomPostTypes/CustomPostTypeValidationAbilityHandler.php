@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomPostTypes;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 
-final readonly class CustomPostTypeValidationAbilityHandler implements AbilityHandlerInterface
-{
-    public function __construct(private CustomPostTypeValidationService $validation) {}
+final readonly class CustomPostTypeValidationAbilityHandler implements AbilityHandlerInterface {
 
-    public function handle(array $input, ExecutionContext $context): mixed
-    {
-        return $this->validation->validate($input);
-    }
+	public function __construct( private CustomPostTypeValidationService $validation ) {}
+
+	public function handle( array $input, ExecutionContext $context ): mixed {
+		return $this->validation->validate( $input );
+	}
 }

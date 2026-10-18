@@ -4,56 +4,55 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Database\Migrations;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
 use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Contracts\MigrationStateStoreInterface;
 
-final class MigrationRunner
-{
-    public function __construct(
-        private readonly MigrationRegistry $registry,
-        private readonly MigrationStateStoreInterface $stateStore,
-    ) {
-    }
+final class MigrationRunner {
 
-    /** @return list<string> applied migration ids */
-    public function runPending(): array
-    {
-        $alreadyApplied = array_fill_keys($this->stateStore->appliedIds(), true);
-        $appliedNow = [];
+	public function __construct(
+		private readonly MigrationRegistry $registry,
+		private readonly MigrationStateStoreInterface $stateStore,
+	) {
+	}
 
-        foreach ($this->registry->ordered() as $migration) {
-            if (isset($alreadyApplied[$migration->id()])) {
-                continue;
-            }
+	/** @return list<string> applied migration ids */
+	public function runPending(): array {
+		$alreadyApplied = array_fill_keys( $this->stateStore->appliedIds(), true );
+		$appliedNow     = [];
 
-            $this->assertSafe($migration);
-            $migration->apply();
-            $this->stateStore->markApplied($migration->id());
-            $alreadyApplied[$migration->id()] = true;
-            $appliedNow[] = $migration->id();
-        }
+		foreach ( $this->registry->ordered() as $migration ) {
+			if ( isset( $alreadyApplied[ $migration->id() ] ) ) {
+				continue;
+			}
 
-        return $appliedNow;
-    }
+			$this->assertSafe( $migration );
+			$migration->apply();
+			$this->stateStore->markApplied( $migration->id() );
+			$alreadyApplied[ $migration->id() ] = true;
+			$appliedNow[]                       = $migration->id();
+		}
 
-    private function assertSafe(MigrationInterface $migration): void
-    {
-        if (!$migration->isDestructive()) {
-            return;
-        }
+		return $appliedNow;
+	}
 
-        $recoveryPlan = trim((string) $migration->recoveryPlan());
-        if ($recoveryPlan === '') {
-            throw new RuntimeException(sprintf(
-                'Destructive migration "%s" requires an explicit recovery plan.',
-                $migration->id(),
-            ));
-        }
-    }
+	private function assertSafe( MigrationInterface $migration ): void {
+		if ( ! $migration->isDestructive() ) {
+			return;
+		}
+
+		$recoveryPlan = trim( (string) $migration->recoveryPlan() );
+		if ( $recoveryPlan === '' ) {
+			throw new RuntimeException(
+				sprintf(
+					'Destructive migration "%s" requires an explicit recovery plan.',
+					$migration->id(),
+				)
+			);
+		}
+	}
 }

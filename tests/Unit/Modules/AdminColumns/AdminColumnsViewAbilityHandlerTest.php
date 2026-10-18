@@ -14,6 +14,7 @@ use WPEssential\Modules\AdminColumns\AdminColumnsViewDefinitionService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\Definition;
+use WPEssential\Platform\Definitions\DefinitionStatus;
 
 final class AdminColumnsViewAbilityHandlerTest extends TestCase
 {
@@ -108,6 +109,7 @@ final class AdminColumnsViewAbilityHandlerTest extends TestCase
             type: 'foreign_definition',
             schemaVersion: 1,
             ownerSurfaceId: 7,
+            status: DefinitionStatus::Draft,
             payload: ['foreign' => true],
         ));
         $views = new AdminColumnsViewDefinitionService($repository, new AdminColumnsViewDefinitionNormalizer());

@@ -102,7 +102,7 @@ final class ListingServerRendererTest extends TestCase
 
         self::assertFalse($result->success);
         self::assertSame(ListingRuntimeState::Error, $result->state);
-        self::assertSame('missing_dynamic_resource_id', $result->failureCode);
+        self::assertSame('wpe_listings_query_contract_mismatch', $result->failureCode);
     }
 
     public function testRendersMultipleRowsDeterministically(): void

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
@@ -14,181 +14,177 @@ use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\DataSources\DataSourceDescriptor;
 
-final readonly class DashboardWidgetQueryBindingExecutor
-{
-    public function __construct(
-        private DataSourceRegistryInterface $dataSources,
-        private QueryReadConsumerInterface $query,
-    ) {}
+final readonly class DashboardWidgetQueryBindingExecutor {
 
-    public function resolve(
-        DashboardWidgetRenderSourceDescriptor $renderSource,
-        ExecutionContext $context,
-    ): DashboardWidgetRenderSourceDescriptor {
-        $query = $renderSource->query;
-        if ($query === null) {
-            return $renderSource;
-        }
+	public function __construct(
+		private DataSourceRegistryInterface $dataSources,
+		private QueryReadConsumerInterface $query,
+	) {}
 
-        $descriptor = $this->dataSources->find($query->sourceRef);
-        if ($descriptor === null || !$descriptor->isAvailable()) {
-            throw new RuntimeException('Dashboard Widget Query Data Source is unavailable.');
-        }
-        if (!$descriptor->policyRequired || !$descriptor->hasAuthorizationMapping()) {
-            throw new RuntimeException('Dashboard Widget Query Data Source is missing canonical authorization metadata.');
-        }
-        if ($query->pageSize > $descriptor->maxPageSize) {
-            throw new RuntimeException('Dashboard Widget Query page size exceeds the Data Source bound.');
-        }
+	public function resolve(
+		DashboardWidgetRenderSourceDescriptor $renderSource,
+		ExecutionContext $context,
+	): DashboardWidgetRenderSourceDescriptor {
+		$query = $renderSource->query;
+		if ( $query === null ) {
+			return $renderSource;
+		}
 
-        $this->assertReferencedFieldsExist($query, $descriptor);
-        $this->assertBindingTypesCompatible($query, $descriptor);
+		$descriptor = $this->dataSources->find( $query->sourceRef );
+		if ( $descriptor === null || ! $descriptor->isAvailable() ) {
+			throw new RuntimeException( 'Dashboard Widget Query Data Source is unavailable.' );
+		}
+		if ( ! $descriptor->policyRequired || ! $descriptor->hasAuthorizationMapping() ) {
+			throw new RuntimeException( 'Dashboard Widget Query Data Source is missing canonical authorization metadata.' );
+		}
+		if ( $query->pageSize > $descriptor->maxPageSize ) {
+			throw new RuntimeException( 'Dashboard Widget Query page size exceeds the Data Source bound.' );
+		}
 
-        $result = $this->query->read($query->request(), $context);
-        $rows = $this->validatedRows($result, $query);
+		$this->assertReferencedFieldsExist( $query, $descriptor );
+		$this->assertBindingTypesCompatible( $query, $descriptor );
 
-        if ($rows === []) {
-            if ($renderSource->emptyState === null) {
-                throw new RuntimeException('Dashboard Widget Query returned zero rows without an authored empty state.');
-            }
+		$result = $this->query->read( $query->request(), $context );
+		$rows   = $this->validatedRows( $result, $query );
 
-            return $renderSource->resolvedEmptyState();
-        }
+		if ( $rows === [] ) {
+			if ( $renderSource->emptyState === null ) {
+				throw new RuntimeException( 'Dashboard Widget Query returned zero rows without an authored empty state.' );
+			}
 
-        $bindings = $renderSource->bindings;
-        foreach ($query->bindings as $bindingKey => $binding) {
-            $logicalType = $descriptor->fieldSchema[$binding['field_ref']];
-            if ($binding['mode'] === 'first') {
-                $value = $this->rowValue($rows[0], $binding['field_ref']);
-                $this->assertRuntimeValue($value, $logicalType);
-                $this->assertSafeValue($value);
-                /** @var scalar $value */
-                $bindings[$bindingKey] = $value;
-                continue;
-            }
+			return $renderSource->resolvedEmptyState();
+		}
 
-            $values = [];
-            foreach ($rows as $row) {
-                $value = $this->rowValue($row, $binding['field_ref']);
-                $this->assertRuntimeValue($value, $logicalType);
-                $this->assertSafeValue($value);
-                /** @var scalar $value */
-                $values[] = $value;
-            }
-            $bindings[$bindingKey] = $values;
-        }
+		$bindings = $renderSource->bindings;
+		foreach ( $query->bindings as $bindingKey => $binding ) {
+			$logicalType = $descriptor->fieldSchema[ $binding['field_ref'] ];
+			if ( $binding['mode'] === 'first' ) {
+				$value = $this->rowValue( $rows[0], $binding['field_ref'] );
+				$this->assertRuntimeValue( $value, $logicalType );
+				$this->assertSafeValue( $value );
+				/** @var scalar $value */
+				$bindings[ $bindingKey ] = $value;
+				continue;
+			}
 
-        ksort($bindings, SORT_STRING);
+			$values = [];
+			foreach ( $rows as $row ) {
+				$value = $this->rowValue( $row, $binding['field_ref'] );
+				$this->assertRuntimeValue( $value, $logicalType );
+				$this->assertSafeValue( $value );
+				/** @var scalar $value */
+				$values[] = $value;
+			}
+			$bindings[ $bindingKey ] = $values;
+		}
 
-        return $renderSource->resolvedWith($bindings);
-    }
+		ksort( $bindings, SORT_STRING );
 
-    private function assertReferencedFieldsExist(
-        DashboardWidgetQueryBindingDescriptor $query,
-        DataSourceDescriptor $descriptor,
-    ): void {
-        $fields = $query->projection;
-        foreach ($query->filters as $filter) {
-            $fields[] = $filter['field_ref'];
-        }
-        foreach ($query->orderBy as $order) {
-            $fields[] = $order['field_ref'];
-        }
+		return $renderSource->resolvedWith( $bindings );
+	}
 
-        foreach (array_unique($fields) as $fieldRef) {
-            if (!array_key_exists($fieldRef, $descriptor->fieldSchema)) {
-                throw new RuntimeException('Dashboard Widget Query references a field absent from the Data Source schema.');
-            }
-        }
-    }
+	private function assertReferencedFieldsExist(
+		DashboardWidgetQueryBindingDescriptor $query,
+		DataSourceDescriptor $descriptor,
+	): void {
+		$fields = $query->projection;
+		foreach ( $query->filters as $filter ) {
+			$fields[] = $filter['field_ref'];
+		}
+		foreach ( $query->orderBy as $order ) {
+			$fields[] = $order['field_ref'];
+		}
 
-    private function assertBindingTypesCompatible(
-        DashboardWidgetQueryBindingDescriptor $query,
-        DataSourceDescriptor $descriptor,
-    ): void {
-        foreach ($query->bindings as $binding) {
-            $logicalType = $descriptor->fieldSchema[$binding['field_ref']];
-            $expected = match ($logicalType) {
-                'string', 'datetime' => $binding['mode'] === 'first' ? 'string' : 'string_list',
-                'integer' => $binding['mode'] === 'first' ? 'int' : 'int_list',
-                'float' => $binding['mode'] === 'first' ? 'float' : null,
-                'boolean' => $binding['mode'] === 'first' ? 'bool' : null,
-                default => null,
-            };
+		foreach ( array_unique( $fields ) as $fieldRef ) {
+			if ( ! array_key_exists( $fieldRef, $descriptor->fieldSchema ) ) {
+				throw new RuntimeException( 'Dashboard Widget Query references a field absent from the Data Source schema.' );
+			}
+		}
+	}
 
-            if ($expected === null || $binding['binding_type'] !== $expected) {
-                throw new RuntimeException('Dashboard Widget Query field type is incompatible with the Blueprint binding type.');
-            }
-        }
-    }
+	private function assertBindingTypesCompatible(
+		DashboardWidgetQueryBindingDescriptor $query,
+		DataSourceDescriptor $descriptor,
+	): void {
+		foreach ( $query->bindings as $binding ) {
+			$logicalType = $descriptor->fieldSchema[ $binding['field_ref'] ];
+			$expected    = match ( $logicalType ) {
+				'string', 'datetime' => $binding['mode'] === 'first' ? 'string' : 'string_list',
+				'integer' => $binding['mode'] === 'first' ? 'int' : 'int_list',
+				'float' => $binding['mode'] === 'first' ? 'float' : null,
+				'boolean' => $binding['mode'] === 'first' ? 'bool' : null,
+				default => null,
+			};
 
-    /**
-     * @param array<string,mixed> $result
-     * @return list<array<string,mixed>>
-     */
-    private function validatedRows(array $result, DashboardWidgetQueryBindingDescriptor $query): array
-    {
-        if (
-            ($result['contract_version'] ?? null) !== QueryReadConsumerInterface::CONTRACT_VERSION
-            || ($result['ok'] ?? null) !== true
-            || ($result['source_ref'] ?? null) !== $query->sourceRef
-            || ($result['projection'] ?? null) !== $query->projection
-        ) {
-            throw new RuntimeException('Dashboard Widget Query result does not match the bounded consumer contract.');
-        }
+			if ( $expected === null || $binding['binding_type'] !== $expected ) {
+				throw new RuntimeException( 'Dashboard Widget Query field type is incompatible with the Blueprint binding type.' );
+			}
+		}
+	}
 
-        $rows = $result['rows'] ?? null;
-        $returned = $result['returned'] ?? null;
-        if (
-            !is_array($rows)
-            || !array_is_list($rows)
-            || !is_int($returned)
-            || $returned !== count($rows)
-            || $returned < 0
-            || $returned > $query->pageSize
-        ) {
-            throw new RuntimeException('Dashboard Widget Query result row/cardinality contract failed.');
-        }
+	/**
+	 * @param array<string,mixed> $result
+	 * @return list<array<string,mixed>>
+	 */
+	private function validatedRows( array $result, DashboardWidgetQueryBindingDescriptor $query ): array {
+		if (
+			( $result['contract_version'] ?? null ) !== QueryReadConsumerInterface::CONTRACT_VERSION
+			|| ( $result['ok'] ?? null ) !== true
+			|| ( $result['source_ref'] ?? null ) !== $query->sourceRef
+			|| ( $result['projection'] ?? null ) !== $query->projection
+		) {
+			throw new RuntimeException( 'Dashboard Widget Query result does not match the bounded consumer contract.' );
+		}
 
-        foreach ($rows as $row) {
-            if (!is_array($row) || array_is_list($row)) {
-                throw new RuntimeException('Dashboard Widget Query rows must be object/maps.');
-            }
-        }
+		$rows     = $result['rows'] ?? null;
+		$returned = $result['returned'] ?? null;
+		if (
+			! is_array( $rows )
+			|| ! array_is_list( $rows )
+			|| ! is_int( $returned )
+			|| $returned !== count( $rows )
+			|| $returned < 0
+			|| $returned > $query->pageSize
+		) {
+			throw new RuntimeException( 'Dashboard Widget Query result row/cardinality contract failed.' );
+		}
 
-        /** @var list<array<string,mixed>> $rows */
-        return $rows;
-    }
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) || array_is_list( $row ) ) {
+				throw new RuntimeException( 'Dashboard Widget Query rows must be object/maps.' );
+			}
+		}
 
-    /** @param array<string,mixed> $row */
-    private function rowValue(array $row, string $fieldRef): mixed
-    {
-        if (!array_key_exists($fieldRef, $row)) {
-            throw new RuntimeException('Dashboard Widget Query result row is missing a projected binding field.');
-        }
+		/** @var list<array<string,mixed>> $rows */
+		return $rows;
+	}
 
-        return $row[$fieldRef];
-    }
+	/** @param array<string,mixed> $row */
+	private function rowValue( array $row, string $fieldRef ): mixed {
+		if ( ! array_key_exists( $fieldRef, $row ) ) {
+			throw new RuntimeException( 'Dashboard Widget Query result row is missing a projected binding field.' );
+		}
 
-    private function assertRuntimeValue(mixed $value, string $logicalType): void
-    {
-        $valid = match ($logicalType) {
-            'string', 'datetime' => is_string($value),
-            'integer' => is_int($value),
-            'float' => is_float($value),
-            'boolean' => is_bool($value),
-            default => false,
-        };
+		return $row[ $fieldRef ];
+	}
 
-        if (!$valid) {
-            throw new RuntimeException('Dashboard Widget Query result value does not match the Data Source logical type.');
-        }
-    }
+	private function assertRuntimeValue( mixed $value, string $logicalType ): void {
+		$valid = match ( $logicalType ) {
+			'string', 'datetime' => is_string( $value ),
+			'integer' => is_int( $value ),
+			'float' => is_float( $value ),
+			'boolean' => is_bool( $value ),
+			default => false,
+		};
 
-    private function assertSafeValue(mixed $value): void
-    {
-        if (is_string($value) && preg_match('/<\?(?:php|=)|<script\b|javascript:/i', $value)) {
-            throw new RuntimeException('Dashboard Widget Query result contains an executable string marker.');
-        }
-    }
+		if ( ! $valid ) {
+			throw new RuntimeException( 'Dashboard Widget Query result value does not match the Data Source logical type.' );
+		}
+	}
+
+	private function assertSafeValue( mixed $value ): void {
+		if ( is_string( $value ) && preg_match( '/<\?(?:php|=)|<script\b|javascript:/i', $value ) ) {
+			throw new RuntimeException( 'Dashboard Widget Query result contains an executable string marker.' );
+		}
+	}
 }

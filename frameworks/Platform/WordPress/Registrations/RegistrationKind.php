@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Registrations;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-enum RegistrationKind: string
-{
-    case PostType = 'post_type';
-    case Taxonomy = 'taxonomy';
-    case Metabox = 'metabox';
-    case SettingsPage = 'settings_page';
+enum RegistrationKind: string {
+
+	case PostType     = 'post_type';
+	case Taxonomy     = 'taxonomy';
+	case Metabox      = 'metabox';
+	case SettingsPage = 'settings_page';
 }
