@@ -426,6 +426,12 @@ PHP quality gates follow ADR-0223:
 - PHPCS errors and new PHPStan errors (outside `phpstan-baseline.neon`) block merge; shrink the baseline, never grow it;
 - a quality gate that cannot turn green by the chosen method within one milestone is a plan defect: stop, audit the method, record a decision, then continue — do not report `NO_VALID_WORK_SLOT` because of it.
 
+Local-first delivery (owner directive, saves CI runner minutes):
+- develop, fix and commit locally; do not push intermediate or checkpoint-only commits;
+- before any push run `composer gate:local` (syntax, architecture, engineering, smoke, PHPCS, PHPStan, PHPUnit) on a clean tree; `composer hooks:install` enables the pre-push hook that refuses an un-gated HEAD;
+- push once per completed milestone, so CI runs once to confirm, not to discover; a CI failure after a green local gate is an environment difference to fix in the gate, not a reason to iterate on the remote;
+- never push README/state/checkpoint-only commits separately; fold them into the milestone push.
+
 ## UI/UX/accessibility
 
 User-facing work must include:
