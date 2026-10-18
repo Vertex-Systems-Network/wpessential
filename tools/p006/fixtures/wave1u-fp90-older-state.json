@@ -1,0 +1,64 @@
+{
+    "status": "PASS",
+    "phase": "older-snapshot-candidate",
+    "cell_id": "minimum",
+    "environment": {
+        "wordpress": "6.9",
+        "php": "8.2.34",
+        "mysql": "8.4.11",
+        "table_prefix": "wpep006u89_"
+    },
+    "logical_pair": {
+        "free": "F0",
+        "pro": "P_API"
+    },
+    "artifact_identity": {
+        "free_sha256": "3fb361db7f66422a6f904cb929b0019a4f519bb70f419a3fa9560b021adaa185",
+        "pro_sha256": "e3d0059e8ac22153d3c2db78a0e92ecfe6db909636349da77cef2704383e2b49",
+        "free_payload_tree_sha256": "6f3d464dfc453e858e618ebf69e735df24813925fe9235ccaea963943cd8f2a4",
+        "pro_payload_tree_sha256": "ed074e5be74232bbbae8959e6e51935763f91239759e44e0394d5bf84885bbb4",
+        "pair_id_sha256": "0dcf2e23ec782e1a6cfe0576b6cf0d0c7891103cab7ad5bb2418de9d8eb843f2"
+    },
+    "snapshot": {
+        "migration_rows": [
+            {
+                "migration_id": "006.create-compiled-registration-atomic-store",
+                "applied_at": "2026-10-18T12:16:39.945818Z"
+            },
+            {
+                "migration_id": "007.create-definition-persistence",
+                "applied_at": "2026-10-18T12:16:39.963549Z"
+            },
+            {
+                "migration_id": "008.create-audit-ptd-store",
+                "applied_at": "2026-10-18T12:16:39.976870Z"
+            }
+        ],
+        "migration_ids": [
+            "006.create-compiled-registration-atomic-store",
+            "007.create-definition-persistence",
+            "008.create-audit-ptd-store"
+        ],
+        "wpe_tables": [
+            "wpep006u89_wpe_audit_events",
+            "wpep006u89_wpe_definition_dependencies",
+            "wpep006u89_wpe_definitions",
+            "wpep006u89_wpe_migrations"
+        ],
+        "wpe_table_schema_sha256": {
+            "wpep006u89_wpe_audit_events": "8547661085429162d1a996946ffc3cffb5a9a8ade440e41500c4f9be2b8d5530",
+            "wpep006u89_wpe_definition_dependencies": "2bb723379cd787ed828ab7d2817a62cf386f815ad9c452ba50f5c3cc89e19453",
+            "wpep006u89_wpe_definitions": "20ac2747c006750b35f26280637e0ef385ddaa340f63058c9b9434b1da571720",
+            "wpep006u89_wpe_migrations": "8883a9bc606f06aa4821c978b47e21ddbf1671bb1482c64c6cd1d4507893fbdf"
+        },
+        "pro_custom_table_store_presence": {
+            "wpep006u89_wpe_custom_table_migration_runs": false,
+            "wpep006u89_wpe_custom_table_migration_confirmations": false
+        },
+        "sentinel": "wave1u-fp89-preserve-v1",
+        "snapshot_sha256": "3466cc54db71870197b44e0adb2315486a32947376e592f0c4731388eab19663"
+    },
+    "formal_fixture_executed": false,
+    "fixture_accounting_changed": false,
+    "network_attempt_count": 0
+}

@@ -413,6 +413,137 @@ function tOlderSnapshot(array $identity, array $in): array {
     ];
 }
 
+/** @return array<string,mixed> */
+function tFp90Fixture(): array {
+    tAssert(tEnv('WPE_P006_FP90_AUTHORIZATION') === 'GOV-P001-CF-TEMP-019-A1', 'FP-90 amended grant missing');
+    $sql = dirname(__DIR__, 2) . '/tools/p006/fixtures/wave1u-fp90-older-state.sql';
+    tAssert(tHashFile($sql) === 'e8898e292ab3d9ce1d4540675c61088617675e9a4cf2b974f553cc6f09147028', 'Amended older SQL identity drift');
+    $record = tRead(dirname(__DIR__, 2) . '/tools/p006/fixtures/wave1u-fp90-older-state.json');
+    tAssert(($record['source_sha'] ?? null) === '182abdaff37819ff9c62d06dd64e4781f71c04c6', 'Older-state source provenance drift');
+    tAssert(($record['formal_fixture_executed'] ?? null) === false, 'Older-state candidate mislabeled formal');
+    tAssert(($record['snapshot']['snapshot_sha256'] ?? null) === '3466cc54db71870197b44e0adb2315486a32947376e592f0c4731388eab19663', 'Older-state semantic identity drift');
+    return $record['snapshot'];
+}
+
+/** @return array<string,mixed> */
+function tFp90Compatibility(string $freeMain, string $proMain): array {
+    $extract = static function (string $pattern, string $source, string $label): string {
+        tAssert(preg_match($pattern, $source, $match) === 1 && isset($match[1]), 'FP-90 metadata drift: ' . $label);
+        return (string) $match[1];
+    };
+    $free = (string) file_get_contents($freeMain);
+    $pro = (string) file_get_contents($proMain);
+    tAssert($free !== '' && $pro !== '', 'FP-90 package metadata missing');
+    $freeMetadata = [
+        'present' => true, 'bootstrap_complete' => true,
+        'version' => $extract("/define\\('WPE_VERSION',\\s*'([^']+)'\\);/", $free, 'Free version'),
+        'platform_api' => $extract("/define\\('WPE_PLATFORM_API_VERSION',\\s*'([^']+)'\\);/", $free, 'Platform API'),
+        'platform_schema' => (int) $extract("/define\\('WPE_PLATFORM_SCHEMA_GENERATION',\\s*([0-9]+)\\);/", $free, 'Platform schema'),
+    ];
+    $proMetadata = ['package_complete' => true];
+    foreach ([
+        'version' => 'WPE_PRO_VERSION', 'min_free_version' => 'WPE_PRO_MIN_FREE_VERSION',
+        'max_free_version' => 'WPE_PRO_MAX_FREE_VERSION',
+        'min_platform_api' => 'WPE_PRO_MIN_PLATFORM_API_VERSION',
+        'max_platform_api' => 'WPE_PRO_MAX_PLATFORM_API_VERSION',
+        'min_platform_schema' => 'WPE_PRO_MIN_PLATFORM_SCHEMA_GENERATION',
+        'max_platform_schema' => 'WPE_PRO_MAX_PLATFORM_SCHEMA_GENERATION',
+        'schema' => 'WPE_PRO_SCHEMA_GENERATION',
+    ] as $key => $constant) {
+        $numeric = in_array($key, ['min_platform_schema', 'max_platform_schema', 'schema'], true);
+        $value = $extract($numeric
+            ? "/define\\('{$constant}',\\s*([0-9]+)\\);/"
+            : "/define\\('{$constant}',\\s*'([^']+)'\\);/", $pro, $constant);
+        $proMetadata[$key] = $numeric ? (int) $value : $value;
+    }
+    require_once dirname(__DIR__, 2) . '/frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php';
+    $result = \WPEssential\Modules\Compatibility\LocalCompatibilityPreflight::evaluate($freeMetadata, $proMetadata);
+    tAssert(($result['state'] ?? null) === 'compatible' && ($result['premium_migrations_allowed'] ?? null) === true, 'FP-90 canonical preflight denied migration');
+    return $result;
+}
+
+/** @param array<string,mixed> $identity @param array<string,mixed> $in @return array<string,mixed> */
+function tFp90Preflight(array $identity, array $in): array {
+    $expected = tFp90Fixture();
+    tTransport($identity, $in, 'F0', 'P_API');
+    tResetLogs($in);
+    tBoot($in);
+    $before = tSnapshot();
+    tAssert($before === $expected, 'Restored older-state semantic identity drift');
+    tAssertIds($before, P006T_FREE_MIGRATIONS, 'FP-90 older state');
+    tAssertProTables($before, false); tAssertSentinel($before);
+    tAssert(tMigrationInsertOrder(tSql($in)) === [] && tWpeDdl(tSql($in)) === [], 'Migration ran before FP-90 compatibility decision');
+    tSelect($in, 'F0', 'P0');
+    $artifact = tTransport($identity, $in, 'F0', 'P0');
+    $plugins = $in['wp_dir'] . '/wp-content/plugins';
+    $preflight = tFp90Compatibility($plugins . '/wpessential/wpessential.php', $plugins . '/wpessential-pro/wpessential-pro.php');
+    tAssert(tNetwork($in) === [], 'FP-90 preflight outbound HTTP observed');
+    return [
+        'status' => 'PASS', 'phase' => 'fp90-preflight-before-upgrade', 'cell_id' => $in['cell'],
+        'authorization' => 'GOV-P001-CF-TEMP-019-A1', 'environment' => tEnvironment($in),
+        'sql_sha256' => 'e8898e292ab3d9ce1d4540675c61088617675e9a4cf2b974f553cc6f09147028',
+        'older_snapshot' => $before, 'artifact_identity' => $artifact, 'preflight' => $preflight,
+        'pending_pro_migrations_invoked' => false, 'network_attempt_count' => 0,
+        'formal_fixture_executed' => false,
+    ];
+}
+
+/** @param array<string,mixed> $identity @param array<string,mixed> $in @return array<string,mixed> */
+function tFp90Upgrade(array $identity, array $in): array {
+    $before = tRead($in['evidence_dir'] . '/fp90-preflight.json');
+    tAssert(($before['preflight']['state'] ?? null) === 'compatible', 'FP-90 compatibility was not proved before upgrade');
+    $artifact = tTransport($identity, $in, 'F0', 'P0');
+    tAssert(($before['artifact_identity']['pair_id_sha256'] ?? null) === $artifact['pair_id_sha256'], 'FP-90 pair drift');
+    tResetLogs($in);
+    tBoot($in);
+    $after = tSnapshot();
+    tAssertIds($after, array_merge(P006T_FREE_MIGRATIONS, P006T_PRO_MIGRATIONS), 'FP-90 upgraded state');
+    tAssertProTables($after, true); tAssertSentinel($after);
+    $added = array_values(array_diff($after['migration_ids'], $before['older_snapshot']['migration_ids']));
+    $order = tMigrationInsertOrder(tSql($in));
+    tAssert($added === P006T_PRO_MIGRATIONS && $order === P006T_PRO_MIGRATIONS, 'FP-90 bounded Pro upgrade order drift');
+    foreach (tWpeDdl(tSql($in)) as $query) {
+        tAssert(preg_match('/^\\s*(?:DROP|ALTER|RENAME|TRUNCATE)\\s+TABLE\\b/i', $query) !== 1, 'FP-90 destructive WPE DDL');
+    }
+    $compat = tCompatibility();
+    tAssert(is_array($compat) && ($compat['state'] ?? null) === 'compatible' && ($compat['premium_migrations_allowed'] ?? null) === true, 'FP-90 runtime compatibility drift');
+    tAssert(tNetwork($in) === [], 'FP-90 upgrade outbound HTTP observed');
+    return [
+        'status' => 'PASS', 'phase' => 'fp90-upgrade', 'cell_id' => $in['cell'],
+        'artifact_identity' => $artifact, 'before_snapshot' => $before['older_snapshot'], 'after_snapshot' => $after,
+        'added_migration_ids' => $added, 'migration_insert_order' => $order,
+        'runtime_compatibility' => $compat, 'network_attempt_count' => 0,
+        'formal_fixture_executed' => false,
+    ];
+}
+
+/** @param array<string,mixed> $identity @param array<string,mixed> $in @return array<string,mixed> */
+function tFp90Settled(array $identity, array $in): array {
+    $preflight = tRead($in['evidence_dir'] . '/fp90-preflight.json');
+    $upgrade = tRead($in['evidence_dir'] . '/fp90-upgrade.json');
+    $artifact = tTransport($identity, $in, 'F0', 'P0');
+    tResetLogs($in);
+    tBoot($in);
+    $settled = tSnapshot();
+    tAssert($settled === $upgrade['after_snapshot'], 'FP-90 settled WPE state drift');
+    tAssert(tMigrationInsertOrder(tSql($in)) === [] && tWpeDdl(tSql($in)) === [], 'FP-90 settled boot reran migration');
+    tAssert(tNetwork($in) === [], 'FP-90 settled boot outbound HTTP observed');
+    return [
+        'status' => 'PASS', 'fixture_id' => 'FP-90', 'wave' => '1U',
+        'authorization' => 'GOV-P001-CF-TEMP-019-A1',
+        'classification' => 'FORMAL FP-90 DISPOSABLE MINIMUM-CELL RESTORE / NON-CERTIFYING',
+        'source_sha' => tEnv('WPE_P006_SOURCE_SHA'), 'environment' => tEnvironment($in),
+        'sql_sha256' => $preflight['sql_sha256'], 'artifact_identity' => $artifact,
+        'compatibility_before_pending_migrations' => $preflight['preflight'],
+        'older_snapshot' => $preflight['older_snapshot'], 'after_upgrade_snapshot' => $upgrade['after_snapshot'],
+        'settled_snapshot' => $settled, 'added_migration_ids' => $upgrade['added_migration_ids'],
+        'migration_insert_order' => $upgrade['migration_insert_order'],
+        'non_destructive_upgrade' => true, 'sentinel_preserved' => true, 'network_attempt_count' => 0,
+        'formal_fixture_executed' => true, 'fixture_accounting_changed' => false,
+        'product_backup_restore_certified' => false, 'pair_or_runtime_certified' => false,
+    ];
+}
+
 $mode = trim((string) getenv('WPE_P006_EXECUTION_MODE'));
 try {
     $identity = tIdentity();
@@ -424,6 +555,9 @@ try {
         'activate-both' => tInitialActivate($identity, $in, true),
         'fp89' => tFp89($identity, $in),
         'older-snapshot-candidate' => tOlderSnapshot($identity, $in),
+        'fp90-preflight' => tFp90Preflight($identity, $in),
+        'fp90-upgrade' => tFp90Upgrade($identity, $in),
+        'fp90-settled' => tFp90Settled($identity, $in),
         default => tFail('Usage: <install|activate-both|fp89>'),
     };
     if ($mode === 'fp89') {
