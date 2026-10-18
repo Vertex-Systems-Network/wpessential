@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\DataSources;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-enum DataSourceAvailability: string
-{
-    case Available = 'available';
-    case Degraded = 'degraded';
+enum DataSourceAvailability: string {
+
+	case Available = 'available';
+	case Degraded  = 'degraded';
 }

@@ -4,323 +4,316 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use Throwable;
 use WPEssential\Contracts\FieldQueryConsumerInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 
-final readonly class QueryFieldPredicateResolver
-{
-    private const CERTIFIED_LOGICAL_TYPES = ['string', 'boolean', 'integer', 'number'];
-    private const CERTIFIED_STORAGE_OWNER = 'native_post_meta';
+final readonly class QueryFieldPredicateResolver {
 
-    public function __construct(private FieldQueryConsumerInterface $fields)
-    {
-    }
+	private const CERTIFIED_LOGICAL_TYPES = [ 'string', 'boolean', 'integer', 'number' ];
+	private const CERTIFIED_STORAGE_OWNER = 'native_post_meta';
 
-    public function resolve(
-        QueryDefinition $definition,
-        ExecutionContext $context,
-        bool $upstreamShortCircuit = false,
-    ): QueryFieldResolution {
-        if ($definition->filter === null || !$this->containsField($definition->filter)) {
-            return new QueryFieldResolution($definition, $upstreamShortCircuit);
-        }
+	public function __construct( private FieldQueryConsumerInterface $fields ) {
+	}
 
-        $root = $definition->filter;
-        if ($root->type !== QueryPredicateType::Group || ($root->payload['boolean'] ?? null) !== 'and') {
-            throw $this->unsupported('$.filter', 'Field predicate V1 requires a root AND group with a finite post-id anchor set.');
-        }
+	public function resolve(
+		QueryDefinition $definition,
+		ExecutionContext $context,
+		bool $upstreamShortCircuit = false,
+	): QueryFieldResolution {
+		if ( $definition->filter === null || ! $this->containsField( $definition->filter ) ) {
+			return new QueryFieldResolution( $definition, $upstreamShortCircuit );
+		}
 
-        $anchorIndex = null;
-        $anchorIds = null;
-        $fieldIndex = null;
-        $field = null;
+		$root = $definition->filter;
+		if ( $root->type !== QueryPredicateType::Group || ( $root->payload['boolean'] ?? null ) !== 'and' ) {
+			throw $this->unsupported( '$.filter', 'Field predicate V1 requires a root AND group with a finite post-id anchor set.' );
+		}
 
-        foreach ($root->children as $index => $child) {
-            if ($child->type === QueryPredicateType::Field) {
-                if ($field !== null) {
-                    throw $this->unsupported('$.filter', 'Field predicate V1 supports exactly one direct Field predicate per query.');
-                }
-                if ($child->children !== []) {
-                    throw $this->unsupported('$.filter.children[' . $index . ']', 'Field predicate V1 does not support nested Field children.');
-                }
-                $field = $child;
-                $fieldIndex = $index;
-                continue;
-            }
+		$anchorIndex = null;
+		$anchorIds   = null;
+		$fieldIndex  = null;
+		$field       = null;
 
-            if ($this->containsField($child)) {
-                throw $this->unsupported('$.filter.children[' . $index . ']', 'Nested Field predicates are not supported by Query Field execution V1.');
-            }
+		foreach ( $root->children as $index => $child ) {
+			if ( $child->type === QueryPredicateType::Field ) {
+				if ( $field !== null ) {
+					throw $this->unsupported( '$.filter', 'Field predicate V1 supports exactly one direct Field predicate per query.' );
+				}
+				if ( $child->children !== [] ) {
+					throw $this->unsupported( '$.filter.children[' . $index . ']', 'Field predicate V1 does not support nested Field children.' );
+				}
+				$field      = $child;
+				$fieldIndex = $index;
+				continue;
+			}
 
-            $candidate = $this->finiteAnchorIds($child);
-            if ($candidate !== null) {
-                if ($anchorIds !== null) {
-                    throw $this->unsupported('$.filter', 'Field predicate V1 requires exactly one finite post.id anchor predicate.');
-                }
-                $anchorIds = $candidate;
-                $anchorIndex = $index;
-            }
-        }
+			if ( $this->containsField( $child ) ) {
+				throw $this->unsupported( '$.filter.children[' . $index . ']', 'Nested Field predicates are not supported by Query Field execution V1.' );
+			}
 
-        if (!$field instanceof QueryPredicate || !is_int($fieldIndex)) {
-            throw $this->unsupported('$.filter', 'Field predicate resolution did not find a direct Field predicate.');
-        }
-        if ($anchorIds === null || !is_int($anchorIndex) || $anchorIds === []) {
-            throw $this->unsupported('$.filter', 'Field predicate V1 requires an explicit non-empty post.id eq/in anchor set.');
-        }
-        if (count($anchorIds) > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS) {
-            throw new QueryPlanningException(
-                'wpe_query_cost_blocked',
-                '$.filter',
-                'Field candidate batch exceeds the public Fields contract limit.',
-            );
-        }
+			$candidate = $this->finiteAnchorIds( $child );
+			if ( $candidate !== null ) {
+				if ( $anchorIds !== null ) {
+					throw $this->unsupported( '$.filter', 'Field predicate V1 requires exactly one finite post.id anchor predicate.' );
+				}
+				$anchorIds   = $candidate;
+				$anchorIndex = $index;
+			}
+		}
 
-        $fieldRef = $field->payload['field_ref'] ?? null;
-        $operator = $field->payload['operator'] ?? null;
-        if (!is_string($fieldRef) || $fieldRef === '') {
-            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.field_ref', 'Field reference is malformed.');
-        }
-        if (!is_string($operator) || $operator === '') {
-            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.operator', 'Field operator is malformed.');
-        }
-        if (!array_key_exists('value', $field->payload)) {
-            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.value', 'Field predicate value is missing.');
-        }
+		if ( ! $field instanceof QueryPredicate || ! is_int( $fieldIndex ) ) {
+			throw $this->unsupported( '$.filter', 'Field predicate resolution did not find a direct Field predicate.' );
+		}
+		if ( $anchorIds === null || ! is_int( $anchorIndex ) || $anchorIds === [] ) {
+			throw $this->unsupported( '$.filter', 'Field predicate V1 requires an explicit non-empty post.id eq/in anchor set.' );
+		}
+		if ( count( $anchorIds ) > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS ) {
+			throw new QueryPlanningException(
+				'wpe_query_cost_blocked',
+				'$.filter',
+				'Field candidate batch exceeds the public Fields contract limit.',
+			);
+		}
 
-        if ($upstreamShortCircuit) {
-            $children = $root->children;
-            array_splice($children, $fieldIndex, 1);
+		$fieldRef = $field->payload['field_ref'] ?? null;
+		$operator = $field->payload['operator'] ?? null;
+		if ( ! is_string( $fieldRef ) || $fieldRef === '' ) {
+			throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter.field_ref', 'Field reference is malformed.' );
+		}
+		if ( ! is_string( $operator ) || $operator === '' ) {
+			throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter.operator', 'Field operator is malformed.' );
+		}
+		if ( ! array_key_exists( 'value', $field->payload ) ) {
+			throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter.value', 'Field predicate value is missing.' );
+		}
 
-            return new QueryFieldResolution(
-                $this->withFilter(
-                    $definition,
-                    new QueryPredicate(QueryPredicateType::Group, $root->payload, array_values($children)),
-                ),
-                true,
-            );
-        }
+		if ( $upstreamShortCircuit ) {
+			$children = $root->children;
+			array_splice( $children, $fieldIndex, 1 );
 
-        try {
-            $description = $this->fields->describe($fieldRef, $context);
-        } catch (Throwable) {
-            throw new QueryPlanningException(
-                'wpe_query_dependency_unavailable',
-                '$.filter.field_ref',
-                'Field reference could not be resolved through the public Fields contract.',
-            );
-        }
+			return new QueryFieldResolution(
+				$this->withFilter(
+					$definition,
+					new QueryPredicate( QueryPredicateType::Group, $root->payload, array_values( $children ) ),
+				),
+				true,
+			);
+		}
 
-        $this->assertDescription($description, $fieldRef, $operator, count($anchorIds));
+		try {
+			$description = $this->fields->describe( $fieldRef, $context );
+		} catch ( Throwable ) {
+			throw new QueryPlanningException(
+				'wpe_query_dependency_unavailable',
+				'$.filter.field_ref',
+				'Field reference could not be resolved through the public Fields contract.',
+			);
+		}
 
-        try {
-            $matched = $this->fields->matchingPostIds(
-                $fieldRef,
-                $operator,
-                $field->payload['value'],
-                $anchorIds,
-                count($anchorIds),
-                $context,
-            );
-        } catch (Throwable) {
-            throw new QueryPlanningException(
-                'wpe_query_dependency_unavailable',
-                '$.filter.field_ref',
-                'Fields consumer could not resolve the bounded candidate set.',
-            );
-        }
+		$this->assertDescription( $description, $fieldRef, $operator, count( $anchorIds ) );
 
-        if (!is_array($matched) || !array_is_list($matched) || count($matched) > count($anchorIds)) {
-            throw new QueryPlanningException(
-                'wpe_query_provider_failed',
-                '$.filter.field_ref',
-                'Fields consumer returned an invalid bounded result shape.',
-            );
-        }
+		try {
+			$matched = $this->fields->matchingPostIds(
+				$fieldRef,
+				$operator,
+				$field->payload['value'],
+				$anchorIds,
+				count( $anchorIds ),
+				$context,
+			);
+		} catch ( Throwable ) {
+			throw new QueryPlanningException(
+				'wpe_query_dependency_unavailable',
+				'$.filter.field_ref',
+				'Fields consumer could not resolve the bounded candidate set.',
+			);
+		}
 
-        $anchorSet = array_fill_keys($anchorIds, true);
-        $matchedSet = [];
-        foreach ($matched as $matchedId) {
-            if (!is_int($matchedId) || $matchedId < 1 || !isset($anchorSet[$matchedId]) || isset($matchedSet[$matchedId])) {
-                throw new QueryPlanningException(
-                    'wpe_query_provider_failed',
-                    '$.filter.field_ref',
-                    'Fields consumer returned duplicate, malformed, or foreign candidate ids.',
-                );
-            }
-            $matchedSet[$matchedId] = true;
-        }
+		if ( ! is_array( $matched ) || ! array_is_list( $matched ) || count( $matched ) > count( $anchorIds ) ) {
+			throw new QueryPlanningException(
+				'wpe_query_provider_failed',
+				'$.filter.field_ref',
+				'Fields consumer returned an invalid bounded result shape.',
+			);
+		}
 
-        $orderedMatches = [];
-        foreach ($anchorIds as $anchorId) {
-            if (isset($matchedSet[$anchorId])) {
-                $orderedMatches[] = $anchorId;
-            }
-        }
+		$anchorSet  = array_fill_keys( $anchorIds, true );
+		$matchedSet = [];
+		foreach ( $matched as $matchedId ) {
+			if ( ! is_int( $matchedId ) || $matchedId < 1 || ! isset( $anchorSet[ $matchedId ] ) || isset( $matchedSet[ $matchedId ] ) ) {
+				throw new QueryPlanningException(
+					'wpe_query_provider_failed',
+					'$.filter.field_ref',
+					'Fields consumer returned duplicate, malformed, or foreign candidate ids.',
+				);
+			}
+			$matchedSet[ $matchedId ] = true;
+		}
 
-        $children = $root->children;
-        array_splice($children, $fieldIndex, 1);
-        if ($fieldIndex < $anchorIndex) {
-            --$anchorIndex;
-        }
+		$orderedMatches = [];
+		foreach ( $anchorIds as $anchorId ) {
+			if ( isset( $matchedSet[ $anchorId ] ) ) {
+				$orderedMatches[] = $anchorId;
+			}
+		}
 
-        $shortCircuit = $orderedMatches === [];
-        if (!$shortCircuit) {
-            $children[$anchorIndex] = new QueryPredicate(
-                QueryPredicateType::SetMembership,
-                [
-                    'field_ref' => 'post.id',
-                    'operator' => 'in',
-                    'values' => $orderedMatches,
-                ],
-            );
-        }
+		$children = $root->children;
+		array_splice( $children, $fieldIndex, 1 );
+		if ( $fieldIndex < $anchorIndex ) {
+			--$anchorIndex;
+		}
 
-        return new QueryFieldResolution(
-            $this->withFilter(
-                $definition,
-                new QueryPredicate(QueryPredicateType::Group, $root->payload, array_values($children)),
-            ),
-            $shortCircuit,
-        );
-    }
+		$shortCircuit = $orderedMatches === [];
+		if ( ! $shortCircuit ) {
+			$children[ $anchorIndex ] = new QueryPredicate(
+				QueryPredicateType::SetMembership,
+				[
+					'field_ref' => 'post.id',
+					'operator'  => 'in',
+					'values'    => $orderedMatches,
+				],
+			);
+		}
 
-    /** @param array<string,mixed> $description */
-    private function assertDescription(array $description, string $fieldRef, string $operator, int $candidateCount): void
-    {
-        if (($description['contract_version'] ?? null) !== FieldQueryConsumerInterface::CONTRACT_VERSION) {
-            throw $this->dependency('Fields consumer contract version is incompatible.');
-        }
-        if (($description['field_ref'] ?? null) !== $fieldRef) {
-            throw $this->dependency('Fields consumer did not echo the requested canonical Field reference.');
-        }
+		return new QueryFieldResolution(
+			$this->withFilter(
+				$definition,
+				new QueryPredicate( QueryPredicateType::Group, $root->payload, array_values( $children ) ),
+			),
+			$shortCircuit,
+		);
+	}
 
-        $operators = $description['operators'] ?? null;
-        if (!is_array($operators) || !array_is_list($operators)) {
-            throw $this->dependency('Fields consumer operator capabilities are unavailable.');
-        }
-        foreach ($operators as $supportedOperator) {
-            if (!is_string($supportedOperator) || $supportedOperator === '') {
-                throw $this->dependency('Fields consumer operator capabilities are malformed.');
-            }
-        }
-        if (!in_array($operator, $operators, true)) {
-            throw new QueryPlanningException(
-                'wpe_query_unsupported_operator',
-                '$.filter.operator',
-                'Field operator is not supported by the owner contract.',
-            );
-        }
+	/** @param array<string,mixed> $description */
+	private function assertDescription( array $description, string $fieldRef, string $operator, int $candidateCount ): void {
+		if ( ( $description['contract_version'] ?? null ) !== FieldQueryConsumerInterface::CONTRACT_VERSION ) {
+			throw $this->dependency( 'Fields consumer contract version is incompatible.' );
+		}
+		if ( ( $description['field_ref'] ?? null ) !== $fieldRef ) {
+			throw $this->dependency( 'Fields consumer did not echo the requested canonical Field reference.' );
+		}
 
-        $maxCandidateIds = $description['max_candidate_ids'] ?? null;
-        $maxResultIds = $description['max_result_ids'] ?? null;
-        if (
-            !is_int($maxCandidateIds)
-            || !is_int($maxResultIds)
-            || $maxCandidateIds < $candidateCount
-            || $maxResultIds < $candidateCount
-            || $maxCandidateIds > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS
-            || $maxResultIds > FieldQueryConsumerInterface::MAX_RESULT_IDS
-        ) {
-            throw $this->dependency('Fields consumer bounds are incompatible with the certified Query V1 Field slice.');
-        }
+		$operators = $description['operators'] ?? null;
+		if ( ! is_array( $operators ) || ! array_is_list( $operators ) ) {
+			throw $this->dependency( 'Fields consumer operator capabilities are unavailable.' );
+		}
+		foreach ( $operators as $supportedOperator ) {
+			if ( ! is_string( $supportedOperator ) || $supportedOperator === '' ) {
+				throw $this->dependency( 'Fields consumer operator capabilities are malformed.' );
+			}
+		}
+		if ( ! in_array( $operator, $operators, true ) ) {
+			throw new QueryPlanningException(
+				'wpe_query_unsupported_operator',
+				'$.filter.operator',
+				'Field operator is not supported by the owner contract.',
+			);
+		}
 
-        $logicalType = $description['logical_type'] ?? null;
-        $storageOwner = $description['storage_owner'] ?? null;
-        if (!is_string($logicalType)
-            || !in_array($logicalType, self::CERTIFIED_LOGICAL_TYPES, true)
-            || $storageOwner !== self::CERTIFIED_STORAGE_OWNER
-        ) {
-            throw $this->dependency('Fields consumer descriptor is outside the certified native scalar post-meta V1 contract.');
-        }
-    }
+		$maxCandidateIds = $description['max_candidate_ids'] ?? null;
+		$maxResultIds    = $description['max_result_ids'] ?? null;
+		if (
+			! is_int( $maxCandidateIds )
+			|| ! is_int( $maxResultIds )
+			|| $maxCandidateIds < $candidateCount
+			|| $maxResultIds < $candidateCount
+			|| $maxCandidateIds > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS
+			|| $maxResultIds > FieldQueryConsumerInterface::MAX_RESULT_IDS
+		) {
+			throw $this->dependency( 'Fields consumer bounds are incompatible with the certified Query V1 Field slice.' );
+		}
 
-    /** @return null|list<int> */
-    private function finiteAnchorIds(QueryPredicate $predicate): ?array
-    {
-        if (
-            $predicate->type === QueryPredicateType::Comparison
-            && ($predicate->payload['field_ref'] ?? null) === 'post.id'
-            && ($predicate->payload['operator'] ?? null) === 'eq'
-        ) {
-            $value = $predicate->payload['value'] ?? null;
-            if (!is_int($value) || $value < 1) {
-                throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor is invalid.');
-            }
-            return [$value];
-        }
+		$logicalType  = $description['logical_type'] ?? null;
+		$storageOwner = $description['storage_owner'] ?? null;
+		if ( ! is_string( $logicalType )
+			|| ! in_array( $logicalType, self::CERTIFIED_LOGICAL_TYPES, true )
+			|| $storageOwner !== self::CERTIFIED_STORAGE_OWNER
+		) {
+			throw $this->dependency( 'Fields consumer descriptor is outside the certified native scalar post-meta V1 contract.' );
+		}
+	}
 
-        if (
-            $predicate->type === QueryPredicateType::SetMembership
-            && ($predicate->payload['field_ref'] ?? null) === 'post.id'
-            && ($predicate->payload['operator'] ?? null) === 'in'
-        ) {
-            $values = $predicate->payload['values'] ?? null;
-            if (!is_array($values) || !array_is_list($values) || $values === []) {
-                throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor list is invalid.');
-            }
+	/** @return null|list<int> */
+	private function finiteAnchorIds( QueryPredicate $predicate ): ?array {
+		if (
+			$predicate->type === QueryPredicateType::Comparison
+			&& ( $predicate->payload['field_ref'] ?? null ) === 'post.id'
+			&& ( $predicate->payload['operator'] ?? null ) === 'eq'
+		) {
+			$value = $predicate->payload['value'] ?? null;
+			if ( ! is_int( $value ) || $value < 1 ) {
+				throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor is invalid.' );
+			}
+			return [ $value ];
+		}
 
-            $ids = [];
-            foreach ($values as $value) {
-                if (!is_int($value) || $value < 1 || isset($ids[$value])) {
-                    throw new QueryPlanningException(
-                        'wpe_query_invalid_ast',
-                        '$.filter',
-                        'Finite post.id anchor list must contain unique positive integers.',
-                    );
-                }
-                $ids[$value] = true;
-            }
-            return array_keys($ids);
-        }
+		if (
+			$predicate->type === QueryPredicateType::SetMembership
+			&& ( $predicate->payload['field_ref'] ?? null ) === 'post.id'
+			&& ( $predicate->payload['operator'] ?? null ) === 'in'
+		) {
+			$values = $predicate->payload['values'] ?? null;
+			if ( ! is_array( $values ) || ! array_is_list( $values ) || $values === [] ) {
+				throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor list is invalid.' );
+			}
 
-        return null;
-    }
+			$ids = [];
+			foreach ( $values as $value ) {
+				if ( ! is_int( $value ) || $value < 1 || isset( $ids[ $value ] ) ) {
+					throw new QueryPlanningException(
+						'wpe_query_invalid_ast',
+						'$.filter',
+						'Finite post.id anchor list must contain unique positive integers.',
+					);
+				}
+				$ids[ $value ] = true;
+			}
+			return array_keys( $ids );
+		}
 
-    private function containsField(QueryPredicate $predicate): bool
-    {
-        if ($predicate->type === QueryPredicateType::Field) {
-            return true;
-        }
-        foreach ($predicate->children as $child) {
-            if ($this->containsField($child)) {
-                return true;
-            }
-        }
-        return false;
-    }
+		return null;
+	}
 
-    private function withFilter(QueryDefinition $definition, QueryPredicate $filter): QueryDefinition
-    {
-        return new QueryDefinition(
-            identity: $definition->identity,
-            astVersion: $definition->astVersion,
-            source: $definition->source,
-            operation: $definition->operation,
-            projection: $definition->projection,
-            parameters: $definition->parameters,
-            filter: $filter,
-            orderBy: $definition->orderBy,
-            pagination: $definition->pagination,
-            distinct: $definition->distinct,
-            executionPolicy: $definition->executionPolicy,
-            cachePolicy: $definition->cachePolicy,
-            metadata: $definition->metadata,
-        );
-    }
+	private function containsField( QueryPredicate $predicate ): bool {
+		if ( $predicate->type === QueryPredicateType::Field ) {
+			return true;
+		}
+		foreach ( $predicate->children as $child ) {
+			if ( $this->containsField( $child ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private function dependency(string $message): QueryPlanningException
-    {
-        return new QueryPlanningException('wpe_query_dependency_unavailable', '$.filter.field_ref', $message);
-    }
+	private function withFilter( QueryDefinition $definition, QueryPredicate $filter ): QueryDefinition {
+		return new QueryDefinition(
+			identity: $definition->identity,
+			astVersion: $definition->astVersion,
+			source: $definition->source,
+			operation: $definition->operation,
+			projection: $definition->projection,
+			parameters: $definition->parameters,
+			filter: $filter,
+			orderBy: $definition->orderBy,
+			pagination: $definition->pagination,
+			distinct: $definition->distinct,
+			executionPolicy: $definition->executionPolicy,
+			cachePolicy: $definition->cachePolicy,
+			metadata: $definition->metadata,
+		);
+	}
 
-    private function unsupported(string $path, string $message): QueryPlanningException
-    {
-        return new QueryPlanningException('wpe_query_unsupported_operator', $path, $message);
-    }
+	private function dependency( string $message ): QueryPlanningException {
+		return new QueryPlanningException( 'wpe_query_dependency_unavailable', '$.filter.field_ref', $message );
+	}
+
+	private function unsupported( string $path, string $message ): QueryPlanningException {
+		return new QueryPlanningException( 'wpe_query_unsupported_operator', $path, $message );
+	}
 }

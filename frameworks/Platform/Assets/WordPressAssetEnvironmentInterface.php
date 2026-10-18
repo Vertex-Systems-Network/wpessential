@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Assets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-interface WordPressAssetEnvironmentInterface
-{
-    public function registerAdminEnqueue(callable $callback): void;
+interface WordPressAssetEnvironmentInterface {
 
-    public function routeForAdminHook(string $hookSuffix): ?string;
+	public function registerAdminEnqueue( callable $callback ): void;
 
-    /**
-     * @param list<string> $dependencies
-     */
-    public function enqueueScript(
-        string $handle,
-        string $source,
-        array $dependencies,
-        ?string $version,
-    ): void;
+	public function routeForAdminHook( string $hookSuffix ): ?string;
 
-    public function enqueueStyle(
-        string $handle,
-        string $source,
-        ?string $version,
-    ): void;
+	/**
+	 * @param list<string> $dependencies
+	 */
+	public function enqueueScript(
+		string $handle,
+		string $source,
+		array $dependencies,
+		?string $version,
+	): void;
 
-    public function setScriptStrategy(string $handle, string $strategy): void;
+	public function enqueueStyle(
+		string $handle,
+		string $source,
+		?string $version,
+	): void;
+
+	public function setScriptStrategy( string $handle, string $strategy ): void;
 }

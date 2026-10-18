@@ -420,6 +420,12 @@ A pre-existing failure is `BASELINE FAILURE`, not automatically a regression. A 
 
 If a check cannot run, record exactly what, why, and how it will be verified.
 
+PHP quality gates follow ADR-0223:
+- run `vendor/bin/phpcbf` for mechanical WPCS fixes; never hand-normalize formatting in batches;
+- never "fix" a sniff by renaming published camelCase APIs, DTO fields or PSR-4 files;
+- PHPCS errors and new PHPStan errors (outside `phpstan-baseline.neon`) block merge; shrink the baseline, never grow it;
+- a quality gate that cannot turn green by the chosen method within one milestone is a plan defect: stop, audit the method, record a decision, then continue — do not report `NO_VALID_WORK_SLOT` because of it.
+
 ## UI/UX/accessibility
 
 User-facing work must include:

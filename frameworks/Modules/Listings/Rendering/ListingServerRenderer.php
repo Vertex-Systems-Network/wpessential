@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Listings\Rendering;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use InvalidArgumentException;
@@ -23,258 +23,279 @@ use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\DynamicValues\DynamicValueRequest;
 use WPEssential\Platform\Rendering\RenderInput;
 
-final readonly class ListingServerRenderer
-{
-    public function __construct(
-        private ListingQueryReader $queryReader,
-        private ComponentBlueprintRegistryInterface $blueprints,
-        private RendererInterface $renderer,
-        private DynamicValueResolverInterface $dynamicValues,
-    ) {
-    }
+final readonly class ListingServerRenderer {
 
-    /** @param array<string,mixed> $parameters */
-    public function render(
-        ListingCompiledDescriptor $descriptor,
-        ListingQueryBinding $binding,
-        array $parameters,
-        ExecutionContext $context,
-    ): ListingRenderResult {
-        if ($binding->sourceRef !== $descriptor->querySourceRef) {
-            return $this->failure('listing_query_source_mismatch');
-        }
+	public function __construct(
+		private ListingQueryReader $queryReader,
+		private ComponentBlueprintRegistryInterface $blueprints,
+		private RendererInterface $renderer,
+		private DynamicValueResolverInterface $dynamicValues,
+	) {
+	}
 
-        if ($descriptor->renderBindings === []) {
-            return $this->failure('missing_render_binding_plan');
-        }
+	/** @param array<string,mixed> $parameters */
+	public function render(
+		ListingCompiledDescriptor $descriptor,
+		ListingQueryBinding $binding,
+		array $parameters,
+		ExecutionContext $context,
+	): ListingRenderResult {
+		if ( $binding->sourceRef !== $descriptor->querySourceRef ) {
+			return $this->failure( 'listing_query_source_mismatch' );
+		}
 
-        $blueprint = $this->blueprints->get($descriptor->blueprintId, $descriptor->blueprintRevision);
-        if ($blueprint === null || $blueprint->id !== $descriptor->blueprintId || $blueprint->revision !== $descriptor->blueprintRevision) {
-            return $this->failure('missing_blueprint');
-        }
+		if ( $descriptor->renderBindings === [] ) {
+			return $this->failure( 'missing_render_binding_plan' );
+		}
 
-        $projection = array_fill_keys($binding->projection, true);
-        foreach ($descriptor->renderBindings as $renderBinding) {
-            if (!array_key_exists($renderBinding->bindingKey, $blueprint->bindingSchema)) {
-                return $this->failure('blueprint_binding_plan_mismatch');
-            }
-            if ($blueprint->bindingSchema[$renderBinding->bindingKey] !== $renderBinding->expectedType) {
-                return $this->failure('blueprint_binding_type_mismatch');
-            }
+		$blueprint = $this->blueprints->get( $descriptor->blueprintId, $descriptor->blueprintRevision );
+		if ( $blueprint === null || $blueprint->id !== $descriptor->blueprintId || $blueprint->revision !== $descriptor->blueprintRevision ) {
+			return $this->failure( 'missing_blueprint' );
+		}
 
-            $requiredField = $renderBinding->kind === 'query_field'
-                ? $renderBinding->queryFieldRef
-                : $renderBinding->resourceIdFieldRef;
-            if ($requiredField === null || !isset($projection[$requiredField])) {
-                return $this->failure('query_projection_binding_mismatch');
-            }
-        }
+		$projection = array_fill_keys( $binding->projection, true );
+		foreach ( $descriptor->renderBindings as $renderBinding ) {
+			if ( ! array_key_exists( $renderBinding->bindingKey, $blueprint->bindingSchema ) ) {
+				return $this->failure( 'blueprint_binding_plan_mismatch' );
+			}
+			if ( $blueprint->bindingSchema[ $renderBinding->bindingKey ] !== $renderBinding->expectedType ) {
+				return $this->failure( 'blueprint_binding_type_mismatch' );
+			}
 
-        try {
-            $queryResult = $this->queryReader->read($binding, $parameters, $context);
-        } catch (InvalidArgumentException) {
-            return $this->failure('invalid_query_binding');
-        }
+			$requiredField = $renderBinding->kind === 'query_field'
+				? $renderBinding->queryFieldRef
+				: $renderBinding->resourceIdFieldRef;
+			if ( $requiredField === null || ! isset( $projection[ $requiredField ] ) ) {
+				return $this->failure( 'query_projection_binding_mismatch' );
+			}
+		}
 
-        if (!$queryResult->ok) {
-            return $this->failure($queryResult->errorCode ?? 'query_failure');
-        }
+		try {
+			$queryResult = $this->queryReader->read( $binding, $parameters, $context );
+		} catch ( InvalidArgumentException ) {
+			return $this->failure( 'invalid_query_binding' );
+		}
 
-        /** @var array<string,true> $assets */
-        $assets = [];
-        foreach (array_merge($descriptor->assetHandles, $blueprint->assetHandles) as $handle) {
-            $assets[$handle] = true;
-        }
+		if ( ! $queryResult->ok ) {
+			return $this->failure( $queryResult->errorCode ?? 'query_failure' );
+		}
 
-        $presentation = $descriptor->presentation;
-        if ($queryResult->rows === []) {
-            $emptyMessage = $presentation?->emptyMessage ?? 'No results.';
-            return new ListingRenderResult(
-                success: true,
-                html: '<p class="wpe-listing__empty" role="status">' . $this->escape($emptyMessage) . '</p>',
-                assetHandles: array_keys($assets),
-                returned: 0,
-                state: ListingRuntimeState::Empty,
-            );
-        }
+		/** @var array<string,true> $assets */
+		$assets = [];
+		foreach ( array_merge( $descriptor->assetHandles, $blueprint->assetHandles ) as $handle ) {
+			$assets[ $handle ] = true;
+		}
 
-        /** @var list<string> $items */
-        $items = [];
-        foreach ($queryResult->rows as $row) {
-            /** @var array<string, scalar|list<scalar>|null> $bindings */
-            $bindings = [];
-            foreach ($descriptor->renderBindings as $renderBinding) {
-                $resolved = $this->resolveBinding($renderBinding, $row, $context);
-                if (!$resolved['ok']) {
-                    return $this->failure($resolved['failure']);
-                }
-                $value = $resolved['value'];
-                if (!$this->matchesBindingType($value, $renderBinding->expectedType)) {
-                    return $this->failure('blueprint_binding_type_mismatch');
-                }
-                /** @var scalar|list<scalar>|null $value */
-                $bindings[$renderBinding->bindingKey] = $value;
-            }
+		$presentation = $descriptor->presentation;
+		if ( $queryResult->rows === [] ) {
+			$emptyMessage = $presentation?->emptyMessage ?? 'No results.';
+			return new ListingRenderResult(
+				success: true,
+				html: '<p class="wpe-listing__empty" role="status">' . $this->escape( $emptyMessage ) . '</p>',
+				assetHandles: array_keys( $assets ),
+				returned: 0,
+				state: ListingRuntimeState::Empty,
+			);
+		}
 
-            try {
-                $output = $this->renderer->render(
-                    new RenderInput($descriptor->blueprintId, $descriptor->blueprintRevision, $bindings),
-                    $context,
-                );
-            } catch (Throwable) {
-                return $this->failure('renderer_failure');
-            }
+		/** @var list<string> $items */
+		$items = [];
+		foreach ( $queryResult->rows as $row ) {
+			/** @var array<string, scalar|list<scalar>|null> $bindings */
+			$bindings = [];
+			foreach ( $descriptor->renderBindings as $renderBinding ) {
+				$resolved = $this->resolveBinding( $renderBinding, $row, $context );
+				if ( ! $resolved['ok'] ) {
+					return $this->failure( $resolved['failure'] );
+				}
+				$value = $resolved['value'];
+				if ( ! $this->matchesBindingType( $value, $renderBinding->expectedType ) ) {
+					return $this->failure( 'blueprint_binding_type_mismatch' );
+				}
+				/** @var scalar|list<scalar>|null $value */
+				$bindings[ $renderBinding->bindingKey ] = $value;
+			}
 
-            if (!$output->success) {
-                return $this->failure($output->failure?->value ?? 'renderer_failure');
-            }
+			try {
+				$output = $this->renderer->render(
+					new RenderInput( $descriptor->blueprintId, $descriptor->blueprintRevision, $bindings ),
+					$context,
+				);
+			} catch ( Throwable ) {
+				return $this->failure( 'renderer_failure' );
+			}
 
-            foreach ($output->assetHandles as $handle) {
-                $assets[$handle] = true;
-            }
-            $items[] = $output->html;
-        }
+			if ( ! $output->success ) {
+				return $this->failure( $output->failure?->value ?? 'renderer_failure' );
+			}
 
-        $attributes = $this->presentationAttributes($presentation);
-        $html = $descriptor->layoutMode === 'list'
-            ? '<ul class="wpe-listing wpe-listing--list"' . $attributes . '><li class="wpe-listing__item">' . implode('</li><li class="wpe-listing__item">', $items) . '</li></ul>'
-            : '<div class="wpe-listing wpe-listing--grid"' . $attributes . '>' . implode('', array_map(
-                static fn (string $item): string => '<div class="wpe-listing__item">' . $item . '</div>',
-                $items,
-            )) . '</div>';
+			foreach ( $output->assetHandles as $handle ) {
+				$assets[ $handle ] = true;
+			}
+			$items[] = $output->html;
+		}
 
-        return new ListingRenderResult(
-            success: true,
-            html: $html,
-            assetHandles: array_keys($assets),
-            returned: count($items),
-            state: ListingRuntimeState::Content,
-        );
-    }
+		$attributes = $this->presentationAttributes( $presentation );
+		$html       = $descriptor->layoutMode === 'list'
+			? '<ul class="wpe-listing wpe-listing--list"' . $attributes . '><li class="wpe-listing__item">' . implode( '</li><li class="wpe-listing__item">', $items ) . '</li></ul>'
+			: '<div class="wpe-listing wpe-listing--grid"' . $attributes . '>' . implode(
+				'',
+				array_map(
+					static fn ( string $item ): string => '<div class="wpe-listing__item">' . $item . '</div>',
+					$items,
+				)
+			) . '</div>';
 
-    /**
-     * @param array<string,mixed> $row
-     * @return array{ok:bool,value:mixed,failure:string}
-     */
-    private function resolveBinding(ListingRenderBinding $binding, array $row, ExecutionContext $context): array
-    {
-        if ($binding->kind === 'query_field') {
-            $fieldRef = $binding->queryFieldRef;
-            if ($fieldRef === null || !array_key_exists($fieldRef, $row)) {
-                return ['ok' => false, 'value' => null, 'failure' => 'missing_query_binding_value'];
-            }
-            return ['ok' => true, 'value' => $row[$fieldRef], 'failure' => ''];
-        }
+		return new ListingRenderResult(
+			success: true,
+			html: $html,
+			assetHandles: array_keys( $assets ),
+			returned: count( $items ),
+			state: ListingRuntimeState::Content,
+		);
+	}
 
-        $resourceIdField = $binding->resourceIdFieldRef;
-        if ($resourceIdField === null || !array_key_exists($resourceIdField, $row)) {
-            return ['ok' => false, 'value' => null, 'failure' => 'missing_dynamic_resource_id'];
-        }
-        $resourceId = $row[$resourceIdField];
-        if (!is_string($resourceId) && !is_int($resourceId)) {
-            return ['ok' => false, 'value' => null, 'failure' => 'invalid_dynamic_resource_id'];
-        }
+	/**
+	 * @param array<string,mixed> $row
+	 * @return array{ok:bool,value:mixed,failure:string}
+	 */
+	private function resolveBinding( ListingRenderBinding $binding, array $row, ExecutionContext $context ): array {
+		if ( $binding->kind === 'query_field' ) {
+			$fieldRef = $binding->queryFieldRef;
+			if ( $fieldRef === null || ! array_key_exists( $fieldRef, $row ) ) {
+				return [
+					'ok'      => false,
+					'value'   => null,
+					'failure' => 'missing_query_binding_value',
+				];
+			}
+			return [
+				'ok'      => true,
+				'value'   => $row[ $fieldRef ],
+				'failure' => '',
+			];
+		}
 
-        try {
-            $result = $this->dynamicValues->resolve(
-                new DynamicValueRequest(
-                    sourceRef: (string) $binding->sourceRef,
-                    valueRef: (string) $binding->valueRef,
-                    resourceType: (string) $binding->resourceType,
-                    resourceId: $resourceId,
-                ),
-                $context,
-            );
-        } catch (Throwable) {
-            return ['ok' => false, 'value' => null, 'failure' => 'dynamic_value_failure'];
-        }
+		$resourceIdField = $binding->resourceIdFieldRef;
+		if ( $resourceIdField === null || ! array_key_exists( $resourceIdField, $row ) ) {
+			return [
+				'ok'      => false,
+				'value'   => null,
+				'failure' => 'missing_dynamic_resource_id',
+			];
+		}
+		$resourceId = $row[ $resourceIdField ];
+		if ( ! is_string( $resourceId ) && ! is_int( $resourceId ) ) {
+			return [
+				'ok'      => false,
+				'value'   => null,
+				'failure' => 'invalid_dynamic_resource_id',
+			];
+		}
 
-        if (!$result->resolved) {
-            return [
-                'ok' => false,
-                'value' => null,
-                'failure' => $result->failure?->value ?? 'dynamic_value_failure',
-            ];
-        }
+		try {
+			$result = $this->dynamicValues->resolve(
+				new DynamicValueRequest(
+					sourceRef: (string) $binding->sourceRef,
+					valueRef: (string) $binding->valueRef,
+					resourceType: (string) $binding->resourceType,
+					resourceId: $resourceId,
+				),
+				$context,
+			);
+		} catch ( Throwable ) {
+			return [
+				'ok'      => false,
+				'value'   => null,
+				'failure' => 'dynamic_value_failure',
+			];
+		}
 
-        return ['ok' => true, 'value' => $result->value, 'failure' => ''];
-    }
+		if ( ! $result->resolved ) {
+			return [
+				'ok'      => false,
+				'value'   => null,
+				'failure' => $result->failure?->value ?? 'dynamic_value_failure',
+			];
+		}
 
-    private function matchesBindingType(mixed $value, string $type): bool
-    {
-        if ($value === null) {
-            return true;
-        }
+		return [
+			'ok'      => true,
+			'value'   => $result->value,
+			'failure' => '',
+		];
+	}
 
-        return match ($type) {
-            'string' => is_string($value),
-            'int' => is_int($value),
-            'float' => is_float($value),
-            'bool' => is_bool($value),
-            'string_list' => $this->isTypedList($value, 'string'),
-            'int_list' => $this->isTypedList($value, 'int'),
-            default => false,
-        };
-    }
+	private function matchesBindingType( mixed $value, string $type ): bool {
+		if ( $value === null ) {
+			return true;
+		}
 
-    private function isTypedList(mixed $value, string $type): bool
-    {
-        if (!is_array($value) || !array_is_list($value)) {
-            return false;
-        }
-        foreach ($value as $item) {
-            if (($type === 'string' && !is_string($item)) || ($type === 'int' && !is_int($item))) {
-                return false;
-            }
-        }
-        return true;
-    }
+		return match ( $type ) {
+			'string' => is_string( $value ),
+			'int' => is_int( $value ),
+			'float' => is_float( $value ),
+			'bool' => is_bool( $value ),
+			'string_list' => $this->isTypedList( $value, 'string' ),
+			'int_list' => $this->isTypedList( $value, 'int' ),
+			default => false,
+		};
+	}
 
-    private function presentationAttributes(?ListingPresentationDescriptor $presentation): string
-    {
-        if ($presentation === null) {
-            return '';
-        }
+	private function isTypedList( mixed $value, string $type ): bool {
+		if ( ! is_array( $value ) || ! array_is_list( $value ) ) {
+			return false;
+		}
+		foreach ( $value as $item ) {
+			if ( ( $type === 'string' && ! is_string( $item ) ) || ( $type === 'int' && ! is_int( $item ) ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-        $attributes = ' aria-label="' . $this->escape($presentation->label) . '"';
-        $columns = $presentation->responsiveColumns;
-        ksort($columns, SORT_STRING);
-        foreach ($columns as $breakpoint => $count) {
-            $attributes .= ' data-wpe-columns-' . $breakpoint . '="' . $count . '"';
-        }
-        return $attributes;
-    }
+	private function presentationAttributes( ?ListingPresentationDescriptor $presentation ): string {
+		if ( $presentation === null ) {
+			return '';
+		}
 
-    private function escape(string $value): string
-    {
-        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
+		$attributes = ' aria-label="' . $this->escape( $presentation->label ) . '"';
+		$columns    = $presentation->responsiveColumns;
+		ksort( $columns, SORT_STRING );
+		foreach ( $columns as $breakpoint => $count ) {
+			$attributes .= ' data-wpe-columns-' . $breakpoint . '="' . $count . '"';
+		}
+		return $attributes;
+	}
 
-    private function failure(string $code): ListingRenderResult
-    {
-        if (!preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $code)) {
-            $code = 'listing_failure';
-        }
+	private function escape( string $value ): string {
+		return htmlspecialchars( $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
+	}
 
-        $state = in_array(
-            $code,
-            [
-                'missing_blueprint',
-                'unsupported_value_source',
-                'dependency_mismatch',
-                'dynamic_value_failure',
-                'renderer_failure',
-            ],
-            true,
-        ) ? ListingRuntimeState::Degraded : ListingRuntimeState::Error;
+	private function failure( string $code ): ListingRenderResult {
+		if ( ! preg_match( '/^[a-z][a-z0-9_.-]{0,127}$/', $code ) ) {
+			$code = 'listing_failure';
+		}
 
-        return new ListingRenderResult(
-            false,
-            '',
-            [],
-            0,
-            $code,
-            $state,
-        );
-    }
+		$state = in_array(
+			$code,
+			[
+				'missing_blueprint',
+				'unsupported_value_source',
+				'dependency_mismatch',
+				'dynamic_value_failure',
+				'renderer_failure',
+			],
+			true,
+		) ? ListingRuntimeState::Degraded : ListingRuntimeState::Error;
+
+		return new ListingRenderResult(
+			false,
+			'',
+			[],
+			0,
+			$code,
+			$state,
+		);
+	}
 }

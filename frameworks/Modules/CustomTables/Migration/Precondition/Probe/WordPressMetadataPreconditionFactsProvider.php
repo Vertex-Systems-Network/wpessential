@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Precondition\Probe;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use JsonException;
@@ -14,43 +14,41 @@ use WPEssential\Modules\CustomTables\Definition\TableSchemaDescriptor;
 use WPEssential\Modules\CustomTables\Migration\ProviderCapabilityProfile;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 
-final readonly class WordPressMetadataPreconditionFactsProvider implements MetadataPreconditionFactsProviderInterface
-{
-    public function __construct(private WordPressCt1SchemaIntrospector $introspector)
-    {
-    }
+final readonly class WordPressMetadataPreconditionFactsProvider implements MetadataPreconditionFactsProviderInterface {
 
-    /** @throws JsonException */
-    public function facts(
-        TableSchemaDescriptor $descriptor,
-        ProviderCapabilityProfile $capabilities,
-    ): MetadataPreconditionFacts {
-        $observed = $this->introspector->observe($descriptor);
-        $fingerprints = [];
+	public function __construct( private WordPressCt1SchemaIntrospector $introspector ) {
+	}
 
-        foreach ($observed->columns as $column) {
-            $fingerprints[$this->columnTarget($descriptor, $column)] = hash(
-                'sha256',
-                json_encode(
-                    $column->canonical(),
-                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-                ),
-            );
-        }
+	/** @throws JsonException */
+	public function facts(
+		TableSchemaDescriptor $descriptor,
+		ProviderCapabilityProfile $capabilities,
+	): MetadataPreconditionFacts {
+		$observed     = $this->introspector->observe( $descriptor );
+		$fingerprints = [];
 
-        return new MetadataPreconditionFacts(
-            tableExists: $observed->exists,
-            features: [
-                'instant_add_column' => $capabilities->instantAddColumnCandidate,
-                'instant_default_change' => $capabilities->instantDefaultChangeCandidate,
-                'inplace_varchar_widening' => $capabilities->inplaceVarcharWideningCandidate,
-            ],
-            columnFingerprints: $fingerprints,
-        );
-    }
+		foreach ( $observed->columns as $column ) {
+			$fingerprints[ $this->columnTarget( $descriptor, $column ) ] = hash(
+				'sha256',
+				json_encode(
+					$column->canonical(),
+					JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+				),
+			);
+		}
 
-    private function columnTarget(TableSchemaDescriptor $descriptor, TableColumnDescriptor $column): string
-    {
-        return sprintf('column.%s.%s', $descriptor->tableKey, $column->key);
-    }
+		return new MetadataPreconditionFacts(
+			tableExists: $observed->exists,
+			features: [
+				'instant_add_column'       => $capabilities->instantAddColumnCandidate,
+				'instant_default_change'   => $capabilities->instantDefaultChangeCandidate,
+				'inplace_varchar_widening' => $capabilities->inplaceVarcharWideningCandidate,
+			],
+			columnFingerprints: $fingerprints,
+		);
+	}
+
+	private function columnTarget( TableSchemaDescriptor $descriptor, TableColumnDescriptor $column ): string {
+		return sprintf( 'column.%s.%s', $descriptor->tableKey, $column->key );
+	}
 }

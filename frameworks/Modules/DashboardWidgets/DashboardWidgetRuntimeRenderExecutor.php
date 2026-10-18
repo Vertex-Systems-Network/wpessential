@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use InvalidArgumentException;
@@ -14,231 +14,231 @@ use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\RendererInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
 
-final readonly class DashboardWidgetRuntimeRenderExecutor
-{
-    private DashboardWidgetRuntimeClock $clock;
+final readonly class DashboardWidgetRuntimeRenderExecutor {
 
-    public function __construct(
-        private DefinitionRepositoryInterface $definitions,
-        private DashboardWidgetRegistrationCompiler $registrationCompiler,
-        private DashboardWidgetVisibilityCompiler $visibilityCompiler,
-        private DashboardWidgetVisibilityEvaluator $visibilityEvaluator,
-        private DashboardWidgetRenderSourceCompiler $renderSourceCompiler,
-        private RendererInterface $renderer,
-        private ?DashboardWidgetQueryBindingExecutor $queryBindingExecutor = null,
-        private ?DashboardWidgetDynamicBindingExecutor $dynamicBindingExecutor = null,
-        ?DashboardWidgetRuntimeClock $clock = null,
-    ) {
-        $this->clock = $clock ?? new DashboardWidgetRuntimeClock();
-    }
+	private DashboardWidgetRuntimeClock $clock;
 
-    public function render(
-        string $definitionId,
-        ExecutionContext $context,
-    ): DashboardWidgetRuntimeRenderResult {
-        try {
-            $definition = $this->definitions->get($definitionId);
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+	public function __construct(
+		private DefinitionRepositoryInterface $definitions,
+		private DashboardWidgetRegistrationCompiler $registrationCompiler,
+		private DashboardWidgetVisibilityCompiler $visibilityCompiler,
+		private DashboardWidgetVisibilityEvaluator $visibilityEvaluator,
+		private DashboardWidgetRenderSourceCompiler $renderSourceCompiler,
+		private RendererInterface $renderer,
+		private ?DashboardWidgetQueryBindingExecutor $queryBindingExecutor = null,
+		private ?DashboardWidgetDynamicBindingExecutor $dynamicBindingExecutor = null,
+		?DashboardWidgetRuntimeClock $clock = null,
+	) {
+		$this->clock = $clock ?? new DashboardWidgetRuntimeClock();
+	}
 
-        if ($definition === null) {
-            return DashboardWidgetRuntimeRenderResult::missingDefinition();
-        }
+	public function render(
+		string $definitionId,
+		ExecutionContext $context,
+	): DashboardWidgetRuntimeRenderResult {
+		try {
+			$definition = $this->definitions->get( $definitionId );
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-        try {
-            $registration = $this->registrationCompiler->compile($definition);
-            $visibility = $this->visibilityCompiler->compile($definition);
-            $lifecycleState = $registration->lifecycleStateAt($this->clock->now());
-        } catch (InvalidArgumentException) {
-            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+		if ( $definition === null ) {
+			return DashboardWidgetRuntimeRenderResult::missingDefinition();
+		}
 
-        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
-                DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
-            );
-        }
-        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
-                DashboardWidgetVisibilityDecision::REASON_EXPIRED,
-            );
-        }
-        if ($lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+		try {
+			$registration   = $this->registrationCompiler->compile( $definition );
+			$visibility     = $this->visibilityCompiler->compile( $definition );
+			$lifecycleState = $registration->lifecycleStateAt( $this->clock->now() );
+		} catch ( InvalidArgumentException ) {
+			return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-        try {
-            $visibilityDecision = $this->visibilityEvaluator->evaluate($visibility, $context);
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+		if ( $lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE ) {
+			return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+				DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
+			);
+		}
+		if ( $lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED ) {
+			return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+				DashboardWidgetVisibilityDecision::REASON_EXPIRED,
+			);
+		}
+		if ( $lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-        if (!$visibilityDecision->allowed) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied($visibilityDecision->reason);
-        }
+		try {
+			$visibilityDecision = $this->visibilityEvaluator->evaluate( $visibility, $context );
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-        try {
-            $renderSource = $this->renderSourceCompiler->compile($definition);
-        } catch (InvalidArgumentException) {
-            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+		if ( ! $visibilityDecision->allowed ) {
+			return DashboardWidgetRuntimeRenderResult::visibilityDenied( $visibilityDecision->reason );
+		}
 
-        if ($renderSource->query !== null) {
-            if ($this->queryBindingExecutor === null) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+		try {
+			$renderSource = $this->renderSourceCompiler->compile( $definition );
+		} catch ( InvalidArgumentException ) {
+			return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-            try {
-                $renderSource = $this->queryBindingExecutor->resolve($renderSource, $context);
-            } catch (Throwable) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+		if ( $renderSource->query !== null ) {
+			if ( $this->queryBindingExecutor === null ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-            if ($renderSource->query !== null || $renderSource->emptyState !== null) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
-        }
+			try {
+				$renderSource = $this->queryBindingExecutor->resolve( $renderSource, $context );
+			} catch ( Throwable ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-        if ($renderSource->dynamicBindings !== []) {
-            if ($this->dynamicBindingExecutor === null) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+			if ( $renderSource->query !== null || $renderSource->emptyState !== null ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
+		}
 
-            try {
-                $renderSource = $this->dynamicBindingExecutor->resolve($renderSource, $context);
-            } catch (Throwable) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+		if ( $renderSource->dynamicBindings !== [] ) {
+			if ( $this->dynamicBindingExecutor === null ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-            if ($renderSource->query !== null || $renderSource->dynamicBindings !== [] || $renderSource->emptyState !== null) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
-        }
+			try {
+				$renderSource = $this->dynamicBindingExecutor->resolve( $renderSource, $context );
+			} catch ( Throwable ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-        try {
-            $output = $this->renderer->render($renderSource->toRenderInput(), $context);
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+			if ( $renderSource->query !== null || $renderSource->dynamicBindings !== [] || $renderSource->emptyState !== null ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
+		}
 
-        if (!$output->success) {
-            if ($output->failure === null) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+		try {
+			$output = $this->renderer->render( $renderSource->toRenderInput(), $context );
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-            $primaryFailure = $output->failure;
-            if ($renderSource->errorState === null) {
-                return DashboardWidgetRuntimeRenderResult::rendererFailed($primaryFailure);
-            }
+		if ( ! $output->success ) {
+			if ( $output->failure === null ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-            try {
-                $fallback = $this->renderer->render($renderSource->errorState->toRenderInput(), $context);
-            } catch (Throwable) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+			$primaryFailure = $output->failure;
+			if ( $renderSource->errorState === null ) {
+				return DashboardWidgetRuntimeRenderResult::rendererFailed( $primaryFailure );
+			}
 
-            if (!$fallback->success) {
-                if ($fallback->failure === null) {
-                    return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-                }
+			try {
+				$fallback = $this->renderer->render( $renderSource->errorState->toRenderInput(), $context );
+			} catch ( Throwable ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-                return DashboardWidgetRuntimeRenderResult::rendererFailed($fallback->failure);
-            }
+			if ( ! $fallback->success ) {
+				if ( $fallback->failure === null ) {
+					return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+				}
 
-            return DashboardWidgetRuntimeRenderResult::renderedError(
-                $fallback->html,
-                $fallback->assetHandles,
-                $primaryFailure,
-            );
-        }
+				return DashboardWidgetRuntimeRenderResult::rendererFailed( $fallback->failure );
+			}
 
-        return DashboardWidgetRuntimeRenderResult::rendered(
-            $output->html,
-            $output->assetHandles,
-        );
-    }
+			return DashboardWidgetRuntimeRenderResult::renderedError(
+				$fallback->html,
+				$fallback->assetHandles,
+				$primaryFailure,
+			);
+		}
 
-    public function renderLoadingState(
-        string $definitionId,
-        ExecutionContext $context,
-    ): DashboardWidgetRuntimeRenderResult {
-        try {
-            $definition = $this->definitions->get($definitionId);
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
-        if ($definition === null) {
-            return DashboardWidgetRuntimeRenderResult::missingDefinition();
-        }
+		return DashboardWidgetRuntimeRenderResult::rendered(
+			$output->html,
+			$output->assetHandles,
+		);
+	}
 
-        try {
-            $registration = $this->registrationCompiler->compile($definition);
-            if (!$registration->manualRefresh) {
-                return DashboardWidgetRuntimeRenderResult::invalidDefinition();
-            }
-            $visibility = $this->visibilityCompiler->compile($definition);
-            $lifecycleState = $registration->lifecycleStateAt($this->clock->now());
-        } catch (InvalidArgumentException) {
-            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+	public function renderLoadingState(
+		string $definitionId,
+		ExecutionContext $context,
+	): DashboardWidgetRuntimeRenderResult {
+		try {
+			$definition = $this->definitions->get( $definitionId );
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
+		if ( $definition === null ) {
+			return DashboardWidgetRuntimeRenderResult::missingDefinition();
+		}
 
-        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
-                DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
-            );
-        }
-        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
-                DashboardWidgetVisibilityDecision::REASON_EXPIRED,
-            );
-        }
-        if ($lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
+		try {
+			$registration = $this->registrationCompiler->compile( $definition );
+			if ( ! $registration->manualRefresh ) {
+				return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+			}
+			$visibility     = $this->visibilityCompiler->compile( $definition );
+			$lifecycleState = $registration->lifecycleStateAt( $this->clock->now() );
+		} catch ( InvalidArgumentException ) {
+			return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-        try {
-            $decision = $this->visibilityEvaluator->evaluate($visibility, $context);
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
-        if (!$decision->allowed) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied($decision->reason);
-        }
+		if ( $lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE ) {
+			return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+				DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
+			);
+		}
+		if ( $lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED ) {
+			return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+				DashboardWidgetVisibilityDecision::REASON_EXPIRED,
+			);
+		}
+		if ( $lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
 
-        try {
-            $renderSource = $this->renderSourceCompiler->compile($definition);
-        } catch (InvalidArgumentException) {
-            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
-        if ($renderSource->loadingState === null) {
-            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
-        }
+		try {
+			$decision = $this->visibilityEvaluator->evaluate( $visibility, $context );
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
+		if ( ! $decision->allowed ) {
+			return DashboardWidgetRuntimeRenderResult::visibilityDenied( $decision->reason );
+		}
 
-        try {
-            $output = $this->renderer->render($renderSource->loadingState->toRenderInput(), $context);
-        } catch (Throwable) {
-            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-        }
-        if (!$output->success) {
-            if ($output->failure === null) {
-                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
-            }
+		try {
+			$renderSource = $this->renderSourceCompiler->compile( $definition );
+		} catch ( InvalidArgumentException ) {
+			return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
+		if ( $renderSource->loadingState === null ) {
+			return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+		}
 
-            return DashboardWidgetRuntimeRenderResult::rendererFailed($output->failure);
-        }
+		try {
+			$output = $this->renderer->render( $renderSource->loadingState->toRenderInput(), $context );
+		} catch ( Throwable ) {
+			return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+		}
+		if ( ! $output->success ) {
+			if ( $output->failure === null ) {
+				return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+			}
 
-        return DashboardWidgetRuntimeRenderResult::rendered(
-            $output->html,
-            $output->assetHandles,
-        );
-    }
+			return DashboardWidgetRuntimeRenderResult::rendererFailed( $output->failure );
+		}
+
+		return DashboardWidgetRuntimeRenderResult::rendered(
+			$output->html,
+			$output->assetHandles,
+		);
+	}
 }

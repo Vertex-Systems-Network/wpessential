@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Status\Transition\Definition;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
@@ -15,40 +15,41 @@ use WPEssential\Modules\Status\Transition\StatusTransitionRule;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
-final readonly class PublishedStatusTransitionPolicyResolver
-{
-    public function __construct(
-        private DefinitionRepositoryInterface $definitions,
-        private StatusTransitionPolicyDefinitionCompiler $compiler = new StatusTransitionPolicyDefinitionCompiler(),
-    ) {}
+final readonly class PublishedStatusTransitionPolicyResolver {
 
-    public function resolve(): StatusTransitionPolicy
-    {
-        $published = array_values(array_filter(
-            $this->definitions->byType(StatusTransitionPolicyDefinitionCompiler::TYPE),
-            static fn (Definition $definition): bool => $definition->status === DefinitionStatus::Published,
-        ));
+	public function __construct(
+		private DefinitionRepositoryInterface $definitions,
+		private StatusTransitionPolicyDefinitionCompiler $compiler = new StatusTransitionPolicyDefinitionCompiler(),
+	) {}
 
-        usort(
-            $published,
-            static fn (Definition $left, Definition $right): int => strcmp($left->id, $right->id),
-        );
+	public function resolve(): StatusTransitionPolicy {
+		$published = array_values(
+			array_filter(
+				$this->definitions->byType( StatusTransitionPolicyDefinitionCompiler::TYPE ),
+				static fn ( Definition $definition ): bool => $definition->status === DefinitionStatus::Published,
+			)
+		);
 
-        /** @var array<string,StatusTransitionRule> $rules */
-        $rules = [];
-        foreach ($published as $definition) {
-            $policy = $this->compiler->compile($definition);
-            foreach ($policy->rules() as $rule) {
-                $edge = $rule->edgeKey();
-                if (isset($rules[$edge])) {
-                    throw new RuntimeException('Published Status transition-policy Definitions contain a duplicate edge.');
-                }
-                $rules[$edge] = $rule;
-            }
-        }
+		usort(
+			$published,
+			static fn ( Definition $left, Definition $right ): int => strcmp( $left->id, $right->id ),
+		);
 
-        ksort($rules, SORT_STRING);
+		/** @var array<string,StatusTransitionRule> $rules */
+		$rules = [];
+		foreach ( $published as $definition ) {
+			$policy = $this->compiler->compile( $definition );
+			foreach ( $policy->rules() as $rule ) {
+				$edge = $rule->edgeKey();
+				if ( isset( $rules[ $edge ] ) ) {
+					throw new RuntimeException( 'Published Status transition-policy Definitions contain a duplicate edge.' );
+				}
+				$rules[ $edge ] = $rule;
+			}
+		}
 
-        return new StatusTransitionPolicy(array_values($rules));
-    }
+		ksort( $rules, SORT_STRING );
+
+		return new StatusTransitionPolicy( array_values( $rules ) );
+	}
 }

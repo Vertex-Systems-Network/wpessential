@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Contracts;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Platform\Definitions\Definition;
@@ -17,7 +17,7 @@ use WPEssential\Platform\Definitions\Definition;
  * throws, including if a concurrent insert wins. Callers must NOT emulate
  * this guarantee using get() followed by save().
  */
-interface DefinitionCreateOnlyRepositoryInterface extends DefinitionRepositoryInterface
-{
-    public function create(Definition $definition): void;
+interface DefinitionCreateOnlyRepositoryInterface extends DefinitionRepositoryInterface {
+
+	public function create( Definition $definition ): void;
 }

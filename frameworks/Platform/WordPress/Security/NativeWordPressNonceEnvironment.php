@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Security;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
 
-final class NativeWordPressNonceEnvironment implements NonceEnvironmentInterface
-{
-    public function create(string $action): string
-    {
-        if (!function_exists('wp_create_nonce')) {
-            throw new RuntimeException('WordPress nonce API is unavailable.');
-        }
+final class NativeWordPressNonceEnvironment implements NonceEnvironmentInterface {
 
-        return (string) wp_create_nonce($action);
-    }
+	public function create( string $action ): string {
+		if ( ! function_exists( 'wp_create_nonce' ) ) {
+			throw new RuntimeException( 'WordPress nonce API is unavailable.' );
+		}
 
-    public function verify(string $nonce, string $action): bool
-    {
-        return function_exists('wp_verify_nonce') && wp_verify_nonce($nonce, $action) !== false;
-    }
+		return (string) wp_create_nonce( $action );
+	}
+
+	public function verify( string $nonce, string $action ): bool {
+		return function_exists( 'wp_verify_nonce' ) && wp_verify_nonce( $nonce, $action ) !== false;
+	}
 }

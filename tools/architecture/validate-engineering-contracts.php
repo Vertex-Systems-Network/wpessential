@@ -44,7 +44,8 @@ foreach ([
     "define('WPE_AJAX_ACTION', 'wpessential_dispatch')",
     "define('WPE_NONCE_ACTION', 'wpessential_request')",
 ] as $requiredMarker) {
-    if (!str_contains($entrypoint, $requiredMarker)) {
+    // Whitespace-insensitive so WPCS formatting ( define( 'X', 'y' ) ) satisfies the marker.
+    if (!str_contains(preg_replace('/\s+/', '', $entrypoint), preg_replace('/\s+/', '', $requiredMarker))) {
         $errors[] = 'Missing required entrypoint metadata/constant marker: ' . $requiredMarker;
     }
 }

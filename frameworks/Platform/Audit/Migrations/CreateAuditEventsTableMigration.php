@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Audit\Migrations;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
@@ -14,41 +13,35 @@ use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Platform\Audit\AuditTableNames;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
-final class CreateAuditEventsTableMigration implements MigrationInterface
-{
-    private readonly AuditTableNames $tables;
+final class CreateAuditEventsTableMigration implements MigrationInterface {
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new AuditTableNames($database);
-    }
+	private readonly AuditTableNames $tables;
 
-    public function id(): string
-    {
-        return '008.create-audit-ptd-store';
-    }
+	public function __construct( private readonly DatabaseAdapterInterface $database ) {
+		$this->tables = new AuditTableNames( $database );
+	}
 
-    public function sequence(): int
-    {
-        return 80;
-    }
+	public function id(): string {
+		return '008.create-audit-ptd-store';
+	}
 
-    public function isDestructive(): bool
-    {
-        return false;
-    }
+	public function sequence(): int {
+		return 80;
+	}
 
-    public function recoveryPlan(): ?string
-    {
-        return null;
-    }
+	public function isDestructive(): bool {
+		return false;
+	}
 
-    public function apply(): void
-    {
-        $charset = trim($this->database->charsetCollate());
-        $charsetSql = $charset === '' ? '' : ' ' . $charset;
+	public function recoveryPlan(): ?string {
+		return null;
+	}
 
-        $sql = "CREATE TABLE IF NOT EXISTS `{$this->tables->events}` (
+	public function apply(): void {
+		$charset    = trim( $this->database->charsetCollate() );
+		$charsetSql = $charset === '' ? '' : ' ' . $charset;
+
+		$sql = "CREATE TABLE IF NOT EXISTS `{$this->tables->events}` (
             event_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             event_uuid CHAR(36) NOT NULL,
             network_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -81,8 +74,8 @@ final class CreateAuditEventsTableMigration implements MigrationInterface
             KEY retention_occurred (retention_class, occurred_at)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        if ($this->database->query($sql) === false) {
-            throw new RuntimeException('Failed to create audit persistence table: ' . $this->database->lastError());
-        }
-    }
+		if ( $this->database->query( $sql ) === false ) {
+			throw new RuntimeException( 'Failed to create audit persistence table: ' . $this->database->lastError() );
+		}
+	}
 }

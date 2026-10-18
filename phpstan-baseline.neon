@@ -1,0 +1,811 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Action callback returns bool but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: frameworks/Bootstrap/Plugin.php
+
+		-
+			message: '#^Action callback returns list\<string\> but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: frameworks/Bootstrap/Plugin.php
+
+		-
+			message: '#^Comparison operation "\<" between int\<80200, 80599\> and 80200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: frameworks/Bootstrap/Plugin.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: frameworks/Bootstrap/Plugin.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and true will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: frameworks/Bootstrap/Plugin.php
+
+		-
+			message: '#^Ternary operator condition is always false\.$#'
+			identifier: ternary.alwaysFalse
+			count: 1
+			path: frameworks/Bootstrap/Plugin.php
+
+		-
+			message: '#^Call to function is_array\(\) with list\<array\{key\: string, label\: string\}\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsCsvExportService.php
+
+		-
+			message: '#^Call to function is_scalar\(\) with \(int\|string\) will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsCsvExportService.php
+
+		-
+			message: '#^Call to function array_key_exists\(\) with ''value'' and array\{post_id\: int, value\: mixed\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsReadAdapter.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\{post_id\: int, value\: mixed\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsReadAdapter.php
+
+		-
+			message: '#^Offset ''post_id'' on array\{post_id\: int, value\: mixed\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsReadAdapter.php
+
+		-
+			message: '#^Match arm comparison between ''status'' and ''status'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewDefinitionService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewDefinitionService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewDefinitionService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewDefinitionService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewDefinitionService.php
+
+		-
+			message: '#^Parameter &\$consumed by\-ref type of method WPEssential\\Modules\\AdminColumns\\AdminColumnsViewPortabilityCodec\:\:remapUserList\(\) expects array\<string, true\>, non\-empty\-array\<int\|string, true\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: frameworks/Modules/AdminColumns/AdminColumnsViewPortabilityCodec.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/AdminMenu/AdminMenuReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/BuilderWidgets/BuilderWidgetsReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Chat/ChatReadAbilityHandler.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between true and true will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Cron/CronReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''status'' and ''status'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>status" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/CustomTables/Migration/ProviderCapabilityProfile.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Dashboard/DashboardReadAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>presetId" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetMultisiteEffectivePresetResolver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>presetRevision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetMultisiteEffectivePresetResolver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>widgetDefinitionIds" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetMultisiteEffectivePresetResolver.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetMultisitePolicyReadAbilityHandler.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetPresetDraftImportService.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetPresetDraftPublishReviewService.php
+
+		-
+			message: '#^Match arm comparison between ''effective'' and ''effective'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetPresetReadAbilityHandler.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetQueryBindingDescriptor.php
+
+		-
+			message: '#^Match arm comparison between ''site_ids'' and ''site_ids'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationDescriptor.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/DashboardWidgetsReadAbilityHandler.php
+
+		-
+			message: '#^Property WP_User\:\:\$roles \(array\<string\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: frameworks/Modules/DashboardWidgets/WordPressDashboardWidgetRoleMembershipProvider.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Emails/EmailsReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''status'' and ''status'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>status" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''import'' and ''import'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Fields/FieldGroupPortabilityAbilityHandler.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/Fields/FieldQueryConsumer.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/Fields/FieldStorageKeyMigrationService.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$getPostStatus with type \(callable\)\|false\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/FieldValueTargetResolver.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$getPostType with type \(callable\)\|false\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/FieldValueTargetResolver.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Fields\\FieldValueTargetResolver\:\:\$getPostStatus with type \(Closure\)\|false is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/FieldValueTargetResolver.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Fields\\FieldValueTargetResolver\:\:\$getPostType with type \(Closure\)\|false is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/FieldValueTargetResolver.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$addPostMeta with type \(callable\)\|false\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/PostMetaValueStore.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$getPostType with type \(callable\)\|false\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/PostMetaValueStore.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$updatePostMeta with type bool\|\(callable\)\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/PostMetaValueStore.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Fields\\PostMetaValueStore\:\:\$addPostMeta with type \(Closure\)\|false is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/PostMetaValueStore.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Fields\\PostMetaValueStore\:\:\$getPostType with type \(Closure\)\|false is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/PostMetaValueStore.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Fields\\PostMetaValueStore\:\:\$updatePostMeta with type bool\|\(Closure\) is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Fields/PostMetaValueStore.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/Fields/WordPressPostMetaRegistrar.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/FormsWorkflows/FormsWorkflowsReadAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>emptyMessage" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Listings/Rendering/ListingServerRenderer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: frameworks/Modules/Listings/Rendering/ListingServerRenderer.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Membership/MembershipReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Notifications/NotificationsReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Profiles/ProfilesReadAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>maxPageSize" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Query/QueryAstValidator.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/Query/QueryFieldPredicateResolver.php
+
+		-
+			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: frameworks/Modules/Query/QueryReadConsumer.php
+
+		-
+			message: '#^Expression "\$context\-\>principal" on a separate line does not do anything\.$#'
+			identifier: expr.resultUnused
+			count: 1
+			path: frameworks/Modules/Query/QueryReadConsumer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Query/QueryReadConsumer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>message" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Query/QueryReadConsumer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>path" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Query/QueryReadConsumer.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Modules/Query/QueryRelationPredicateResolver.php
+
+		-
+			message: '#^Parameter \#1 \$type of function filter_input expects 0\|1\|2\|4\|5, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: frameworks/Modules/Relations/RelationAdminController.php
+
+		-
+			message: '#^Match arm comparison between ''status'' and ''status'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>status" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Relations/RelationDefinitionAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''disconnect'' and ''disconnect'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Relations/RelationEdgeMutationAbilityHandler.php
+
+		-
+			message: '#^Property WP_Post\:\:\$post_type \(string\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 1
+			path: frameworks/Modules/Relations/RelationEndpointObjectAuthorizer.php
+
+		-
+			message: '#^Match arm comparison between ''import'' and ''import'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Relations/RelationPortabilityAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''impact'' and ''impact'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Roles/RolesReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''catalog'' and ''catalog'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Settings/SettingsReadAbilityHandler.php
+
+		-
+			message: '#^Match arm comparison between ''status'' and ''status'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Status/Admin/StatusAdminAuthoringHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Status/Admin/StatusAdminAuthoringHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Status/Admin/StatusAdminAuthoringHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Status/Admin/StatusAdminAuthoringHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>status" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Status/Admin/StatusAdminAuthoringHandler.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$readPostStatus with type \(callable\)\|false\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Status/Execution/StatusTransitionExecutor.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$readPostType with type \(callable\)\|false\|null is not subtype of native type \(callable\)\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: frameworks/Modules/Status/Execution/StatusTransitionExecutor.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Status\\Execution\\StatusTransitionExecutor\:\:\$readPostStatus with type \(Closure\)\|false is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Status/Execution/StatusTransitionExecutor.php
+
+		-
+			message: '#^PHPDoc tag @var for property WPEssential\\Modules\\Status\\Execution\\StatusTransitionExecutor\:\:\$readPostType with type \(Closure\)\|false is not subtype of native type Closure\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: frameworks/Modules/Status/Execution/StatusTransitionExecutor.php
+
+		-
+			message: '#^Match arm comparison between ''import'' and ''import'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>status" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+
+		-
+			message: '#^Property WP_Post_Type\:\:\$_builtin \(bool\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyDefinitionReadModel.php
+
+		-
+			message: '#^Action callback returns bool but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyModule.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyRewriteRefreshCoordinator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>dependencies" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>revision" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>schemaVersion" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyValidationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Modules/Taxonomies/TaxonomyValidationService.php
+
+		-
+			message: '#^Match arm comparison between ''null'' and ''null'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 2
+			path: frameworks/Platform/Abilities/InputValidation/AbilityInputValidator.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Platform/Admin/RuntimeDiagnosticsSnapshot.php
+
+		-
+			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: frameworks/Platform/Assets/NativeWordPressAssetEnvironment.php
+
+		-
+			message: '#^Found usage of constant DOING_CRON\. Use wp_doing_cron\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: frameworks/Platform/Assets/NativeWordPressAssetEnvironment.php
+
+		-
+			message: '#^Function as_enqueue_async_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: frameworks/Platform/Jobs/Adapters/ActionScheduler/NativeActionSchedulerBackendEnvironment.php
+
+		-
+			message: '#^Function as_get_scheduled_actions not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: frameworks/Platform/Jobs/Adapters/ActionScheduler/NativeActionSchedulerBackendEnvironment.php
+
+		-
+			message: '#^Function as_schedule_single_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: frameworks/Platform/Jobs/Adapters/ActionScheduler/NativeActionSchedulerBackendEnvironment.php
+
+		-
+			message: '#^Function as_unschedule_action not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: frameworks/Platform/Jobs/Adapters/ActionScheduler/NativeActionSchedulerBackendEnvironment.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Action_Scheduler'' and ''is_initialized'' will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: frameworks/Platform/Jobs/Adapters/ActionScheduler/NativeActionSchedulerEnvironment.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Platform/Jobs/WpdbJobAttemptStore.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: frameworks/Platform/WordPress/Ajax/NativeWordPressAjaxEnvironment.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>generation" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Platform/WordPress/Registrations/RegistrationCompiler.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>entries" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: frameworks/Platform/WordPress/Registrations/RegistrationRuntimeLoader.php
+
+		-
+			message: '#^Comparison operation "\<" between int\<80200, 80599\> and 80200 is always false\.$#'
+			identifier: smaller.alwaysFalse
+			count: 1
+			path: wpessential.php

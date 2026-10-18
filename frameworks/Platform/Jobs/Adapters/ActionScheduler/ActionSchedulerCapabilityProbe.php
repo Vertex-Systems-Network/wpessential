@@ -4,49 +4,47 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Jobs\Adapters\ActionScheduler;
 
-
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-final readonly class ActionSchedulerCapabilityProbe
-{
-    private const REQUIRED_FUNCTIONS = [
-        'as_enqueue_async_action',
-        'as_schedule_single_action',
-        'as_schedule_recurring_action',
-        'as_unschedule_action',
-        'as_has_scheduled_action',
-        'as_get_scheduled_actions',
-    ];
+final readonly class ActionSchedulerCapabilityProbe {
 
-    public function __construct(private ActionSchedulerEnvironmentInterface $environment) {}
+	private const REQUIRED_FUNCTIONS = [
+		'as_enqueue_async_action',
+		'as_schedule_single_action',
+		'as_schedule_recurring_action',
+		'as_unschedule_action',
+		'as_has_scheduled_action',
+		'as_get_scheduled_actions',
+	];
 
-    public function probe(): ActionSchedulerProbeReport
-    {
-        $missing = [];
-        foreach (self::REQUIRED_FUNCTIONS as $function) {
-            if (!$this->environment->hasFunction($function)) {
-                $missing[] = $function;
-            }
-        }
+	public function __construct( private ActionSchedulerEnvironmentInterface $environment ) {}
 
-        $features = [
-            'ensure_recurring_actions_hook' => $this->environment->supports('ensure_recurring_actions_hook'),
-        ];
+	public function probe(): ActionSchedulerProbeReport {
+		$missing = [];
+		foreach ( self::REQUIRED_FUNCTIONS as $function ) {
+			if ( ! $this->environment->hasFunction( $function ) ) {
+				$missing[] = $function;
+			}
+		}
 
-        if (count($missing) === count(self::REQUIRED_FUNCTIONS)) {
-            return new ActionSchedulerProbeReport(ActionSchedulerProbeState::Absent, $missing, $features);
-        }
+		$features = [
+			'ensure_recurring_actions_hook' => $this->environment->supports( 'ensure_recurring_actions_hook' ),
+		];
 
-        if ($missing !== []) {
-            return new ActionSchedulerProbeReport(ActionSchedulerProbeState::Incompatible, $missing, $features);
-        }
+		if ( count( $missing ) === count( self::REQUIRED_FUNCTIONS ) ) {
+			return new ActionSchedulerProbeReport( ActionSchedulerProbeState::Absent, $missing, $features );
+		}
 
-        if (!$this->environment->isInitialized()) {
-            return new ActionSchedulerProbeReport(ActionSchedulerProbeState::NotInitialized, [], $features);
-        }
+		if ( $missing !== [] ) {
+			return new ActionSchedulerProbeReport( ActionSchedulerProbeState::Incompatible, $missing, $features );
+		}
 
-        return new ActionSchedulerProbeReport(ActionSchedulerProbeState::Ready, [], $features);
-    }
+		if ( ! $this->environment->isInitialized() ) {
+			return new ActionSchedulerProbeReport( ActionSchedulerProbeState::NotInitialized, [], $features );
+		}
+
+		return new ActionSchedulerProbeReport( ActionSchedulerProbeState::Ready, [], $features );
+	}
 }

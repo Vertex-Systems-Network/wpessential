@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Relations\Migrations;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
@@ -13,41 +13,35 @@ use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Modules\Relations\RelationEdgeTableNames;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
-final class CreateRelationEdgeTablesMigration implements MigrationInterface
-{
-    private readonly RelationEdgeTableNames $tables;
+final class CreateRelationEdgeTablesMigration implements MigrationInterface {
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new RelationEdgeTableNames($database);
-    }
+	private readonly RelationEdgeTableNames $tables;
 
-    public function id(): string
-    {
-        return '010.create-relation-edge-persistence';
-    }
+	public function __construct( private readonly DatabaseAdapterInterface $database ) {
+		$this->tables = new RelationEdgeTableNames( $database );
+	}
 
-    public function sequence(): int
-    {
-        return 100;
-    }
+	public function id(): string {
+		return '010.create-relation-edge-persistence';
+	}
 
-    public function isDestructive(): bool
-    {
-        return false;
-    }
+	public function sequence(): int {
+		return 100;
+	}
 
-    public function recoveryPlan(): ?string
-    {
-        return null;
-    }
+	public function isDestructive(): bool {
+		return false;
+	}
 
-    public function apply(): void
-    {
-        $charset = trim($this->database->charsetCollate());
-        $charsetSql = $charset === '' ? '' : ' ' . $charset;
+	public function recoveryPlan(): ?string {
+		return null;
+	}
 
-        $edgesSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->edges}` (
+	public function apply(): void {
+		$charset    = trim( $this->database->charsetCollate() );
+		$charsetSql = $charset === '' ? '' : ' ' . $charset;
+
+		$edgesSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->edges}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             edge_id CHAR(36) NOT NULL,
@@ -62,7 +56,7 @@ final class CreateRelationEdgeTablesMigration implements MigrationInterface
             KEY relation_target_lookup (network_id, site_id, relation_definition_id, to_object_id, from_object_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        $stateSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->state}` (
+		$stateSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->state}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             relation_definition_id CHAR(36) NOT NULL,
@@ -71,10 +65,10 @@ final class CreateRelationEdgeTablesMigration implements MigrationInterface
             PRIMARY KEY (network_id, site_id, relation_definition_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        foreach ([$edgesSql, $stateSql] as $sql) {
-            if ($this->database->query($sql) === false) {
-                throw new RuntimeException('Failed to create Relation edge persistence tables: ' . $this->database->lastError());
-            }
-        }
-    }
+		foreach ( [ $edgesSql, $stateSql ] as $sql ) {
+			if ( $this->database->query( $sql ) === false ) {
+				throw new RuntimeException( 'Failed to create Relation edge persistence tables: ' . $this->database->lastError() );
+			}
+		}
+	}
 }

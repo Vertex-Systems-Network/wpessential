@@ -1,5 +1,11 @@
 # AI Durable Last Checkpoint
 
+# 2026-10-18 — AI plan audit: WPCS gate method replaced (ADR-0223)
+
+- Audit: full `WordPress` ruleset on PSR-4/camelCase code gave ~135k violations; 113k were `phpcbf`-fixable, ~10k contradicted ADR-0214 ABI. Manual indentation batches in #1416 could not converge; `NO_VALID_WORK_SLOT` was a plan defect.
+- Fix on `claude/pensive-wozniak-qbgl24`: ADR-0223 profile, one-shot phpcbf (token-stream verified, no behavior change), security sniffs resolved, PHPStan `treatPhpDocTypesAsCertain:false` + 138-entry baseline. Local: PHPCS 0 errors, PHPStan 0, unit/smoke/script exit codes identical to main.
+- Next: PHPUnit baseline failure on main (82 files) — re-apply #1415 recovery scope. #1102/#858 parked.
+
 # 2026-10-17 — P-006 Wave 1A independent review merged; shared-truth closeout
 
 - Issue #947 / one-file PR #1422 merged as `db38d64f278767e8cc1d933b0258e1bf2d06566f` after exact-head Governance run `39078236308` PASS; #947 closed. The independent review reconciles historical run `34902018141` and FP-01/02/05/07/08 PASS without new execution. Original 14-day artifact expired, so no fresh archive-byte rehash. No pair/runtime/ADR-0010 certification; P-006 remains 144/57/57/0/0 with zero certified pairs/runtime.
@@ -104,22 +110,3 @@
 - Exact implementation PR head `f5844b210e17646ed60e57fa5ddbc0f2a228f18a`; 14/14 checks PASS (Governance, PHP, Distributable, Architecture, Platform Compatibility 10/10); 18 accepted paths, zero behind, zero unresolved review threads.
 - Terminal evidence only: `PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1`. No full Surface 10 runtime parity, native layout preference application, deployment or GA.
 - Issue #1333 records material README/state/queue/benchmark divergence after the merge. This narrow reconciliation does not introduce runtime source changes. Future safe source milestone must be freshly selected and scoped; #858/#1102/#947 remain parked.
-
-## Recent certified milestones
-
-| Track | Terminal evidence | Status |
-|---|---|---|
-| RB-0096, Issue #1325, PR #1326 | Head `6f54c797578a9808c5e28cab41f8c1e88642d093`; main merge `31724a373e7ad6c278c0a0072f32230dd036e309`; exact-head Governance/PHP/Distributable/Platform 10/10/Architecture PASS | PASS, bounded |
-| RB-0095, Issue #1323, PR #1324 | Merge `9f3d5922aa5d801aad40d553b6acd0db558865c8`; Browser E2E/Accessibility PASS | PASS, bounded |
-| RB-0092 through RB-0094 | Dashboard diagnostics, dismiss/reset, lifecycle; accepted PRs #1318, #1320, #1322 | PASS, bounded |
-| RB-0089 through RB-0091 | Shared asset loader and migration, PRs #1305, #1307, #1316 | PASS, bounded |
-
-Older exhaustive milestone audit trails are retained in their linked GitHub Issues/PRs, historical Git revisions, `CHECKPOINT.md`, and the relevant Runner Benchmark entries; they must not be re-inferred from this compact index. Do not promote bounded evidence to full product parity or GA.
-
-## Safe continuation order
-
-1. Re-read `.ai/state/CURRENT-STATE.yaml`, this checkpoint, exact live main, open Issues and PRs; reconcile stale anchors instead of duplicating work.
-2. Recheck deterministic claims, `config/coordination/agent-work-queue.json` and Runner Benchmark; select highest-priority non-conflicting authorized slot.
-3. Implement and test one bounded milestone, checkpoint it, then continue another safe ready milestone without requesting a fresh `continue` message.
-4. Park external CI/authorization/dependency lanes with evidence; no tight polling or permission bypass. Revisit at meaningful state change.
-5. Update README concise progress after each meaningful Supervisor integration; update 56/56 table only when its evidence changes or a closeout trigger applies.

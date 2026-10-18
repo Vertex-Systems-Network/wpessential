@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Relations\Migrations;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use RuntimeException;
@@ -13,51 +13,45 @@ use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Modules\Relations\RelationEdgeTableNames;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
-final class AllowNonUniqueRelationEdgeTuplesMigration implements MigrationInterface
-{
-    private readonly RelationEdgeTableNames $tables;
+final class AllowNonUniqueRelationEdgeTuplesMigration implements MigrationInterface {
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new RelationEdgeTableNames($database);
-    }
+	private readonly RelationEdgeTableNames $tables;
 
-    public function id(): string
-    {
-        return '020.allow-non-unique-relation-edge-tuples';
-    }
+	public function __construct( private readonly DatabaseAdapterInterface $database ) {
+		$this->tables = new RelationEdgeTableNames( $database );
+	}
 
-    public function sequence(): int
-    {
-        return 110;
-    }
+	public function id(): string {
+		return '020.allow-non-unique-relation-edge-tuples';
+	}
 
-    public function isDestructive(): bool
-    {
-        return false;
-    }
+	public function sequence(): int {
+		return 110;
+	}
 
-    public function recoveryPlan(): ?string
-    {
-        return null;
-    }
+	public function isDestructive(): bool {
+		return false;
+	}
 
-    public function apply(): void
-    {
-        $index = $this->database->getRow(
-            "SHOW INDEX FROM `{$this->tables->edges}` WHERE Key_name = 'scope_relation_edge'",
-        );
-        if ($index === null) {
-            return;
-        }
+	public function recoveryPlan(): ?string {
+		return null;
+	}
 
-        $result = $this->database->query(
-            "ALTER TABLE `{$this->tables->edges}` DROP INDEX `scope_relation_edge`",
-        );
-        if ($result === false) {
-            throw new RuntimeException(
-                'Failed to allow non-unique Relation edge tuples: ' . $this->database->lastError(),
-            );
-        }
-    }
+	public function apply(): void {
+		$index = $this->database->getRow(
+			"SHOW INDEX FROM `{$this->tables->edges}` WHERE Key_name = 'scope_relation_edge'",
+		);
+		if ( $index === null ) {
+			return;
+		}
+
+		$result = $this->database->query(
+			"ALTER TABLE `{$this->tables->edges}` DROP INDEX `scope_relation_edge`",
+		);
+		if ( $result === false ) {
+			throw new RuntimeException(
+				'Failed to allow non-unique Relation edge tuples: ' . $this->database->lastError(),
+			);
+		}
+	}
 }
