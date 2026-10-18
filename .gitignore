@@ -10,3 +10,4 @@
 
 # Claude Code Stop-hook off-switch
 .claude/.allow-stop
+/.claude/.stop-hook-blocks
