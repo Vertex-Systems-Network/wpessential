@@ -135,4 +135,3 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/custom-tables-r1-execution-mysql.php
-
