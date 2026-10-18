@@ -46,7 +46,13 @@ final readonly class R1AdditiveExecutionCoordinator {
 		}
 
 		try {
-			$recompiled = $this->compiler->compile( $request->plan, $request->desired, $request->identity, $request->capabilities );
+			$recompiled = $this->compiler->compile(
+				$request->plan,
+				$request->desired,
+				$request->identity,
+				$request->capabilities,
+				$this->database->charsetCollate(),
+			);
 		} catch ( Throwable ) {
 			return R1AdditiveExecutionResult::rejected( [ 'recompile_failed' ] );
 		}
