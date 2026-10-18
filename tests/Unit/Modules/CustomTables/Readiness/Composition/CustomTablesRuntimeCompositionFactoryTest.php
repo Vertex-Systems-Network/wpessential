@@ -16,6 +16,7 @@ use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\RuntimeCompositionReadinessService;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
+use WPEssential\Modules\CustomTables\Migration\Review\R1MigrationRunPreparationService;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
@@ -56,6 +57,13 @@ final class CustomTablesRuntimeCompositionFactoryTest extends TestCase
         );
 
         self::assertInstanceOf(R1AdditiveExecutionCoordinator::class, $factory->createR1AdditiveExecutionCoordinator($introspector));
+        self::assertInstanceOf(R1MigrationRunPreparationService::class, $factory->createR1MigrationRunPreparationService($introspector));
+
+        $preparation = (new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'createR1MigrationRunPreparationService'))->getParameters();
+        self::assertCount(1, $preparation);
+        $preparationType = $preparation[0]->getType();
+        self::assertInstanceOf(\ReflectionNamedType::class, $preparationType);
+        self::assertSame(WordPressCt1SchemaIntrospector::class, $preparationType->getName());
 
         $parameters = (new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'createR1AdditiveExecutionCoordinator'))->getParameters();
         self::assertCount(1, $parameters);

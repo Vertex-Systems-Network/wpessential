@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Throwable;
 use WPEssential\Modules\CustomTables\Definition\TableColumnDescriptor;
 use WPEssential\Modules\CustomTables\Definition\TableIndexDescriptor;
-use WPEssential\Modules\CustomTables\Migration\MigrationRisk;
 use WPEssential\Modules\CustomTables\Migration\ProviderDdlPreviewCompiler;
 use WPEssential\Modules\CustomTables\Migration\ProviderStatementPreview;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\RuntimeCompositionReadinessService;
@@ -27,8 +26,6 @@ use WPEssential\Platform\Database\DatabaseAdapterInterface;
  * the identical statements, and verifies the result by re-introspection before reporting success.
  */
 final readonly class R1AdditiveExecutionCoordinator {
-
-	private const ADDITIVE_OPERATIONS = [ 'create_table', 'add_column', 'add_index' ];
 
 	public function __construct(
 		private RuntimeCompositionReadinessService $readiness,
@@ -124,25 +121,7 @@ final readonly class R1AdditiveExecutionCoordinator {
 
 	/** @return list<string> */
 	private function scopeReasons( R1AdditiveExecutionRequest $request ): array {
-		$plan    = $request->plan;
-		$reasons = [];
-		if ( $plan->operations === [] ) {
-			$reasons[] = 'plan_empty';
-		}
-		if ( $plan->blocked || $plan->recoveryRequired || $plan->findings !== [] ) {
-			$reasons[] = 'plan_not_clean';
-		}
-		if ( $plan->risk->value > MigrationRisk::R1->value ) {
-			$reasons[] = 'plan_risk_above_r1';
-		}
-		foreach ( $plan->operations as $operation ) {
-			if ( ! in_array( $operation->type, self::ADDITIVE_OPERATIONS, true ) ) {
-				$reasons[] = 'operation_not_additive';
-			}
-			if ( $operation->risk->value > MigrationRisk::R1->value || $operation->blocked || $operation->recoveryRequired ) {
-				$reasons[] = 'operation_risk_above_r1';
-			}
-		}
+		$reasons = R1AdditiveScope::planReasons( $request->plan );
 		if ( $request->run->state !== MigrationRunState::Revalidating ) {
 			$reasons[] = 'run_not_revalidating';
 		}

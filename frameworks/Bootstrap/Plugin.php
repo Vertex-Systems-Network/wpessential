@@ -23,6 +23,7 @@ use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
 use WPEssential\Modules\Backup\Verification\LocalBackupManifestVerifier;
+use WPEssential\Modules\CustomTables\Migration\Review\Persistence\CreateMigrationReviewSnapshotStoreMigration;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRunStoreMigration;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
@@ -292,6 +293,7 @@ final class Plugin {
 		if ( self::proCustomTablesMigrationsAllowed() ) {
 			$migrationCoordinator->register( new CreateMigrationRunStoreMigration( $database ) );
 			$migrationCoordinator->register( new CreateMigrationExecutionConfirmationStoreMigration( $database ) );
+			$migrationCoordinator->register( new CreateMigrationReviewSnapshotStoreMigration( $database ) );
 		}
 		$migrationCoordinator->runPending();
 
@@ -330,6 +332,7 @@ final class Plugin {
 			LocalBackupRecoveryVerificationProvider::class,
 			LocalBackupManifestVerifier::class,
 			CreateMigrationRunStoreMigration::class,
+			CreateMigrationReviewSnapshotStoreMigration::class,
 			WordPressCt1SchemaIntrospector::class,
 		] as $class ) {
 			if ( ! class_exists( $class ) ) {

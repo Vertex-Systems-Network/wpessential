@@ -17,9 +17,12 @@ use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\TrustedRecoveryVerificationProviderInterface;
+use WPEssential\Modules\CustomTables\Migration\Review\Persistence\WpdbMigrationReviewSnapshotRepository;
+use WPEssential\Modules\CustomTables\Migration\Review\R1MigrationRunPreparationService;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\MigrationRunRecordCodec;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunTransitionService;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\WpdbMigrationRunRepository;
+use WPEssential\Modules\CustomTables\Migration\TableSchemaDiffPlanner;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
@@ -87,6 +90,21 @@ final readonly class CustomTablesRuntimeCompositionFactory {
 			database: $this->database,
 			schema: $schema,
 			compiler: new ProviderDdlPreviewCompiler(),
+		);
+	}
+
+	/** ADR-0225 run preparation over the same run repository; only the final repository-owned introspector observes. */
+	public function createR1MigrationRunPreparationService( WordPressCt1SchemaIntrospector $schema ): R1MigrationRunPreparationService {
+		$runs = $this->runs();
+
+		return new R1MigrationRunPreparationService(
+			schema: $schema,
+			planner: new TableSchemaDiffPlanner(),
+			compiler: new ProviderDdlPreviewCompiler(),
+			database: $this->database,
+			runs: $runs,
+			transitions: new MigrationRunTransitionService( $runs ),
+			snapshots: new WpdbMigrationReviewSnapshotRepository( $this->database, $this->siteId ),
 		);
 	}
 
