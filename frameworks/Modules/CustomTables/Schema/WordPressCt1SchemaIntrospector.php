@@ -13,7 +13,7 @@ use JsonException;
 use RuntimeException;
 use WPEssential\Modules\CustomTables\Definition\TableSchemaDescriptor;
 
-final class WordPressCt1SchemaIntrospector {
+final class WordPressCt1SchemaIntrospector implements ObservedSchemaReaderInterface {
 
 	private const SERVER_MYSQL   = 'mysql';
 	private const SERVER_MARIADB = 'mariadb';
