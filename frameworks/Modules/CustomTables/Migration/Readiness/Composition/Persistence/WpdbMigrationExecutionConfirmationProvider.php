@@ -35,6 +35,7 @@ final readonly class WpdbMigrationExecutionConfirmationProvider implements Trust
 		$this->table = $prefix . 'wpe_custom_table_migration_confirmations';
 	}
 
+	/** @phpstan-impure Reads the current database row on every call. */
 	public function confirmationFor( string $runId ): ?BoundMigrationExecutionConfirmation {
 		if ( preg_match( '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $runId ) !== 1 ) {
 			throw new InvalidArgumentException( 'Custom Tables execution confirmation lookup run id must be a canonical UUID.' );

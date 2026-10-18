@@ -19,6 +19,7 @@ use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetad
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTablesRuntimeCompositionFactory;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\CreateMigrationExecutionConfirmationStoreMigration;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
+use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationIssuer;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRunStoreMigration;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
@@ -207,6 +208,10 @@ final class Plugin {
 						siteId: $siteId,
 					),
 				);
+				$services->set(
+					'custom-tables.execution-confirmation.issuer',
+					new WpdbMigrationExecutionConfirmationIssuer( $database, $confirmations, $abilityPolicy, $siteId ),
+				);
 			}
 		}
 		if ( $migrationCoordinator instanceof MigrationCoordinator ) {
@@ -314,6 +319,7 @@ final class Plugin {
 			CustomTablesRuntimeCompositionFactory::class,
 			CreateMigrationExecutionConfirmationStoreMigration::class,
 			WpdbMigrationExecutionConfirmationProvider::class,
+			WpdbMigrationExecutionConfirmationIssuer::class,
 			FailClosedRecoveryVerificationProvider::class,
 			CreateMigrationRunStoreMigration::class,
 			WordPressCt1SchemaIntrospector::class,
