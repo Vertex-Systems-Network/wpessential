@@ -170,6 +170,16 @@ try {
     $sentinel = 'minimum-cell-fp86-preserve-v1';
     b6bAssert(update_option($sentinelKey, $sentinel) === true, 'Unable to persist disposable sentinel');
 
+    // Fixed synthetic values stay outside migration inputs; FP-94 verifies no runtime
+    // migration status, exception, stderr, error log or evidence emits their bytes.
+    foreach ([
+        'license' => 'P006_WAVE1U_LICENSE_TOKEN_DO_NOT_EMIT',
+        'vault' => 'P006_WAVE1U_VAULT_PLAINTEXT_DO_NOT_EMIT',
+        'private' => 'P006_WAVE1U_PRIVATE_USER_DATA_DO_NOT_EMIT',
+    ] as $kind => $value) {
+        b6bAssert(update_option('wpe_p006_u_fp94_' . $kind, $value, false), 'Unable to seed synthetic canary');
+    }
+
     $adapter = new \WPEssential\Platform\Database\NativeWpdbAdapter($wpdb);
     $realStore = new \WPEssential\Platform\Database\Migrations\WpdbMigrationStateStore($adapter);
     $targetTable = $prefix . 'wpe_custom_table_migration_runs';

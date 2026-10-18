@@ -7,6 +7,7 @@ on:
       - .github/workflows/p006-wave1u-minimum-evidence.yml
       - tools/p006/p006-wave1u-authorized-identity.php
       - tools/p006/p006-wave1u-fp86.php
+      - tools/p006/p006-wave1u-fp94.php
       - tools/p006/p006-wave1u-fp89.php
       - tools/p006/p006-wave1u-wordpress-setup.sh
       - tools/p006/p006-b6a-fp89-platform-api-candidate.php
@@ -271,6 +272,11 @@ jobs:
       WPE_P006_TABLE_PREFIX: wpep006b6b_
       WPE_P006_NETWORK_LOG: /tmp/p006-wave1u-fp86-network.log
       WPE_P006_EVIDENCE_FILE: ${{ github.workspace }}/artifacts/p006-wave1u/fp86.json
+      WPE_P006_FP86_EVIDENCE: ${{ github.workspace }}/artifacts/p006-wave1u/fp86.json
+      WPE_P006_FP86_STDOUT: ${{ github.workspace }}/artifacts/p006-wave1u/fp86-stdout.txt
+      WPE_P006_FP86_STDERR: ${{ github.workspace }}/artifacts/p006-wave1u/fp86-stderr.txt
+      WPE_P006_FP86_ERROR_LOG: ${{ github.workspace }}/artifacts/p006-wave1u/fp86-php-error.log
+      WPE_P006_FP94_EVIDENCE: ${{ github.workspace }}/artifacts/p006-wave1u/fp94.json
     steps:
       - name: Checkout exact source head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -293,6 +299,7 @@ jobs:
         run: |
           set -euo pipefail
           php -l tools/p006/p006-wave1u-fp86.php
+          php -l tools/p006/p006-wave1u-fp94.php
           bash -n tools/p006/p006-b6b-wordpress-setup.sh
       - name: Prepare isolated WordPress and deny outbound HTTP
         run: bash tools/p006/p006-b6b-wordpress-setup.sh
@@ -300,13 +307,21 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/p006-wave1u
-          php tools/p006/p006-wave1u-fp86.php
+          : > "$WPE_P006_FP86_ERROR_LOG"
+          php -d log_errors=1 -d display_errors=0 -d error_log="$WPE_P006_FP86_ERROR_LOG" tools/p006/p006-wave1u-fp86.php > "$WPE_P006_FP86_STDOUT" 2> "$WPE_P006_FP86_STDERR"
           jq -e '.status == "PASS" and .fixture_id == "FP-86" and .formal_fixture_executed == true and .authorization == "GOV-P001-CF-TEMP-019" and .sentinel_preserved == true and .second_fresh_run.marker_count == 1 and .network_attempt_count == 0' artifacts/p006-wave1u/fp86.json
-      - name: Upload immutable FP-86 evidence
+      - name: Verify FP-94 migration diagnostics and redaction surfaces
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-wave1u-fp94.php
+          jq -e '.status == "PASS" and .fixture_id == "FP-94" and .formal_fixture_executed == true and .authorization == "GOV-P001-CF-TEMP-019" and .controlled_failure_observed == true and .sensitive_value_redacted == true and (.captured_surfaces | length) == 6' artifacts/p006-wave1u/fp94.json
+      - name: Upload immutable FP-86 and FP-94 evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: p006-wave1u-fp86-${{ github.run_id }}
-          path: artifacts/p006-wave1u/fp86.json
+          path: |
+            artifacts/p006-wave1u/fp86.json
+            artifacts/p006-wave1u/fp94.json
           if-no-files-found: error
           retention-days: 14
       - name: Verify tracked source remains clean
