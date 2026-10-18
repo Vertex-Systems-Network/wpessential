@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use InvalidArgumentException;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\Policy\MigrationExecutionAuthorizationPolicyAdapter;
+use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
+use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\TrustedRecoveryVerificationProviderInterface;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\MigrationRunRecordCodec;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\WpdbMigrationRunRepository;
@@ -33,12 +35,16 @@ final readonly class CustomTablesRuntimeCompositionFactory {
 		}
 	}
 
+	/**
+	 * Exclusive trust root: only the final, repository-owned trusted providers are accepted,
+	 * so alternate code cannot inject a custom implementation of the trusted marker interfaces.
+	 */
 	public static function production(
 		DatabaseAdapterInterface $database,
 		PolicyEngine $policy,
 		WordPressMetadataPreconditionFactsProvider $metadataFacts,
-		TrustedRecoveryVerificationProviderInterface $recoveryVerification,
-		TrustedMigrationExecutionConfirmationProviderInterface $confirmations,
+		FailClosedRecoveryVerificationProvider $recoveryVerification,
+		WpdbMigrationExecutionConfirmationProvider $confirmations,
 		int $networkId,
 		int $siteId,
 	): self {
