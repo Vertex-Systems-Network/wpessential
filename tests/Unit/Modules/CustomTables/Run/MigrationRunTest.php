@@ -16,7 +16,7 @@ final class MigrationRunTest extends TestCase
 
     public function testReviewedLifecycleCanAdvanceDeterministically(): void
     {
-        $run = $this->run();
+        $run = $this->fixtureRun();
 
         $run = $run->transition(MigrationRunState::AwaitingReview)
             ->transition(MigrationRunState::Approved)
@@ -33,7 +33,7 @@ final class MigrationRunTest extends TestCase
 
     public function testCancellationIsUnavailableAfterMutationBoundary(): void
     {
-        $run = $this->run()
+        $run = $this->fixtureRun()
             ->transition(MigrationRunState::AwaitingReview)
             ->transition(MigrationRunState::Approved)
             ->transition(MigrationRunState::Revalidating)
@@ -47,7 +47,7 @@ final class MigrationRunTest extends TestCase
 
     public function testTerminalStateCannotTransition(): void
     {
-        $run = $this->run()->transition(MigrationRunState::CancelledBeforeMutation);
+        $run = $this->fixtureRun()->transition(MigrationRunState::CancelledBeforeMutation);
 
         self::assertTrue($run->state->terminal());
         self::assertFalse($run->canTransitionTo(MigrationRunState::AwaitingReview));
@@ -71,7 +71,7 @@ final class MigrationRunTest extends TestCase
         );
     }
 
-    private function run(): MigrationRun
+    private function fixtureRun(): MigrationRun
     {
         return new MigrationRun(
             id: self::RUN_ID,

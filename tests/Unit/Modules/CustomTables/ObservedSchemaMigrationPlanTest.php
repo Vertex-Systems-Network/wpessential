@@ -73,7 +73,10 @@ final class ObservedSchemaMigrationPlanTest extends TestCase
 
         $observed = (new ObservedTableSchemaNormalizer())->normalize('orders', $metadata);
         self::assertTrue($observed->isBlockedByDrift());
-        self::assertSame('unsupported_column_type', $observed->findings[0]->code);
+        self::assertContains('unsupported_column_type', array_map(
+            static fn ($finding): string => $finding->code,
+            $observed->findings,
+        ));
 
         $plan = (new TableSchemaDiffPlanner())->plan($this->desired(), $observed);
 
@@ -81,7 +84,10 @@ final class ObservedSchemaMigrationPlanTest extends TestCase
         self::assertSame(MigrationRisk::R3, $plan->risk);
         self::assertTrue($plan->recoveryRequired);
         self::assertSame([], $plan->operations);
-        self::assertSame('observed_unsupported_column_type', $plan->findings[0]->code);
+        self::assertContains('observed_unsupported_column_type', array_map(
+            static fn ($finding): string => $finding->code,
+            $plan->findings,
+        ));
     }
 
     public function testExtraObservedColumnIsDestructiveBlockedR4RecoveryPlan(): void

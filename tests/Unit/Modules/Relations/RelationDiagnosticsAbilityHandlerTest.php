@@ -41,7 +41,7 @@ final class RelationDiagnosticsAbilityHandlerTest extends TestCase
     {
         $definitions = new InMemoryDefinitionRepository();
         $valid = $this->definition();
-        $definitions->save(new Definition(
+        $corrupt = new Definition(
             id: $valid->id,
             slug: $valid->slug,
             type: $valid->type,
@@ -52,7 +52,11 @@ final class RelationDiagnosticsAbilityHandlerTest extends TestCase
             revision: $valid->revision,
             dependencies: [],
             checksum: str_repeat('0', 64),
-        ));
+        );
+        // Simulate data corrupted outside the repository's validated write path.
+        // Never weaken InMemoryDefinitionRepository::save() checksum validation.
+        (new \ReflectionProperty(InMemoryDefinitionRepository::class, 'definitions'))
+            ->setValue($definitions, [$corrupt->id => $corrupt]);
 
         $result = $this->handler($definitions)->handle(
             ['definition_id' => self::RELATION_ID],

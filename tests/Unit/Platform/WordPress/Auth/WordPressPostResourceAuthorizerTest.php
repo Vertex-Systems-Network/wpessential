@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Platform\WordPress\Auth;
 
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Platform\Auth\ExecutionContext;
@@ -68,7 +69,7 @@ final class WordPressPostResourceAuthorizerTest extends TestCase
         $authorizer->assertCanEdit(new ExecutionContext(new Principal(7, 'service'), 3, networkId: 2), 91);
     }
 
-    /** @dataProvider mismatchedContexts */
+    #[DataProvider('mismatchedContexts')]
     public function testMismatchedActiveContextFailsBeforeCapabilityEvaluation(ExecutionContext $context): void
     {
         $calls = 0;

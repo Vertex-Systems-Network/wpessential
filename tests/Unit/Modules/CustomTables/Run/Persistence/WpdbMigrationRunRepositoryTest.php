@@ -38,7 +38,7 @@ final class WpdbMigrationRunRepositoryTest extends TestCase
     {
         $database = new MigrationRunDatabaseFake();
         $repository = new WpdbMigrationRunRepository($database, new MigrationRunRecordCodec(), 7);
-        $run = self::run();
+        $run = self::fixtureRun();
 
         $created = $repository->create($run);
         self::assertSame($run->fingerprint(), $created->fingerprint());
@@ -54,7 +54,7 @@ final class WpdbMigrationRunRepositoryTest extends TestCase
     {
         $database = new MigrationRunDatabaseFake();
         $repository = new WpdbMigrationRunRepository($database, new MigrationRunRecordCodec(), 7);
-        $run = self::run();
+        $run = self::fixtureRun();
         $repository->create($run);
         $database->casResult = 0;
 
@@ -62,7 +62,7 @@ final class WpdbMigrationRunRepositoryTest extends TestCase
         $repository->compareAndSwap($run->transition(MigrationRunState::AwaitingReview), 1);
     }
 
-    private static function run(): MigrationRun
+    private static function fixtureRun(): MigrationRun
     {
         return new MigrationRun(
             id: '11111111-1111-4111-8111-111111111111',

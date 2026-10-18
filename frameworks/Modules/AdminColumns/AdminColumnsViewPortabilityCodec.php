@@ -216,7 +216,7 @@ final readonly class AdminColumnsViewPortabilityCodec {
 		$sets = [];
 		foreach ( self::REMAP_KEYS as $key ) {
 			$value = $remaps[ $key ] ?? [];
-			if ( ! is_array( $value ) || array_is_list( $value ) || count( $value ) > 200 ) {
+			if ( ! is_array( $value ) || ( $value !== [] && array_is_list( $value ) ) || count( $value ) > 200 ) {
 				throw new InvalidArgumentException( sprintf( 'Portable View remap set "%s" is malformed or over budget.', $key ) );
 			}
 			$normalized   = [];

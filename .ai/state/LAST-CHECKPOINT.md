@@ -4,7 +4,7 @@
 
 - Audit: full `WordPress` ruleset on PSR-4/camelCase code gave ~135k violations; 113k were `phpcbf`-fixable, ~10k contradicted ADR-0214 ABI. Manual indentation batches in #1416 could not converge; `NO_VALID_WORK_SLOT` was a plan defect.
 - Fix on `claude/pensive-wozniak-qbgl24`: ADR-0223 profile, one-shot phpcbf (token-stream verified, no behavior change), security sniffs resolved, PHPStan `treatPhpDocTypesAsCertain:false` + 138-entry baseline. Local: PHPCS 0 errors, PHPStan 0, unit/smoke/script exit codes identical to main.
-- Next: PHPUnit baseline failure on main (82 files) — re-apply #1415 recovery scope. #1102/#858 parked.
+- #1415 PHPUnit recovery re-applied without #1416 indentation commits: PHPUnit 1421/1421 local. Next: exact-head CI on PHP 8.2, then supersede #1416. #1102/#858 parked.
 
 # 2026-10-17 — P-006 Wave 1A independent review merged; shared-truth closeout
 

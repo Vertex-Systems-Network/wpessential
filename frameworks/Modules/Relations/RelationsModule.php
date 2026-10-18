@@ -191,6 +191,15 @@ final class RelationsModule implements ModuleInterface {
 			$migrations->runPending();
 		}
 
+		// A second boot may recheck idempotent migrations; it must not
+		// register the canonical admin controller twice. Reject foreign seams.
+		if ( $services->has( 'module.relations.admin' ) ) {
+			if ( ! $services->get( 'module.relations.admin' ) instanceof RelationAdminController ) {
+				throw new LogicException( 'Relations admin service must use the canonical controller.' );
+			}
+			return;
+		}
+
 		$abilities = $services->get( 'platform.abilities' );
 		$contexts  = $services->get( 'platform.abilities.contexts' );
 		if ( ! $abilities instanceof AbilityRegistry || ! $contexts instanceof WordPressExecutionContextFactory ) {

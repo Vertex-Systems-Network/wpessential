@@ -70,7 +70,7 @@ final readonly class QueryFieldPredicateResolver {
 			throw $this->unsupported( '$.filter', 'Field predicate resolution did not find a direct Field predicate.' );
 		}
 		if ( $anchorIds === null || ! is_int( $anchorIndex ) || $anchorIds === [] ) {
-			throw $this->unsupported( '$.filter', 'Field predicate V1 requires an explicit non-empty post.id eq/in anchor set.' );
+			throw $this->unsupported( '$.filter', 'Field predicate V1 requires an explicit non-empty post.id eq/in anchor set (finite post-id anchor).' );
 		}
 		if ( count( $anchorIds ) > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS ) {
 			throw new QueryPlanningException(

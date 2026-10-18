@@ -138,7 +138,7 @@ final class PostMetaValueStoreTest extends TestCase
         $field = $this->field([
             'key' => 'headline',
             'type' => 'text',
-            'required' => true,
+            'settings' => ['required' => true],
         ]);
 
         try {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\Fields;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\Fields\FieldGroupDefinitionNormalizer;
 use WPEssential\Modules\Fields\FieldGroupRuntimeStorageProjection;
@@ -84,7 +85,7 @@ final class FieldRuntimeStorageProjectionTest extends TestCase
         self::assertFalse($fieldRuntime['show_in_rest']);
     }
 
-    /** @dataProvider unsupportedStorageModeProvider */
+    #[DataProvider('unsupportedStorageModeProvider')]
     public function testRuntimePostMetaProjectionRejectsNonNativePostMetaModes(string $mode): void
     {
         $group = (new FieldGroupDefinitionNormalizer())->normalize([

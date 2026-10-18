@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\CustomTables;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\CustomTables\Definition\TableDefinitionCompiler;
 use WPEssential\Platform\Definitions\Definition;
@@ -69,7 +70,7 @@ final class TableDefinitionCompilerTest extends TestCase
         self::assertNotSame($baseline->compatibilityFingerprint, $changed->compatibilityFingerprint);
     }
 
-    /** @dataProvider invalidDefinitionEnvelopeProvider */
+    #[DataProvider('invalidDefinitionEnvelopeProvider')]
     public function testRejectsInvalidDefinitionEnvelope(
         string $type,
         int $surface,
@@ -101,7 +102,7 @@ final class TableDefinitionCompilerTest extends TestCase
         yield 'dependency channel' => ['table', 7, 1, DefinitionStatus::Published, [['type' => 'provider', 'id' => 'mysql']]];
     }
 
-    /** @dataProvider invalidPayloadMutationProvider */
+    #[DataProvider('invalidPayloadMutationProvider')]
     public function testRejectsMalformedOrExecutablePayload(callable $mutate): void
     {
         $payload = $this->payload();

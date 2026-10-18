@@ -33,6 +33,6 @@ The AI plan responded by hand-normalizing indentation in 6–35 file batches (PR
 
 ## Consequences
 
-- PHP Quality now reaches PHPUnit. `main` has a **BASELINE FAILURE** there (e.g. `CustomPostTypeValidationServiceTest` overriding final `TestCase::status()`, 82 failing test files) — the PHPUnit-recovery scope of Issue #1415 / PR #1416 is the next milestone and must be re-applied on top of this normalization, without its indentation commits.
+- PHP Quality now reaches PHPUnit. The PHPUnit-recovery scope of Issue #1415 (`7a42187..1046c8c`, 62 paths) was re-applied on top of the normalization by 3-way merge in phpcbf-normalized space, without #1416's indentation commits: **1,421 tests / 7,489 assertions PASS** locally.
 - New code must pass PHPCS with zero errors; run `vendor/bin/phpcbf` before committing instead of hand-formatting.
 - Re-enabling an excluded sniff requires a new ADR.

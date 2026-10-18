@@ -40,7 +40,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 {
     public function testCompositionCanBeReadyWhileExecutionRemainsHardDisabled(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run)),
             $run,
@@ -54,7 +54,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testStaleConfirmationFailsClosedAgainstRunRevision(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $confirmation = new BoundMigrationExecutionConfirmation(
             $run->id,
             $run->planFingerprint,
@@ -71,7 +71,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testMissingConfirmationFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(self::service($run), $run);
 
         self::assertBlocked($package, 'confirmation_missing');
@@ -80,7 +80,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testConfirmationActorMismatchFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $confirmation = new BoundMigrationExecutionConfirmation(
             $run->id,
             $run->planFingerprint,
@@ -97,7 +97,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testCapabilityDenialFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run), capabilityAllowed: false),
             $run,
@@ -108,7 +108,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testRowScanningPreconditionIsNotAllowlisted(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run)),
             $run,
@@ -126,7 +126,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testMetadataFactsProviderFailureFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $metadata = new FixedMetadataFactsProvider(new MetadataPreconditionFacts(true), fail: true);
         $package = self::evaluate(
             self::service($run, self::confirmation($run), metadataFacts: $metadata),
@@ -139,7 +139,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testDescriptorRunMismatchFailsClosedBeforeTrustedMetadataLookup(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $descriptor = self::descriptor($run, revision: $run->targetRevision + 1);
         $metadata = new FixedMetadataFactsProvider(new MetadataPreconditionFacts(true));
         $package = self::evaluate(
@@ -154,7 +154,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testNetworkScopeMismatchFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run)),
             $run,
@@ -166,7 +166,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testSiteScopeMismatchFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run)),
             $run,
@@ -178,7 +178,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testMissingRecoveryEvidenceFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run), recoveryAvailable: false),
             $run,
@@ -191,7 +191,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testR3RiskRemainsUnsupportedEvenWithOtherwiseValidEvidence(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $package = self::evaluate(
             self::service($run, self::confirmation($run)),
             $run,
@@ -203,7 +203,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
 
     public function testCurrentGenerationMismatchFailsClosed(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $current = new MigrationGenerationStamp(
             planFingerprint: $run->planFingerprint,
             sourceObservedFingerprint: str_repeat('d', 64),
@@ -307,7 +307,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
         );
     }
 
-    private static function run(): MigrationRun
+    private static function fixtureRun(): MigrationRun
     {
         return new MigrationRun(
             id: '11111111-1111-4111-8111-111111111111',

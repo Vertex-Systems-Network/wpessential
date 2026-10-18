@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 
+if ( ! defined( 'ABSPATH' ) && PHP_SAPI === 'cli' ) {
+	// Composer loads this file outside WordPress for CLI quality and test tools.
+	// Do not register WordPress wrappers during CLI tool bootstrap.
+	return;
+}
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

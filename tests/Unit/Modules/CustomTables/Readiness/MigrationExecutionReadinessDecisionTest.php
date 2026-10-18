@@ -26,7 +26,7 @@ final class MigrationExecutionReadinessDecisionTest extends TestCase
 {
     public function testAllExecutionFreeFactsCanProduceReadyDecision(): void
     {
-        $run = self::run(MigrationRunState::Revalidating);
+        $run = self::fixtureRun(MigrationRunState::Revalidating);
         $preconditions = new PreconditionReport([
             new PreconditionEvaluation('table_exists', PreconditionOutcome::Satisfied),
         ]);
@@ -53,7 +53,7 @@ final class MigrationExecutionReadinessDecisionTest extends TestCase
 
     public function testUnsafeOrIncompleteFactsFailClosedWithDeterministicReasons(): void
     {
-        $run = self::run(MigrationRunState::Approved);
+        $run = self::fixtureRun(MigrationRunState::Approved);
         $preconditions = new PreconditionReport([
             new PreconditionEvaluation('row_count', PreconditionOutcome::Blocked),
         ]);
@@ -94,7 +94,7 @@ final class MigrationExecutionReadinessDecisionTest extends TestCase
         ], $decision->reasons);
     }
 
-    private static function run(MigrationRunState $state): MigrationRun
+    private static function fixtureRun(MigrationRunState $state): MigrationRun
     {
         return new MigrationRun(
             id: '11111111-1111-4111-8111-111111111111',

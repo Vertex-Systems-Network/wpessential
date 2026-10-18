@@ -172,7 +172,7 @@ final class StatusModule implements ModuleInterface {
 			StatusAdminAuthoringHandler::STATUS,
 		];
 		foreach ( $actions as $action ) {
-			$name = 'wpessential/status/admin/' . $action;
+			$name = 'wpessential/status/admin-' . $action;
 			if ( $abilities->descriptor( $name ) !== null ) {
 				throw new LogicException( 'Status admin Ability is already registered.' );
 			}

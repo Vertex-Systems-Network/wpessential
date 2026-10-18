@@ -7,12 +7,12 @@ observed_main_source: "2026-10-18 owner-directed AI plan audit on main 30ad00c (
 active_issue: "#1417"
 active_pr: null
 active_branch: claude/pensive-wozniak-qbgl24
-current_milestone: "ADR-0223 PHP quality gate: WPCS profile + one-shot phpcbf + PHPStan baseline; then PHPUnit baseline recovery (#1415 scope) on top."
+current_milestone: "ADR-0223 PHP quality gate + #1415 PHPUnit recovery re-applied: PHPCS 0 errors, PHPStan 0, PHPUnit 1421/1421 local."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Land ADR-0223 normalization (PHPCS 0 errors, PHPStan 0 new); then re-apply only the PHPUnit-recovery scope of #1415/#1416 (not its indentation commits) so PHP Quality turns fully green."
+next_safe_action: "Open PR for claude/pensive-wozniak-qbgl24, verify exact-head CI on PHP 8.2; then close #1416 as superseded and resume the next safe source milestone from the queue."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
-next_planned_slot: PHPUNIT_BASELINE_RECOVERY
+next_planned_slot: EXACT_HEAD_CI_VERIFICATION
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

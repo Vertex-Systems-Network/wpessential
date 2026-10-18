@@ -20,9 +20,9 @@ final readonly class AdminColumnsPersonalPreferenceAbilityHandler implements Abi
 	public const SAVE  = 'save';
 	public const RESET = 'reset';
 
-	public const ABILITY_LOAD  = 'wpessential/admin-columns/personal-preference/load';
-	public const ABILITY_SAVE  = 'wpessential/admin-columns/personal-preference/save';
-	public const ABILITY_RESET = 'wpessential/admin-columns/personal-preference/reset';
+	public const ABILITY_LOAD  = 'wpessential/admin-columns/personal-preference-load';
+	public const ABILITY_SAVE  = 'wpessential/admin-columns/personal-preference-save';
+	public const ABILITY_RESET = 'wpessential/admin-columns/personal-preference-reset';
 
 	public const AJAX_LOAD  = 'admin-columns.personal.preference.load';
 	public const AJAX_SAVE  = 'admin-columns.personal.preference.save';

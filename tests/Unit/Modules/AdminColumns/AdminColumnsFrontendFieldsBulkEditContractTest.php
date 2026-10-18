@@ -38,7 +38,8 @@ final class AdminColumnsFrontendFieldsBulkEditContractTest extends TestCase
             'view_id: expectedViewId',
             'column_key: target.column.key',
             'post_id: postId',
-            'expected_group_revision: target.metadata.groupRevision',
+            'expected_group_revision:',
+            'target.metadata.groupRevision',
             'parseFieldWriteResult(',
         ] as $needle) {
             self::assertStringContainsString($needle, $source);

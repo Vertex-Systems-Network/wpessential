@@ -56,7 +56,7 @@ final class DashboardWidgetPresetPortabilityReadServiceTest extends TestCase
         self::assertNotSame($first['sha256'], $revision['sha256']);
         self::assertSame(2, $revision['payload']['revision']);
 
-        $repo->save($this->preset(self::PRESET, 2, [self::WIDGET_B, self::WIDGET_A]));
+        $repo->save($this->preset(self::PRESET, 3, [self::WIDGET_B, self::WIDGET_A]));
         $order = $service->snapshot(self::PRESET);
         self::assertNotSame($revision['sha256'], $order['sha256']);
         self::assertSame([self::WIDGET_B, self::WIDGET_A], $order['payload']['widget_definition_ids']);
@@ -70,7 +70,7 @@ final class DashboardWidgetPresetPortabilityReadServiceTest extends TestCase
         self::assertNull($service->snapshot('99999999-9999-4999-8999-999999999999'));
         self::assertNull($service->snapshot(self::WIDGET_A));
 
-        $repo->save($this->preset(self::PRESET, 1, [self::WIDGET_A], owner: 9));
+        $repo->save($this->preset(self::PRESET, 2, [self::WIDGET_A], owner: 9));
         self::assertNull($service->snapshot(self::PRESET));
 
         $repo->save($this->preset(self::PRESET, 3, ['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa']));

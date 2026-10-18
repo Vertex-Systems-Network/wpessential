@@ -60,7 +60,7 @@ final class StatusTransitionExecutorTest extends TestCase
         self::assertFalse($result->programmatic);
     }
 
-    public function testStaleExpectedStatusFailsBeforeAuthorizationOrMutation(): void
+    public function testStaleExpectedStatusFailsAfterObjectAuthorizationBeforeMutation(): void
     {
         $state = 'draft';
         $metaCaps = [];
@@ -79,7 +79,7 @@ final class StatusTransitionExecutorTest extends TestCase
             $executor->execute($this->context(), self::POST_ID, 'pending', 'publish');
             self::fail('Stale expected status must fail closed.');
         } catch (RuntimeException) {
-            self::assertSame([], $metaCaps);
+            self::assertSame([['edit_post', self::POST_ID]], $metaCaps);
             self::assertSame([], $edgeCaps);
             self::assertSame([], $mutations);
             self::assertSame('draft', $state);
@@ -218,7 +218,7 @@ final class StatusTransitionExecutorTest extends TestCase
             $executor->execute($this->context(), self::POST_ID, 'draft', 'review-ready');
             self::fail('Inapplicable WPE Status target must fail closed.');
         } catch (RuntimeException) {
-            self::assertSame([], $metaCaps);
+            self::assertSame([['edit_post', self::POST_ID]], $metaCaps);
             self::assertSame([], $mutations);
         }
     }
