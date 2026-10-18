@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
 use WPEssential\Contracts\CapabilityCheckerInterface;
+use WPEssential\Modules\CustomTables\Migration\Execution\R1AdditiveExecutionCoordinator;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTablesRuntimeCompositionFactory;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
@@ -38,6 +39,30 @@ final class CustomTablesRuntimeCompositionFactoryTest extends TestCase
         );
 
         self::assertInstanceOf(RuntimeCompositionReadinessService::class, $factory->create());
+    }
+
+    public function testFactoryBuildsR1CoordinatorOnlyFromFinalRepositoryIntrospector(): void
+    {
+        $database = new RuntimeCompositionDatabaseFake();
+        $introspector = new WordPressCt1SchemaIntrospector(new RuntimeCompositionWpdbFake());
+        $factory = CustomTablesRuntimeCompositionFactory::production(
+            database: $database,
+            policy: new PolicyEngine(self::capabilityChecker()),
+            metadataFacts: new WordPressMetadataPreconditionFactsProvider($introspector),
+            recoveryVerification: new FailClosedRecoveryVerificationProvider(),
+            confirmations: new WpdbMigrationExecutionConfirmationProvider($database, 7),
+            networkId: 2,
+            siteId: 7,
+        );
+
+        self::assertInstanceOf(R1AdditiveExecutionCoordinator::class, $factory->createR1AdditiveExecutionCoordinator($introspector));
+
+        $parameters = (new ReflectionMethod(CustomTablesRuntimeCompositionFactory::class, 'createR1AdditiveExecutionCoordinator'))->getParameters();
+        self::assertCount(1, $parameters);
+        $type = $parameters[0]->getType();
+        self::assertInstanceOf(\ReflectionNamedType::class, $type);
+        self::assertSame(WordPressCt1SchemaIntrospector::class, $type->getName());
+        self::assertTrue((new ReflectionClass($type->getName()))->isFinal());
     }
 
     public function testCanonicalFactoryCreateDoesNotAcceptCallerSuppliedTrustProviders(): void
