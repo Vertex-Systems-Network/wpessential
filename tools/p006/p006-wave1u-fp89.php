@@ -391,6 +391,28 @@ function tFp89(array $identity, array $in): array {
     ];
 }
 
+/** Test-only older-state candidate; never counts or executes FP-90. */
+function tOlderSnapshot(array $identity, array $in): array {
+    $artifact = tTransport($identity, $in, 'F0', 'P_API');
+    tResetLogs($in);
+    tBoot($in);
+    $snapshot = tSnapshot();
+    tAssertIds($snapshot, P006T_FREE_MIGRATIONS, 'Older SQL snapshot candidate');
+    tAssertSentinel($snapshot);
+    tAssertProTables($snapshot, false);
+    $compat = tCompatibility();
+    tAssert(is_array($compat) && ($compat['state'] ?? null) === 'platform_api_too_old', 'Candidate compatibility drift');
+    tAssert(($compat['premium_migrations_allowed'] ?? null) === false, 'Candidate invoked Pro migration');
+    tAssert(tNetwork($in) === [], 'Outbound HTTP during candidate snapshot verification');
+    return [
+        'status' => 'PASS', 'phase' => 'older-snapshot-candidate', 'cell_id' => $in['cell'],
+        'environment' => tEnvironment($in), 'logical_pair' => ['free' => 'F0', 'pro' => 'P_API'],
+        'artifact_identity' => $artifact, 'snapshot' => $snapshot,
+        'formal_fixture_executed' => false, 'fixture_accounting_changed' => false,
+        'network_attempt_count' => 0,
+    ];
+}
+
 $mode = trim((string) getenv('WPE_P006_EXECUTION_MODE'));
 try {
     $identity = tIdentity();
@@ -401,6 +423,7 @@ try {
         'install' => tInstall($identity, $in),
         'activate-both' => tInitialActivate($identity, $in, true),
         'fp89' => tFp89($identity, $in),
+        'older-snapshot-candidate' => tOlderSnapshot($identity, $in),
         default => tFail('Usage: <install|activate-both|fp89>'),
     };
     if ($mode === 'fp89') {

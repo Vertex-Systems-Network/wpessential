@@ -237,6 +237,61 @@ jobs:
           path: artifacts/p006-wave1u/fp89/*.json
           if-no-files-found: error
           retention-days: 14
+      - name: Establish a separate test-only older SQL snapshot candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$WPE_TEST_WP_DB" = wpessential_test
+          ids="$(docker ps --filter 'ancestor=mysql:8.4' --format '{{.ID}}')"
+          test "$(printf '%s\n' "$ids" | sed '/^$/d' | wc -l)" -eq 1
+          mysql_container="$(printf '%s\n' "$ids" | sed '/^$/d')"
+          test -n "$mysql_container"
+          mkdir -p artifacts/p006-wave1u/fp90-candidate
+          snapshot_dir="$GITHUB_WORKSPACE/artifacts/p006-wave1u/fp90-candidate"
+          dump_sql() {
+            docker exec -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" "$mysql_container" mysqldump \
+              -u"$WPE_TEST_MYSQL_USER" --default-character-set=utf8mb4 --single-transaction \
+              --quick --hex-blob --skip-comments --skip-add-locks --skip-disable-keys \
+              --skip-triggers --order-by-primary --complete-insert --skip-extended-insert \
+              --set-gtid-purged=OFF --no-tablespaces "$WPE_TEST_WP_DB"
+          }
+          replay_sql() {
+            local file="$1"
+            docker exec -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" "$mysql_container" \
+              mysql -u"$WPE_TEST_MYSQL_USER" \
+              -e 'DROP DATABASE IF EXISTS `wpessential_test`; CREATE DATABASE `wpessential_test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+            docker exec -i -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" "$mysql_container" \
+              mysql -u"$WPE_TEST_MYSQL_USER" "$WPE_TEST_WP_DB" < "$file"
+          }
+          WPE_P006_EXECUTION_MODE=older-snapshot-candidate WPE_P006_EVIDENCE_FILE=older-before.json php tools/p006/p006-wave1u-fp89.php > /dev/null
+          dump_sql > "$snapshot_dir/seed.sql"
+          test -s "$snapshot_dir/seed.sql"
+          ! grep -Eq '^(CREATE DATABASE|USE )' "$snapshot_dir/seed.sql"
+          ! grep -Eq '220\.custom_tables|221\.custom_tables|wpe_custom_table_migration_(runs|confirmations)' "$snapshot_dir/seed.sql"
+          replay_sql "$snapshot_dir/seed.sql"
+          WPE_P006_EXECUTION_MODE=older-snapshot-candidate WPE_P006_EVIDENCE_FILE=older-after-seed.json php tools/p006/p006-wave1u-fp89.php > /dev/null
+          dump_sql > "$snapshot_dir/older-state-candidate.sql"
+          replay_sql "$snapshot_dir/older-state-candidate.sql"
+          WPE_P006_EXECUTION_MODE=older-snapshot-candidate WPE_P006_EVIDENCE_FILE=older-after-accepted.json php tools/p006/p006-wave1u-fp89.php > /dev/null
+          dump_sql > "$snapshot_dir/fixed-point.sql"
+          cmp --silent "$snapshot_dir/older-state-candidate.sql" "$snapshot_dir/fixed-point.sql"
+          jq -e --slurpfile prior "$WPE_P006_EVIDENCE_DIR/older-after-seed.json" '.snapshot == $prior[0].snapshot and .formal_fixture_executed == false' "$WPE_P006_EVIDENCE_DIR/older-after-accepted.json"
+          sha="$(sha256sum "$snapshot_dir/older-state-candidate.sql" | cut -d' ' -f1)"
+          jq -n --arg source "$WPE_P006_SOURCE_SHA" --arg sha "$sha" \
+            --arg required 24178a1289fb5929eda850f488d932c94bbbddc5936a82cc26cb83979823b058 \
+            '{status:"PASS",classification:"TEST-ONLY NEW OLDER SQL SNAPSHOT CANDIDATE / FP-90 NOT FORMALLY EXECUTED",source_sha:$source,sql_sha256:$sha,prior_accepted_sql_sha256:$required,byte_identical_after_replay:true,formal_fixture_executed:false,fixture_accounting_changed:false}' \
+            > "$snapshot_dir/identity.json"
+      - name: Upload test-only snapshot candidate separately
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1u-fp90-candidate-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1u/fp90-candidate/older-state-candidate.sql
+            artifacts/p006-wave1u/fp90-candidate/identity.json
+            artifacts/p006-wave1u/fp89/older-after-seed.json
+            artifacts/p006-wave1u/fp89/older-after-accepted.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Verify tracked source remains clean
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
 
