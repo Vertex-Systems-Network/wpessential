@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use InvalidArgumentException;
+use WPEssential\Modules\CustomTables\Migration\Execution\R1AdditiveExecutionCoordinator;
+use WPEssential\Modules\CustomTables\Migration\ProviderDdlPreviewCompiler;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\Policy\MigrationExecutionAuthorizationPolicyAdapter;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
@@ -16,7 +18,9 @@ use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecov
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\TrustedRecoveryVerificationProviderInterface;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\MigrationRunRecordCodec;
+use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunTransitionService;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\WpdbMigrationRunRepository;
+use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
@@ -62,17 +66,35 @@ final readonly class CustomTablesRuntimeCompositionFactory {
 
 	public function create(): RuntimeCompositionReadinessService {
 		return new RuntimeCompositionReadinessService(
-			runs: new WpdbMigrationRunRepository(
-				$this->database,
-				new MigrationRunRecordCodec(),
-				$this->siteId,
-			),
+			runs: $this->runs(),
 			metadataFacts: $this->metadataFacts,
 			recoveryVerification: $this->recoveryVerification,
 			confirmations: $this->confirmations,
 			authorizationPolicy: new MigrationExecutionAuthorizationPolicyAdapter( $this->policy ),
 			networkId: $this->networkId,
 			siteId: $this->siteId,
+		);
+	}
+
+	/**
+	 * ADR-0224 coordinator over the same trusted readiness composition and run repository.
+	 * Only the final repository-owned introspector is accepted as the post-execution schema reader.
+	 */
+	public function createR1AdditiveExecutionCoordinator( WordPressCt1SchemaIntrospector $schema ): R1AdditiveExecutionCoordinator {
+		return new R1AdditiveExecutionCoordinator(
+			readiness: $this->create(),
+			transitions: new MigrationRunTransitionService( $this->runs() ),
+			database: $this->database,
+			schema: $schema,
+			compiler: new ProviderDdlPreviewCompiler(),
+		);
+	}
+
+	private function runs(): WpdbMigrationRunRepository {
+		return new WpdbMigrationRunRepository(
+			$this->database,
+			new MigrationRunRecordCodec(),
+			$this->siteId,
 		);
 	}
 }
