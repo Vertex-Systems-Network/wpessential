@@ -281,7 +281,7 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
             {
                 return $this->allowed
                     && $context->principal->userId === 7
-                    && $capability === 'manage_options';
+                    && $capability === 'wpessential_apply_table_migrations';
             }
         };
 

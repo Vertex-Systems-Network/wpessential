@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
+use WPEssential\Modules\CustomTables\CustomTablesCapabilities;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\ExecutionActorType;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\BoundMigrationExecutionConfirmation;
 use WPEssential\Platform\Auth\AuthorizationRequest;
@@ -34,7 +35,7 @@ final readonly class WpdbMigrationExecutionConfirmationIssuer {
 		private PolicyEngine $policy,
 		private int $siteId,
 		private string $ability = 'custom-tables.migration.execute',
-		private string $capability = 'manage_options',
+		private string $capability = CustomTablesCapabilities::APPLY_MIGRATIONS,
 	) {
 		if ( $this->siteId < 1 ) {
 			throw new InvalidArgumentException( 'Custom Tables execution confirmation issuer site id must be positive.' );

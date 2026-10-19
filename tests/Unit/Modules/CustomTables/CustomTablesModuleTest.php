@@ -64,7 +64,7 @@ final class CustomTablesModuleTest extends TestCase
             foreach ([ExecutionChannel::Rest, ExecutionChannel::Cli, ExecutionChannel::Ai, ExecutionChannel::Workflow] as $channel) {
                 self::assertFalse($descriptor->allows($channel), $name . ' must not allow ' . $channel->value);
             }
-            self::assertSame('manage_options', $descriptor->capability);
+            self::assertSame('wpessential_apply_table_migrations', $descriptor->capability);
             self::assertSame(7, $descriptor->ownerSurfaceId);
             self::assertTrue($descriptor->mutates);
             self::assertFalse(($descriptor->inputSchema['additionalProperties'] ?? true));
@@ -273,7 +273,7 @@ final class CustomTablesModuleTest extends TestCase
         $policy = new PolicyEngine(new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
             {
-                return $context->principal->userId === 7 && $capability === 'manage_options';
+                return $context->principal->userId === 7 && $capability === 'wpessential_apply_table_migrations';
             }
         });
         $database = new ModuleDatabaseFake();

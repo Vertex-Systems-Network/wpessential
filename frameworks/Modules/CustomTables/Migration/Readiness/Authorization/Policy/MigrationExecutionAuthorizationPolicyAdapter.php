@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use WPEssential\Modules\CustomTables\Migration\MigrationRisk;
+use WPEssential\Modules\CustomTables\CustomTablesCapabilities;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\ExecutionActorType;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\MigrationExecutionAuthorizationRequest;
 use WPEssential\Platform\Auth\AuthorizationRequest;
@@ -20,7 +21,7 @@ final readonly class MigrationExecutionAuthorizationPolicyAdapter {
 	public function __construct(
 		private PolicyEngine $policy,
 		private string $ability = 'custom-tables.migration.execute',
-		private string $capability = 'manage_options',
+		private string $capability = CustomTablesCapabilities::APPLY_MIGRATIONS,
 	) {
 	}
 
