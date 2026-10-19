@@ -47,7 +47,7 @@ P-006 B6a FP-89 Platform API candidate prerequisite: **Issue #1093 / PR #1094**
 P-006 B6b FP-86 fail-once marker prerequisite: **Issue #1095 / PR #1096**
 P-006 B6c FP-94 diagnostics/redaction prerequisite: **Issue #1097 / PR #1098**
 P-006 B6d FP-90 disposable DB snapshot prerequisite: **Issue #1099 / PR #1100**
-P-006 Wave 1U FP-86/89/90/94 minimum-cell evidence: **Issue #1425 / EVIDENCE PENDING CI RUN / GOV-P001-CF-TEMP-019**
+P-006 Wave 1U FP-86/89/90/94 minimum-cell evidence: **Issue #1425 / run 39218761905: FP-86/89/94 PASS, FP-90 NOT EXECUTED (B6d artifact expired) / 144 documented / 60 executed / 60 PASS / GOV-P001-CF-TEMP-019**
 P-006 B6d shared-truth closeout: **PR #1101**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6D_FP90_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE_NON_CERTIFYING`**
