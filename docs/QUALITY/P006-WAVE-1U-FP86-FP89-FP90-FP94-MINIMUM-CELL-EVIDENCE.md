@@ -6,7 +6,7 @@ Workflow: `.github/workflows/p006-wave1u-minimum-cell.yml` — **P-006 Wave 1U F
 
 Classification: **FORMAL BOUNDED P-006 EVIDENCE / NON-CERTIFYING**
 
-Status: **EVIDENCE PENDING CI RUN** — no fixture result is claimed until an exact-head workflow run passes the relevant runtime job (see §4/§5 for the FP-86/89/94 vs FP-90 split). Run id, source head, artifact names/digests and observed values are recorded here only after that run.
+Status: **FP-86 / FP-89 / FP-94 PASS (run 39218761905); FP-90 NOT EXECUTED** — the accepted B6d snapshot artifact has expired. Accounting: **144 documented / 60 executed / 60 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
 
 ## 1. Scope
 
@@ -80,9 +80,29 @@ This tranche performs no product runtime or DI change, no provider/license/billi
 - every scenario step was skipped; FP-86, FP-89, FP-90 and FP-94 produced **no evidence** (0 executed, 0 PASS, 0 FAIL); accounting stays 144 / 57 / 57;
 - corrective decision: split the runtime so FP-86/89/94 no longer depend on the FP-90 prerequisite (`minimum` job without B6d download, `fp90` job keeping the exact-hash snapshot requirement unchanged). The snapshot hash is not re-baselined; FP-90 remains not-executed until the exact accepted snapshot is available.
 
-## 8. Accepted run (pending)
+### Run 39216892132 — 0 executed
 
-- workflow run id: _pending_;
-- exact source head: _pending_;
-- governance run id: _pending_;
-- artifacts and digests: _pending_.
+- `minimum` job stopped before any fixture: Wave 1U pointed the B6b/B6d setups at `/tmp/wordpress-b6b` / `/tmp/wordpress-b6d`, but both extract WordPress to `/tmp/wordpress`, so their `wp-load.php` check failed silently;
+- fixed by PR #1441 (both jobs use `/tmp/wordpress`; failed captured steps print their name). Reproduced locally; the corrected B6b harness returns PASS.
+
+## 8. Accepted run — 39218761905
+
+- workflow run: [39218761905](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/39218761905) (`workflow_dispatch` on `main`);
+- exact source head: `7b0013fa590c7d8007eb2e3fcf20cb1bae3fc5c6`;
+- candidate build: success (accepted B6a canonical F0/P0/P-API graph reproduced twice, byte-identical);
+- `minimum` job (FP-86/89/94, WP 6.9 / PHP 8.2 / MySQL 8.4): **success**; aggregate `PASS`, raw-canary scan clean; artifact `p006-wave1u-minimum-39218761905`;
+- `fp90` job: **failure before execution** (`Artifact not found for name: p006-b6d-fp90-prerequisite-35542007281`); artifact `p006-wave1u-fp90-39218761905`;
+- terminal marker `p006-wave1u-terminal-39218761905`: `fixture_outcomes` FP-86 PASS, FP-89 PASS, FP-94 PASS, FP-90 NOT_EXECUTED; `accounting_observed` 144 / 60 / 60 / 0 / 0; terminal status FAIL solely because FP-90 did not run.
+
+### Result
+
+| Fixture | Outcome |
+|---|---|
+| FP-86 | PASS |
+| FP-89 | PASS |
+| FP-94 | PASS |
+| FP-90 | NOT EXECUTED |
+
+P-006 accounting: **144 documented / 60 executed / 60 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
+
+FP-90 needs a fresh B6d prerequisite run with a new accepted snapshot identity; the original hash cannot be regenerated because the dump embeds install timestamps. No pair, runtime, migration or Backup/Restore certification follows; ADR-0010 remains Proposed.
