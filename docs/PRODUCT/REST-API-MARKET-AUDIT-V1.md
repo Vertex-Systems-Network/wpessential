@@ -2,8 +2,8 @@
 
 Status: `MARKET_AUDITED` (integrated in `config/product/options-bank-audits/rest-api-market-ecosystem.json`)
 
-Surface: 22 — REST API  
-Snapshot: 2026-10-19  
+Surface: 22 — REST API
+Snapshot: 2026-10-19
 Issue: #1446
 
 ## 1. Scope and boundary

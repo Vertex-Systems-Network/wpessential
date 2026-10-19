@@ -1,8 +1,8 @@
 # REST API — Native WordPress Audit V1
 
-Surface: **22 / REST API**  
-Issue: **#1446**  
-Planning parent: **#588 / merged PR #601**  
+Surface: **22 / REST API**
+Issue: **#1446**
+Planning parent: **#588 / merged PR #601**
 Seed: `config/product/options-bank/rest-api.json` — **46 records**
 
 ## Decision
