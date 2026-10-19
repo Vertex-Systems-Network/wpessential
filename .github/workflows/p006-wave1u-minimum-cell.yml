@@ -262,6 +262,7 @@ jobs:
           captured() {
             local name="$1"; shift
             if ! "$@" >> "$cap/$name.stdout.log" 2>> "$cap/$name.stderr.log"; then
+              echo "Wave 1U step failed: $name" >&2
               cat "$cap/$name.stdout.log" "$cap/$name.stderr.log" >&2 || true
               exit 1
             fi
@@ -273,7 +274,7 @@ jobs:
           }
 
           # FP-86: compose accepted B6b fail-once marker harness on migration 220.
-          export WPE_TEST_WORDPRESS_DIR=/tmp/wordpress-b6b WPE_TEST_WP_DB=wpessential_test WPE_P006_TABLE_PREFIX=wpep006b6b_
+          export WPE_TEST_WORDPRESS_DIR=/tmp/wordpress WPE_TEST_WP_DB=wpessential_test WPE_P006_TABLE_PREFIX=wpep006b6b_
           export WPE_P006_NETWORK_LOG="$cap/fp86-network.log" WPE_P006_SQL_LOG="$cap/fp86-sql.log"
           : > "$WPE_P006_SQL_LOG"
           captured b6b-setup bash tools/p006/p006-b6b-wordpress-setup.sh
@@ -406,6 +407,7 @@ jobs:
           captured() {
             local name="$1"; shift
             if ! "$@" >> "$cap/$name.stdout.log" 2>> "$cap/$name.stderr.log"; then
+              echo "Wave 1U step failed: $name" >&2
               cat "$cap/$name.stdout.log" "$cap/$name.stderr.log" >&2 || true
               exit 1
             fi
@@ -417,7 +419,7 @@ jobs:
           }
 
           # FP-90: accepted older-state snapshot, compatibility first, then current non-destructive 220/221.
-          export WPE_TEST_WORDPRESS_DIR=/tmp/wordpress-b6d WPE_TEST_WP_DB=wpessential_b6d WPE_P006_TABLE_PREFIX=wpep006b6d_
+          export WPE_TEST_WORDPRESS_DIR=/tmp/wordpress WPE_TEST_WP_DB=wpessential_b6d WPE_P006_TABLE_PREFIX=wpep006b6d_
           export WPE_P006_NETWORK_LOG="$cap/fp90-network.log" WPE_P006_SQL_LOG="$cap/fp90-sql.log"
           : > "$WPE_P006_SQL_LOG"
           docker exec -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" "$MYSQL_CONTAINER_ID" mysql -u"$WPE_TEST_MYSQL_USER" \
