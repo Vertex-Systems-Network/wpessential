@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use RuntimeException;
+use WPEssential\Modules\CustomTables\CustomTablesCapabilities;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRun;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunState;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunTransitionService;
@@ -30,7 +31,7 @@ final readonly class R1MigrationRunLifecycleService {
 		private PolicyEngine $policy,
 		private int $siteId,
 		private string $ability = 'custom-tables.migration.execute',
-		private string $capability = 'manage_options',
+		private string $capability = CustomTablesCapabilities::APPLY_MIGRATIONS,
 	) {
 	}
 

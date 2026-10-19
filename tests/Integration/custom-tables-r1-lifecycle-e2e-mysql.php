@@ -172,7 +172,7 @@ mkdir($backupRoot . '/' . CT_E2E_BACKUP . '/database', 0777, true);
 $policy = new PolicyEngine(new class implements CapabilityCheckerInterface {
     public function can(ExecutionContext $context, string $capability): bool
     {
-        return $context->principal->userId === 7 && $capability === 'manage_options';
+        return $context->principal->userId === 7 && $capability === 'wpessential_apply_table_migrations';
     }
 });
 $confirmations = new WpdbMigrationExecutionConfirmationProvider($database, CT_E2E_SITE);

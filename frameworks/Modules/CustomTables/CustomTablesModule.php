@@ -39,7 +39,7 @@ use WPEssential\Platform\WordPress\Security\NonceOperation;
  */
 final class CustomTablesModule implements ModuleInterface {
 
-	public const CAPABILITY = 'manage_options';
+	public const CAPABILITY = CustomTablesCapabilities::APPLY_MIGRATIONS;
 
 	public const CHANNELS = [ ExecutionChannel::Internal, ExecutionChannel::Ui ];
 
@@ -134,6 +134,7 @@ final class CustomTablesModule implements ModuleInterface {
 		$admin = new CustomTablesAdminController( $dispatcher, $assets, $definitions, $gateway->action() );
 		$services->set( 'module.custom-tables.admin', $admin );
 		$admin->register();
+		CustomTablesCapabilities::register();
 	}
 
 	public static function routeType( string $action ): string {

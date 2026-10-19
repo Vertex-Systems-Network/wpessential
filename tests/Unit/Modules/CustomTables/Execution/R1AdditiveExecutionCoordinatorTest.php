@@ -264,7 +264,7 @@ final class CoordinatorFixture
         $checker = new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
             {
-                return $context->principal->userId === 7 && $capability === 'manage_options';
+                return $context->principal->userId === 7 && $capability === 'wpessential_apply_table_migrations';
             }
         };
         $facts = new class implements MetadataPreconditionFactsProviderInterface {
