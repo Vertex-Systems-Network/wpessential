@@ -5,7 +5,9 @@ Planning issue: **#590**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `dab9944bf7ad174ceffb3b48ddebffac4ea71bcc`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NOT BANK_REVIEWED — NO OPTION CONTRACT PROMOTION**
+Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+
+> Update (Issue #1450): the Surface 24 Bank is now seeded and `BANK_REVIEWED (122)` — see `config/product/options-bank/backup.json`, `docs/PRODUCT/BACKUP-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/BACKUP-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/backup-market-ecosystem.json` and `config/product/options-bank-reviews/backup-bank-review-v1.json`. Bank seeding, native/market/provider audit and duplicate/ownership/unsafe/deferred resolution are closed; schema-valid Atomic Option Contracts are next. The "Current machine truth" section below is the historical #590 snapshot.
 
 This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, create archives, upload backup data, restore data, mutate files/database state or authorize runtime implementation.
 
