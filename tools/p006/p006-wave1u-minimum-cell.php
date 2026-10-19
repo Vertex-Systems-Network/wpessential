@@ -62,6 +62,27 @@ const P006U_B6C_CANARIES = [
 const P006U_ACCOUNTING_BEFORE = ['documented' => 144, 'executed' => 57, 'pass' => 57, 'fail' => 0, 'inconclusive' => 0];
 const P006U_ACCOUNTING_IF_PASS = ['documented' => 144, 'executed' => 61, 'pass' => 61, 'fail' => 0, 'inconclusive' => 0];
 
+/**
+ * Fixture subset for aggregate / FP-94 scope. WPE_P006_AGGREGATE_FIXTURES lists
+ * fixtures (space/comma separated); default is all four. Only authorized fixtures
+ * are accepted, order is canonical, and duplicates are rejected.
+ *
+ * @return list<string>
+ */
+function uAggregateFixtures(): array
+{
+    $raw = trim((string) getenv('WPE_P006_AGGREGATE_FIXTURES'));
+    if ($raw === '') {
+        return P006U_FIXTURES;
+    }
+    $list = preg_split('/[\s,]+/', $raw, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    uAssert(count($list) === count(array_unique($list)), 'aggregate fixture list has duplicates');
+    foreach ($list as $fixture) {
+        uAssert(in_array($fixture, P006U_FIXTURES, true), 'aggregate fixture not authorized: ' . $fixture);
+    }
+    return array_values(array_filter(P006U_FIXTURES, static fn (string $f): bool => in_array($f, $list, true)));
+}
+
 function uFail(string $message): never
 {
     throw new RuntimeException($message);
@@ -664,7 +685,9 @@ function uFp94(array $in): array
     }
     ksort($surfaces, SORT_STRING);
     uAssert(count($surfaces) >= 8, 'FP-94 captured too few surfaces');
-    foreach (['FP-86', 'FP-89', 'FP-90'] as $fixture) {
+    $formal = array_values(array_diff(uAggregateFixtures(), ['FP-94']));
+    uAssert($formal !== [], 'FP-94 has no formal scenarios to cover');
+    foreach ($formal as $fixture) {
         $file = $in['evidence_dir'] . '/' . strtolower(str_replace('-', '', $fixture)) . '.json';
         uAssert(isset($surfaces[$file]), 'FP-94 did not scan formal evidence for ' . $fixture);
     }
@@ -673,7 +696,7 @@ function uFp94(array $in): array
         'composed_prerequisite' => 'B6c-FP94-diagnostics-redaction',
         'canary_fingerprints_sha256' => array_map(static fn (string $c): string => hash('sha256', $c), P006U_CANARIES),
         'b6c_canary_fingerprints_sha256' => $b6c['canary_fingerprints_sha256'] ?? null,
-        'formal_scenarios_covered' => ['FP-86', 'FP-89', 'FP-90'],
+        'formal_scenarios_covered' => $formal,
         'captured_surfaces' => $surfaces, 'raw_canaries_absent_from_all_captured_surfaces' => true,
         'network_attempt_count' => 0, 'fatal_or_error' => null,
     ];
@@ -682,8 +705,9 @@ function uFp94(array $in): array
 /** @param array<string,mixed> $in @return array<string,mixed> */
 function uAggregate(array $in): array
 {
+    $selected = uAggregateFixtures();
     $fixtures = [];
-    foreach (P006U_FIXTURES as $fixture) {
+    foreach ($selected as $fixture) {
         $record = uRead($in['evidence_dir'] . '/' . strtolower(str_replace('-', '', $fixture)) . '.json');
         uAssert(($record['status'] ?? null) === 'PASS', $fixture . ' is not PASS');
         uAssert(($record['fixture_id'] ?? null) === $fixture, $fixture . ' fixture id drift');
@@ -696,8 +720,16 @@ function uAggregate(array $in): array
         'classification' => 'FORMAL FP-86/89/90/94 MINIMUM-CELL EVIDENCE / NON-CERTIFYING',
         'authorization' => P006U_GRANT, 'temporary_approval_consumed_once' => true,
         'source_sha' => uEnv('WPE_P006_SOURCE_SHA'), 'cell_id' => $in['cell'], 'cell' => P006U_CELL,
-        'fixture_results' => $fixtures, 'formal_fp_fixtures_executed' => P006U_FIXTURES,
-        'accounting_before' => P006U_ACCOUNTING_BEFORE, 'accounting_if_terminally_accepted' => P006U_ACCOUNTING_IF_PASS,
+        'fixture_results' => $fixtures, 'formal_fp_fixtures_executed' => $selected,
+        'fixtures_not_in_this_aggregate' => array_values(array_diff(P006U_FIXTURES, $selected)),
+        'accounting_before' => P006U_ACCOUNTING_BEFORE,
+        'accounting_if_terminally_accepted' => [
+            'documented' => 144,
+            'executed' => P006U_ACCOUNTING_BEFORE['executed'] + count($selected),
+            'pass' => P006U_ACCOUNTING_BEFORE['pass'] + count($selected),
+            'fail' => 0, 'inconclusive' => 0,
+        ],
+        'accounting_if_all_four_accepted' => P006U_ACCOUNTING_IF_PASS,
         'product_runtime_source_modified' => false, 'product_di_modified' => false, 'destructive_migration_executed' => false,
         'provider_or_remote_entitlement_used' => false, 'production_or_live_data_used' => false,
         'reference_cell_executed' => false, 'pair_certified' => false, 'runtime_certified' => false,

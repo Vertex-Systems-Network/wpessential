@@ -6,7 +6,7 @@ Workflow: `.github/workflows/p006-wave1u-minimum-cell.yml` — **P-006 Wave 1U F
 
 Classification: **FORMAL BOUNDED P-006 EVIDENCE / NON-CERTIFYING**
 
-Status: **EVIDENCE PENDING CI RUN** — no fixture result is claimed until an exact-head workflow run passes all four jobs. Run id, source head, artifact names/digests and observed values are recorded here only after that run.
+Status: **EVIDENCE PENDING CI RUN** — no fixture result is claimed until an exact-head workflow run passes the relevant runtime job (see §4/§5 for the FP-86/89/94 vs FP-90 split). Run id, source head, artifact names/digests and observed values are recorded here only after that run.
 
 ## 1. Scope
 
@@ -15,7 +15,7 @@ Wave 1U formally executes exactly, on the minimum disposable cell only (WordPres
 - **FP-86** — current idempotent migration `220.custom_tables_migration_runs_v1` with a fail-once marker write: the apply completes, the marker write fails once, a fresh runner re-applies 220 idempotently (schema unchanged, marker persisted exactly once) and a settled third run applies nothing;
 - **FP-89** — the isolated API-incompatible Pro candidate (`P_API`) paired with canonical `F0` is rejected (`platform_api_too_old`, dimension `platform_api`) before premium boot and before any Pro migration, with no premium module registered;
 - **FP-90** — the exact accepted older-state snapshot `sha256:24178a1289fb5929eda850f488d932c94bbbddc5936a82cc26cb83979823b058` is restored, its semantic identity re-proved, canonical F0/P0 compatibility is proved **before** pending migrations, and only then are the current non-destructive 220/221 migrations applied (additive `CREATE TABLE IF NOT EXISTS` only, pre-existing schema, migration rows and sentinel preserved, settled rerun applies nothing);
-- **FP-94** — raw license-like, Vault-plaintext and private-user-data canaries seeded into the disposable state (plus the accepted B6c redaction capture) are absent from every surface captured during the formal FP-86/89/90 scenarios (evidence JSON, stdout/stderr, PHP error log, network and SQL logs).
+- **FP-94** — raw license-like, Vault-plaintext and private-user-data canaries seeded into the disposable state (plus the accepted B6c redaction capture) are absent from every surface captured during the formal FP-86/89 scenarios in the same `minimum` job (evidence JSON, stdout/stderr, PHP error log, network and SQL logs).
 
 No reference cell, other fixture, or other runtime cell is executed.
 
@@ -49,8 +49,9 @@ Any drift in these values fails the run; it is never re-baselined inside this tr
 | --- | --- | --- |
 | `change-gate` | ≤ 3 min | latest-change gate on PR `synchronize` |
 | `build-candidates` | ≤ 15 min | build canonical pair twice from accepted B6a head, derive B6a graph twice, assert accepted identities, upload `p006-wave1u-candidates-<run_id>` |
-| `runtime` | ≤ 18 min | disposable WP 6.9 / PHP 8.2 / MySQL 8.4 execution of FP-86, FP-89, FP-90, FP-94 and aggregate; upload `p006-wave1u-minimum-<run_id>` |
-| `terminal` | ≤ 5 min | terminal aggregate marker `p006-wave1u-terminal-<run_id>` |
+| `minimum` | ≤ 18 min | disposable WP 6.9 / PHP 8.2 / MySQL 8.4 execution of FP-86, FP-89, FP-94 (FP-94 scans the surfaces captured in this job) and aggregate over those three (`WPE_P006_AGGREGATE_FIXTURES="FP-86 FP-89 FP-94"`); no B6d download; upload `p006-wave1u-minimum-<run_id>` |
+| `fp90` | ≤ 18 min | separate disposable WP 6.9 / PHP 8.2 / MySQL 8.4 cell; downloads the accepted B6d artifact, keeps the exact-hash requirement `sha256:24178a12…b058` unchanged, runs FP-90 and a FP-90-only aggregate; upload `p006-wave1u-fp90-<run_id>`. If the download fails the job fails and FP-90 stays not-executed |
+| `terminal` | ≤ 5 min | terminal marker `p006-wave1u-terminal-<run_id>` recording per-fixture outcomes, partial result (`fp86_fp89_fp94_job_result`, `fp90_job_result`) and observed accounting; status PASS only if every job succeeds; the job still fails if any job failed |
 
 The workflow is manual-dispatch only (terminal-workflow contract), matching Wave 1T and the B6 workflows. Actions are pinned to the same commit SHAs as Wave 1T.
 
@@ -60,13 +61,26 @@ Evidence tool: `tools/p006/p006-wave1u-minimum-cell.php` (modes `fp89-install`, 
 
 Before execution: **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
 
-If, and only if, the exact-head run is terminally accepted: **144 documented / 61 executed / 61 PASS / 0 FAIL / 0 INCONCLUSIVE**. Until then accounting is unchanged.
+Observed accounting is computed per job, never inferred: executed = 57, + 3 if the `minimum` job (FP-86/89/94) passed, + 1 if the `fp90` job passed.
+
+- `minimum` PASS only: **144 documented / 60 executed / 60 PASS / 0 FAIL / 0 INCONCLUSIVE**, FP-90 not-executed;
+- both PASS (terminal PASS): **144 documented / 61 executed / 61 PASS / 0 FAIL / 0 INCONCLUSIVE**.
+
+Until an exact-head run records it, accounting is unchanged.
 
 ## 6. Boundaries
 
 This tranche performs no product runtime or DI change, no provider/license/billing/remote entitlement call, no live or production data mutation, no destructive or irreversible migration, no other fixture or cell, no deploy/release, no pair/runtime/migration certification, no permanent P-001/CF certification, and no ADR-0010 promotion (remains **Proposed**). `GOV-P001-CF-TEMP-019` is consumed by this tranche and is not reusable.
 
-## 7. Accepted run (pending)
+## 7. Run history
+
+### Run 39183971075 (first dispatch) — 0 executed
+
+- failed at `Download accepted B6d older-state snapshot`: the accepted B6d artifact `p006-b6d-fp90-prerequisite-35542007281` from run 35542007281 had expired;
+- every scenario step was skipped; FP-86, FP-89, FP-90 and FP-94 produced **no evidence** (0 executed, 0 PASS, 0 FAIL); accounting stays 144 / 57 / 57;
+- corrective decision: split the runtime so FP-86/89/94 no longer depend on the FP-90 prerequisite (`minimum` job without B6d download, `fp90` job keeping the exact-hash snapshot requirement unchanged). The snapshot hash is not re-baselined; FP-90 remains not-executed until the exact accepted snapshot is available.
+
+## 8. Accepted run (pending)
 
 - workflow run id: _pending_;
 - exact source head: _pending_;
