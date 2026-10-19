@@ -25,6 +25,7 @@ const entries = {
   fields: path.join(sourceRoot, 'fields.ts'),
   query: path.join(sourceRoot, 'query.ts'),
   'columns-runtime': path.join(sourceRoot, 'columns-runtime.ts'),
+  'custom-tables': path.join(sourceRoot, 'custom-tables.ts'),
 };
 
 const styles = {
@@ -33,6 +34,7 @@ const styles = {
   fields: path.join(sourceRoot, 'fields.scss'),
   query: path.join(sourceRoot, 'query.scss'),
   'columns-runtime': path.join(sourceRoot, 'columns.scss'),
+  'custom-tables': path.join(sourceRoot, 'custom-tables.scss'),
 };
 
 const approvedDevDependencies = {

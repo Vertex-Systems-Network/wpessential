@@ -20,13 +20,16 @@ use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilit
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 /**
@@ -66,6 +69,15 @@ final class CustomTablesModule implements ModuleInterface {
 		$logger      = $services->get( AuditServices::LOGGER );
 		$contexts    = $services->get( 'platform.abilities.contexts' );
 		$ajaxRoutes  = $services->get( 'platform.ajax.routes' );
+		$dispatcher  = $services->get( 'platform.ajax.dispatcher' );
+		$gateway     = $services->get( 'platform.ajax.gateway' );
+		$assets      = $services->get( 'platform.admin.assets' );
+		if ( ! $dispatcher instanceof AjaxDispatcher || ! $gateway instanceof WordPressAjaxGateway ) {
+			throw new LogicException( 'Custom Tables requires the shared AJAX dispatcher and gateway.' );
+		}
+		if ( ! $assets instanceof AdminAssetManifest ) {
+			throw new LogicException( 'Custom Tables requires the admin asset manifest.' );
+		}
 		if ( ! $abilities instanceof AbilityRegistry ) {
 			throw new LogicException( 'Custom Tables requires the shared ability registry.' );
 		}
@@ -117,6 +129,11 @@ final class CustomTablesModule implements ModuleInterface {
 				)
 			);
 		}
+
+		// ADR-0228-B: the admin page is the only place that mints nonces for the routes above.
+		$admin = new CustomTablesAdminController( $dispatcher, $assets, $definitions, $gateway->action() );
+		$services->set( 'module.custom-tables.admin', $admin );
+		$admin->register();
 	}
 
 	public static function routeType( string $action ): string {

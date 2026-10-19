@@ -15,6 +15,7 @@ use WPEssential\Contracts\ModuleActivationPolicyInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
+use WPEssential\Modules\CustomTables\CustomTablesAdminController;
 use WPEssential\Modules\CustomTables\CustomTablesModule;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTablesRuntimeCompositionFactory;
@@ -345,6 +346,7 @@ final class Plugin {
 			CreateMigrationReviewSnapshotStoreMigration::class,
 			WordPressProviderCapabilityProfileResolver::class,
 			CustomTablesModule::class,
+			CustomTablesAdminController::class,
 			WordPressCt1SchemaIntrospector::class,
 		] as $class ) {
 			if ( ! class_exists( $class ) ) {
