@@ -5,7 +5,9 @@ Planning issue: **#593**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `588079965734c56b2bda783778c9efa4dbf63530`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NOT BANK_REVIEWED — NO OPTION CONTRACT PROMOTION**
+Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+
+> Update (Issue #1456): the Surface 27 Bank is now seeded and `BANK_REVIEWED (225)` — see `config/product/options-bank/protector.json`, `docs/PRODUCT/PROTECTOR-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/PROTECTOR-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/protector-market-ecosystem.json` and `config/product/options-bank-reviews/protector-bank-review-v1.json`. Bank seeding, native/market audit and duplicate/ownership/unsafe/deferred resolution are closed; schema-valid Atomic Option Contracts are next. The "Current machine truth" section below is the historical #593 snapshot.
 
 This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, block requests, change login/admin routes, emit security headers, mutate rate-limit state or authorize runtime implementation.
 
