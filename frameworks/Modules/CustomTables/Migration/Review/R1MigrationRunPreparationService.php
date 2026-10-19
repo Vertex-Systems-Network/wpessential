@@ -107,7 +107,7 @@ final readonly class R1MigrationRunPreparationService {
 			return R1MigrationRunPreparationResult::rejected( [ 'snapshot_record_failed' ] );
 		}
 
-		return R1MigrationRunPreparationResult::prepared( $run, $preview, $snapshot );
+		return R1MigrationRunPreparationResult::prepared( $run, $preview, $snapshot, $plan );
 	}
 
 	private static function uuid(): string {

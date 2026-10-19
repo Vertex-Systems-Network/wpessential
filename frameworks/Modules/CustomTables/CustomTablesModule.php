@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use LogicException;
+use WPEssential\Contracts\AuditLoggerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -19,17 +20,25 @@ use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilit
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
+use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 /**
- * ADR-0227: registers the R1 migration abilities on the internal channel only.
+ * ADR-0227/0228: registers the R1 migration abilities for internal callers and nonce-protected admin-AJAX.
  *
- * No WordPress Abilities API exposure, AJAX route or REST channel; those are a later ADR.
+ * Never exposed through the WordPress Abilities API, REST, CLI or AI channels (spec §26).
  */
 final class CustomTablesModule implements ModuleInterface {
 
 	public const CAPABILITY = 'manage_options';
+
+	public const CHANNELS = [ ExecutionChannel::Internal, ExecutionChannel::Ui ];
 
 	private const UUID_PATTERN = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$';
 
@@ -54,8 +63,20 @@ final class CustomTablesModule implements ModuleInterface {
 		$definitions = $services->get( 'platform.definitions' );
 		$factory     = $services->get( 'custom-tables.runtime-composition.factory' );
 		$issuer      = $services->get( 'custom-tables.execution-confirmation.issuer' );
+		$logger      = $services->get( AuditServices::LOGGER );
+		$contexts    = $services->get( 'platform.abilities.contexts' );
+		$ajaxRoutes  = $services->get( 'platform.ajax.routes' );
 		if ( ! $abilities instanceof AbilityRegistry ) {
 			throw new LogicException( 'Custom Tables requires the shared ability registry.' );
+		}
+		if ( ! $logger instanceof AuditLoggerInterface ) {
+			throw new LogicException( 'Custom Tables requires the shared audit logger.' );
+		}
+		if ( ! $contexts instanceof WordPressExecutionContextFactory ) {
+			throw new LogicException( 'Custom Tables requires the WordPress execution context factory.' );
+		}
+		if ( ! $ajaxRoutes instanceof AjaxRouteRegistry ) {
+			throw new LogicException( 'Custom Tables requires the shared AJAX route registry.' );
 		}
 		if ( ! $definitions instanceof DefinitionRepositoryInterface ) {
 			throw new LogicException( 'Custom Tables requires the shared Definition Repository.' );
@@ -67,6 +88,7 @@ final class CustomTablesModule implements ModuleInterface {
 			throw new LogicException( 'Custom Tables requires the execution confirmation issuer.' );
 		}
 
+		$audit = new CustomTablesMigrationAudit( $logger );
 		foreach ( CustomTablesMigrationAbilityHandler::ACTIONS as $action ) {
 			$abilities->register(
 				new AbilityDescriptor(
@@ -74,13 +96,31 @@ final class CustomTablesModule implements ModuleInterface {
 					ownerSurfaceId: TableDefinitionCompiler::OWNER_SURFACE_ID,
 					capability: self::CAPABILITY,
 					mutates: true,
-					channels: [ ExecutionChannel::Internal ],
+					channels: self::CHANNELS,
 					inputSchema: self::inputSchema( $action ),
 					outputSchema: [ 'type' => 'object' ],
 				),
-				new CustomTablesMigrationAbilityHandler( $action, $factory, $this->schema, $this->profiles, $definitions, $issuer, $this->sitePrefix ),
+				new CustomTablesMigrationAbilityHandler( $action, $factory, $this->schema, $this->profiles, $definitions, $issuer, $this->sitePrefix, $audit ),
+			);
+
+			// ADR-0228: admin-AJAX only, nonce-protected; never exposed through the Abilities API or REST.
+			$ajaxRoutes->register(
+				new AjaxRoute(
+					type: self::routeType( $action ),
+					handler: new AuditedMigrationAjaxHandler(
+						new AbilityAjaxHandler( $abilities, self::abilityName( $action ), $contexts ),
+						$action,
+						$audit,
+						$contexts,
+					),
+					operation: NonceOperation::Update,
+				)
 			);
 		}
+	}
+
+	public static function routeType( string $action ): string {
+		return 'custom-tables.migration.' . $action;
 	}
 
 	public function boot( ServiceRegistryInterface $services ): void {

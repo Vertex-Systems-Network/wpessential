@@ -10,7 +10,9 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
+use WPEssential\Modules\CustomTables\AuditedMigrationAjaxHandler;
 use WPEssential\Modules\CustomTables\CustomTablesMigrationAbilityHandler;
+use WPEssential\Modules\CustomTables\CustomTablesMigrationAudit;
 use WPEssential\Modules\CustomTables\CustomTablesModule;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTablesRuntimeCompositionFactory;
@@ -20,27 +22,38 @@ use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecov
 use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilityProfileResolver;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Audit\AuditOutcome;
+use WPEssential\Platform\Audit\AuditServices;
+use WPEssential\Platform\Audit\InMemoryAuditLogger;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AjaxAuthorizationException;
+use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class CustomTablesModuleTest extends TestCase
 {
     private const RUN_ID = '11111111-1111-4111-8111-111111111111';
 
-    public function testRegistersSevenInternalOnlyMutatingAbilities(): void
+    public function testRegistersSevenMutatingAbilitiesForInternalAndAdminUiOnly(): void
     {
-        $abilities = $this->registered();
+        [$abilities] = $this->registered();
 
         $names = [];
         foreach (CustomTablesMigrationAbilityHandler::ACTIONS as $action) {
             $name = CustomTablesModule::abilityName($action);
             $descriptor = $abilities->descriptor($name);
             self::assertNotNull($descriptor, $name);
-            self::assertSame([ExecutionChannel::Internal], $descriptor->channels);
+            self::assertSame([ExecutionChannel::Internal, ExecutionChannel::Ui], $descriptor->channels);
+            foreach ([ExecutionChannel::Rest, ExecutionChannel::Cli, ExecutionChannel::Ai, ExecutionChannel::Workflow] as $channel) {
+                self::assertFalse($descriptor->allows($channel), $name . ' must not allow ' . $channel->value);
+            }
             self::assertSame('manage_options', $descriptor->capability);
             self::assertSame(7, $descriptor->ownerSurfaceId);
             self::assertTrue($descriptor->mutates);
@@ -59,11 +72,26 @@ final class CustomTablesModuleTest extends TestCase
         ], $names);
     }
 
-    public function testExternalChannelsAreRefusedBeforeAnyHandlerRuns(): void
+    public function testEveryAbilityHasANonceProtectedAuditedAdminAjaxRoute(): void
     {
-        $abilities = $this->registered();
+        [, $routes] = $this->registered();
 
-        foreach ([ExecutionChannel::Rest, ExecutionChannel::Cli, ExecutionChannel::Ui, ExecutionChannel::Ai] as $channel) {
+        foreach (CustomTablesMigrationAbilityHandler::ACTIONS as $action) {
+            $route = $routes->get(CustomTablesModule::routeType($action));
+            self::assertNotNull($route, $action);
+            self::assertSame(NonceOperation::Update, $route->operation);
+            self::assertTrue($route->requiresNonce);
+            self::assertFalse($route->allowGuests);
+            self::assertInstanceOf(AuditedMigrationAjaxHandler::class, $route->handler);
+        }
+        self::assertFalse($routes->hasGuestRoutes());
+    }
+
+    public function testRestCliAndAiChannelsAreRefusedBeforeAnyHandlerRuns(): void
+    {
+        [$abilities] = $this->registered();
+
+        foreach ([ExecutionChannel::Rest, ExecutionChannel::Cli, ExecutionChannel::Ai] as $channel) {
             foreach (CustomTablesMigrationAbilityHandler::ACTIONS as $action) {
                 try {
                     $abilities->execute(
@@ -79,22 +107,51 @@ final class CustomTablesModuleTest extends TestCase
         }
     }
 
-    public function testUsersWithoutManageOptionsAreRefused(): void
+    public function testAdminAjaxRefusalIsAuditedAsDeniedAndRethrown(): void
     {
-        $abilities = $this->registered();
+        $logger = new InMemoryAuditLogger();
+        [, $routes] = $this->registered(userId: 8, logger: $logger);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('denied');
-        $abilities->execute(
-            CustomTablesModule::abilityName('approve'),
-            ['run_id' => self::RUN_ID, 'expected_state_revision' => 1],
-            new ExecutionContext(new Principal(8), 1, networkId: 1),
-        );
+        try {
+            $routes->get(CustomTablesModule::routeType('approve'))?->handler->handle(['run_id' => self::RUN_ID, 'expected_state_revision' => 1]);
+            self::fail('A non-administrator must be refused.');
+        } catch (AjaxAuthorizationException) {
+        }
+
+        $records = array_values($logger->all());
+        self::assertCount(1, $records);
+        self::assertSame('custom-tables.migration.approve', $records[0]->action);
+        self::assertSame(AuditOutcome::Denied, $records[0]->outcome);
+        self::assertSame(ExecutionChannel::Ui, $records[0]->context->channel);
+        self::assertSame(self::RUN_ID, $records[0]->resourceId);
     }
 
-    public function testHandlerRejectsMalformedIdentifiersAndRevisions(): void
+    public function testHandlerFailureIsAuditedAndRethrown(): void
     {
-        $abilities = $this->registered();
+        $logger = new InMemoryAuditLogger();
+        [$abilities] = $this->registered(logger: $logger);
+
+        try {
+            $abilities->execute(
+                CustomTablesModule::abilityName('approve'),
+                ['run_id' => self::RUN_ID, 'expected_state_revision' => 1],
+                new ExecutionContext(new Principal(7), 1, networkId: 1),
+            );
+            self::fail('Approving a run that does not exist must fail.');
+        } catch (RuntimeException) {
+        }
+
+        $records = array_values($logger->all());
+        self::assertCount(1, $records);
+        self::assertSame(AuditOutcome::Failed, $records[0]->outcome);
+        self::assertSame('custom_table_migration_run', $records[0]->resourceType);
+        self::assertSame(self::RUN_ID, $records[0]->resourceId);
+    }
+
+    public function testMalformedInputIsRejectedAndNeverEchoedIntoTheAuditTrail(): void
+    {
+        $logger = new InMemoryAuditLogger();
+        [$abilities] = $this->registered(logger: $logger);
         $admin = new ExecutionContext(new Principal(7), 1, networkId: 1);
 
         foreach ([
@@ -110,7 +167,11 @@ final class CustomTablesModuleTest extends TestCase
             } catch (InvalidArgumentException) {
             }
         }
-        self::assertTrue(true);
+
+        $records = array_values($logger->all());
+        self::assertCount(5, $records);
+        self::assertNull($records[0]->resourceId);
+        self::assertNull($records[3]->resourceId);
     }
 
     public function testUnknownActionIsRejected(): void
@@ -126,28 +187,25 @@ final class CustomTablesModuleTest extends TestCase
             new InMemoryDefinitionRepository(),
             $services->get('custom-tables.execution-confirmation.issuer'),
             'wp_',
+            new CustomTablesMigrationAudit(new InMemoryAuditLogger()),
         );
     }
 
     public function testModuleRequiresTheTrustedFactory(): void
     {
-        [, $abilities] = $this->services();
-        $services = new ServiceRegistry();
-        $services->set('platform.abilities', $abilities);
-        $services->set('platform.definitions', new InMemoryDefinitionRepository());
-        $services->set('custom-tables.runtime-composition.factory', new \stdClass());
-        $services->set('custom-tables.execution-confirmation.issuer', new \stdClass());
+        [$services] = $this->services(factory: new \stdClass());
 
         $this->expectException(LogicException::class);
         $this->module()->register($services);
     }
 
-    private function registered(): AbilityRegistry
+    /** @return array{0: AbilityRegistry, 1: AjaxRouteRegistry} */
+    private function registered(int $userId = 7, ?InMemoryAuditLogger $logger = null): array
     {
-        [$services, $abilities] = $this->services();
+        [$services, $abilities, $routes] = $this->services($userId, $logger);
         $this->module()->register($services);
 
-        return $abilities;
+        return [$abilities, $routes];
     }
 
     private function module(): CustomTablesModule
@@ -161,8 +219,8 @@ final class CustomTablesModuleTest extends TestCase
         );
     }
 
-    /** @return array{0: ServiceRegistry, 1: AbilityRegistry} */
-    private function services(): array
+    /** @return array{0: ServiceRegistry, 1: AbilityRegistry, 2: AjaxRouteRegistry} */
+    private function services(int $userId = 7, ?InMemoryAuditLogger $logger = null, ?object $factory = null): array
     {
         $policy = new PolicyEngine(new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
@@ -173,11 +231,15 @@ final class CustomTablesModuleTest extends TestCase
         $database = new ModuleDatabaseFake();
         $confirmations = new WpdbMigrationExecutionConfirmationProvider($database, 1);
         $abilities = new AbilityRegistry($policy);
+        $routes = new AjaxRouteRegistry();
 
         $services = new ServiceRegistry();
         $services->set('platform.abilities', $abilities);
         $services->set('platform.definitions', new InMemoryDefinitionRepository());
-        $services->set('custom-tables.runtime-composition.factory', CustomTablesRuntimeCompositionFactory::production(
+        $services->set('platform.abilities.contexts', new WordPressExecutionContextFactory(new ModuleEnvironmentFake($userId)));
+        $services->set('platform.ajax.routes', $routes);
+        $services->set(AuditServices::LOGGER, $logger ?? new InMemoryAuditLogger());
+        $services->set('custom-tables.runtime-composition.factory', $factory ?? CustomTablesRuntimeCompositionFactory::production(
             database: $database,
             policy: $policy,
             metadataFacts: new WordPressMetadataPreconditionFactsProvider(new WordPressCt1SchemaIntrospector(new ModuleWpdbFake())),
@@ -188,8 +250,26 @@ final class CustomTablesModuleTest extends TestCase
         ));
         $services->set('custom-tables.execution-confirmation.issuer', new WpdbMigrationExecutionConfirmationIssuer($database, $confirmations, $policy, 1));
 
-        return [$services, $abilities];
+        return [$services, $abilities, $routes];
     }
+}
+
+final class ModuleEnvironmentFake implements WordPressAbilityEnvironmentInterface
+{
+    public function __construct(private int $userId)
+    {
+    }
+
+    public function abilitiesApiAvailable(): bool { return true; }
+    public function doingAction(string $hook): bool { return false; }
+    public function currentUserId(): ?int { return $this->userId; }
+    public function currentSiteId(): int { return 1; }
+    public function currentNetworkId(): ?int { return 1; }
+    public function currentUserCan(string $capability): bool { return $this->userId === 7; }
+    public function isRestRequest(): bool { return false; }
+    public function isCli(): bool { return false; }
+    public function registerCategory(string $slug, array $args): bool { return true; }
+    public function registerAbility(string $name, array $args): bool { return true; }
 }
 
 final class ModuleWpdbFake
