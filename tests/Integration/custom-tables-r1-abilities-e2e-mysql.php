@@ -29,7 +29,14 @@ use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Audit\InMemoryAuditLogger;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\Admin\AdminAssetManifest;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\WordPress\Ajax\AjaxResponse;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxEnvironmentInterface;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
+use WPEssential\Platform\WordPress\Security\NonceEnvironmentInterface;
+use WPEssential\Platform\WordPress\Security\NonceManager;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Modules\Backup\Verification\LocalBackupManifestVerifier;
@@ -144,6 +151,21 @@ final class CtAbEnvironment implements WordPressAbilityEnvironmentInterface
     public function registerAbility(string $name, array $args): bool { return true; }
 }
 
+final class CtAbNonceEnvironment implements NonceEnvironmentInterface
+{
+    public function create(string $action): string { return 'nonce:' . $action; }
+    public function verify(string $nonce, string $action): bool { return $nonce === 'nonce:' . $action; }
+}
+
+final class CtAbAjaxEnvironment implements WordPressAjaxEnvironmentInterface
+{
+    public function registerAction(string $hook, callable $callback): void {}
+    public function request(): array { return []; }
+    public function isAuthenticated(): bool { return true; }
+    public function currentUserCan(string $capability): bool { return true; }
+    public function respond(AjaxResponse $response): void {}
+}
+
 $pdo = new PDO($dsn, getenv('WPE_TEST_MYSQL_USER') ?: 'root', getenv('WPE_TEST_MYSQL_PASSWORD') ?: 'root', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_EMULATE_PREPARES => false,
@@ -220,10 +242,20 @@ $services->set('custom-tables.execution-confirmation.issuer', new WpdbMigrationE
 $auditLog = new InMemoryAuditLogger();
 $services->set(AuditServices::LOGGER, $auditLog);
 $services->set('platform.abilities.contexts', new WordPressExecutionContextFactory(new CtAbEnvironment()));
-$services->set('platform.ajax.routes', new AjaxRouteRegistry());
+$ajaxRoutes = new AjaxRouteRegistry();
+$dispatcher = new AjaxDispatcher($ajaxRoutes, new NonceManager(new CtAbNonceEnvironment(), 'wpessential_request'), static fn (string $capability): bool => true);
+$services->set('platform.ajax.routes', $ajaxRoutes);
+$services->set('platform.ajax.dispatcher', $dispatcher);
+$services->set('platform.ajax.gateway', new WordPressAjaxGateway('wpessential_dispatch', $dispatcher, new CtAbAjaxEnvironment()));
+$services->set('platform.admin.assets', new AdminAssetManifest(sys_get_temp_dir(), 'https://example.test/wp-content/plugins/wpessential'));
 (new CustomTablesModule($introspector, $profiles, CT_AB_PREFIX))->register($services);
 
 $admin = new ExecutionContext(new Principal(7), CT_AB_SITE, networkId: 1);
+
+// The admin page (ADR-0228-B) mints a nonce for every registered migration route and lists this table.
+$adminBootstrap = $services->get('module.custom-tables.admin')->bootstrap('https://example.test/wp-admin/admin-ajax.php');
+ctAbExpect(count($adminBootstrap['routes']) === 7 && count(array_unique(array_column($adminBootstrap['routes'], 'nonce'))) === 7, 'admin page must mint one nonce per migration route');
+ctAbExpect(array_column($adminBootstrap['tables'], 'key') === ['aborders'], 'admin page must list the table definition');
 $call = static fn (string $action, array $input, ?ExecutionContext $context = null): array =>
     $abilities->execute(CustomTablesModule::abilityName($action), $input, $context ?? $admin);
 

@@ -11,6 +11,7 @@ use RuntimeException;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\CustomTables\AuditedMigrationAjaxHandler;
+use WPEssential\Modules\CustomTables\CustomTablesAdminController;
 use WPEssential\Modules\CustomTables\CustomTablesMigrationAbilityHandler;
 use WPEssential\Modules\CustomTables\CustomTablesMigrationAudit;
 use WPEssential\Modules\CustomTables\CustomTablesModule;
@@ -22,6 +23,7 @@ use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecov
 use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilityProfileResolver;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Audit\AuditOutcome;
 use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Audit\InMemoryAuditLogger;
@@ -30,11 +32,19 @@ use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
+use WPEssential\Platform\Definitions\Definition;
+use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AjaxAuthorizationException;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\WordPress\Ajax\AjaxResponse;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxEnvironmentInterface;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Security\NonceEnvironmentInterface;
+use WPEssential\Platform\WordPress\Security\NonceManager;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class CustomTablesModuleTest extends TestCase
@@ -174,6 +184,44 @@ final class CustomTablesModuleTest extends TestCase
         self::assertNull($records[3]->resourceId);
     }
 
+    public function testAdminBootstrapMintsOneNoncePerMigrationRouteAndListsOnlyTableDefinitions(): void
+    {
+        $definitions = new InMemoryDefinitionRepository();
+        $definitions->create(new Definition(
+            id: '78888888-8888-4888-8888-888888888888',
+            slug: 'orders',
+            type: 'table',
+            schemaVersion: 1,
+            ownerSurfaceId: 7,
+            status: DefinitionStatus::Published,
+            payload: ['label' => 'Orders'],
+        ));
+        [$services] = $this->services(definitions: $definitions);
+        $this->module()->register($services);
+
+        $admin = $services->get('module.custom-tables.admin');
+        self::assertInstanceOf(CustomTablesAdminController::class, $admin);
+        $bootstrap = $admin->bootstrap('https://example.test/wp-admin/admin-ajax.php');
+
+        self::assertSame('custom-tables', $bootstrap['surface']);
+        self::assertSame('wpessential_dispatch', $bootstrap['ajaxAction']);
+        self::assertSame(CustomTablesMigrationAbilityHandler::ACTIONS, array_keys($bootstrap['routes']));
+        $nonces = [];
+        foreach ($bootstrap['routes'] as $action => $route) {
+            self::assertSame(CustomTablesModule::routeType($action), $route['type']);
+            self::assertStringContainsString(':update:', $route['nonce']);
+            self::assertStringContainsString($route['type'], $route['nonce']);
+            $nonces[] = $route['nonce'];
+        }
+        self::assertCount(7, array_unique($nonces));
+        self::assertSame([[
+            'definition_id' => '78888888-8888-4888-8888-888888888888',
+            'key' => 'orders',
+            'label' => 'Orders',
+            'revision' => 1,
+        ]], $bootstrap['tables']);
+    }
+
     public function testUnknownActionIsRejected(): void
     {
         [$services] = $this->services();
@@ -220,7 +268,7 @@ final class CustomTablesModuleTest extends TestCase
     }
 
     /** @return array{0: ServiceRegistry, 1: AbilityRegistry, 2: AjaxRouteRegistry} */
-    private function services(int $userId = 7, ?InMemoryAuditLogger $logger = null, ?object $factory = null): array
+    private function services(int $userId = 7, ?InMemoryAuditLogger $logger = null, ?object $factory = null, ?InMemoryDefinitionRepository $definitions = null): array
     {
         $policy = new PolicyEngine(new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
@@ -232,10 +280,28 @@ final class CustomTablesModuleTest extends TestCase
         $confirmations = new WpdbMigrationExecutionConfirmationProvider($database, 1);
         $abilities = new AbilityRegistry($policy);
         $routes = new AjaxRouteRegistry();
+        $dispatcher = new AjaxDispatcher(
+            $routes,
+            new NonceManager(new class implements NonceEnvironmentInterface {
+                public function create(string $action): string
+                {
+                    return 'nonce:' . $action;
+                }
+
+                public function verify(string $nonce, string $action): bool
+                {
+                    return $nonce === 'nonce:' . $action;
+                }
+            }, 'wpessential-test'),
+            static fn (string $capability): bool => true,
+        );
 
         $services = new ServiceRegistry();
         $services->set('platform.abilities', $abilities);
-        $services->set('platform.definitions', new InMemoryDefinitionRepository());
+        $services->set('platform.definitions', $definitions ?? new InMemoryDefinitionRepository());
+        $services->set('platform.ajax.dispatcher', $dispatcher);
+        $services->set('platform.ajax.gateway', new WordPressAjaxGateway('wpessential_dispatch', $dispatcher, new ModuleAjaxEnvironmentFake()));
+        $services->set('platform.admin.assets', new AdminAssetManifest(sys_get_temp_dir(), 'https://example.test/wp-content/plugins/wpessential'));
         $services->set('platform.abilities.contexts', new WordPressExecutionContextFactory(new ModuleEnvironmentFake($userId)));
         $services->set('platform.ajax.routes', $routes);
         $services->set(AuditServices::LOGGER, $logger ?? new InMemoryAuditLogger());
@@ -309,4 +375,13 @@ final class ModuleDatabaseFake implements DatabaseAdapterInterface
     public function beginTransaction(): void {}
     public function commit(): void {}
     public function rollBack(): void {}
+}
+
+final class ModuleAjaxEnvironmentFake implements WordPressAjaxEnvironmentInterface
+{
+    public function registerAction(string $hook, callable $callback): void {}
+    public function request(): array { return []; }
+    public function isAuthenticated(): bool { return true; }
+    public function currentUserCan(string $capability): bool { return true; }
+    public function respond(AjaxResponse $response): void {}
 }
