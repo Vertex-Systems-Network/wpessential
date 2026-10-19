@@ -35,6 +35,7 @@ $terminalWorkflows = [
     '.github/workflows/p006-wave1r-fp21-fp22-overlap-boot.yml',
     '.github/workflows/p006-wave1s-fp33-activation-lifecycle.yml',
     '.github/workflows/p006-wave1t-schema-migration.yml',
+    '.github/workflows/p006-wave1u-minimum-cell.yml',
 ];
 
 $failures = [];
