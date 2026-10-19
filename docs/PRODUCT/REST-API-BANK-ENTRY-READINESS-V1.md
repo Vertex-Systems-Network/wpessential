@@ -5,7 +5,9 @@ Planning issue: **#588**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `b95e2ab190d452dc13882370ae613397f48f38c0`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NOT BANK_REVIEWED — NO OPTION CONTRACT PROMOTION**
+Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+
+> Update (Issue #1446): the Surface 22 Bank is now seeded and `BANK_REVIEWED (46)` — see `config/product/options-bank/rest-api.json`, `docs/PRODUCT/REST-API-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/REST-API-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/rest-api-market-ecosystem.json` and `config/product/options-bank-reviews/rest-api-bank-review-v1.json`. Steps 1–5 of the next gate below are closed; step 6 (schema-valid Atomic Option Contracts) is next. The "Current machine truth" section below is the historical #588 snapshot.
 
 This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, register REST routes, widen CORS/auth policy, expose data or authorize runtime implementation.
 
