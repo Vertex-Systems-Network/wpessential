@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WPEssential\Modules\CustomTables\Migration\MigrationPlan;
 use WPEssential\Modules\CustomTables\Migration\ProviderMigrationPreview;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRun;
 
@@ -20,6 +21,7 @@ final readonly class R1MigrationRunPreparationResult {
 		public ?ProviderMigrationPreview $preview,
 		public ?MigrationReviewSnapshot $snapshot,
 		public array $reasons,
+		public ?MigrationPlan $plan = null,
 	) {
 	}
 
@@ -31,7 +33,7 @@ final readonly class R1MigrationRunPreparationResult {
 		return new self( false, null, null, null, $reasons );
 	}
 
-	public static function prepared( MigrationRun $run, ProviderMigrationPreview $preview, MigrationReviewSnapshot $snapshot ): self {
-		return new self( true, $run, $preview, $snapshot, [] );
+	public static function prepared( MigrationRun $run, ProviderMigrationPreview $preview, MigrationReviewSnapshot $snapshot, MigrationPlan $plan ): self {
+		return new self( true, $run, $preview, $snapshot, [], $plan );
 	}
 }

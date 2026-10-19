@@ -28,6 +28,7 @@ use WPEssential\Modules\CustomTables\Migration\Run\MigrationRun;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunTransitionService;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\WpdbMigrationRunRepository;
 use WPEssential\Modules\CustomTables\Migration\TableSchemaDiffPlanner;
+use WPEssential\Modules\CustomTables\Schema\Ct1ManagedTableIdentity;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
@@ -151,6 +152,16 @@ final readonly class CustomTablesRuntimeCompositionFactory {
 	/** Read-only lookup of a stored run in this site's scope. */
 	public function run( string $runId ): ?MigrationRun {
 		return $this->runs()->get( $runId );
+	}
+
+	/** ADR-0228 §17 evidence: current row count of an existing managed table (identity-validated name). */
+	public function affectedRowsEstimate( Ct1ManagedTableIdentity $identity ): int {
+		$count = $this->database->getVar( "SELECT COUNT(*) FROM `{$identity->physicalName}`" );
+		if ( is_int( $count ) ) {
+			return max( 0, $count );
+		}
+
+		return is_string( $count ) && preg_match( '/^\d+$/', $count ) === 1 ? (int) $count : 0;
 	}
 
 	private function runs(): WpdbMigrationRunRepository {

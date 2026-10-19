@@ -24,6 +24,12 @@ use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\CustomTables\CustomTablesModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Audit\AuditOutcome;
+use WPEssential\Platform\Audit\AuditServices;
+use WPEssential\Platform\Audit\InMemoryAuditLogger;
+use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Modules\Backup\Verification\LocalBackupManifestVerifier;
@@ -124,6 +130,20 @@ final class CtAbDefinitions implements DefinitionRepositoryInterface
     public function dependentsOf(string $id): array { return []; }
 }
 
+final class CtAbEnvironment implements WordPressAbilityEnvironmentInterface
+{
+    public function abilitiesApiAvailable(): bool { return true; }
+    public function doingAction(string $hook): bool { return false; }
+    public function currentUserId(): ?int { return 7; }
+    public function currentSiteId(): int { return CT_AB_SITE; }
+    public function currentNetworkId(): ?int { return 1; }
+    public function currentUserCan(string $capability): bool { return true; }
+    public function isRestRequest(): bool { return false; }
+    public function isCli(): bool { return false; }
+    public function registerCategory(string $slug, array $args): bool { return true; }
+    public function registerAbility(string $name, array $args): bool { return true; }
+}
+
 $pdo = new PDO($dsn, getenv('WPE_TEST_MYSQL_USER') ?: 'root', getenv('WPE_TEST_MYSQL_PASSWORD') ?: 'root', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_EMULATE_PREPARES => false,
@@ -197,6 +217,10 @@ $services->set('platform.abilities', $abilities);
 $services->set('platform.definitions', $definitions);
 $services->set('custom-tables.runtime-composition.factory', $factory);
 $services->set('custom-tables.execution-confirmation.issuer', new WpdbMigrationExecutionConfirmationIssuer($database, $confirmations, $policy, CT_AB_SITE));
+$auditLog = new InMemoryAuditLogger();
+$services->set(AuditServices::LOGGER, $auditLog);
+$services->set('platform.abilities.contexts', new WordPressExecutionContextFactory(new CtAbEnvironment()));
+$services->set('platform.ajax.routes', new AjaxRouteRegistry());
 (new CustomTablesModule($introspector, $profiles, CT_AB_PREFIX))->register($services);
 
 $admin = new ExecutionContext(new Principal(7), CT_AB_SITE, networkId: 1);
@@ -205,7 +229,9 @@ $call = static fn (string $action, array $input, ?ExecutionContext $context = nu
 
 // 1. Prepare and walk the lifecycle through the registry.
 $prepared = $call('prepare', ['definition_id' => CT_AB_DEFINITION]);
-ctAbExpect($prepared['prepared'] === true && $prepared['statements'] !== [], 'prepare must return a planned run with reviewable SQL');
+ctAbExpect($prepared['prepared'] === true && $prepared['preview']['schema_diff'] !== [], 'prepare must return a planned run with a reviewable schema diff');
+ctAbExpect($prepared['preview']['operations'] === ['create_table'] && $prepared['preview']['affected_rows_estimate'] === 0, 'a new table affects no existing rows');
+ctAbExpect(str_contains($prepared['preview']['data_compatibility'], 'Not applicable') && $prepared['preview']['rollback_strategy'] !== '', 'preview must carry the spec section 17 evidence');
 $runId = $prepared['run']['run_id'];
 $run = $call('submit', ['run_id' => $runId, 'expected_state_revision' => $prepared['run']['state_revision']])['run'];
 $run = $call('approve', ['run_id' => $runId, 'expected_state_revision' => $run['state_revision']])['run'];
@@ -250,6 +276,48 @@ $applied = $call('execute', ['run_id' => $runId, 'backup_id' => CT_AB_BACKUP]);
 ctAbExpect($applied['applied'] === true && $applied['state'] === 'applied', 'execute with a verified backup must apply: ' . implode(',', $applied['reasons']));
 $observed = $introspector->observe($desired);
 ctAbExpect($observed->exists && !$observed->isBlockedByDrift(), 'managed table must exist without drift');
+
+// 5. An additive change to an existing table reports a real row count and the column lock note.
+$pdo->exec("INSERT INTO `{$identity->physicalName}` () VALUES (), ()");
+$definitions->save(new Definition(
+    id: CT_AB_DEFINITION,
+    slug: 'aborders',
+    type: 'table',
+    schemaVersion: 1,
+    ownerSurfaceId: 7,
+    status: DefinitionStatus::Published,
+    payload: [
+        'key' => 'aborders',
+        'label' => 'Ability Orders',
+        'desired_schema_version' => 2,
+        'columns' => [
+            ['key' => 'id', 'type' => 'bigint', 'nullable' => false, 'auto_increment' => true],
+            ['key' => 'label', 'type' => 'varchar', 'length' => 64, 'nullable' => true],
+            ['key' => 'note', 'type' => 'varchar', 'length' => 32, 'nullable' => true],
+        ],
+        'primary_key' => ['id'],
+        'indexes' => [],
+        'data_classification' => 'internal',
+    ],
+    revision: 3,
+));
+$second = $call('prepare', ['definition_id' => CT_AB_DEFINITION]);
+ctAbExpect($second['prepared'] === true, 'adding a nullable column must prepare: ' . implode(',', $second['reasons']));
+ctAbExpect($second['preview']['operations'] === ['add_column'], 'second plan must add a column');
+ctAbExpect($second['preview']['affected_rows_estimate'] === 2, 'row estimate must count the existing rows');
+ctAbExpect(stripos($second['preview']['lock_notes'][0], 'column') !== false, 'lock note must describe the column change');
+
+// 6. Every call above left an audit record; executions are recorded with their outcome.
+$records = array_values($auditLog->all());
+// 8 handler calls: prepare, submit, approve, revalidate, confirm, execute x2, prepare. The REST call in step 2
+// is refused by the registry before any handler runs; ADR-0228 audits such refusals only on the admin-AJAX path.
+ctAbExpect(count($records) === 8, 'every migration ability call that reaches a handler must be audited, got ' . count($records));
+$executeOutcomes = array_map(
+    static fn ($record) => $record->outcome,
+    array_values(array_filter($records, static fn ($record) => $record->action === 'custom-tables.migration.execute')),
+);
+ctAbExpect($executeOutcomes === [AuditOutcome::Failed, AuditOutcome::Success], 'execute without then with a backup must audit failed then success');
+ctAbExpect(array_reduce($records, static fn (bool $all, $record) => $all && $record->ownerSurfaceId === 7, true), 'audit records belong to the Custom Tables surface');
 
 foreach (array_merge([$identity->physicalName], $stores) as $table) {
     $pdo->exec("DROP TABLE IF EXISTS `{$table}`");
