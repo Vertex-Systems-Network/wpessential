@@ -7,8 +7,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 QUEUE = ROOT / "config" / "coordination" / "agent-work-queue.json"
 STOP_MODES = {"NO_SAFE_AUTHORIZED_WORK", "OWNER_AUTHORITY_REQUIRED", "PAUSED_BY_OWNER"}
-# AGENTS.md non-stop rule 6: CI waits are bounded (max 12 observations), never an endless block.
-MAX_CONSECUTIVE_STOP_BLOCKS = 12
+# Block a stop once per turn; a retried stop (stop_hook_active) is then allowed, so the hook
+# never loops. Claude Code caps consecutive Stop-hook blocks at 9 on its own.
+MAX_CONSECUTIVE_STOP_BLOCKS = 1
 COUNTER = ROOT / ".claude" / ".stop-hook-blocks"
 
 
