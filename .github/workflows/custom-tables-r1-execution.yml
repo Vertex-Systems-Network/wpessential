@@ -8,6 +8,7 @@ on:
       - 'tests/Integration/custom-tables-r1-execution-mysql.php'
       - 'tests/Integration/custom-tables-review-snapshot-mysql.php'
       - 'tests/Integration/custom-tables-r1-lifecycle-e2e-mysql.php'
+      - 'tests/Integration/custom-tables-r1-abilities-e2e-mysql.php'
       - 'frameworks/Modules/Backup/**'
       - '.github/workflows/custom-tables-r1-execution.yml'
   push:
@@ -19,6 +20,7 @@ on:
       - 'tests/Integration/custom-tables-r1-execution-mysql.php'
       - 'tests/Integration/custom-tables-review-snapshot-mysql.php'
       - 'tests/Integration/custom-tables-r1-lifecycle-e2e-mysql.php'
+      - 'tests/Integration/custom-tables-r1-abilities-e2e-mysql.php'
       - 'frameworks/Modules/Backup/**'
       - '.github/workflows/custom-tables-r1-execution.yml'
   workflow_dispatch:
@@ -81,6 +83,7 @@ jobs:
           php -l tests/Integration/custom-tables-r1-execution-mysql.php
           php -l tests/Integration/custom-tables-review-snapshot-mysql.php
           php -l tests/Integration/custom-tables-r1-lifecycle-e2e-mysql.php
+          php -l tests/Integration/custom-tables-r1-abilities-e2e-mysql.php
           find frameworks/Modules/CustomTables -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Run Custom Tables R1 execution integration
@@ -92,6 +95,7 @@ jobs:
           php tests/Integration/custom-tables-r1-execution-mysql.php
           php tests/Integration/custom-tables-review-snapshot-mysql.php
           php tests/Integration/custom-tables-r1-lifecycle-e2e-mysql.php
+          php tests/Integration/custom-tables-r1-abilities-e2e-mysql.php
 
 
   mariadb:
@@ -140,6 +144,7 @@ jobs:
           php -l tests/Integration/custom-tables-r1-execution-mysql.php
           php -l tests/Integration/custom-tables-review-snapshot-mysql.php
           php -l tests/Integration/custom-tables-r1-lifecycle-e2e-mysql.php
+          php -l tests/Integration/custom-tables-r1-abilities-e2e-mysql.php
           find frameworks/Modules/CustomTables -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Run Custom Tables R1 execution integration
@@ -151,3 +156,4 @@ jobs:
           php tests/Integration/custom-tables-r1-execution-mysql.php
           php tests/Integration/custom-tables-review-snapshot-mysql.php
           php tests/Integration/custom-tables-r1-lifecycle-e2e-mysql.php
+          php tests/Integration/custom-tables-r1-abilities-e2e-mysql.php

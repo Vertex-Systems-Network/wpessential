@@ -15,6 +15,7 @@ use WPEssential\Contracts\ModuleActivationPolicyInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
+use WPEssential\Modules\CustomTables\CustomTablesModule;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTablesRuntimeCompositionFactory;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\CreateMigrationExecutionConfirmationStoreMigration;
@@ -24,6 +25,7 @@ use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecov
 use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\LocalBackupRecoveryVerificationProvider;
 use WPEssential\Modules\Backup\Verification\LocalBackupManifestVerifier;
 use WPEssential\Modules\CustomTables\Migration\Review\Persistence\CreateMigrationReviewSnapshotStoreMigration;
+use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilityProfileResolver;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRunStoreMigration;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
@@ -189,15 +191,15 @@ final class Plugin {
 		$services->set( AssetServices::BUILD_ENTRIES, $assetBuildEntries );
 		$services->set( AssetServices::MANIFEST, $adminAssets );
 		$services->set( AssetServices::WORDPRESS, $assetLoader );
+		$customTablesModule = null;
 		if ( $database instanceof NativeWpdbAdapter ) {
 			$services->set( 'platform.database', $database );
 			$networkId = function_exists( 'get_current_network_id' ) ? max( 1, (int) get_current_network_id() ) : 1;
 			$siteId    = function_exists( 'get_current_blog_id' ) ? max( 1, (int) get_current_blog_id() ) : 1;
 			$wpdb      = $GLOBALS['wpdb'] ?? null;
 			if ( is_object( $wpdb ) && self::proCustomTablesRuntimeAvailable() ) {
-				$metadataFacts = new WordPressMetadataPreconditionFactsProvider(
-					new WordPressCt1SchemaIntrospector( $wpdb ),
-				);
+				$schemaIntrospector = new WordPressCt1SchemaIntrospector( $wpdb );
+				$metadataFacts      = new WordPressMetadataPreconditionFactsProvider( $schemaIntrospector );
 				$confirmations = new WpdbMigrationExecutionConfirmationProvider( $database, $siteId );
 				$services->set(
 					'custom-tables.runtime-composition.factory',
@@ -219,6 +221,11 @@ final class Plugin {
 					'custom-tables.execution-confirmation.issuer',
 					new WpdbMigrationExecutionConfirmationIssuer( $database, $confirmations, $abilityPolicy, $siteId ),
 				);
+				$customTablesModule = new CustomTablesModule(
+					$schemaIntrospector,
+					new WordPressProviderCapabilityProfileResolver( $wpdb ),
+					property_exists( $wpdb, 'prefix' ) ? (string) $wpdb->prefix : '',
+				);
 			}
 		}
 		if ( $migrationCoordinator instanceof MigrationCoordinator ) {
@@ -239,6 +246,9 @@ final class Plugin {
 
 		self::$kernel->registerModule( new CustomPostTypeModule() );
 		self::$kernel->registerModule( new TaxonomyModule() );
+		if ( $customTablesModule instanceof CustomTablesModule ) {
+			self::$kernel->registerModule( $customTablesModule );
+		}
 		foreach ( self::$contributedModules as $module ) {
 			self::$kernel->registerModule( $module );
 		}
@@ -333,6 +343,8 @@ final class Plugin {
 			LocalBackupManifestVerifier::class,
 			CreateMigrationRunStoreMigration::class,
 			CreateMigrationReviewSnapshotStoreMigration::class,
+			WordPressProviderCapabilityProfileResolver::class,
+			CustomTablesModule::class,
 			WordPressCt1SchemaIntrospector::class,
 		] as $class ) {
 			if ( ! class_exists( $class ) ) {

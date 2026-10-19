@@ -24,6 +24,7 @@ use WPEssential\Modules\CustomTables\Migration\Review\R1MigrationRunLifecycleSer
 use WPEssential\Modules\CustomTables\Migration\Review\R1MigrationRunPreparationService;
 use WPEssential\Modules\CustomTables\Migration\Review\WordPressProviderCapabilityProfileResolver;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\MigrationRunRecordCodec;
+use WPEssential\Modules\CustomTables\Migration\Run\MigrationRun;
 use WPEssential\Modules\CustomTables\Migration\Run\MigrationRunTransitionService;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\WpdbMigrationRunRepository;
 use WPEssential\Modules\CustomTables\Migration\TableSchemaDiffPlanner;
@@ -145,6 +146,11 @@ final readonly class CustomTablesRuntimeCompositionFactory {
 			sitePrefix: $sitePrefix,
 			maxRecoveryEvidenceAgeHours: self::R1_MAX_RECOVERY_EVIDENCE_AGE_HOURS,
 		);
+	}
+
+	/** Read-only lookup of a stored run in this site's scope. */
+	public function run( string $runId ): ?MigrationRun {
+		return $this->runs()->get( $runId );
 	}
 
 	private function runs(): WpdbMigrationRunRepository {
