@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "11ca1800eeb5c07d49bce6195928d314576310e4",
+  "anchor_main_sha": "7345b40b913ca8d383165bb52360bce726ed3c8f",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -983,7 +983,7 @@
         "Issue #1172 closed completed",
         "README 56/56, queue v124 and #1170 READY_TO_CLAIM handoff landed"
       ],
-      "note": "Terminal PASS for the #1168→#1170 shared-truth handoff."
+      "note": "Terminal PASS for the #1168\u2192#1170 shared-truth handoff."
     },
     {
       "id": "RB-0031",
@@ -1061,7 +1061,7 @@
         "merged renderer-execution transition audit #1175/#1177",
         "canonical DashboardWidgetComponentBlueprintCatalog"
       ],
-      "authorization": "Content-class ↔ canonical Blueprint consistency only; no Dashboard runtime renderer invocation, hooks, providers/sources, assets, mutation, shared Platform changes, certification, deploy or release authority",
+      "authorization": "Content-class \u2194 canonical Blueprint consistency only; no Dashboard runtime renderer invocation, hooks, providers/sources, assets, mutation, shared Platform changes, certification, deploy or release authority",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 15,
@@ -1080,7 +1080,7 @@
         "PR #1178 merged as d6c66ed7ce224131f484dc8bc8243c03a8649832",
         "Issue #1176 closed completed"
       ],
-      "note": "PASS certifies only trusted content-class ↔ canonical Blueprint consistency. WordPress Dashboard hooks and full runtime orchestration remain unpromoted."
+      "note": "PASS certifies only trusted content-class \u2194 canonical Blueprint consistency. WordPress Dashboard hooks and full runtime orchestration remain unpromoted."
     },
     {
       "id": "RB-0034",
@@ -1090,7 +1090,7 @@
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
       "environment": "supervisor/dashboard-widgets-runtime-render-execution-transition-audit-v1 exact head",
       "dependencies": [
-        "merged content-class ↔ canonical Blueprint consistency #1176/#1178",
+        "merged content-class \u2194 canonical Blueprint consistency #1176/#1178",
         "visibility evaluator",
         "trusted render-source compiler",
         "shared renderer dispatcher"
@@ -2651,7 +2651,7 @@
         "DefinitionRepository optimistic revision semantics",
         "exact source base 880db8ac6938f520fcc53d7f23eddd319b45e5fe"
       ],
-      "authorization": "Exact six-file Forms owner-contract/shared-truth scope only; freeze Published↔Disabled Set-Enabled Ability semantics, owner-side input validation, expected_revision safety and no-REST boundary; no runtime PHP/JS/tests",
+      "authorization": "Exact six-file Forms owner-contract/shared-truth scope only; freeze Published\u2194Disabled Set-Enabled Ability semantics, owner-side input validation, expected_revision safety and no-REST boundary; no runtime PHP/JS/tests",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 10,
@@ -2685,7 +2685,7 @@
         "DefinitionRepository optimistic revision semantics",
         "exact source base f47ab596dc0329b759bdfa404b37fce6b5963447"
       ],
-      "authorization": "Exact nine-file Forms handler/module/test/shared-truth scope only; Published↔Disabled mutation with owner-side validation, expected_revision and showInRest=false; no Dashboard/AbilityRegistry/entry-run/provider/REST/package changes",
+      "authorization": "Exact nine-file Forms handler/module/test/shared-truth scope only; Published\u2194Disabled mutation with owner-side validation, expected_revision and showInRest=false; no Dashboard/AbilityRegistry/entry-run/provider/REST/package changes",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 15,
@@ -3948,6 +3948,30 @@
         "Final exact PR head 3636d29112b01edf374c9eb7b89753dd31744d47: Governance Gate run 39408236547 PASS; Architecture Guards run 39408236669 PASS; Platform Compatibility Matrix run 39408236817 PASS (10/10 cells); zero unresolved review threads; merged as 11ca1800eeb5c07d49bce6195928d314576310e4."
       ],
       "note": "No endpoint registration/execution or public exposure is certified."
+    },
+    {
+      "id": "RB-0128",
+      "source": "Issue #1465 / Surface 23 Connections/Webhooks Atomic Option Contract and UX V1",
+      "category": "CONNECTIONS_ATOMIC_CONTRACT_UX_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head schema/source/ownership contract validation plus applicable Governance Gate, Architecture Guards, and Platform Compatibility Matrix for integration",
+      "environment": "PR #1465 exact accepted head 90e70170003afd8c0daec35863ec6de29f389f79 on base main 7345b40b913ca8d383165bb52360bce726ed3c8f; exact-head workflows complete.",
+      "dependencies": [
+        "Issue #1448 Bank Review accepted: 65/65, zero unresolved",
+        "Issue #1465 exact ten-file scope"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002; Issue #1465; planning/data/docs only; no outbound network, OAuth, webhook execution, credential values, provider, production, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 30,
+      "dedup_key": "connections|surface23-atomic-contract-ux|issue1465|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "Local Draft 2020-12 schema validation: PASS (0 errors); reviewed Bank projection exact 65/65 one-to-one; disposition counts 43/4/2/16; canonical ownership and prohibited/deferred boundaries checked; git diff --check PASS.",
+        "Exact PR head 90e70170003afd8c0daec35863ec6de29f389f79: Governance Gate run 39412253765 PASS; Architecture Guards run 39412253845 PASS; Platform Compatibility Matrix run 39412253758 PASS (10/10 cells); zero unresolved review threads. Final evidence-only head requires rerun of exact-head gates."
+      ],
+      "note": "No secret value, network request, OAuth callback or webhook route/execution is authorized."
     }
   ],
   "last_reconciled_issue": "#1458",

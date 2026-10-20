@@ -1,10 +1,12 @@
-# 2026-10-20 — Surface 22 REST API Atomic Option Contract / UX V1 completed
+# 2026-10-20 — Surface 23 Connections/Webhooks Atomic Option Contract / UX V1 active
 
-- Exact main refresh: `11ca1800eeb5c07d49bce6195928d314576310e4` (Issue #1463 / PR #1463 merged).
-- PR #1463 exact tested head: `3636d29112b01edf374c9eb7b89753dd31744d47`; Governance run `39408236547`, Architecture Guards `39408236669`, Platform Compatibility `39408236817` (10/10) all PASS. RB-0127 terminal PASS.
-- Surface 22 Bank: 46/46 reviewed, zero unresolved. Atomic contract is a schema-valid 46/46 source projection: 33 PARITY, 2 EXCEEDS, 1 DEFERRED, 10 REJECTED_UNSAFE. Lifecycle: `UX_CONTRACT_COMPLETE` only.
-- Runtime boundary remains unchanged: no route registration/execution, auth/CORS widening, external exposure, provider calls, endpoint writes, deployment or release.
-- Post-merge state divergence reconciled under Issue #1464; no additional implementation lane was seeded. Refresh open issues/PRs before the next scoped milestone; #858 remains external-admin and #1102/#1425/#1426 remain authorization-gated P-006 work.
+- Exact main refresh: `7345b40b913ca8d383165bb52360bce726ed3c8f` (PR #1464 reconciled Surface 22 post-merge state).
+- Open issue/PR audit: #1465 is the active safe planning milestone. #858 remains external-admin; #1102/#1425/#1426 remain authorization-gated P-006 items; do not touch those lanes.
+- Surface 23 Bank evidence: 65/65 reviewed, zero unresolved; native and market audits complete, 140 source references and five extra dispositions reconciled, zero post-audit record delta.
+- Contract target: 65/65 one-to-one projection, expected 43 PARITY / 4 EXCEEDS / 2 DEFERRED / 16 REJECTED_UNSAFE. UX/readiness/gap re-review plus lifecycle/README/queue reconciliation is in scope.
+- Hard boundaries: Vault owns secret values; Surface 23 stores opaque references only. No outbound HTTP, OAuth callback, webhook route/execution, credential access, provider calls, deployment or release.
+- Runner Benchmark RB-0128 is `IMMEDIATE_REQUIRED` for exact-head contract/schema/coverage checks and applicable integration gates. RB-0127 was terminal PASS on Surface 22 and is no longer pending.
+- Issue #1465 is active on `agent/connections-atomic-contract-ux-v1`; contract projection generated and local Draft 2020-12 schema validation passes. Exact-head CI is pending after PR creation.
 
 ## Previous checkpoint
 
