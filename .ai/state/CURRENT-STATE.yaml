@@ -2,15 +2,15 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: b4f2cb5fc707bee0358bdc83323424638cd4ef4f
-observed_main_source: "2026-10-20 exact main refresh; last merge #1457."
-active_issue: "#1458"
-active_pr: "#1459"
-active_branch: agent/media-operations-options-bank-v1
+observed_main_sha: 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece
+observed_main_source: "2026-10-20 post-merge refresh; PR #1459 / issue #1458 merged."
+active_issue: null
+active_pr: null
+active_branch: main
 current_milestone: "Surface 28 Media Operations Options Bank V1: 232 normalized entries, native + market audit, zero-unresolved review."
-milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "PR #1459 is open for Issue #1458; resolve exact-head CI findings, refresh the PR head and verify required checks before merge."
+milestone_status: COMPLETED
+last_completed_milestone: "RB-0126 Issue #1458 / PR #1459 exact head 210ace4539c90d3d43deb9120f285ecf319408c6; Governance + Architecture Guards + 10/10 Platform Compatibility PASS; merged 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece; Bank planning only."
+next_safe_action: "Surface 28 Bank Review is complete. Contract derivation and UX re-review require a separate scoped issue; no runtime or attachment mutation is promoted."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
 next_planned_slot: EXACT_HEAD_CI_VERIFICATION
 readme_progress_contract:
@@ -19,8 +19,7 @@ readme_progress_contract:
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending:
-    - RB-0126
+  immediate_pending: []
   terminal_pass:
     - RB-0041
     - RB-0042

@@ -4,7 +4,7 @@
 - Deep audit found stale compact-state anchor 30ad00c, stale media readiness (UNSEEDED / 0), and an open unrelated PR #1426 that is 64 commits behind/dirty; its FP-86/89/90/94 formal jobs are skipped at the observed head. Do not claim those fixtures pass or merge that draft.
 - Accepted actionable Issue #1458 scope: Surface 28 Bank seed + native/market review only. Implementation uses 232 normalized records, 20 WordPress Core source refs, six primary market sources, nine specialists and one Core cross-reference; 0 native/market/review unresolved, 0 semantic overlaps, 0 post-audit count delta.
 - Strict boundaries: original files unchanged; no derivative execution, attachment/reference/cache/CDN mutation, provider call, runtime/UX/Atomic Contract promotion, deployment or release.
-- Runner gate RB-0126 registered as IMMEDIATE_REQUIRED for exact-head merge verification. PR #1459 is open, but exact-head Governance JSON validation failed on config/coordination/agent-work-queue.json because the GitHub connector encoded its blob incorrectly; re-upload all changed files as UTF-8, correct branch content, and refresh checks.
+- Runner gate RB-0126 registered as IMMEDIATE_REQUIRED for exact-head merge verification. Corrected head 210ace4539c90d3d43deb9120f285ecf319408c6 passed Governance, Architecture Guards and Platform Compatibility 10/10. PR #1459 merged as 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece. Surface 28 remains Bank planning only; contract derivation/UX review need separate scope.
 
 # AI Durable Last Checkpoint
 
