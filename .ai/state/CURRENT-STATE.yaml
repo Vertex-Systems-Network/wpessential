@@ -1,16 +1,16 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: FEATURE_ACTIVE
-observed_main_sha: 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece
-observed_main_source: "2026-10-20 post-merge refresh; PR #1459 / issue #1458 merged."
-active_issue: null
+state_status: IMPLEMENTATION_ACTIVE
+observed_main_sha: 6c4c7aadb00ab807128ce9321d43ca9a66db0c91
+observed_main_source: "2026-10-20 exact-main refresh after PR #1462 merged; main @ 6c4c7aadb00ab807128ce9321d43ca9a66db0c91."
+active_issue: 1463
 active_pr: null
-active_branch: main
-current_milestone: "Surface 28 Media Operations Options Bank V1: 232 normalized entries, native + market audit, zero-unresolved review."
-milestone_status: COMPLETED
-last_completed_milestone: "RB-0126 Issue #1458 / PR #1459 exact head 210ace4539c90d3d43deb9120f285ecf319408c6; Governance + Architecture Guards + 10/10 Platform Compatibility PASS; merged 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece; Bank planning only."
-next_safe_action: "Surface 28 Bank Review is complete. Contract derivation and UX re-review require a separate scoped issue; no runtime or attachment mutation is promoted."
+active_branch: agent/rest-api-atomic-contract-ux-v1
+current_milestone: "Surface 22 REST API Atomic Option Contract and UX re-review V1; 46 reviewed Bank records."
+milestone_status: IMPLEMENTING
+last_completed_milestone: "Issue #1461 / PR #1462 Surface 28 Atomic Option Contract + UX accepted and merged 6c4c7aadb00ab807128ce9321d43ca9a66db0c91; all required exact-head checks passed."
+next_safe_action: "Complete Issue #1463: derive the Surface 22 Atomic Option Contract from its 46 reviewed Bank records, re-review UX, reconcile shared truth, then pass exact-head gates. No route registration/runtime exposure."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
 next_planned_slot: EXACT_HEAD_CI_VERIFICATION
 readme_progress_contract:
@@ -19,7 +19,8 @@ readme_progress_contract:
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0127
   terminal_pass:
     - RB-0041
     - RB-0042

@@ -1,9 +1,9 @@
 {
-  "schema_version": 208,
+  "schema_version": 209,
   "snapshot_date": "2026-10-20",
-  "queue_anchor_main_sha": "2c9120bbbf7a0a5136e3472b63a5cd09cb130ece",
+  "queue_anchor_main_sha": "6c4c7aadb00ab807128ce9321d43ca9a66db0c91",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1458",
+  "source_issue": "#1463",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -8537,6 +8537,37 @@
         "unresolved_review_threads": 0,
         "regression": "PASS_PHPUNIT_PRIVILEGE_REVOKED_AFTER_INITIAL_CHECK"
       }
+    },
+    {
+      "priority": 1200,
+      "slot_id": "rest-api-atomic-contract-ux-v1",
+      "title": "Surface 22 REST API Atomic Option Contract and UX re-review V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE",
+      "work_mode": "REST_API_ATOMIC_CONTRACT_UX_V1",
+      "source": "Issue #1463",
+      "dependencies": [
+        "Surface 22 Bank Review #1446 accepted: 46 records, 0 unresolved",
+        "Exact main 6c4c7aadb00ab807128ce9321d43ca9a66db0c91"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1463 ten-file allowlist: REST API contract JSON, three Surface 22 planning docs, atomic progress ledger, README, compact state/checkpoint, work queue and runner benchmark"
+      ],
+      "forbidden_scope": [
+        "REST route registration or execution",
+        "auth/CORS widening or external data exposure",
+        "provider calls, endpoint writes, deployment or release",
+        "editing unrelated surfaces or formal P-006 evidence"
+      ],
+      "claim_branch": "agent/rest-api-atomic-contract-ux-v1",
+      "close_condition": "Exact 46/46 one-to-one source projection, disposition counts 33/2/1/10, schema and focused consistency checks, reviewed UX/readiness/gap docs, exact-head Governance/Architecture/Platform checks PASS, fresh main, zero behind and zero unresolved reviews; merge the exact tested head and close Issue #1463.",
+      "terminal_result": null,
+      "terminal_evidence": null
     }
   ],
   "historical_closeout": {
