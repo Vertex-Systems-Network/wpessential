@@ -1,15 +1,12 @@
-Warning: truncated output (original token count: 228032)
-Total output lines: 21186
+Warning: truncated output (original token count: 227951)
+Total output lines: 21183
 
 {
   "schema_version": 1,
   "surface_id": 28,
   "surface_key": "media",
   "benchmark_snapshot": {
-    "date": {
-      "date": "2026-10-20",
-      "notes": "Primary-provider and specialist review of current WordPress.org entries and official Core developer references. Research reviewed product descriptions/FAQ claims only; no competitor code was executed. Records are dispositioned as a Bank review, not a parity or runtime certification."
-    },
+    "date": "2026-10-20",
     "products": [
       {
         "name": "Image Watermark",
@@ -4961,7 +4958,13 @@ Total output lines: 21186
               "provider traffic",
               "original-file mutation"
             ]
-   …128032 tokens truncated…s": "Cross-site scope is not inferred; future implementation requires explicit site/network ownership contracts."
+          },
+          "competitor_evidence": []
+        },
+        {
+          "id": "media.image-aspect",
+          "label": "Preserve overlay aspect ratio by default",
+          "description": "Core WPE media-rule behavior from the exhaustive spec, bounded by canonical owner, capability checks and the non-destructive deriv…127951 tokens truncated…s": "Cross-site scope is not inferred; future implementation requires explicit site/network ownership contracts."
           },
           "testing": {
             "required_evidence": [
