@@ -5,7 +5,7 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: e400ea23ae2af0b49a3292963e5eaaf488ec325a
 observed_main_source: "2026-10-20 exact-main refresh after PR #1465 merged; main @ e400ea23ae2af0b49a3292963e5eaaf488ec325a."
 active_issue: 1467
-active_pr: null
+active_pr: 1467
 active_branch: agent/surface24-backup-atomic-contract-ux-v1
 current_milestone: "Surface 24 Backup Atomic Option Contract and UX V1; 122 reviewed Bank records."
 milestone_status: IN_PROGRESS

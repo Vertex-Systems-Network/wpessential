@@ -3979,7 +3979,7 @@
       "category": "BACKUP_ATOMIC_CONTRACT_UX_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head option contract schema/source/ownership validation plus Governance Gate, Architecture Guards, Platform Compatibility Matrix (10 cells)",
-      "environment": "PR # pending exact source head, base main e400ea23ae2af0b49a3292963e5eaaf488ec325a",
+      "environment": "PR #1467 exact candidate head; base main e400ea23ae2af0b49a3292963e5eaaf488ec325a",
       "dependencies": [
         "Issue #1450 Bank Review accepted: 122/122, zero unresolved",
         "Issue #1467 exact ten-file scope",

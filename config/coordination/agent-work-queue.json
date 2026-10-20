@@ -8648,7 +8648,7 @@
       "close_condition": "Exact-head schema/source projection, ownership, Governance, Architecture and Platform Compatibility checks pass; merge planning-only PR.",
       "terminal_result": null,
       "terminal_evidence": null,
-      "active_pr": null,
+      "active_pr": 1467,
       "terminal_source_head_precloseout": null,
       "terminal_governance_run": null,
       "terminal_architecture_run": null,
