@@ -5,20 +5,20 @@ Planning issue: **#590**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `dab9944bf7ad174ceffb3b48ddebffac4ea71bcc`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+Status: **BANK REVIEWED 122/122 — ATOMIC CONTRACT + UX CANDIDATE UNDER ISSUE #1467**
 
-> Update (Issue #1450): the Surface 24 Bank is now seeded and `BANK_REVIEWED (122)` — see `config/product/options-bank/backup.json`, `docs/PRODUCT/BACKUP-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/BACKUP-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/backup-market-ecosystem.json` and `config/product/options-bank-reviews/backup-bank-review-v1.json`. Bank seeding, native/market/provider audit and duplicate/ownership/unsafe/deferred resolution are closed; schema-valid Atomic Option Contracts are next. The "Current machine truth" section below is the historical #590 snapshot.
+> Bank review #1450 accepted 122 records with zero unresolved. Native and market audits are complete; the market audit covers 4 primary providers, 11 specialists, 248 references, 6 extra dispositions, zero unresolved, and zero semantic relationship/alias/effective-derivation candidates. Contract and UX acceptance is in progress under #1467. Earlier `UNSEEDED / 0` statements below describe the historical #590 checkpoint only.
 
 This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, create archives, upload backup data, restore data, mutate files/database state or authorize runtime implementation.
 
 ## Current machine truth
 
-- Surface 24 `backup` is `UNSEEDED` with **0 normalized Master Options Bank records**.
-- The atomic planning ledger marks Surface 24 `ATOMIC_INVENTORY_COMPLETE`; this is pre-contract planning only.
+- **Historical #590 checkpoint:** Surface 24 `backup` was `UNSEEDED / 0`. This is superseded by the accepted #1450 review.
+- **Current reviewed truth:** Bank is `BANK_REVIEWED / 122`, zero unresolved; native/market audits and ownership/unsafe/deferred decisions are closed. Issue #1467 derives the Atomic Option Contract and re-reviews UX; lifecycle promotion awaits exact-head gates.
 - The canonical ownership map assigns backup artifact/restore truth to Surface 24. Provider transport/credentials remain Surface 23; scheduling/Job execution and Notifications remain delegated owners.
 - Exact-main `frameworks/Modules` has no dedicated Backup runtime module.
 
-The next valid product gate is Bank seeding + native/market review, not capture/restore implementation.
+The current product gate is schema-valid one-to-one contract projection plus UX acceptance. Backup/restore implementation remains a separate authorization gate.
 
 ## Existing in-repo evidence
 
@@ -127,4 +127,4 @@ Reject or tightly bound:
 
 Surface 24 has enough semantic material to begin disciplined Master Options Bank seeding/native/market review, but exact-main `UNSEEDED / 0` blocks option-contract, UX and runtime promotion.
 
-Next gate: normalized Bank seed → native audit → market/provider audit → ownership/unsafe/deferred resolution → Bank review with zero unresolved items → schema-valid Atomic Option Contracts → UX re-review → separately authorized runtime slices.
+Current gate: reviewed Bank → schema-valid Atomic Option Contract → UX acceptance. Only a later separately authorized runtime issue may address capture or restore.

@@ -1,9 +1,9 @@
 {
-  "schema_version": 212,
+  "schema_version": 213,
   "snapshot_date": "2026-10-20",
   "queue_anchor_main_sha": "e400ea23ae2af0b49a3292963e5eaaf488ec325a",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1466",
+  "source_issue": "#1467",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -52,7 +52,7 @@
     "b6c_fp94_diagnostics_redaction_authorization": "Issue #1097 / GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001 PREREQUISITE_PASS_PR_1098",
     "b6d_fp90_disposable_db_snapshot_authorization": "Issue #1099 / GOV-P006-B6D-FP90-DISPOSABLE-DB-SNAPSHOT-001 PREREQUISITE_PASS_MERGED_PR_1100"
   },
-  "authoritative_rule": "Resolve exact main \u2192 classify open issues \u2192 reconcile open PRs/MRs second \u2192 active claims/queue \u2192 Runner Benchmark \u2192 accepted work. Security remediations #1103/#1108 are completed; security/merge-required runner checks remain immediate exceptions. Material non-blocking runner work is registered in config/coordination/runner-benchmark.json and defaults to DEFER_FINAL_BATCH for one deduplicated milestone/integration closeout batch. A Runner Benchmark entry never grants execution authority: formal runtime/destructive/provider/production/deploy/release tasks remain BLOCKED_AUTHORIZATION until an explicit current grant exists. Historical consumed P-006 evidence must not be silently rerun. RC1 and P-006 Waves 1H\u20131T plus B6 prerequisites remain terminal as previously recorded; FP-86/89/90/94 remain NOT FORMALLY EXECUTED and accounting remains 144/57/57/0/0 with zero certified pairs/runtime certifications. #858 remains external-admin NON_BLOCKING; #947 independent review completed by PR #1422 and issue closed.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → Runner Benchmark → accepted work. Security remediations #1103/#1108 are completed; security/merge-required runner checks remain immediate exceptions. Material non-blocking runner work is registered in config/coordination/runner-benchmark.json and defaults to DEFER_FINAL_BATCH for one deduplicated milestone/integration closeout batch. A Runner Benchmark entry never grants execution authority: formal runtime/destructive/provider/production/deploy/release tasks remain BLOCKED_AUTHORIZATION until an explicit current grant exists. Historical consumed P-006 evidence must not be silently rerun. RC1 and P-006 Waves 1H–1T plus B6 prerequisites remain terminal as previously recorded; FP-86/89/90/94 remain NOT FORMALLY EXECUTED and accounting remains 144/57/57/0/0 with zero certified pairs/runtime certifications. #858 remains external-admin NON_BLOCKING; #947 independent review completed by PR #1422 and issue closed.",
   "runner_benchmark": {
     "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
     "source_issue": "#1109",
@@ -797,7 +797,7 @@
         "local_compatibility_preflight_sha256": "53333d4bc59947e8dcc22b5119f7f0edd5609150cc47a33a360e40aaf62470f2",
         "php82_determinism_sha256": "ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632",
         "php85_determinism_sha256": "ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632",
-        "summary": "FP-61\u202668/76 PASS in PHP 8.2 and 8.5; 9 formal fixtures; identical normalized decisions across both cells; no WordPress boot, DB, filesystem replacement, provider/network or destructive/live side effects; no pair/runtime certification promotion"
+        "summary": "FP-61…68/76 PASS in PHP 8.2 and 8.5; 9 formal fixtures; identical normalized decisions across both cells; no WordPress boot, DB, filesystem replacement, provider/network or destructive/live side effects; no pair/runtime certification promotion"
       },
       "wave1k_evidence": {
         "source_head": "59e8675e292d41a3a98009f8649593f57f8d22ad",
@@ -1040,16 +1040,16 @@
         "primary_fault_injection_blocker": "No accepted integrity/publication contract prevents readable partially copied PHP from reaching require/autoload before fail-closed package state can be published",
         "manual_replacement_blocker": "No accepted WordPress-owned manual upload/overwrite harness; Wave 1K/1L symlink transport is not equivalent",
         "next_prerequisites": [
-          "separate integrity/publication architecture decision or pre-load package-integrity contract for full FP-49\u202652 interruption/truncation coverage",
+          "separate integrity/publication architecture decision or pre-load package-integrity contract for full FP-49…52 interruption/truncation coverage",
           "separate WordPress-owned manual upload/overwrite harness implementation/review for FP-58"
         ],
-        "summary": "Non-runtime review only; no FP-49\u202652/58 execution; P-006 remains 144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications"
+        "summary": "Non-runtime review only; no FP-49…52/58 execution; P-006 remains 144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications"
       },
       "b3_manual_replacement_harness": {
         "source_issue": 1043,
         "closeout_pr": 1045,
         "authorization": "GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED",
-        "terminal_result": "PASS prerequisite on minimum/reference Free and Pro cells using WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true), direct filesystem and real plugin directories; exact F0\u2192F1/P0\u2192P1 payload trees, activation preserved, compatible fresh boot, zero outbound HTTP, no temp-backup residue. FP-58 remains NOT_EXECUTED and P-006 counters unchanged.",
+        "terminal_result": "PASS prerequisite on minimum/reference Free and Pro cells using WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true), direct filesystem and real plugin directories; exact F0→F1/P0→P1 payload trees, activation preserved, compatible fresh boot, zero outbound HTTP, no temp-backup residue. FP-58 remains NOT_EXECUTED and P-006 counters unchanged.",
         "source_head_initial": "816cca3ca04cac48337dc02cb018da04c2c70d2a",
         "workflow_run": 35394229243,
         "governance_run_initial": 35394229287,
@@ -1101,7 +1101,7 @@
         "pair_certified": false,
         "runtime_certified": false,
         "adr_0010": "Proposed",
-        "summary": "WordPress-owned manual ZIP overwrite transport prerequisite validated for F0\u2192F1 Free and P0\u2192P1 Pro on both accepted cells; exact live payload-tree identity, active state, compatible fresh boot, direct filesystem, zero outbound HTTP and no backup residue; FP-58 remains NOT_EXECUTED"
+        "summary": "WordPress-owned manual ZIP overwrite transport prerequisite validated for F0→F1 Free and P0→P1 Pro on both accepted cells; exact live payload-tree identity, active state, compatible fresh boot, direct filesystem, zero outbound HTTP and no backup residue; FP-58 remains NOT_EXECUTED"
       },
       "b3_publication_owner_harness": {
         "source_issue": 1052,
@@ -1117,8 +1117,8 @@
           "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
         ],
         "targets": [
-          "Free F0\u2192F1 with P0 unchanged",
-          "Pro P0\u2192P1 with F0 unchanged"
+          "Free F0→F1 with P0 unchanged",
+          "Pro P0→P1 with F0 unchanged"
         ],
         "scenarios": {
           "successful_entrypoint_last_publication": "PASS",
@@ -1177,7 +1177,7 @@
         "runtime_certified": false,
         "adr_0010": "Proposed",
         "next_gate": "SEPARATELY_AUTHORIZED_FP49_52_APPLICABILITY_READINESS_REVIEW_BEFORE_ANY_FORMAL_EXECUTION",
-        "summary": "Entrypoint-last external publication-owner prerequisite PASS on minimum/reference Free and Pro targets with exact staged/final/recovery identities, deterministic mid-copy fresh-process probes, fail-closed partial states, corrupt-stage and unsupported-profile refusal, zero outbound HTTP; no FP-49\u202652 execution or certification promotion."
+        "summary": "Entrypoint-last external publication-owner prerequisite PASS on minimum/reference Free and Pro targets with exact staged/final/recovery identities, deterministic mid-copy fresh-process probes, fail-closed partial states, corrupt-stage and unsupported-profile refusal, zero outbound HTTP; no FP-49…52 execution or certification promotion."
       },
       "b3_fp49_52_applicability_review": {
         "source_issue": 1055,
@@ -1212,7 +1212,7 @@
         "pair_certified": false,
         "runtime_certified": false,
         "adr_0010": "Proposed",
-        "summary": "Non-runtime review maps exact original FP-49\u202652 wording to the validated entrypoint-last publisher without fixture redefinition. FP-49/51/52 are dependency-ready for separate formal runtime authorization; FP-50 remains interpretation-blocked. No counter/certification promotion."
+        "summary": "Non-runtime review maps exact original FP-49…52 wording to the validated entrypoint-last publisher without fixture redefinition. FP-49/51/52 are dependency-ready for separate formal runtime authorization; FP-50 remains interpretation-blocked. No counter/certification promotion."
       },
       "wave1n_fp49_evidence": {
         "source_issue": 1058,
@@ -1540,7 +1540,7 @@
     {
       "priority": 110,
       "slot_id": "rc1-lane-a-cpt-taxonomy-v1",
-      "title": "RC1 Lane A \u2014 CPT primary stabilization + Taxonomy regression guard",
+      "title": "RC1 Lane A — CPT primary stabilization + Taxonomy regression guard",
       "role": "ANY",
       "status": "COMPLETED",
       "work_mode": "RC1_BOUNDED_STABILIZATION",
@@ -1558,7 +1558,7 @@
     {
       "priority": 120,
       "slot_id": "rc1-lane-b-fields-relations-status-v1",
-      "title": "RC1 Lane B \u2014 Fields, Relations, Status stabilization",
+      "title": "RC1 Lane B — Fields, Relations, Status stabilization",
       "role": "ANY",
       "status": "COMPLETED",
       "work_mode": "RC1_BOUNDED_STABILIZATION",
@@ -1577,7 +1577,7 @@
     {
       "priority": 130,
       "slot_id": "rc1-lane-c-query-columns-listings-v1",
-      "title": "RC1 Lane C \u2014 Query, Admin Columns, Listings stabilization",
+      "title": "RC1 Lane C — Query, Admin Columns, Listings stabilization",
       "role": "ANY",
       "status": "COMPLETED",
       "work_mode": "RC1_BOUNDED_STABILIZATION",
@@ -1596,7 +1596,7 @@
     {
       "priority": 200,
       "slot_id": "p006-wave1h-static-harness-v1",
-      "title": "P-006 Wave 1H static/harness evidence \u2014 FP-29/30/31/33/40/41/42",
+      "title": "P-006 Wave 1H static/harness evidence — FP-29/30/31/33/40/41/42",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_PR_1028_MERGE",
       "work_mode": "P006_BOUNDED_STATIC_HARNESS_EVIDENCE",
@@ -1627,7 +1627,7 @@
     {
       "priority": 210,
       "slot_id": "p006-wave1i-runtime-v1",
-      "title": "P-006 Wave 1I real-WordPress evidence \u2014 FP-34/44",
+      "title": "P-006 Wave 1I real-WordPress evidence — FP-34/44",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_PR_1030_MERGE",
       "work_mode": "P006_BOUNDED_REAL_WORDPRESS_EVIDENCE",
@@ -1667,7 +1667,7 @@
     {
       "priority": 220,
       "slot_id": "p006-wave1j-range-semantics-v1",
-      "title": "P-006 Wave 1J Lane B1 pure Platform API range semantics \u2014 FP-61\u202668/76",
+      "title": "P-006 Wave 1J Lane B1 pure Platform API range semantics — FP-61…68/76",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_PR_1033_MERGE",
       "work_mode": "P006_BOUNDED_PURE_RANGE_EVIDENCE",
@@ -1675,7 +1675,7 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1j-range-semantics-v1",
       "temp_grant": "GOV-P001-CF-TEMP-008 CONSUMED",
-      "terminal_result": "FP-61\u202668/76 PASS in PHP 8.2 and PHP 8.5; identical determinism digest ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632; 0 FAIL; no WordPress/DB/provider side effects",
+      "terminal_result": "FP-61…68/76 PASS in PHP 8.2 and PHP 8.5; identical determinism digest ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632; 0 FAIL; no WordPress/DB/provider side effects",
       "authorized_php_cells": [
         "PHP 8.2",
         "PHP 8.5"
@@ -1683,7 +1683,7 @@
       "timeout_safe_ci": "Separate immutable-candidate build/identity job and independent PHP 8.2/8.5 pure-evaluator jobs; <=15m build, <=8m evaluator jobs; concurrency cancellation; per-cell artifacts",
       "allowed_scope": [
         "deterministic Free/Pro candidate and compatibility-source identity pinning",
-        "pure LocalCompatibilityPreflight::evaluate() fixtures FP-61\u202668 and FP-76",
+        "pure LocalCompatibilityPreflight::evaluate() fixtures FP-61…68 and FP-76",
         "tests/evidence workflow/docs required only for Wave 1J B1"
       ],
       "forbidden_scope": [
@@ -1706,7 +1706,7 @@
     {
       "priority": 230,
       "slot_id": "p006-wave1k-compatible-update-order-v1",
-      "title": "P-006 Wave 1K Lane B2 compatible update order \u2014 FP-45/46/53/60",
+      "title": "P-006 Wave 1K Lane B2 compatible update order — FP-45/46/53/60",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_PR_1036_MERGE",
       "work_mode": "P006_BOUNDED_COMPATIBLE_UPDATE_EVIDENCE",
@@ -1754,7 +1754,7 @@
     {
       "priority": 240,
       "slot_id": "p006-wave1l-breaking-order-v1",
-      "title": "P-006 Wave 1L Lane B3a complete-package breaking update order \u2014 FP-47/48",
+      "title": "P-006 Wave 1L Lane B3a complete-package breaking update order — FP-47/48",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_PR_1039_MERGE",
       "work_mode": "P006_BOUNDED_BREAKING_UPDATE_EVIDENCE",
@@ -1803,7 +1803,7 @@
     {
       "priority": 250,
       "slot_id": "p006-b3-harness-readiness-review-v1",
-      "title": "P-006 Lane B3 fault-injection/manual-upgrade harness readiness review \u2014 FP-49\u202652/58",
+      "title": "P-006 Lane B3 fault-injection/manual-upgrade harness readiness review — FP-49…52/58",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_REVIEW_PR_MERGE",
       "work_mode": "P006_NON_RUNTIME_HARNESS_READINESS_REVIEW",
@@ -1892,10 +1892,10 @@
         "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
       ],
       "authorized_paths": [
-        "compatible Free-first F0/P0\u2192F1/P0",
-        "compatible Pro-first F0/P0\u2192F0/P1",
-        "breaking Free-first F1/P0\u2192F2/P0",
-        "breaking Pro-first F1/P0\u2192F1/P2"
+        "compatible Free-first F0/P0→F1/P0",
+        "compatible Pro-first F0/P0→F0/P1",
+        "breaking Free-first F1/P0→F2/P0",
+        "breaking Pro-first F1/P0→F1/P2"
       ],
       "artifact_graph": [
         "F0 Free 0.1.0-dev / API 0.1.0 / schema 1",
@@ -1943,7 +1943,7 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b3-integrity-publication-review-v1",
       "authorization": "GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED",
-      "terminal_result": "NON-RUNTIME architecture review complete: generic WordPress replacement not universally atomic; plugin-internal manifest alone cannot protect corrupt entrypoint; external publication-owner boundary is mandatory first prerequisite; FP-49\u202652 remain unexecuted and counters unchanged.",
+      "terminal_result": "NON-RUNTIME architecture review complete: generic WordPress replacement not universally atomic; plugin-internal manifest alone cannot protect corrupt entrypoint; external publication-owner boundary is mandatory first prerequisite; FP-49…52 remain unexecuted and counters unchanged.",
       "allowed_scope": [
         "docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md",
         "read-only repository bootstrap/build/update inspection",
@@ -1992,8 +1992,8 @@
         "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
       ],
       "authorized_targets": [
-        "Free F0\u2192F1",
-        "Pro P0\u2192P1"
+        "Free F0→F1",
+        "Pro P0→P1"
       ],
       "required_scenarios": [
         "successful entrypoint-last publication",
@@ -2041,7 +2041,7 @@
     {
       "priority": 291,
       "slot_id": "p006-b3-fp49-52-applicability-review-v1",
-      "title": "P-006 B3 FP-49\u202652 applicability/readiness review",
+      "title": "P-006 B3 FP-49…52 applicability/readiness review",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED",
       "work_mode": "P006_B3_FP49_52_APPLICABILITY_REVIEW_NON_RUNTIME",
@@ -2059,7 +2059,7 @@
       "required_output": "docs/QUALITY/P006-B3-FP49-52-APPLICABILITY-READINESS.md",
       "allowed_scope": [
         "non-runtime source/evidence review",
-        "exact original FP-49\u202652 contract mapping",
+        "exact original FP-49…52 contract mapping",
         "supported-vs-excluded publication state classification",
         "finite proposed coverage pinning",
         "dependency-readiness decision",
@@ -2093,7 +2093,7 @@
     {
       "priority": 292,
       "slot_id": "p006-wave1n-fp49-free-interruption-v1",
-      "title": "P-006 Wave 1N \u2014 FP-49 Free interruption",
+      "title": "P-006 Wave 1N — FP-49 Free interruption",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED",
       "work_mode": "P006_FORMAL_FP49_FREE_INTERRUPTION",
@@ -2106,7 +2106,7 @@
         "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
         "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
       ],
-      "baseline_target": "F0/P0 \u2192 interrupted Free F1/P0 \u2192 exact F0/P0 recovery",
+      "baseline_target": "F0/P0 → interrupted Free F1/P0 → exact F0/P0 recovery",
       "required_cut_points": [
         "F49-01: 1/238",
         "F49-25: 59/238",
@@ -2153,7 +2153,7 @@
     {
       "priority": 293,
       "slot_id": "p006-wave1o-fp51-pro-partial-files-v1",
-      "title": "P-006 Wave 1O \u2014 FP-51 Pro partial-file matrix",
+      "title": "P-006 Wave 1O — FP-51 Pro partial-file matrix",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED",
       "work_mode": "P006_FORMAL_FP51_PRO_PARTIAL_FILES",
@@ -2180,7 +2180,7 @@
         "P51-R-MISSING",
         "P51-R-TRUNCATED"
       ],
-      "baseline_target": "F0/P0 \u2192 faulted P1 non-entry destination with Pro entry excluded or staged-bootstrap refusal \u2192 exact P0 recovery",
+      "baseline_target": "F0/P0 → faulted P1 non-entry destination with Pro entry excluded or staged-bootstrap refusal → exact P0 recovery",
       "data_sentinel": "wpe_p006_fp51_data_sentinel=fp51-preserve-v1",
       "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
       "allowed_scope": [
@@ -2223,7 +2223,7 @@
     {
       "priority": 294,
       "slot_id": "p006-wave1p-fp52-free-partial-files-v1",
-      "title": "P-006 Wave 1P \u2014 FP-52 Free partial-file matrix",
+      "title": "P-006 Wave 1P — FP-52 Free partial-file matrix",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED",
       "work_mode": "P006_FORMAL_FP52_FREE_PARTIAL_FILES",
@@ -2252,7 +2252,7 @@
         "frameworks/Platform/Entitlements/ProductEntitlementState.php",
         "frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php"
       ],
-      "baseline_target": "F0/P0 \u2192 faulted F1 non-entry destination with Free entry excluded and complete P0 active \u2192 exact F0/P0 recovery",
+      "baseline_target": "F0/P0 → faulted F1 non-entry destination with Free entry excluded and complete P0 active → exact F0/P0 recovery",
       "data_sentinel": "wpe_p006_fp52_data_sentinel=fp52-preserve-v1",
       "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
       "allowed_scope": [
@@ -2372,7 +2372,7 @@
         "P50-75: 214/286",
         "P50-100: 286/286 configured Pro entry absent"
       ],
-      "baseline_target": "F0/P0 \u2192 interrupted Pro P1 non-entry destination with Pro entry excluded and exact F0 active \u2192 exact P0 recovery",
+      "baseline_target": "F0/P0 → interrupted Pro P1 non-entry destination with Pro entry excluded and exact F0 active → exact P0 recovery",
       "data_sentinel": "wpe_p006_fp50_data_sentinel=fp50-preserve-v1",
       "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; one immutable candidate artifact shared by both runtime cells; terminal aggregate <=5m; queue/CHECKPOINT/README excluded from runtime workflow paths",
       "allowed_scope": [
@@ -2640,7 +2640,7 @@
     {
       "priority": 300,
       "slot_id": "p006-b5-lane-c-schema-readiness-v1",
-      "title": "P-006 B5 Lane C schema/migration readiness review \u2014 FP-77\u202694",
+      "title": "P-006 B5 Lane C schema/migration readiness review — FP-77…94",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED",
       "work_mode": "P006_B5_NON_RUNTIME_SCHEMA_MIGRATION_READINESS_REVIEW",
@@ -2649,7 +2649,7 @@
       "claim_branch": "supervisor/p006-b5-lane-c-schema-readiness-v1",
       "authorization": "GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001",
       "authorized_fixtures": [
-        "FP-77\u2026FP-94 READINESS ONLY"
+        "FP-77…FP-94 READINESS ONLY"
       ],
       "allowed_scope": [
         "docs/QUALITY/P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS.md",
@@ -2795,7 +2795,7 @@
     {
       "priority": 302,
       "slot_id": "p006-b6-harness-prerequisite-readiness-v1",
-      "title": "P-006 B6 harness-prerequisite readiness \u2014 FP-86/89/90/94",
+      "title": "P-006 B6 harness-prerequisite readiness — FP-86/89/90/94",
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED",
       "work_mode": "P006_B6_NON_RUNTIME_HARNESS_PREREQUISITE_READINESS_REVIEW",
@@ -6404,7 +6404,7 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "agent/forms-workflows-bounded-set-enabled-ability-v1",
-      "close_condition": "Exact nine-file handler/module/test/shared-truth scope; owner-side strict input validation; authorization+execution resource/revision checks; Published\u2194Disabled changed/no-op/replay tests; showInRest=false; existing read abilities unchanged; RB-0082 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1.",
+      "close_condition": "Exact nine-file handler/module/test/shared-truth scope; owner-side strict input validation; authorization+execution resource/revision checks; Published↔Disabled changed/no-op/replay tests; showInRest=false; existing read abilities unchanged; RB-0082 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1.",
       "terminal_result": "PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1",
       "terminal_evidence": {
         "issue": 1285,
@@ -8614,6 +8614,46 @@
       "terminal_architecture_run": 39412650424,
       "terminal_platform_run": 39412650383,
       "terminal_merge_sha": "e400ea23ae2af0b49a3292963e5eaaf488ec325a"
+    },
+    {
+      "priority": 1211,
+      "slot_id": "backup-atomic-contract-ux-v1",
+      "title": "Surface 24 Backup Atomic Option Contract and UX acceptance V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "IN_PROGRESS",
+      "work_mode": "BACKUP_ATOMIC_CONTRACT_UX_V1",
+      "source": "Issue #1467",
+      "dependencies": [
+        "Surface 24 Bank Review #1450 accepted: 122 records, zero unresolved",
+        "Exact main e400ea23ae2af0b49a3292963e5eaaf488ec325a",
+        "Surface 23 contract/UX acceptance merged in PR #1465"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1467 exact ten-file allowlist: Backup Atomic Option Contract, UX/readiness/gap docs, lifecycle ledger, README, compact state/checkpoint, work queue and runner benchmark"
+      ],
+      "forbidden_scope": [
+        "Archive generation or local filesystem capture",
+        "Upload/provider calls or credential/recovery-key access",
+        "Backup restore/copy/delete or other destructive action",
+        "Changing Surface 23/18/19/25/26/55/Vault ownership",
+        "Deployment or release"
+      ],
+      "claim_branch": "agent/surface24-backup-atomic-contract-ux-v1",
+      "authorization": "GOV-OWNER-CONSENT-002; Issue #1467; planning/data/docs only",
+      "close_condition": "Exact-head schema/source projection, ownership, Governance, Architecture and Platform Compatibility checks pass; merge planning-only PR.",
+      "terminal_result": null,
+      "terminal_evidence": null,
+      "active_pr": null,
+      "terminal_source_head_precloseout": null,
+      "terminal_governance_run": null,
+      "terminal_architecture_run": null,
+      "terminal_platform_run": null,
+      "terminal_merge_sha": null
     }
   ],
   "historical_closeout": {

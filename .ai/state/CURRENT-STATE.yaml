@@ -4,15 +4,15 @@ state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
 observed_main_sha: e400ea23ae2af0b49a3292963e5eaaf488ec325a
 observed_main_source: "2026-10-20 exact-main refresh after PR #1465 merged; main @ e400ea23ae2af0b49a3292963e5eaaf488ec325a."
-active_issue: null
+active_issue: 1467
 active_pr: null
-active_branch: main
-current_milestone: "Surface 23 Connections/Webhooks Atomic Option Contract and UX V1; 65 reviewed Bank records."
-milestone_status: COMPLETED
+active_branch: agent/surface24-backup-atomic-contract-ux-v1
+current_milestone: "Surface 24 Backup Atomic Option Contract and UX V1; 122 reviewed Bank records."
+milestone_status: IN_PROGRESS
 last_completed_milestone: "Issue #1465 / PR #1465 Surface 23 Atomic Option Contract + UX accepted; exact head 8fe5e91ed7c7cd9fab37287a1a351558f33bf870; Governance #39412651472, Architecture #39412650424, Platform Compatibility #39412650383 (10/10) PASS; merged e400ea23ae2af0b49a3292963e5eaaf488ec325a. Runtime remains unpromoted."
-next_safe_action: "Refresh open issues/PRs and select next safe scoped milestone; no runtime or privileged work without its separate authorization gate."
+next_safe_action: "Complete Issue #1467 exact-head contract/source/ownership checks and required Governance, Architecture, and Platform Compatibility CI; runtime remains separately gated."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
-next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
+next_planned_slot: SURFACE24_BACKUP_ATOMIC_CONTRACT_UX_V1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
