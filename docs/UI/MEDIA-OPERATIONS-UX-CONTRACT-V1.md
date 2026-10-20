@@ -1,11 +1,12 @@
 # Media Operations — Provisional UX Contract V1
 
-Surface: **28 / Media Operations**  
-Planning issue: **#594**  
-Supervisor wave: **#583**  
-Exact-main claim anchor: `3f3aedaf6a2a3d568aa36bd8a570346bb65d1698`
+Surface: **28 / Media Operations**
+Planning issue: **#594**
+Bank review: **#1458 / PR #1459**
+Contract and UX re-review: **#1461**
+Exact-main claim anchor: `2c210da0d510874e25f74a4d0c3aed04ab65ccc4`
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 28 remains `UNSEEDED / 0` in the Master Options Bank. This document does not promote `UX_CONTRACT_COMPLETE` or authorize attachment/file/derivative/CDN/reference mutation.
+Lifecycle status: **REVIEWED UX CONTRACT; CONTRACT/CI ACCEPTANCE PENDING**. Surface 28 has 232 reviewed Bank records. The Atomic Option Contract is derived in Issue #1461 and must pass schema, coverage, governance and architecture checks before `UX_CONTRACT_COMPLETE` is recorded. This document does not authorize attachment/file/derivative/CDN/reference mutation or runtime implementation.
 
 ## Product rule
 
@@ -197,4 +198,4 @@ Recovery preserves original source identity and generation lineage. Derived-outp
 
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Exact-main Master Options Bank remains `UNSEEDED / 0`; Bank review and schema-valid Atomic Option Contracts must precede UX lifecycle/runtime promotion.
+This UX contract has been re-reviewed against the completed 232-record Bank and the Surface 28 Atomic Option Contract candidate. It preserves the original-source invariant, capability-aware degraded states, and Surface 45/53/23/26 ownership boundaries. Lifecycle promotion awaits the candidate contract’s schema/coverage checks and exact-head CI under Issue #1461. Runtime implementation, file/attachment/reference/provider mutation, deployment and release remain separately gated.

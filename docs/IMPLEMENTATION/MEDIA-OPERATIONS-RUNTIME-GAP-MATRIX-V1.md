@@ -1,20 +1,21 @@
 # Media Operations — Runtime Gap Matrix V1
 
-Surface: **28 / Media Operations**  
-Planning issue: **#594**  
-Supervisor wave: **#583**  
-Exact-main claim anchor: `3f3aedaf6a2a3d568aa36bd8a570346bb65d1698`
+Surface: **28 / Media Operations**
+Planning issue: **#594**
+Bank review: **#1458 / PR #1459**
+Contract and UX re-review: **#1461**
+Exact-main claim anchor: `2c210da0d510874e25f74a4d0c3aed04ab65ccc4`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **BANK_REVIEWED / CONTRACT CANDIDATE DERIVED / RUNTIME NOT AUTHORIZED**
 
-Surface 28 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated Media Operations runtime module. This matrix records prerequisites and owner boundaries only.
+Surface 28 has 232 reviewed Bank records and a candidate schema-valid Atomic Option Contract under acceptance in Issue #1461. Exact main has no dedicated Media Operations runtime module. This matrix records prerequisites and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market/offload reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **COMPLETE — BANK_REVIEWED / 232** | Native/market/offload reviewed normalized records; 0 unresolved items. | Completed by #1458/#1459; data planning only. |
+| Atomic Option Contracts | **CANDIDATE DERIVED — ACCEPTANCE PENDING** | Validate 232 source records, explicit dispositions and zero missing/unclassified coverage. | Issue #1461 exact-head schema/coverage/CI gate; runtime remains separately gated. |
 | Media Rule definitions | **ABSENT** | canonical identity/revision/lifecycle/priority/conditions/output policy. | Surface 28. |
 | Image editor capability catalog | **ABSENT FOR SURFACE** | exact read/write format, animation, alpha, metadata and operation capability probes. | Must derive from active WordPress editor/environment. |
 | Non-destructive derivative engine | **ABSENT** | generate WPE-owned/regeneratable outputs while preserving original source. | Original in-place mutation forbidden in standard scope. |
@@ -158,6 +159,6 @@ Only after Bank review + schema-valid option contracts:
 
 ## Exit decision
 
-Exact main has a mature Watermarker/Media Rules specification and clear non-destructive ownership boundaries, but the Master Options Bank is still `UNSEEDED / 0` and no Media Operations runtime exists. `runtime_allowed=false` remains correct.
+The Bank review is complete and the candidate Atomic Option Contract/UX re-review are under Issue #1461 acceptance. No Media Operations runtime exists; `runtime_allowed=false` remains correct.
 
-The next valid action is Bank seeding/native/market review, then schema-valid option contracts and UX re-review — not media/file/reference mutation from this planning lane.
+After exact-head contract and UX gates pass, any runtime slice still requires its own bounded issue and authorization. Media/file/reference/provider mutation is not authorized by this planning lane.
