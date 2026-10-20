@@ -5,7 +5,7 @@ Planning issue: **#589**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `6e0c29aeec9c7553ebb2d22decbc5f9437edecc1`
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 23 remains `UNSEEDED / 0` in the Master Options Bank. This document does not promote `UX_CONTRACT_COMPLETE` or authorize network/credential side effects.
+Lifecycle status: **UX_CONTRACT_COMPLETE CANDIDATE UNDER ISSUE #1465**. The reviewed Surface 23 Bank has 65/65 records, zero unresolved items; the candidate contract projects 43 PARITY, 4 EXCEEDS, 2 DEFERRED and 16 REJECTED_UNSAFE. This document specifies intended interaction only; it authorizes no network/credential side effects.
 
 ## Product model
 
@@ -61,14 +61,14 @@ Secret values are entered only through dedicated replace/add controls and never 
 ### Expert
 
 - certified provider/auth adapters;
-- private-network exception flow behind dedicated high-risk capability and exact allowlist;
+- no private-network allowlist control in V1; this capability remains deferred pending separate security review/certification;
 - circuit/degraded behavior;
 - secret-rotation overlap where provider requires;
 - raw-receipt short retention policy;
 - health-check cadence;
 - provider-version/compatibility diagnostics.
 
-No Expert control exposes arbitrary PHP, secrets, disabled TLS verification or unrestricted private-network access.
+No Expert control exposes arbitrary PHP, secret values, disabled TLS verification or private-network access. Deferred private-network exceptions are not represented as a usable control.
 
 ### System / Diagnostics
 
@@ -84,6 +84,8 @@ Read-only system view shows:
 - webhook signature/replay/schema health;
 - Vault availability;
 - current site/network scope.
+
+These diagnostic stages describe a future separately authorized test flow; this UX contract runs no DNS, TLS, OAuth, outbound request or webhook verification.
 
 ## Connections list
 
@@ -146,7 +148,7 @@ Dynamic host is absent by default. Component-aware encoding is used for path/que
 Endpoint editor shows:
 
 - name/key/status/provider;
-- generated route;
+- proposed route pattern preview only; no route is registered by this planning contract;
 - signature/auth mode;
 - Vault secret reference state;
 - timestamp/replay window;
@@ -183,7 +185,7 @@ Raw inbound body retention is off/short-bounded candidate and clearly marked sen
 
 ## Multisite
 
-Future normalized contract must define site/network Connection scope, credential/Vault scope, OAuth callbacks, inbound route ownership, logs/receipts visibility, dependency use and export/import behavior. Cross-site access must be Policy-authorized, never inferred from Super Admin presentation.
+The candidate contract records site scope by default, provider-defined scope only where the reviewed Bank requires it, Vault reference isolation and explicit consumer ownership. Any future network scope, OAuth callback, inbound route, logs/receipt visibility and export/import behavior must be enforced through canonical Policy. Cross-site access is never inferred from Super Admin presentation.
 
 ## Portability
 
@@ -191,4 +193,4 @@ Exports contain provider/type/non-secret settings and credential placeholders on
 
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Exact-main Master Options Bank remains `UNSEEDED / 0`; re-review after Bank review and schema-valid Atomic Option Contracts is mandatory before runtime authorization.
+The 65-record UX was re-reviewed against the accepted Bank and the schema-valid candidate contract under Issue #1465. Promote only `UX_CONTRACT_COMPLETE` after exact-head acceptance. Runtime remains absent: no outbound request, OAuth flow, webhook route, credential read, provider call or product-parity claim.

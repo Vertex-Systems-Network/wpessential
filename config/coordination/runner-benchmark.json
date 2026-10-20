@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "11ca1800eeb5c07d49bce6195928d314576310e4",
+  "anchor_main_sha": "7345b40b913ca8d383165bb52360bce726ed3c8f",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3948,6 +3948,30 @@
         "Final exact PR head 3636d29112b01edf374c9eb7b89753dd31744d47: Governance Gate run 39408236547 PASS; Architecture Guards run 39408236669 PASS; Platform Compatibility Matrix run 39408236817 PASS (10/10 cells); zero unresolved review threads; merged as 11ca1800eeb5c07d49bce6195928d314576310e4."
       ],
       "note": "No endpoint registration/execution or public exposure is certified."
+    },
+    {
+      "id": "RB-0128",
+      "source": "Issue #1465 / Surface 23 Connections/Webhooks Atomic Option Contract and UX V1",
+      "category": "CONNECTIONS_ATOMIC_CONTRACT_UX_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head schema/source/ownership contract validation plus applicable Governance Gate, Architecture Guards, and Platform Compatibility Matrix for integration",
+      "environment": "PR #1465 exact-head CI on base main 7345b40b913ca8d383165bb52360bce726ed3c8f; terminal source SHA and run IDs are recorded from final accepted PR checks.",
+      "dependencies": [
+        "Issue #1448 Bank Review accepted: 65/65, zero unresolved",
+        "Issue #1465 exact ten-file scope"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002; Issue #1465; planning/data/docs only; no outbound network, OAuth, webhook execution, credential values, provider, production, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 30,
+      "dedup_key": "connections|surface23-atomic-contract-ux|issue1465|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Local contract generation uses reviewed Bank IDs; schema and 65/65 one-to-one projection checks must pass.",
+        "Exact-head CI is pending after PR creation; platform workflow is path-applicable because config/product contract JSON changes."
+      ],
+      "note": "No secret value, network request, OAuth callback or webhook route/execution is authorized."
     }
   ],
   "last_reconciled_issue": "#1458",

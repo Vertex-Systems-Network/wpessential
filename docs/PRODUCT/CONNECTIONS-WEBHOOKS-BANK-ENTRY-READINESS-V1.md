@@ -5,20 +5,20 @@ Planning issue: **#589**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `6e0c29aeec9c7553ebb2d22decbc5f9437edecc1`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+Status: **BANK_REVIEWED (65/65) — ATOMIC OPTION CONTRACT / UX CANDIDATE UNDER ISSUE #1465**
 
-> Update (Issue #1448): the Surface 23 Bank is now seeded and `BANK_REVIEWED (65)` — see `config/product/options-bank/connections.json`, `docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/connections-market-ecosystem.json` and `config/product/options-bank-reviews/connections-bank-review-v1.json`. Bank seeding, native/market audit and duplicate/ownership/unsafe/deferred resolution are closed; schema-valid Atomic Option Contracts are next. The "Current machine truth" section below is the historical #589 snapshot.
+> Evidence correction: Issue #1448 completed the Surface 23 Bank, native audit and market review. Issue #1465 now derives/re-reviews the 65-record contract and UX; exact-head acceptance is pending. The old #589 preparation text below is retained as historical source rationale and must not override current machine truth.
 
-This document is planning evidence only. It does not seed/review the Master Options Bank, store or rotate credentials, perform OAuth, make outbound requests, register inbound webhook routes or authorize runtime implementation.
+This document is planning evidence only. The reviewed contract does not store/rotate credential values, perform OAuth, make outbound requests, register inbound webhook routes or authorize runtime implementation.
 
 ## Current machine truth
 
-- Surface 23 `connections` is `UNSEEDED` with **0 normalized Master Options Bank records**.
-- The atomic planning ledger marks Surface 23 `ATOMIC_INVENTORY_COMPLETE`; this is planning inventory only.
-- The canonical ownership map assigns reusable connection/transport lifecycle to Surface 23 while Workflow, Notifications, Backup, REST, Sync and other consumers retain their domain semantics.
-- Exact-main `frameworks/Modules` has no dedicated Connections/Webhooks runtime module.
+- Surface 23 `connections` is `BANK_REVIEWED`: 65 normalized records, 65 classified, zero review/native/market unresolved, with zero post-audit record delta. The review certificate is `config/product/options-bank-reviews/connections-bank-review-v1.json`.
+- The canonical main ledger remains `ATOMIC_INVENTORY_COMPLETE` until Issue #1465 merges. Its candidate contract projects all 65 IDs one-to-one with expected dispositions 43 PARITY, 4 EXCEEDS, 2 DEFERRED and 16 REJECTED_UNSAFE; no runtime promotion is implied.
+- Surface 23 owns connection/provider/auth profiles, Safe HTTP, OAuth and webhook transport/delivery. Vault owns secret values; Workflow 17 owns business orchestration; REST 22 owns the public endpoint contract; Import/Export 26 owns package movement; Sync 41 owns cursors/conflicts.
+- Exact-main `frameworks/Modules` has no dedicated Connections/Webhooks runtime module. No network/OAuth/webhook execution is authorized by this contract lane.
 
-The next valid gate is Bank seeding + native/market review, not HTTP/OAuth/webhook execution.
+The current gate is exact-head contract/UX acceptance, not Bank seeding or transport execution.
 
 ## Existing in-repo evidence
 
@@ -31,7 +31,7 @@ Primary sources:
 
 The exhaustive spec already establishes the core split: Connection Definition, Vault Secret, Outbound Request Profile, Inbound Webhook Endpoint, and Delivery/Receipt are separate concepts. Consumers must not each invent credentials, OAuth, retries or HTTP security.
 
-## Candidate Bank families
+## Candidate Bank families (historical seed design; Bank now reviewed)
 
 1. Connection identity/provider/environment/lifecycle.
 2. Generic HTTP base URL/path/method/header/query/content/timeouts/response caps.
@@ -57,9 +57,9 @@ The exhaustive spec already establishes the core split: Connection Definition, V
 22. Secret-free portability/import degraded credential-required state.
 23. Permissions/Abilities, multisite scope, diagnostics and performance.
 
-## Native WordPress audit required before Bank review
+## Native WordPress audit evidence used for Bank review
 
-Audit current WordPress HTTP/OAuth-adjacent capabilities explicitly:
+The completed native audit classified the following WordPress HTTP/OAuth-adjacent capabilities as transport substrate only:
 
 - WP HTTP API request/redirect/TLS behavior;
 - `wp_safe_remote_*` limitations and DNS/redirect implications;
@@ -72,9 +72,9 @@ Audit current WordPress HTTP/OAuth-adjacent capabilities explicitly:
 
 Native WordPress HTTP helpers are primitives, not a complete SSRF/OAuth/secret-management contract.
 
-## Market audit required before Bank review
+## Market audit evidence used for Bank review
 
-Compare current integration/webhook/automation products and provider SDK patterns for:
+The completed market audit compared current integration/webhook products and provider standards for:
 
 - reusable provider connections;
 - OAuth lifecycle/scopes;
@@ -123,6 +123,4 @@ Reject or tightly bound:
 
 ## Readiness decision
 
-Surface 23 has enough semantic material to begin disciplined Bank seeding/native/market review, but exact-main `UNSEEDED / 0` blocks option-contract, UX and runtime promotion.
-
-Next gate: seed normalized Bank records, complete native + market audit, resolve duplicates/ownership/unsafe/deferred items, promote Bank with zero unresolved items, derive schema-valid Atomic Option Contracts, then re-review UX before any transport runtime work.
+Surface 23 has a `BANK_REVIEWED` 65-record source, zero unresolved items, and completed native/market audits. Issue #1465 derives the schema-valid contract and re-reviews this UX. Only `UX_CONTRACT_COMPLETE` may be promoted; network, credential, OAuth and webhook execution remain unpromoted and require separate authorization.

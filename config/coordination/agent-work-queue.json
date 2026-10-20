@@ -1,9 +1,9 @@
 {
-  "schema_version": 210,
+  "schema_version": 211,
   "snapshot_date": "2026-10-20",
-  "queue_anchor_main_sha": "11ca1800eeb5c07d49bce6195928d314576310e4",
+  "queue_anchor_main_sha": "7345b40b913ca8d383165bb52360bce726ed3c8f",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1464",
+  "source_issue": "#1465",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -8574,6 +8574,41 @@
       "terminal_governance_run": 39408236547,
       "terminal_architecture_run": 39408236669,
       "terminal_platform_run": 39408236817
+    },
+    {
+      "priority": 1210,
+      "slot_id": "connections-atomic-contract-ux-v1",
+      "title": "Surface 23 Connections/Webhooks Atomic Option Contract and UX re-review V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE",
+      "work_mode": "CONNECTIONS_ATOMIC_CONTRACT_UX_V1",
+      "source": "Issue #1465 / PR #1465",
+      "dependencies": [
+        "Surface 23 Bank Review #1448 accepted: 65 records, zero unresolved",
+        "Exact main 7345b40b913ca8d383165bb52360bce726ed3c8f"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1465 exact ten-file allowlist: Connections Atomic Option Contract, reviewed UX/readiness/gap docs, lifecycle ledger, README, compact state/checkpoint, work queue and runner benchmark"
+      ],
+      "forbidden_scope": [
+        "Outbound HTTP or private-network access",
+        "OAuth callbacks/token exchange/refresh/revoke",
+        "Inbound route registration or webhook execution",
+        "Credential values or provider calls",
+        "Changing Vault, Workflow, REST, Import/Export or Sync ownership",
+        "Deployment or release"
+      ],
+      "claim_branch": "agent/connections-atomic-contract-ux-v1",
+      "authorization": "GOV-OWNER-CONSENT-002; Issue #1465; planning/data/docs only",
+      "close_condition": "Exact 65/65 reviewed source projection, 43/4/2/16 disposition counts, schema/ownership/security checks, UX/readiness/gap re-review, applicable exact-head gates PASS, zero behind/review blockers; merge exact tested head and close Issue #1465. Runtime remains unpromoted.",
+      "terminal_result": null,
+      "terminal_evidence": null,
+      "active_pr": 1465
     }
   ],
   "historical_closeout": {

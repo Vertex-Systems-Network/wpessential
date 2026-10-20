@@ -5,16 +5,16 @@ Planning issue: **#589**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `6e0c29aeec9c7553ebb2d22decbc5f9437edecc1`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **ATOMIC OPTION CONTRACT / UX CANDIDATE COMPLETE / RUNTIME NOT AUTHORIZED**
 
-Surface 23 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated Connections/Webhooks runtime. This matrix records prerequisites and owner boundaries only.
+Surface 23 Bank review is complete at 65/65 with zero unresolved. Issue #1465 carries the candidate schema-valid contract and UX re-review; exact-head integration is pending. Exact main has no dedicated Connections/Webhooks runtime. This matrix records runtime gaps and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **PASS — BANK_REVIEWED (65/65), zero unresolved** | No further seed/native/market work in this tranche. | Issue #1448. |
+| Atomic Option Contract | **CANDIDATE — schema-valid 65/65 source projection; 43/4/2/16 dispositions** | Final exact-head acceptance under Issue #1465. | Promote only through UX_CONTRACT_COMPLETE; no runtime certification. |
 | Connection Definition runtime | **ABSENT** | Stable definitions, provider profiles, revision/CAS/lifecycle. | Surface 23. |
 | Vault secret references | **NO SURFACE CONTRACT** | store refs only; never return secret values. | Shared Vault owner. |
 | Safe HTTP / SSRF engine | **ABSENT** | scheme/host/IP/DNS/redirect/TLS enforcement incl IPv4/IPv6. | Security prerequisite before outbound calls. |
@@ -101,7 +101,7 @@ No cross-site access or secret reuse is implied by Super Admin status alone.
 
 ## Future implementation order
 
-Only after Bank review + schema-valid option contracts:
+Any runtime work needs a separately scoped issue and authorization after this planning contract is accepted. Order remains:
 
 1. Connection Definition + Vault-reference contract + Policy;
 2. Safe HTTP/SSRF/TLS engine + read-only tests;
@@ -116,6 +116,4 @@ Private-network connections remain a separately gated high-risk capability, not 
 
 ## Exit decision
 
-Exact main has a mature exhaustive Connections/Webhooks specification and clear owner boundaries, but the Master Options Bank remains `UNSEEDED / 0` and no runtime module exists. `runtime_allowed=false` remains correct.
-
-The next valid action is Bank seeding/native/market review, then schema-valid option contracts and UX re-review — not network/OAuth/webhook execution from this planning lane.
+The reviewed Bank (65/65, zero unresolved), candidate schema-valid contract, UX re-review and owner-boundary matrix are planning evidence only. Exact main has no runtime module; `runtime_allowed=false` remains correct. The next runtime proposal, if any, must start with a separately scoped authorization and must retain Safe HTTP, Vault, Policy, raw-body signature and replay boundaries; no transport execution is certified here.
