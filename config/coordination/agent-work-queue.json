@@ -1,9 +1,9 @@
 {
-  "schema_version": 209,
+  "schema_version": 210,
   "snapshot_date": "2026-10-20",
-  "queue_anchor_main_sha": "6c4c7aadb00ab807128ce9321d43ca9a66db0c91",
+  "queue_anchor_main_sha": "11ca1800eeb5c07d49bce6195928d314576310e4",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1463",
+  "source_issue": "#1464",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -8543,7 +8543,7 @@
       "slot_id": "rest-api-atomic-contract-ux-v1",
       "title": "Surface 22 REST API Atomic Option Contract and UX re-review V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "REST_API_ATOMIC_CONTRACT_UX_V1",
       "source": "Issue #1463 / PR #1463",
       "dependencies": [
@@ -8565,10 +8565,15 @@
         "editing unrelated surfaces or formal P-006 evidence"
       ],
       "claim_branch": "agent/rest-api-atomic-contract-ux-v1",
-      "close_condition": "Exact 46/46 one-to-one source projection, disposition counts 33/2/1/10, schema and focused consistency checks, reviewed UX/readiness/gap docs, exact-head Governance/Architecture/Platform checks PASS, fresh main, zero behind and zero unresolved reviews; merge the exact tested head and close Issue #1463.",
-      "terminal_result": null,
-      "terminal_evidence": null,
-      "active_pr": 1463
+      "close_condition": "Satisfied: exact tested head merged after required checks; planning-only milestone, no runtime certification.",
+      "terminal_result": "PASS_REST_API_ATOMIC_OPTION_CONTRACT_UX_V1",
+      "terminal_evidence": "46/46 schema-valid source projection; 33/2/1/10 dispositions; UX reviewed; exact-head Governance, Architecture, Platform 10/10 PASS; zero review threads; merged.",
+      "active_pr": null,
+      "terminal_source_head_precloseout": "3636d29112b01edf374c9eb7b89753dd31744d47",
+      "terminal_merge_sha": "11ca1800eeb5c07d49bce6195928d314576310e4",
+      "terminal_governance_run": 39408236547,
+      "terminal_architecture_run": 39408236669,
+      "terminal_platform_run": 39408236817
     }
   ],
   "historical_closeout": {

@@ -1,18 +1,18 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: IMPLEMENTATION_ACTIVE
-observed_main_sha: 6c4c7aadb00ab807128ce9321d43ca9a66db0c91
-observed_main_source: "2026-10-20 exact-main refresh after PR #1462 merged; main @ 6c4c7aadb00ab807128ce9321d43ca9a66db0c91."
-active_issue: "#1463"
-active_pr: "#1463"
-active_branch: agent/rest-api-atomic-contract-ux-v1
-current_milestone: "Surface 22 REST API Atomic Option Contract and UX re-review V1; 46 reviewed Bank records."
-milestone_status: IMPLEMENTING
-last_completed_milestone: "Issue #1461 / PR #1462 Surface 28 Atomic Option Contract + UX accepted and merged 6c4c7aadb00ab807128ce9321d43ca9a66db0c91; all required exact-head checks passed."
-next_safe_action: "Complete Issue #1463: derive the Surface 22 Atomic Option Contract from its 46 reviewed Bank records, re-review UX, reconcile shared truth, then pass exact-head gates. No route registration/runtime exposure."
+state_status: FEATURE_ACTIVE
+observed_main_sha: 11ca1800eeb5c07d49bce6195928d314576310e4
+observed_main_source: "2026-10-20 exact-main refresh after PR #1463 merged; main @ 11ca1800eeb5c07d49bce6195928d314576310e4."
+active_issue: null
+active_pr: null
+active_branch: main
+current_milestone: "Surface 22 REST API Atomic Option Contract and UX V1; 46 reviewed Bank records."
+milestone_status: COMPLETED
+last_completed_milestone: "Issue #1463 / PR #1463 Surface 22 Atomic Option Contract + UX accepted; exact head 3636d29112b01edf374c9eb7b89753dd31744d47; Governance, Architecture and Platform Compatibility 10/10 PASS; merged 11ca1800eeb5c07d49bce6195928d314576310e4. Runtime remains unpromoted."
+next_safe_action: "Refresh open issues/PRs and select the next safe scoped milestone; no runtime or privileged work without its separate authorization gate."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
-next_planned_slot: EXACT_HEAD_CI_VERIFICATION
+next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
