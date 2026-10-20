@@ -19,7 +19,7 @@ readme_progress_contract:
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending:
+  immediate_pending: []
   terminal_pass:
     - RB-0041
     - RB-0042
