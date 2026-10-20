@@ -3979,7 +3979,7 @@
       "category": "BACKUP_ATOMIC_CONTRACT_UX_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head option contract schema/source/ownership validation plus Governance Gate, Architecture Guards, Platform Compatibility Matrix (10 cells)",
-      "environment": "PR #1467 exact candidate head; base main e400ea23ae2af0b49a3292963e5eaaf488ec325a",
+      "environment": "PR #1467 exact tested head 3246142053839b1605df6fbf59b2d803af5ca576 on base main 04b72f033d8a551e25f61a95a504de0d8791a3dd; merged as e3cf5878f9d19ad80483688426ebae21aac2e62d.",
       "dependencies": [
         "Issue #1450 Bank Review accepted: 122/122, zero unresolved",
         "Issue #1467 exact ten-file scope",
@@ -3991,16 +3991,17 @@
       "expected_minutes": 30,
       "dedup_key": "backup|atomic-contract-ux|issue1467|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
-        "Require deterministic 122/122 source projection and coverage 78/10/10/24/0/0",
-        "Require exact-head schema/source ownership checks and Governance/Architecture/Platform 10/10 PASS",
-        "Runtime remains separately gated"
+        "122/122 one-to-one source projection; coverage 78/10/10/24/0/0; exact option-contract schema/source/ownership checks and full smoke suite PASS",
+        "Governance Gate run 39423015428 PASS; Architecture Guards 39423015376 PASS; Platform Compatibility Matrix 39423015390 PASS (10/10)",
+        "PR #1467 had 10 allowlisted files, zero behind, zero unresolved review threads; protected squash merge e3cf5878f9d19ad80483688426ebae21aac2e62d",
+        "Planning/UX lifecycle only; Backup/restore runtime remains separately gated"
       ],
-      "note": "Planning-only Surface 24 contract/UX acceptance; no backup/restore execution."
+      "note": "PASS_BACKUP_ATOMIC_CONTRACT_UX_V1 only; no archive/capture/upload/restore/copy/delete/provider execution or runtime certification."
     }
   ],
-  "last_reconciled_issue": "#1467",
+  "last_reconciled_issue": "#1468",
   "last_reconciled_policy": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
