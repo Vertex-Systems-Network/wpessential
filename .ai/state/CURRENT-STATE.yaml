@@ -1,18 +1,18 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: IMPLEMENTATION_ACTIVE
-observed_main_sha: 7345b40b913ca8d383165bb52360bce726ed3c8f
-observed_main_source: "2026-10-20 exact-main refresh after PR #1464 shared-state closeout merged; main @ 7345b40b913ca8d383165bb52360bce726ed3c8f."
-active_issue: "#1465"
-active_pr: "#1465"
-active_branch: agent/connections-atomic-contract-ux-v1
-current_milestone: "Surface 23 Connections/Webhooks Atomic Option Contract and UX re-review V1; 65 reviewed Bank records."
-milestone_status: IMPLEMENTING
-last_completed_milestone: "Issue #1463 / PR #1463 Surface 22 Atomic Option Contract + UX accepted; exact head 3636d29112b01edf374c9eb7b89753dd31744d47; Governance, Architecture and Platform Compatibility 10/10 PASS; merged 11ca1800eeb5c07d49bce6195928d314576310e4. Runtime remains unpromoted."
-next_safe_action: "Complete Issue #1465: derive and validate the Surface 23 65-record Atomic Option Contract, re-review UX, reconcile shared truth, then pass applicable exact-head gates. No network/OAuth/webhook execution or secret access."
+state_status: FEATURE_ACTIVE
+observed_main_sha: e400ea23ae2af0b49a3292963e5eaaf488ec325a
+observed_main_source: "2026-10-20 exact-main refresh after PR #1465 merged; main @ e400ea23ae2af0b49a3292963e5eaaf488ec325a."
+active_issue: null
+active_pr: null
+active_branch: main
+current_milestone: "Surface 23 Connections/Webhooks Atomic Option Contract and UX V1; 65 reviewed Bank records."
+milestone_status: COMPLETED
+last_completed_milestone: "Issue #1465 / PR #1465 Surface 23 Atomic Option Contract + UX accepted; exact head 8fe5e91ed7c7cd9fab37287a1a351558f33bf870; Governance #39412651472, Architecture #39412650424, Platform Compatibility #39412650383 (10/10) PASS; merged e400ea23ae2af0b49a3292963e5eaaf488ec325a. Runtime remains unpromoted."
+next_safe_action: "Refresh open issues/PRs and select next safe scoped milestone; no runtime or privileged work without its separate authorization gate."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
-next_planned_slot: EXACT_HEAD_CI_VERIFICATION
+next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -20,8 +20,8 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0128
   terminal_pass:
+    - RB-0128
     - RB-0127
     - RB-0041
     - RB-0042
