@@ -1,11 +1,11 @@
-# REST API — Provisional UX Contract V1
+# REST API — UX Contract V1
 
 Surface: **22 / REST API**  
 Planning issue: **#588**  
 Supervisor wave: **#583**  
 Exact-main claim anchor: `b95e2ab190d452dc13882370ae613397f48f38c0`
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 22 remains `UNSEEDED / 0` in the Master Options Bank. This document guides later review; it does not promote `UX_CONTRACT_COMPLETE` or authorize route registration.
+Lifecycle status: **UX_CONTRACT_COMPLETE** after the 46-record BANK_REVIEWED source projection, schema and coverage checks, and UX re-review recorded under Issue #1463. This remains planning evidence; endpoint registration, execution, auth/CORS widening and external exposure are not authorized.
 
 ## Product model
 
@@ -239,4 +239,4 @@ Export/import includes schema and canonical dependency references, not secrets. 
 
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Because exact-main Master Options Bank status remains `UNSEEDED / 0`, it must be re-reviewed after Bank review and schema-valid Atomic Option Contracts. No endpoint/runtime/product-parity promotion follows from this document.
+This UX contract has been re-reviewed against the 46-record BANK_REVIEWED source and the schema-valid Atomic Option Contract. It keeps endpoint definition ownership in Surface 22 and execution/security ownership with Query, Data Sources, Abilities, Workflows, Membership/Roles/Policy, Connections, Protector and Surface 26 portability. No endpoint registration, auth/CORS widening, runtime, or product-parity promotion follows from this document.

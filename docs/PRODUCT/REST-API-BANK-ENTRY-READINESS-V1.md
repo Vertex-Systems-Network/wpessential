@@ -5,20 +5,20 @@ Planning issue: **#588**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `b95e2ab190d452dc13882370ae613397f48f38c0`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+Status: **BANK_REVIEWED — OPTION_CONTRACT_COMPLETE / UX_CONTRACT_COMPLETE**
 
-> Update (Issue #1446): the Surface 22 Bank is now seeded and `BANK_REVIEWED (46)` — see `config/product/options-bank/rest-api.json`, `docs/PRODUCT/REST-API-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/REST-API-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/rest-api-market-ecosystem.json` and `config/product/options-bank-reviews/rest-api-bank-review-v1.json`. Steps 1–5 of the next gate below are closed; step 6 (schema-valid Atomic Option Contracts) is next. The "Current machine truth" section below is the historical #588 snapshot.
+> Update (Issue #1463): the 46-record Bank was previously accepted by Issue #1446; the schema-valid one-to-one Atomic Option Contract and UX review are now recorded in the progress ledger. The original #588 sections below are retained as historical planning context where noted.
 
-This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, register REST routes, widen CORS/auth policy, expose data or authorize runtime implementation.
+This document is planning evidence only. It records the accepted Bank, Atomic Option Contract and UX milestones; it does not register REST routes, widen CORS/auth policy, expose data or authorize runtime implementation.
 
 ## Current machine truth
 
-- Surface 22 `rest-api` is `UNSEEDED` with **0 normalized Master Options Bank records**.
-- The atomic planning ledger marks Surface 22 `ATOMIC_INVENTORY_COMPLETE`; that is planning inventory, not `OPTION_CONTRACT_COMPLETE` or `UX_CONTRACT_COMPLETE`.
+- Surface 22 `rest-api` is `BANK_REVIEWED` with **46 normalized Master Options Bank records** and zero unresolved review items.
+- The accepted Atomic Option Contract maps all 46 reviewed Bank records one-to-one: 33 parity, 2 WPE exceed, 1 deferred and 10 rejected unsafe, with zero missing/unclassified. The lifecycle ledger records `UX_CONTRACT_COMPLETE` after schema/projection/UX review; runtime remains separately gated.
 - The canonical ownership map assigns endpoint definitions to Surface 22 while execution remains bound to canonical Query/Data Source/Ability owners.
 - Exact-main `frameworks/Modules` has no dedicated REST API Builder runtime module.
 
-The next valid gate is Master Options Bank seeding + native/market review, not endpoint registration.
+The next valid gate is a separately scoped runtime-readiness/implementation issue. This planning contract does not authorize endpoint registration or execution.
 
 ## Existing in-repo evidence
 
@@ -133,14 +133,6 @@ Reject or tightly bound:
 
 ## Readiness decision
 
-Surface 22 has sufficient in-repo semantics to begin disciplined Master Options Bank seeding/native/market review, but exact-main `UNSEEDED / 0` blocks option-contract, UX and runtime lifecycle promotion.
+Surface 22 is `BANK_REVIEWED / 46` with schema-valid one-to-one Atomic Option Contract and re-reviewed UX at `UX_CONTRACT_COMPLETE`. Runtime implementation and endpoint exposure remain separately gated.
 
-Next gate:
-
-1. normalize candidate Bank records;
-2. complete current WordPress native audit;
-3. complete evidence-backed market audit;
-4. resolve ownership, duplicates, unsafe/deferred entries;
-5. promote Bank only with zero unresolved review items;
-6. derive schema-valid Atomic Option Contracts;
-7. re-review provisional UX before runtime authorization.
+Next gate: define a bounded runtime-readiness/implementation milestone with explicit endpoint, policy, request/response, compatibility and recovery acceptance. No route registration or endpoint execution is authorized by this readiness document.

@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "b4f2cb5fc707bee0358bdc83323424638cd4ef4f",
+  "anchor_main_sha": "6c4c7aadb00ab807128ce9321d43ca9a66db0c91",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3924,6 +3924,30 @@
         "PR #1459 merged at 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece. Focused JSON consistency and git diff --check passed."
       ],
       "note": "Only validates the data/docs planning milestone. No runtime certification."
+    },
+    {
+      "id": "RB-0127",
+      "source": "Issue #1463 / Surface 22 REST API Atomic Option Contract and UX V1",
+      "category": "REST_API_ATOMIC_CONTRACT_UX_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head JSON/schema/coverage Governance Gate, Architecture Guards and Platform Compatibility Matrix required for integration",
+      "environment": "PR #1463 exact-head CI on base main 6c4c7aadb00ab807128ce9321d43ca9a66db0c91; terminal source SHA is recorded from the final accepted PR checks.",
+      "dependencies": [
+        "Issue #1446 Bank Review accepted: 46/46, zero unresolved",
+        "Issue #1463 exact file scope"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002; Issue #1463; planning/data/docs only; no REST runtime, auth/CORS widening, provider, production, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 25,
+      "dedup_key": "rest-api|surface22-atomic-contract-ux|issue1463|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "Local Draft 2020-12 schema constraints: PASS (0 errors); exact 46/46 projection/disposition checks and git diff --check PASS.",
+        "Exact source head c8508481270c291e27ba83a091f619b48a500faa: Governance Gate run 39407798569 PASS; Architecture Guards run 39407798615 PASS; Platform Compatibility Matrix run 39407798625 PASS (10/10 cells)."
+      ],
+      "note": "No endpoint registration/execution or public exposure is certified."
     }
   ],
   "last_reconciled_issue": "#1458",

@@ -5,16 +5,16 @@ Planning issue: **#588**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `b95e2ab190d452dc13882370ae613397f48f38c0`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **UX_CONTRACT_COMPLETE / RUNTIME NOT AUTHORIZED**
 
-Surface 22 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated REST API Builder runtime. This matrix records prerequisites and owner boundaries only.
+Surface 22 has a BANK_REVIEWED 46-record Bank, schema-valid Atomic Option Contract and re-reviewed UX. Exact main has no dedicated REST API Builder runtime. This matrix records remaining prerequisites and canonical owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **PASS — BANK_REVIEWED / 46** | 46 normalized records; zero unresolved review items. | PR #1463 implementation PR; planning evidence only. |
+| Atomic Option Contracts + UX | **PASS — UX_CONTRACT_COMPLETE** | 46/46 source projection; 33 parity, 2 exceed, 1 deferred, 10 rejected unsafe; zero missing/unclassified. | Runtime remains separately gated. |
 | Endpoint Definition runtime | **ABSENT** | Canonical endpoint definitions, revision/CAS and lifecycle. | Surface 22. |
 | Route compiler/registration | **ABSENT** | Safe WordPress REST registration with collision checks. | Runtime authorization required later. |
 | Binding compiler | **ABSENT** | Typed mapping to Query/Data Source/Ability/Workflow. | Execution remains canonical owner. |
@@ -126,6 +126,6 @@ OAuth servers, arbitrary custom code and generic SQL endpoints remain outside ba
 
 ## Exit decision
 
-Exact main has a mature exhaustive REST API Builder specification and clear owner boundaries, but the Master Options Bank is still `UNSEEDED / 0` and no dedicated builder runtime exists. `runtime_allowed=false` remains correct.
+The BANK_REVIEWED options inventory, 46-record Atomic Option Contract and UX planning milestone are complete. No dedicated REST API Builder runtime exists, and `runtime_allowed=false` remains correct.
 
-The next valid action is separate Bank seeding/native/market review, then schema-valid option contracts and UX re-review — not endpoint registration from this planning lane.
+A future runtime-readiness or implementation lane must be separately scoped. This contract does not authorize endpoint registration, request execution, auth/CORS widening or external exposure.
