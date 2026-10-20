@@ -6,14 +6,14 @@ Bank review issue: **#1458**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `b4f2cb5fc707bee0358bdc83323424638cd4ef4f`
 
-Status: **BANK_REVIEWED — NO OPTION CONTRACT OR UX CONTRACT PROMOTION**
+Status: **BANK_REVIEWED — OPTION_CONTRACT_COMPLETE / UX_CONTRACT_COMPLETE**
 
-This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, mutate attachments/files, generate derivatives, apply watermarks, call CDN/provider APIs, rewrite references, purge caches or authorize runtime implementation.
+This document is planning evidence only. It does not authorize runtime implementation; it does not mutate attachments/files, generate derivatives, apply watermarks, call CDN/provider APIs, rewrite references, purge caches or authorize runtime implementation.
 
 ## Current machine truth
 
 - Surface 28 media is BANK_REVIEWED with **232 normalized Master Options Bank records**.
-- The atomic planning ledger marks Surface 28 `ATOMIC_INVENTORY_COMPLETE`; this is planning inventory only, not `OPTION_CONTRACT_COMPLETE` or `UX_CONTRACT_COMPLETE`.
+- The accepted Atomic Option Contract maps all 232 Bank records into explicit dispositions (196 parity, 2 exceed, 24 deferred, 10 rejected unsafe), with zero missing or unclassified records. PR #1462 passed exact-head Governance, Architecture, and all 10 Platform Compatibility cells; the lifecycle ledger records UX_CONTRACT_COMPLETE. Runtime remains separately gated.
 - Canonical ownership assigns watermark/derivative and broader media-operation policy to Surface 28. Generic reference mutation belongs Surface 45 Transform; font assets belong Surface 53 Fonts; remote provider/connection security belongs Surface 23 Connections/Webhooks.
 - Exact-main `frameworks/Modules` has no dedicated Media Operations runtime module.
 
