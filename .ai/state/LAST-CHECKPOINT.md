@@ -1,12 +1,10 @@
-# 2026-10-20 — Surface 23 Connections/Webhooks Atomic Option Contract / UX V1 active
+# 2026-10-20 — Surface 23 Connections/Webhooks Atomic Option Contract / UX V1 completed
 
-- Exact main refresh: `7345b40b913ca8d383165bb52360bce726ed3c8f` (PR #1464 reconciled Surface 22 post-merge state).
-- Open issue/PR audit: #1465 is the active safe planning milestone. #858 remains external-admin; #1102/#1425/#1426 remain authorization-gated P-006 items; do not touch those lanes.
-- Surface 23 Bank evidence: 65/65 reviewed, zero unresolved; native and market audits complete, 140 source references and five extra dispositions reconciled, zero post-audit record delta.
-- Contract target: 65/65 one-to-one projection, expected 43 PARITY / 4 EXCEEDS / 2 DEFERRED / 16 REJECTED_UNSAFE. UX/readiness/gap re-review plus lifecycle/README/queue reconciliation is in scope.
-- Hard boundaries: Vault owns secret values; Surface 23 stores opaque references only. No outbound HTTP, OAuth callback, webhook route/execution, credential access, provider calls, deployment or release.
-- Runner Benchmark RB-0128 is `IMMEDIATE_REQUIRED` for exact-head contract/schema/coverage checks and applicable integration gates. RB-0127 was terminal PASS on Surface 22 and is no longer pending.
-- Issue #1465 is active on `agent/connections-atomic-contract-ux-v1`; contract projection generated and local Draft 2020-12 schema validation passes. Exact-head CI is pending after PR creation.
+- Exact main refresh: `e400ea23ae2af0b49a3292963e5eaaf488ec325a` (Issue #1465 / PR #1465 merged).
+- PR #1465 exact tested head: `8fe5e91ed7c7cd9fab37287a1a351558f33bf870`; Governance run `39412651472`, Architecture Guards `39412650424`, Platform Compatibility `39412650383` (10/10) all PASS. RB-0128 terminal PASS.
+- Surface 23 Bank: 65/65 reviewed, zero unresolved; Atomic Option Contract is a schema-valid 65/65 source projection: 43 PARITY, 4 EXCEEDS, 2 DEFERRED, 16 REJECTED_UNSAFE. Lifecycle: `UX_CONTRACT_COMPLETE` only.
+- Runtime remains unpromoted: no outbound HTTP, OAuth callback, webhook route/execution, credential access, provider call, deployment or release.
+- Main README, compact state, queue and runner evidence reconciled under Issue #1466; #858 remains external-admin and #1102/#1425/#1426 remain authorization-gated P-006 work.
 
 ## Previous checkpoint
 

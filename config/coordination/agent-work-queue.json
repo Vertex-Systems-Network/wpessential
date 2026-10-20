@@ -1,9 +1,9 @@
 {
-  "schema_version": 211,
+  "schema_version": 212,
   "snapshot_date": "2026-10-20",
-  "queue_anchor_main_sha": "7345b40b913ca8d383165bb52360bce726ed3c8f",
+  "queue_anchor_main_sha": "e400ea23ae2af0b49a3292963e5eaaf488ec325a",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1465",
+  "source_issue": "#1466",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -8605,14 +8605,15 @@
       ],
       "claim_branch": "agent/connections-atomic-contract-ux-v1",
       "authorization": "GOV-OWNER-CONSENT-002; Issue #1465; planning/data/docs only",
-      "close_condition": "Satisfied: exact tested head passed required checks; planning-only milestone, no runtime certification.",
+      "close_condition": "Satisfied: exact tested head merged after required checks; planning-only milestone, no runtime certification.",
       "terminal_result": "PASS_CONNECTIONS_ATOMIC_OPTION_CONTRACT_UX_V1",
-      "terminal_evidence": "65/65 schema-valid source projection; 43/4/2/16 dispositions; Governance, Architecture, Platform 10/10 PASS; zero review threads; exact-head evidence reconciliation rerun pending.",
+      "terminal_evidence": "65/65 schema-valid source projection; 43/4/2/16 dispositions; Governance #39412651472, Architecture #39412650424, Platform #39412650383 (10/10) PASS; zero review threads; merged e400ea23ae2af0b49a3292963e5eaaf488ec325a.",
       "active_pr": null,
-      "terminal_source_head_precloseout": "90e70170003afd8c0daec35863ec6de29f389f79",
-      "terminal_governance_run": 39412253765,
-      "terminal_architecture_run": 39412253845,
-      "terminal_platform_run": 39412253758
+      "terminal_source_head_precloseout": "8fe5e91ed7c7cd9fab37287a1a351558f33bf870",
+      "terminal_governance_run": 39412651472,
+      "terminal_architecture_run": 39412650424,
+      "terminal_platform_run": 39412650383,
+      "terminal_merge_sha": "e400ea23ae2af0b49a3292963e5eaaf488ec325a"
     }
   ],
   "historical_closeout": {
