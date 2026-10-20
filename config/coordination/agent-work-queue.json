@@ -1,9 +1,9 @@
 {
-  "schema_version": 213,
+  "schema_version": 214,
   "snapshot_date": "2026-10-20",
-  "queue_anchor_main_sha": "e400ea23ae2af0b49a3292963e5eaaf488ec325a",
+  "queue_anchor_main_sha": "e3cf5878f9d19ad80483688426ebae21aac2e62d",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1467",
+  "source_issue": "#1468",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -8620,12 +8620,12 @@
       "slot_id": "backup-atomic-contract-ux-v1",
       "title": "Surface 24 Backup Atomic Option Contract and UX acceptance V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "BACKUP_ATOMIC_CONTRACT_UX_V1",
-      "source": "Issue #1467",
+      "source": "Issue #1467 / PR #1467",
       "dependencies": [
         "Surface 24 Bank Review #1450 accepted: 122 records, zero unresolved",
-        "Exact main e400ea23ae2af0b49a3292963e5eaaf488ec325a",
+        "Exact tested main merge e3cf5878f9d19ad80483688426ebae21aac2e62d (source head 3246142053839b1605df6fbf59b2d803af5ca576)",
         "Surface 23 contract/UX acceptance merged in PR #1465"
       ],
       "runtime_allowed": false,
@@ -8646,14 +8646,14 @@
       "claim_branch": "agent/surface24-backup-atomic-contract-ux-v1",
       "authorization": "GOV-OWNER-CONSENT-002; Issue #1467; planning/data/docs only",
       "close_condition": "Exact-head schema/source projection, ownership, Governance, Architecture and Platform Compatibility checks pass; merge planning-only PR.",
-      "terminal_result": null,
-      "terminal_evidence": null,
-      "active_pr": 1467,
-      "terminal_source_head_precloseout": null,
-      "terminal_governance_run": null,
-      "terminal_architecture_run": null,
-      "terminal_platform_run": null,
-      "terminal_merge_sha": null
+      "terminal_result": "PASS_BACKUP_ATOMIC_CONTRACT_UX_V1",
+      "terminal_evidence": "122/122 reviewed Bank records projected exactly once; 78 parity, 10 exceeds, 10 deferred, 24 rejected unsafe; zero missing/unclassified. Option-contract smoke and full smoke suite PASS. Exact-head Governance 39423015428, Architecture 39423015376, Platform Compatibility 39423015390 (10/10) PASS; zero review threads; merged e3cf5878f9d19ad80483688426ebae21aac2e62d.",
+      "active_pr": null,
+      "terminal_source_head_precloseout": "3246142053839b1605df6fbf59b2d803af5ca576",
+      "terminal_governance_run": 39423015428,
+      "terminal_architecture_run": 39423015376,
+      "terminal_platform_run": 39423015390,
+      "terminal_merge_sha": "e3cf5878f9d19ad80483688426ebae21aac2e62d"
     }
   ],
   "historical_closeout": {
