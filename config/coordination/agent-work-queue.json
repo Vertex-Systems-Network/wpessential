@@ -8545,7 +8545,7 @@
       "role": "SUPERVISOR_ONLY",
       "status": "ACTIVE",
       "work_mode": "REST_API_ATOMIC_CONTRACT_UX_V1",
-      "source": "Issue #1463",
+      "source": "Issue #1463 / PR #1463",
       "dependencies": [
         "Surface 22 Bank Review #1446 accepted: 46 records, 0 unresolved",
         "Exact main 6c4c7aadb00ab807128ce9321d43ca9a66db0c91"
@@ -8567,7 +8567,8 @@
       "claim_branch": "agent/rest-api-atomic-contract-ux-v1",
       "close_condition": "Exact 46/46 one-to-one source projection, disposition counts 33/2/1/10, schema and focused consistency checks, reviewed UX/readiness/gap docs, exact-head Governance/Architecture/Platform checks PASS, fresh main, zero behind and zero unresolved reviews; merge the exact tested head and close Issue #1463.",
       "terminal_result": null,
-      "terminal_evidence": null
+      "terminal_evidence": null,
+      "active_pr": 1463
     }
   ],
   "historical_closeout": {

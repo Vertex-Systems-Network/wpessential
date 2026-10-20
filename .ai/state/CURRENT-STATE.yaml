@@ -5,7 +5,7 @@ state_status: IMPLEMENTATION_ACTIVE
 observed_main_sha: 6c4c7aadb00ab807128ce9321d43ca9a66db0c91
 observed_main_source: "2026-10-20 exact-main refresh after PR #1462 merged; main @ 6c4c7aadb00ab807128ce9321d43ca9a66db0c91."
 active_issue: 1463
-active_pr: null
+active_pr: 1463
 active_branch: agent/rest-api-atomic-contract-ux-v1
 current_milestone: "Surface 22 REST API Atomic Option Contract and UX re-review V1; 46 reviewed Bank records."
 milestone_status: IMPLEMENTING

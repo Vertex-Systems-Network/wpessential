@@ -3931,7 +3931,7 @@
       "category": "REST_API_ATOMIC_CONTRACT_UX_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head JSON/schema/coverage Governance Gate, Architecture Guards and Platform Compatibility Matrix required for integration",
-      "environment": "agent/rest-api-atomic-contract-ux-v1; base main 6c4c7aadb00ab807128ce9321d43ca9a66db0c91; exact PR head to be recorded at closeout",
+      "environment": "PR #1463 head 1a32f6635887553cab91be1d8581aeb038f455db on agent/rest-api-atomic-contract-ux-v1; base main 6c4c7aadb00ab807128ce9321d43ca9a66db0c91",
       "dependencies": [
         "Issue #1446 Bank Review accepted: 46/46, zero unresolved",
         "Issue #1463 exact file scope"
@@ -3944,7 +3944,8 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "IN_PROGRESS",
       "evidence": [
-        "Runner registered before exact-head CI. Contract, source coverage, and diff checks are being prepared."
+        "Local Draft 2020-12 schema constraints: PASS (0 errors); exact 46/46 projection/disposition checks and git diff --check PASS.",
+        "PR #1463 opened at 1a32f6635887553cab91be1d8581aeb038f455db; exact-head GitHub workflows pending."
       ],
       "note": "No endpoint registration/execution or public exposure is certified."
     }

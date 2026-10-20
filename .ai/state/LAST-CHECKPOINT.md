@@ -5,7 +5,7 @@
 - Surface 22 Bank evidence: `BANK_REVIEWED`, 46 records, zero unresolved. This milestone is limited to a schema-valid 46/46 contract projection, UX/readiness/gap review and shared-truth reconciliation. Expected dispositions: 33 PARITY / 2 EXCEEDS / 1 DEFERRED / 10 REJECTED_UNSAFE.
 - Runtime boundary: no route registration/execution, auth/CORS widening, provider calls, endpoint writes, deployment or release.
 - Runner Benchmark RB-0127 is registered `IMMEDIATE_REQUIRED` before exact-head CI; no runner result is claimed yet.
-- Active branch: `agent/rest-api-atomic-contract-ux-v1`; next: finish contract and docs, validate exact projection/counts, create PR, then observe required exact-head checks once at closeout.
+- PR #1463 is open at exact source head `1a32f6635887553cab91be1d8581aeb038f455db`; branch: `agent/rest-api-atomic-contract-ux-v1`. Contract/schema/source checks passed locally; exact-head CI is now the active gate. Next: observe required checks once at closeout, repair if red, and merge only the exact green head.
 
 ## Previous checkpoint
 
