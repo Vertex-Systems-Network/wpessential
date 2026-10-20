@@ -6,16 +6,16 @@ Bank review: **#1458 / PR #1459**
 Contract and UX re-review: **#1461**
 Exact-main claim anchor: `2c210da0d510874e25f74a4d0c3aed04ab65ccc4`
 
-Status: **BANK_REVIEWED / CONTRACT CANDIDATE DERIVED / RUNTIME NOT AUTHORIZED**
+Status: **UX_CONTRACT_COMPLETE / RUNTIME NOT AUTHORIZED**
 
-Surface 28 has 232 reviewed Bank records and a candidate schema-valid Atomic Option Contract under acceptance in Issue #1461. Exact main has no dedicated Media Operations runtime module. This matrix records prerequisites and owner boundaries only.
+Surface 28 has 232 reviewed Bank records and a schema-valid Atomic Option Contract with complete UX review, accepted by exact-head checks in PR #1462. Exact main has no dedicated Media Operations runtime module. This matrix records prerequisites and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
 | Master Options Bank | **COMPLETE — BANK_REVIEWED / 232** | Native/market/offload reviewed normalized records; 0 unresolved items. | Completed by #1458/#1459; data planning only. |
-| Atomic Option Contracts | **CANDIDATE DERIVED — ACCEPTANCE PENDING** | Validate 232 source records, explicit dispositions and zero missing/unclassified coverage. | Issue #1461 exact-head schema/coverage/CI gate; runtime remains separately gated. |
+| Atomic Option Contracts | **COMPLETE — UX_CONTRACT_COMPLETE** | 232 source records mapped; 0 missing/unclassified; 196 parity, 2 exceed, 24 deferred, 10 rejected unsafe. | PR #1462 exact-head Governance, Architecture and 10-cell Platform gates passed; runtime remains separately gated. |
 | Media Rule definitions | **ABSENT** | canonical identity/revision/lifecycle/priority/conditions/output policy. | Surface 28. |
 | Image editor capability catalog | **ABSENT FOR SURFACE** | exact read/write format, animation, alpha, metadata and operation capability probes. | Must derive from active WordPress editor/environment. |
 | Non-destructive derivative engine | **ABSENT** | generate WPE-owned/regeneratable outputs while preserving original source. | Original in-place mutation forbidden in standard scope. |
@@ -159,6 +159,6 @@ Only after Bank review + schema-valid option contracts:
 
 ## Exit decision
 
-The Bank review is complete and the candidate Atomic Option Contract/UX re-review are under Issue #1461 acceptance. No Media Operations runtime exists; `runtime_allowed=false` remains correct.
+The Bank review and Atomic Option Contract/UX re-review are complete under Issue #1461 / PR #1462. No Media Operations runtime exists; `runtime_allowed=false` remains correct.
 
 After exact-head contract and UX gates pass, any runtime slice still requires its own bounded issue and authorization. Media/file/reference/provider mutation is not authorized by this planning lane.
