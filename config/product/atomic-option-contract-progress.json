@@ -34,8 +34,8 @@
   "truth": {
     "capability_matrix_surfaces": 56,
     "atomic_inventory_surfaces": 56,
-    "option_contract_complete_surfaces": 20,
-    "ux_contract_complete_surfaces": 19,
+    "option_contract_complete_surfaces": 21,
+    "ux_contract_complete_surfaces": 20,
     "runtime_certified_for_full_parity_contract": 0,
     "product_parity_certified_surfaces": 0
   }
