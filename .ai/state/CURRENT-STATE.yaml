@@ -2,15 +2,15 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 30ad00cb8aa740e3e48646e0c2ba99cc45f0eafc
-observed_main_source: "2026-10-18 owner-directed AI plan audit on main 30ad00c (PR #1424 merged)."
-active_issue: "#1417"
-active_pr: null
-active_branch: claude/pensive-wozniak-qbgl24
-current_milestone: "ADR-0223 PHP quality gate + #1415 PHPUnit recovery re-applied: PHPCS 0 errors, PHPStan 0, PHPUnit 1421/1421 local."
+observed_main_sha: b4f2cb5fc707bee0358bdc83323424638cd4ef4f
+observed_main_source: "2026-10-20 exact main refresh; last merge #1457."
+active_issue: "#1458"
+active_pr: "#1459"
+active_branch: agent/media-operations-options-bank-v1
+current_milestone: "Surface 28 Media Operations Options Bank V1: 232 normalized entries, native + market audit, zero-unresolved review."
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0125 #1411/#1412 exact head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 CI PASS, protected merge d85f3183e2684a94c0f654fd191d7185dbda1929; no publication/full parity/GA."
-next_safe_action: "Open PR for claude/pensive-wozniak-qbgl24, verify exact-head CI on PHP 8.2; then close #1416 as superseded and resume the next safe source milestone from the queue."
+next_safe_action: "PR #1459 is open for Issue #1458; resolve exact-head CI findings, refresh the PR head and verify required checks before merge."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
 next_planned_slot: EXACT_HEAD_CI_VERIFICATION
 readme_progress_contract:
@@ -19,7 +19,8 @@ readme_progress_contract:
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0126
   terminal_pass:
     - RB-0041
     - RB-0042

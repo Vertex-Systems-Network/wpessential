@@ -2,21 +2,22 @@
 
 Surface: **28 / Media Operations**  
 Planning issue: **#594**  
+Bank review issue: **#1458**
 Supervisor wave: **#583**  
-Exact-main claim anchor: `3f3aedaf6a2a3d568aa36bd8a570346bb65d1698`
+Exact-main claim anchor: `b4f2cb5fc707bee0358bdc83323424638cd4ef4f`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NOT BANK_REVIEWED — NO OPTION CONTRACT PROMOTION**
+Status: **BANK_REVIEWED — NO OPTION CONTRACT OR UX CONTRACT PROMOTION**
 
 This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, mutate attachments/files, generate derivatives, apply watermarks, call CDN/provider APIs, rewrite references, purge caches or authorize runtime implementation.
 
 ## Current machine truth
 
-- Surface 28 `media` is `UNSEEDED` with **0 normalized Master Options Bank records**.
+- Surface 28 media is BANK_REVIEWED with **232 normalized Master Options Bank records**.
 - The atomic planning ledger marks Surface 28 `ATOMIC_INVENTORY_COMPLETE`; this is planning inventory only, not `OPTION_CONTRACT_COMPLETE` or `UX_CONTRACT_COMPLETE`.
 - Canonical ownership assigns watermark/derivative and broader media-operation policy to Surface 28. Generic reference mutation belongs Surface 45 Transform; font assets belong Surface 53 Fonts; remote provider/connection security belongs Surface 23 Connections/Webhooks.
 - Exact-main `frameworks/Modules` has no dedicated Media Operations runtime module.
 
-The next valid product gate is Bank seeding + native/market review, not file/attachment mutation.
+The Bank, native API audit and market review are complete with zero unresolved items. SVG processing remains deferred until a separate renderer/security certification; font file/catalog management remains owned by Surface 53. The next gate is schema-valid Atomic Option Contract derivation and UX re-review; runtime/attachment mutation remains a separate gate.
 
 ## Existing in-repo evidence
 
@@ -57,9 +58,9 @@ Normalize at least these families independently:
 21. **Multisite/portability/recovery** — site-specific upload roots/variants/adapters, secret-free configuration portability and reversible derivative cleanup.
 22. **Performance/reliability** — memory/megapixel guards, background jobs, capability cache, no frontend full-library scans.
 
-## Native WordPress audit required before Bank review
+## Native WordPress audit completed before Bank review
 
-A future native audit must classify current WordPress media behavior precisely:
+The accepted native audit at docs/PRODUCT/MEDIA-OPERATIONS-NATIVE-WORDPRESS-AUDIT-V1.md classifies the current WordPress media substrate precisely:
 
 - attachment metadata and original-file identity;
 - registered intermediate image sizes and regeneration semantics;
@@ -76,9 +77,9 @@ A future native audit must classify current WordPress media behavior precisely:
 
 Native metadata or a recognized MIME type must never be treated as proof that the active editor can read/write a format safely.
 
-## Market audit required before Bank review
+## Market audit completed before Bank review
 
-Compare current specialist products/adapters for:
+The accepted market audit at docs/PRODUCT/MEDIA-OPERATIONS-MARKET-AUDIT-V1.md compares current specialist products/adapters across:
 
 - watermark rule targeting and regeneration;
 - derivative/non-destructive output models;
@@ -126,6 +127,4 @@ Reject or tightly bound:
 
 ## Readiness decision
 
-Surface 28 has enough in-repo semantic material to begin disciplined Master Options Bank seeding/native/market review, but exact-main `UNSEEDED / 0` blocks option-contract, UX and runtime promotion.
-
-Next gate: normalize Bank records → complete native audit → complete market/offload audit → resolve ownership/unsafe/deferred items → Bank review with zero unresolved items → derive schema-valid Atomic Option Contracts → re-review UX → separately authorize bounded runtime slices.
+Bank Review V1 closes 232 normalized records; native, market and review unresolved counts are all zero; there are no Surface 28 semantic aliases/relationships and no record-count delta after audit. Next: derive schema-valid Atomic Option Contracts → re-review UX → separately gate runtime slices.

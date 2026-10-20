@@ -1,1 +1,387 @@
-{"schema_version":1,"bank_version":"v1","snapshot_date":"2026-09-13","target_surface_count":56,"status_meanings":{"UNSEEDED":"No normalized Master Options Bank records exist yet for the surface.","BANK_SURFACE_SEEDED":"A normalized discovery seed exists, but native and market completeness are not yet certified.","NATIVE_AUDITED":"Relevant current native WordPress/platform possibilities have been exhaustively audited and classified.","MARKET_AUDITED":"Relevant competitor/specialist market possibilities have been exhaustively audited and classified with evidence.","BANK_REVIEWED":"Native + market + WPE-future possibilities are reviewed; duplicates/gaps are resolved and the surface Bank is ready to feed implementation contracts."},"surface_status":[{"id":1,"key":"cpt","status":"BANK_REVIEWED","records":107,"notes":"CPT Bank Review V1 closes the unchanged 107-record Surface 1 Bank after current WordPress native audit, five primary market providers plus Toolset specialist review, zero unresolved native/market/review items and zero CPT semantic overlaps. Rejected-unsafe, deferred and WPE-exceed policy gates are consistent. Surface 1 is ready to feed downstream Atomic Option Contracts and UX closure; this does not claim CPT runtime implementation or shipped parity."},{"id":2,"key":"taxonomy","status":"BANK_REVIEWED","records":71,"notes":"Taxonomy Bank Review V1 closes the unchanged 71-record Surface 2 Bank after current WordPress native audit, seven primary market providers plus TaxoPress specialist review, zero unresolved items and zero semantic overlaps. Surface 2 is ready to feed downstream implementation contracts; this does not claim Taxonomy runtime implementation or shipped parity."},{"id":3,"key":"fields","status":"BANK_REVIEWED","records":618,"notes":"Fields Bank Review V2 closes the original semantic, native and market blockers without adding count-only records. Six semantic relationships remain machine-canonicalized; native WordPress audit and provider-by-provider market audit both have zero unresolved items; all 618 Fields records are classified, and rejected/deferred/WPE-exceed policies are consistency-gated. Surface 3 is ready to feed downstream Atomic Option Contracts, but this does not claim runtime implementation or shipped parity."},{"id":4,"key":"relations","status":"BANK_REVIEWED","records":144,"notes":"Relations Bank Review V1 closes native, market, semantic, policy and ownership review at 144 records with zero unresolved items and no post-market count inflation. Surface 4 is ready to feed downstream Atomic Option Contracts; this does not claim runtime implementation, migration readiness or shipped parity."},{"id":5,"key":"status","status":"BANK_REVIEWED","records":129,"notes":"Stage D Bank Review promotion closes the 129-record Status surface after certified native and market audits, zero semantic overlaps, four explicit rejected-unsafe records, zero deferred records, and zero unresolved review gates. The synchronized MARKET_AUDITED prerequisite head db928cca648a97a76c4fb5554b2b83fd6b7456e6 passed all five applicable workflows. Surface 5 may now feed downstream UX projection and Atomic Option/implementation contracts; this does not claim runtime implementation or shipped parity."},{"id":6,"key":"query","status":"BANK_REVIEWED","records":169,"notes":"Query Bank Review V1 closes the reconciled 169-record Surface 6 planning Bank after current WordPress native audit, three primary market providers plus one specialist, zero unresolved review items, and zero semantic-registry entries. This promotes planning/Bank truth only; Query runtime remains blocked by Relations Gate B and the accepted public Query-consumer/Data Source seam."},{"id":7,"key":"tables","status":"BANK_REVIEWED","records":165,"notes":"Surface 7 Custom Tables Bank Review V1 closes 165 normalized records after zero-unresolved native and market audits, zero semantic overlaps, explicit rejected-unsafe SQL/DDL and cross-site/destructive boundaries, and closed deferred/WPE-exceed consistency gates. Surface 7 may feed downstream Atomic Option/implementation contracts; this does not authorize runtime DDL/migration execution or claim shipped parity."},{"id":8,"key":"columns","status":"BANK_REVIEWED","records":214,"notes":"Stage D Bank Review closes the 214-record Admin Columns surface after certified native and market audits, zero semantic overlaps, zero unresolved review gates, and closed policy consistency. Exact-head Stage C market certification is the prerequisite; this state does not claim runtime implementation or shipped parity."},{"id":9,"key":"listings","status":"BANK_REVIEWED","records":150,"notes":"Listings Bank Review V1 closes the reconciled 150-record Surface 9 planning Bank after current WordPress native audit, four primary market providers plus two specialists, zero unresolved review items, and zero semantic-registry entries. This promotes planning/Bank truth only; Listings runtime remains blocked by the accepted Relations → Query → Admin Columns → Listings dependency gates and exact-head shared runtime contracts."},{"id":10,"key":"dashboard-widgets","status":"BANK_REVIEWED","records":123,"notes":"Stage D Bank Review closes the 123-record Dashboard Widgets surface after certified native and market audits, zero semantic overlaps, zero unresolved review gates, 2 canonical deferred records, and 12 future WPE-exceed records. Exact-head Stage C market certification is the prerequisite; this state does not claim runtime implementation or shipped parity."},{"id":11,"key":"admin-menu","status":"BANK_REVIEWED","records":16,"notes":"Admin Menu Bank Review V1 closes all 16 records after accepted native and market audits, zero UNREVIEWED records, zero native/market/review unresolved items, zero semantic-registry entries and zero market record delta. Roles/Policy remains canonical for authorization and unsafe URL schemes remain rejected. This does not claim runtime implementation or product parity."},{"id":12,"key":"settings","status":"BANK_REVIEWED","records":17,"notes":"Settings Pages Bank Review V1 closes the reconciled 17-record Bank after two native additions integrated earlier, accepted market audit, zero unresolved items, zero semantic overlaps and zero post-market record delta. Fields and Vault ownership boundaries remain explicit; runtime remains unpromoted."},{"id":13,"key":"dashboard","status":"BANK_REVIEWED","records":17,"notes":"Frontend Dashboard Bank Review V1 closes the reconciled 17-record Bank after native routing/render additions, market review, zero unresolved items, zero semantic overlaps and zero market record delta. The dashboard remains a composition shell over canonical Profile/Content/Services/Policy owners; runtime remains unpromoted."},{"id":14,"key":"profiles","status":"BANK_REVIEWED","records":17,"notes":"User Profiles Bank Review V1 closes 17 records after native privacy-lifecycle integration and market review with zero unresolved items, zero semantic overlaps and zero market record delta. Roles/Policy, Fields, Media and Query/Listings remain canonical dependencies; runtime remains unpromoted."},{"id":15,"key":"membership","status":"BANK_REVIEWED","records":15,"notes":"Membership Bank Review V1 closes all 15 records with zero unresolved items, zero semantic overlaps and zero market record delta. Payment/provider settlement and role-grant truth remain external canonical owners; runtime/provider execution remains unpromoted."},{"id":16,"key":"builder-widgets","status":"BANK_REVIEWED","records":18,"notes":"Builder Widgets Bank Review V1 closes the reconciled 18-record Bank after native adapter additions and Elementor/Bricks market review with zero unresolved items and zero semantic overlaps. Fields, Query/Listings, Relations, Renderer and Policy ownership remains explicit; raw executable callbacks stay rejected."},{"id":17,"key":"forms-workflows","status":"BANK_REVIEWED","records":17,"notes":"Forms & Workflows Bank Review V1 closes the reconciled 17-record Bank after native invocation-channel integration and market review with zero unresolved items and zero semantic overlaps. Ability/Policy, payment providers and Vault remain canonical owners; raw executable workflow input stays rejected."},{"id":18,"key":"cron","status":"BANK_REVIEWED","records":15,"notes":"Cron Bank Review V1 closes all 15 records with zero unresolved items, zero semantic overlaps and zero market record delta. WP-Cron request-driven timing remains explicit; exact-time, retry/idempotency and provider reliability semantics are not overstated. Runtime/job execution remains unpromoted."},{"id":19,"key":"notifications","status":"BANK_REVIEWED","records":16,"notes":"Notifications Bank Review V1 closes all 16 records with zero unresolved items, zero semantic overlaps and zero market record delta. Email/Webhook transports remain delegated and raw hook/callback input stays rejected; external delivery/runtime remains unpromoted."},{"id":20,"key":"emails","status":"BANK_REVIEWED","records":16,"notes":"Emails Bank Review V1 closes all 16 records with zero unresolved items, zero semantic overlaps and zero market record delta. Transport credentials remain provider/Vault-owned, protected attachment policy stays explicit and raw executable content remains rejected. Sending/runtime remains unpromoted."},{"id":21,"key":"chat","status":"BANK_REVIEWED","records":17,"notes":"Chat Bank Review V1 closes all 17 records with zero unresolved items, zero semantic overlaps and zero market record delta. Realtime transport remains provider-profiled, private attachment/Policy boundaries remain explicit and raw HTML/script stays rejected. Message/runtime execution remains unpromoted."},{"id":22,"key":"rest-api","status":"BANK_REVIEWED","records":46,"notes":"REST API Bank Review V1 closes 46 normalized Surface 22 records seeded from the REST API Builder exhaustive spec and #601 readiness evidence after a zero-unresolved WordPress native audit and market audit (JetEngine, Custom API for WP, WPGraphQL, WP REST Cache, HTTP/OpenAPI/CORS standards), zero semantic overlaps and zero post-market record delta. Explicit permission Policy is mandatory, public mutation is never a default, 10 unsafe patterns (raw SQL/PHP, missing permission callback, credential header mapping, wildcard CORS, unbounded output, sensitive logging) stay rejected and third-party auth adapters are deferred. This promotes planning/Bank truth only; endpoint registration and runtime remain unpromoted."},{"id":23,"key":"connections","status":"BANK_REVIEWED","records":65,"notes":"Connections/Webhooks Bank Review V1 closes 65 normalized Surface 23 records seeded from the Webhooks & Connections exhaustive spec and #602 readiness evidence after a zero-unresolved WordPress native audit and market audit (WP Webhooks, Uncanny Automator, n8n, Zapier Webhooks; WooCommerce, Stripe, GitHub, Standard Webhooks, OWASP SSRF and OAuth RFC specialists), zero semantic overlaps and zero post-market record delta. Secrets are Vault references only, Safe HTTP SSRF/redirect/TLS policy and raw-body webhook signature verification are mandatory, 16 unsafe patterns (plaintext secrets, ignore-TLS, private/metadata destinations, cross-host auth redirects, unsigned webhooks, weak algorithms, replay re-runs, credential logging, AI credential access) stay rejected and provider signing adapters plus private-network allowlists are deferred. This promotes planning/Bank truth only; network, OAuth and webhook execution remain unpromoted."},{"id":24,"key":"backup","status":"BANK_REVIEWED","records":122,"notes":"Backup Bank Review V1 closes 122 normalized Surface 24 records seeded from the Backup Manager exhaustive spec, Backup & Restore Semantics, the BACKUP-* architecture profiles, the archive encryption/key recovery model and #603 readiness evidence after a zero-unresolved WordPress native audit and market audit (UpdraftPlus, BackWPup, Duplicator, WPvivid; Jetpack VaultPress Backup, BlogVault, All-in-One WP Migration, Solid Backups, restic, BorgBackup, AWS S3 integrity/Object Lock, NIST SP 800-34, RFC 9106, Zip Slip and RFC 4253 specialists), zero semantic overlaps and zero post-market record delta. Manifest and SHA-256 checksums are mandatory, archive encryption is reviewed AEAD with recovery material never stored beside the archive, credentials are Vault references only, destructive restore requires preflight, a verified source, explicit confirmation and a pre-restore point by default, and archives are never exposed through public URLs; 24 unsafe patterns stay rejected and 10 items (DR bootstrap, KMS keys, incremental chains, logical content backup, DB objects, imports, conversions, auto-mirror, V3 scheduling, environment restrictions) are deferred. This promotes planning/Bank truth only; capture, archive, upload and restore execution remain unpromoted."},{"id":25,"key":"reset","status":"BANK_REVIEWED","records":148,"notes":"Reset Bank Review V1 closes 148 normalized Surface 25 records seeded from the Reset Manager exhaustive spec and #604 readiness evidence after a zero-unresolved WordPress native audit and market audit (WP Reset, Advanced WP Reset, WP Database Reset, WP-CLI db reset/site empty; Bulk Delete, WP-Optimize, WP STAGING, NIST SP 800-34 and OWASP Transaction Authorization specialists), zero semantic overlaps and zero post-market record delta. Every run requires explicit scope, a read-only dry-run impact preview with drift fingerprint, a verified pre-reset restore point from Surface 24 Backup by default (waivable only through a recorded, capability-gated unsafe override with reason, typed phrase and re-auth), level-based typed confirmation with recent re-auth and a safe audit summary; users, uploads, packages and Vault/account/backup catalog are preserved by default, deletion never leaves WPE-owned or explicitly selected registered-owner scope, network-wide reset is not offered by default and AI is read/preview only; 25 unsafe patterns stay rejected and 6 items (relation-driven selection, advanced user reset and its impact, visual snapshot, video, network-wide reset) are deferred. This promotes planning/Bank truth only; deletion, restore-point creation and reset execution remain unpromoted."},{"id":26,"key":"import-export","status":"BANK_REVIEWED","records":188,"notes":"Import/Export Bank Review V1 closes 188 normalized Surface 26 records seeded from the Import/Export exhaustive spec, the Portable Configuration Package Format, the Source Migration Adapter Registry and #605 readiness evidence after a zero-unresolved WordPress native audit and market audit (WordPress Importer (WXR) + Tools Export, WP All Import, WP All Export, WP Ultimate CSV Importer; Customizer Export/Import, Widget Importer & Exporter, Import and export users and customers, WooCommerce Product CSV Importer and Exporter, WP Migrate, OWASP CSV Injection, OWASP XML External Entity Prevention Cheat Sheet, OWASP Deserialization Cheat Sheet, OWASP File Upload Cheat Sheet, RFC 4180 CSV Format specialists), zero semantic overlaps and zero post-market record delta. Configuration packages carry a versioned manifest, stable UUIDs, checksums, dependency edges and credential placeholders with secrets excluded; every import treats content as untrusted (structure/checksum/schema validation, size and archive limits, JSON-only payloads with no PHP object deserialization or code execution, private non-executable storage, Safe HTTP for remote sources) and runs inspect, compatibility, conflict mapping, semantic diff and dry run before a capability + nonce gated apply, with destructive replace and overwrite-all never default; data imports default to create-only with ownership-marker-scoped synchronize, report rollback coverage before execution and keep AI to analyze/preview; exports exclude passwords, hashes, tokens and secrets, redact PII by privacy class and escape spreadsheet formulas by default. 22 unsafe patterns stay rejected and 6 items (Encrypted Secret Transfer Mode, Concurrent Import Workers, Certified Password Hash Migration, Export From Current Admin Filtered List Snapshot, Blueprint Sample Data, Persisted Deferred Package Objects) are deferred. This promotes planning/Bank truth only; import, export and package execution remain unpromoted."},{"id":27,"key":"protector","status":"BANK_REVIEWED","records":225,"notes":"Protector Bank Review V1 closes 225 normalized Surface 27 records seeded from the Protector exhaustive spec and #606 readiness evidence after a zero-unresolved WordPress native audit and market audit (Wordfence Security, Solid Security, All-In-One Security, Limit Login Attempts Reloaded; WPS Hide Login, Password Protected, SeedProd Coming Soon & Maintenance, Disable REST API, Headers Security Advanced & HSTS WP, Members, OWASP Authentication, Credential Stuffing Prevention, Logging, HTTP Headers and Content Security Policy Cheat Sheets, MDN Content-Security-Policy-Report-Only and X-Forwarded-For, RFC 7239, RFC 6797, HSTS Preload, RFC 6585 and NIST SP 800-63B specialists), zero semantic overlaps and zero post-market record delta. Protector is fail-safe: Site Gate and login alias are off by default, authenticated administrators keep a dedicated bypass, every high-risk publish runs a lockout preflight with re-auth and a documented wp-config safe-disable recovery path, and blocks are temporary; client IP is the direct remote address unless forwarded headers arrive from configured trusted proxies; security logs never contain passwords, cookies, auth headers or tokens, have bounded retention and IP truncation and make no third-party IP lookups by default; security headers are previewed and CSP starts Report-Only with HSTS preload never automatic; Surface 27 owns the shared rate-limit service consumed by Surface 22 while outbound SSRF/TLS stays with Surface 23, and AI is read/simulate/explain only. 21 unsafe patterns stay rejected and 6 items (time-limited recovery token, geo conditions via explicit provider, advanced regex scope, remote threat feeds, strict distributed rate-limit backend, CDN/provider client-IP adapters) are deferred. This promotes planning/Bank truth only; request blocking, login/admin route changes, header emission and rate-limit execution remain unpromoted."},{"id":28,"key":"media","status":"UNSEEDED","records":0},{"id":29,"key":"xml-rpc","status":"UNSEEDED","records":0},{"id":30,"key":"roles","status":"BANK_REVIEWED","records":68,"notes":"Roles Bank Review V1 closes 68 normalized Surface 30 records after a zero-unresolved WordPress native audit and market audit across User Role Editor, PublishPress Capabilities, Members and MemberPress User Roles. The Bank preserves explicit allow/deny/absent capability semantics, multi-role users, separate individual user overrides, multisite/Super Admin context, anti-lockout boundaries and a future canonical read-only peer seam. This promotes planning/Bank truth only; production role/user mutation and runtime certification remain unpromoted."},{"id":31,"key":"platform","status":"UNSEEDED","records":0},{"id":32,"key":"solutions","status":"UNSEEDED","records":0},{"id":33,"key":"analytics","status":"UNSEEDED","records":0},{"id":34,"key":"search","status":"UNSEEDED","records":0},{"id":35,"key":"decision","status":"UNSEEDED","records":0},{"id":36,"key":"ledger","status":"UNSEEDED","records":0},{"id":37,"key":"reservations","status":"UNSEEDED","records":0},{"id":38,"key":"placement","status":"UNSEEDED","records":0},{"id":39,"key":"experiments","status":"UNSEEDED","records":0},{"id":40,"key":"documents","status":"UNSEEDED","records":0},{"id":41,"key":"sync","status":"UNSEEDED","records":0},{"id":42,"key":"geo","status":"UNSEEDED","records":0},{"id":43,"key":"ai","status":"UNSEEDED","records":0},{"id":44,"key":"redirects","status":"UNSEEDED","records":0},{"id":45,"key":"transform","status":"UNSEEDED","records":0},{"id":46,"key":"fixtures","status":"UNSEEDED","records":0},{"id":47,"key":"link-health","status":"UNSEEDED","records":0},{"id":48,"key":"db-maintenance","status":"UNSEEDED","records":0},{"id":49,"key":"admin-theme","status":"UNSEEDED","records":0},{"id":50,"key":"safe-script","status":"UNSEEDED","records":0},{"id":51,"key":"content-order","status":"UNSEEDED","records":0},{"id":52,"key":"security-scanner","status":"UNSEEDED","records":0},{"id":53,"key":"fonts","status":"UNSEEDED","records":0},{"id":54,"key":"user-stores","status":"UNSEEDED","records":0},{"id":55,"key":"staging","status":"UNSEEDED","records":0},{"id":56,"key":"theme-workspace","status":"UNSEEDED","records":0}],"truth":{"seeded_surfaces":28,"native_audited_surfaces":28,"market_audited_surfaces":28,"bank_reviewed_surfaces":28,"total_bank_records":2933}}
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "snapshot_date": "2026-10-20",
+  "target_surface_count": 56,
+  "status_meanings": {
+    "UNSEEDED": "No normalized Master Options Bank records exist yet for the surface.",
+    "BANK_SURFACE_SEEDED": "A normalized discovery seed exists, but native and market completeness are not yet certified.",
+    "NATIVE_AUDITED": "Relevant current native WordPress/platform possibilities have been exhaustively audited and classified.",
+    "MARKET_AUDITED": "Relevant competitor/specialist market possibilities have been exhaustively audited and classified with evidence.",
+    "BANK_REVIEWED": "Native + market + WPE-future possibilities are reviewed; duplicates/gaps are resolved and the surface Bank is ready to feed implementation contracts."
+  },
+  "surface_status": [
+    {
+      "id": 1,
+      "key": "cpt",
+      "status": "BANK_REVIEWED",
+      "records": 107,
+      "notes": "CPT Bank Review V1 closes the unchanged 107-record Surface 1 Bank after current WordPress native audit, five primary market providers plus Toolset specialist review, zero unresolved native/market/review items and zero CPT semantic overlaps. Rejected-unsafe, deferred and WPE-exceed policy gates are consistent. Surface 1 is ready to feed downstream Atomic Option Contracts and UX closure; this does not claim CPT runtime implementation or shipped parity."
+    },
+    {
+      "id": 2,
+      "key": "taxonomy",
+      "status": "BANK_REVIEWED",
+      "records": 71,
+      "notes": "Taxonomy Bank Review V1 closes the unchanged 71-record Surface 2 Bank after current WordPress native audit, seven primary market providers plus TaxoPress specialist review, zero unresolved items and zero semantic overlaps. Surface 2 is ready to feed downstream implementation contracts; this does not claim Taxonomy runtime implementation or shipped parity."
+    },
+    {
+      "id": 3,
+      "key": "fields",
+      "status": "BANK_REVIEWED",
+      "records": 618,
+      "notes": "Fields Bank Review V2 closes the original semantic, native and market blockers without adding count-only records. Six semantic relationships remain machine-canonicalized; native WordPress audit and provider-by-provider market audit both have zero unresolved items; all 618 Fields records are classified, and rejected/deferred/WPE-exceed policies are consistency-gated. Surface 3 is ready to feed downstream Atomic Option Contracts, but this does not claim runtime implementation or shipped parity."
+    },
+    {
+      "id": 4,
+      "key": "relations",
+      "status": "BANK_REVIEWED",
+      "records": 144,
+      "notes": "Relations Bank Review V1 closes native, market, semantic, policy and ownership review at 144 records with zero unresolved items and no post-market count inflation. Surface 4 is ready to feed downstream Atomic Option Contracts; this does not claim runtime implementation, migration readiness or shipped parity."
+    },
+    {
+      "id": 5,
+      "key": "status",
+      "status": "BANK_REVIEWED",
+      "records": 129,
+      "notes": "Stage D Bank Review promotion closes the 129-record Status surface after certified native and market audits, zero semantic overlaps, four explicit rejected-unsafe records, zero deferred records, and zero unresolved review gates. The synchronized MARKET_AUDITED prerequisite head db928cca648a97a76c4fb5554b2b83fd6b7456e6 passed all five applicable workflows. Surface 5 may now feed downstream UX projection and Atomic Option/implementation contracts; this does not claim runtime implementation or shipped parity."
+    },
+    {
+      "id": 6,
+      "key": "query",
+      "status": "BANK_REVIEWED",
+      "records": 169,
+      "notes": "Query Bank Review V1 closes the reconciled 169-record Surface 6 planning Bank after current WordPress native audit, three primary market providers plus one specialist, zero unresolved review items, and zero semantic-registry entries. This promotes planning/Bank truth only; Query runtime remains blocked by Relations Gate B and the accepted public Query-consumer/Data Source seam."
+    },
+    {
+      "id": 7,
+      "key": "tables",
+      "status": "BANK_REVIEWED",
+      "records": 165,
+      "notes": "Surface 7 Custom Tables Bank Review V1 closes 165 normalized records after zero-unresolved native and market audits, zero semantic overlaps, explicit rejected-unsafe SQL/DDL and cross-site/destructive boundaries, and closed deferred/WPE-exceed consistency gates. Surface 7 may feed downstream Atomic Option/implementation contracts; this does not authorize runtime DDL/migration execution or claim shipped parity."
+    },
+    {
+      "id": 8,
+      "key": "columns",
+      "status": "BANK_REVIEWED",
+      "records": 214,
+      "notes": "Stage D Bank Review closes the 214-record Admin Columns surface after certified native and market audits, zero semantic overlaps, zero unresolved review gates, and closed policy consistency. Exact-head Stage C market certification is the prerequisite; this state does not claim runtime implementation or shipped parity."
+    },
+    {
+      "id": 9,
+      "key": "listings",
+      "status": "BANK_REVIEWED",
+      "records": 150,
+      "notes": "Listings Bank Review V1 closes the reconciled 150-record Surface 9 planning Bank after current WordPress native audit, four primary market providers plus two specialists, zero unresolved review items, and zero semantic-registry entries. This promotes planning/Bank truth only; Listings runtime remains blocked by the accepted Relations → Query → Admin Columns → Listings dependency gates and exact-head shared runtime contracts."
+    },
+    {
+      "id": 10,
+      "key": "dashboard-widgets",
+      "status": "BANK_REVIEWED",
+      "records": 123,
+      "notes": "Stage D Bank Review closes the 123-record Dashboard Widgets surface after certified native and market audits, zero semantic overlaps, zero unresolved review gates, 2 canonical deferred records, and 12 future WPE-exceed records. Exact-head Stage C market certification is the prerequisite; this state does not claim runtime implementation or shipped parity."
+    },
+    {
+      "id": 11,
+      "key": "admin-menu",
+      "status": "BANK_REVIEWED",
+      "records": 16,
+      "notes": "Admin Menu Bank Review V1 closes all 16 records after accepted native and market audits, zero UNREVIEWED records, zero native/market/review unresolved items, zero semantic-registry entries and zero market record delta. Roles/Policy remains canonical for authorization and unsafe URL schemes remain rejected. This does not claim runtime implementation or product parity."
+    },
+    {
+      "id": 12,
+      "key": "settings",
+      "status": "BANK_REVIEWED",
+      "records": 17,
+      "notes": "Settings Pages Bank Review V1 closes the reconciled 17-record Bank after two native additions integrated earlier, accepted market audit, zero unresolved items, zero semantic overlaps and zero post-market record delta. Fields and Vault ownership boundaries remain explicit; runtime remains unpromoted."
+    },
+    {
+      "id": 13,
+      "key": "dashboard",
+      "status": "BANK_REVIEWED",
+      "records": 17,
+      "notes": "Frontend Dashboard Bank Review V1 closes the reconciled 17-record Bank after native routing/render additions, market review, zero unresolved items, zero semantic overlaps and zero market record delta. The dashboard remains a composition shell over canonical Profile/Content/Services/Policy owners; runtime remains unpromoted."
+    },
+    {
+      "id": 14,
+      "key": "profiles",
+      "status": "BANK_REVIEWED",
+      "records": 17,
+      "notes": "User Profiles Bank Review V1 closes 17 records after native privacy-lifecycle integration and market review with zero unresolved items, zero semantic overlaps and zero market record delta. Roles/Policy, Fields, Media and Query/Listings remain canonical dependencies; runtime remains unpromoted."
+    },
+    {
+      "id": 15,
+      "key": "membership",
+      "status": "BANK_REVIEWED",
+      "records": 15,
+      "notes": "Membership Bank Review V1 closes all 15 records with zero unresolved items, zero semantic overlaps and zero market record delta. Payment/provider settlement and role-grant truth remain external canonical owners; runtime/provider execution remains unpromoted."
+    },
+    {
+      "id": 16,
+      "key": "builder-widgets",
+      "status": "BANK_REVIEWED",
+      "records": 18,
+      "notes": "Builder Widgets Bank Review V1 closes the reconciled 18-record Bank after native adapter additions and Elementor/Bricks market review with zero unresolved items and zero semantic overlaps. Fields, Query/Listings, Relations, Renderer and Policy ownership remains explicit; raw executable callbacks stay rejected."
+    },
+    {
+      "id": 17,
+      "key": "forms-workflows",
+      "status": "BANK_REVIEWED",
+      "records": 17,
+      "notes": "Forms & Workflows Bank Review V1 closes the reconciled 17-record Bank after native invocation-channel integration and market review with zero unresolved items and zero semantic overlaps. Ability/Policy, payment providers and Vault remain canonical owners; raw executable workflow input stays rejected."
+    },
+    {
+      "id": 18,
+      "key": "cron",
+      "status": "BANK_REVIEWED",
+      "records": 15,
+      "notes": "Cron Bank Review V1 closes all 15 records with zero unresolved items, zero semantic overlaps and zero market record delta. WP-Cron request-driven timing remains explicit; exact-time, retry/idempotency and provider reliability semantics are not overstated. Runtime/job execution remains unpromoted."
+    },
+    {
+      "id": 19,
+      "key": "notifications",
+      "status": "BANK_REVIEWED",
+      "records": 16,
+      "notes": "Notifications Bank Review V1 closes all 16 records with zero unresolved items, zero semantic overlaps and zero market record delta. Email/Webhook transports remain delegated and raw hook/callback input stays rejected; external delivery/runtime remains unpromoted."
+    },
+    {
+      "id": 20,
+      "key": "emails",
+      "status": "BANK_REVIEWED",
+      "records": 16,
+      "notes": "Emails Bank Review V1 closes all 16 records with zero unresolved items, zero semantic overlaps and zero market record delta. Transport credentials remain provider/Vault-owned, protected attachment policy stays explicit and raw executable content remains rejected. Sending/runtime remains unpromoted."
+    },
+    {
+      "id": 21,
+      "key": "chat",
+      "status": "BANK_REVIEWED",
+      "records": 17,
+      "notes": "Chat Bank Review V1 closes all 17 records with zero unresolved items, zero semantic overlaps and zero market record delta. Realtime transport remains provider-profiled, private attachment/Policy boundaries remain explicit and raw HTML/script stays rejected. Message/runtime execution remains unpromoted."
+    },
+    {
+      "id": 22,
+      "key": "rest-api",
+      "status": "BANK_REVIEWED",
+      "records": 46,
+      "notes": "REST API Bank Review V1 closes 46 normalized Surface 22 records seeded from the REST API Builder exhaustive spec and #601 readiness evidence after a zero-unresolved WordPress native audit and market audit (JetEngine, Custom API for WP, WPGraphQL, WP REST Cache, HTTP/OpenAPI/CORS standards), zero semantic overlaps and zero post-market record delta. Explicit permission Policy is mandatory, public mutation is never a default, 10 unsafe patterns (raw SQL/PHP, missing permission callback, credential header mapping, wildcard CORS, unbounded output, sensitive logging) stay rejected and third-party auth adapters are deferred. This promotes planning/Bank truth only; endpoint registration and runtime remain unpromoted."
+    },
+    {
+      "id": 23,
+      "key": "connections",
+      "status": "BANK_REVIEWED",
+      "records": 65,
+      "notes": "Connections/Webhooks Bank Review V1 closes 65 normalized Surface 23 records seeded from the Webhooks & Connections exhaustive spec and #602 readiness evidence after a zero-unresolved WordPress native audit and market audit (WP Webhooks, Uncanny Automator, n8n, Zapier Webhooks; WooCommerce, Stripe, GitHub, Standard Webhooks, OWASP SSRF and OAuth RFC specialists), zero semantic overlaps and zero post-market record delta. Secrets are Vault references only, Safe HTTP SSRF/redirect/TLS policy and raw-body webhook signature verification are mandatory, 16 unsafe patterns (plaintext secrets, ignore-TLS, private/metadata destinations, cross-host auth redirects, unsigned webhooks, weak algorithms, replay re-runs, credential logging, AI credential access) stay rejected and provider signing adapters plus private-network allowlists are deferred. This promotes planning/Bank truth only; network, OAuth and webhook execution remain unpromoted."
+    },
+    {
+      "id": 24,
+      "key": "backup",
+      "status": "BANK_REVIEWED",
+      "records": 122,
+      "notes": "Backup Bank Review V1 closes 122 normalized Surface 24 records seeded from the Backup Manager exhaustive spec, Backup & Restore Semantics, the BACKUP-* architecture profiles, the archive encryption/key recovery model and #603 readiness evidence after a zero-unresolved WordPress native audit and market audit (UpdraftPlus, BackWPup, Duplicator, WPvivid; Jetpack VaultPress Backup, BlogVault, All-in-One WP Migration, Solid Backups, restic, BorgBackup, AWS S3 integrity/Object Lock, NIST SP 800-34, RFC 9106, Zip Slip and RFC 4253 specialists), zero semantic overlaps and zero post-market record delta. Manifest and SHA-256 checksums are mandatory, archive encryption is reviewed AEAD with recovery material never stored beside the archive, credentials are Vault references only, destructive restore requires preflight, a verified source, explicit confirmation and a pre-restore point by default, and archives are never exposed through public URLs; 24 unsafe patterns stay rejected and 10 items (DR bootstrap, KMS keys, incremental chains, logical content backup, DB objects, imports, conversions, auto-mirror, V3 scheduling, environment restrictions) are deferred. This promotes planning/Bank truth only; capture, archive, upload and restore execution remain unpromoted."
+    },
+    {
+      "id": 25,
+      "key": "reset",
+      "status": "BANK_REVIEWED",
+      "records": 148,
+      "notes": "Reset Bank Review V1 closes 148 normalized Surface 25 records seeded from the Reset Manager exhaustive spec and #604 readiness evidence after a zero-unresolved WordPress native audit and market audit (WP Reset, Advanced WP Reset, WP Database Reset, WP-CLI db reset/site empty; Bulk Delete, WP-Optimize, WP STAGING, NIST SP 800-34 and OWASP Transaction Authorization specialists), zero semantic overlaps and zero post-market record delta. Every run requires explicit scope, a read-only dry-run impact preview with drift fingerprint, a verified pre-reset restore point from Surface 24 Backup by default (waivable only through a recorded, capability-gated unsafe override with reason, typed phrase and re-auth), level-based typed confirmation with recent re-auth and a safe audit summary; users, uploads, packages and Vault/account/backup catalog are preserved by default, deletion never leaves WPE-owned or explicitly selected registered-owner scope, network-wide reset is not offered by default and AI is read/preview only; 25 unsafe patterns stay rejected and 6 items (relation-driven selection, advanced user reset and its impact, visual snapshot, video, network-wide reset) are deferred. This promotes planning/Bank truth only; deletion, restore-point creation and reset execution remain unpromoted."
+    },
+    {
+      "id": 26,
+      "key": "import-export",
+      "status": "BANK_REVIEWED",
+      "records": 188,
+      "notes": "Import/Export Bank Review V1 closes 188 normalized Surface 26 records seeded from the Import/Export exhaustive spec, the Portable Configuration Package Format, the Source Migration Adapter Registry and #605 readiness evidence after a zero-unresolved WordPress native audit and market audit (WordPress Importer (WXR) + Tools Export, WP All Import, WP All Export, WP Ultimate CSV Importer; Customizer Export/Import, Widget Importer & Exporter, Import and export users and customers, WooCommerce Product CSV Importer and Exporter, WP Migrate, OWASP CSV Injection, OWASP XML External Entity Prevention Cheat Sheet, OWASP Deserialization Cheat Sheet, OWASP File Upload Cheat Sheet, RFC 4180 CSV Format specialists), zero semantic overlaps and zero post-market record delta. Configuration packages carry a versioned manifest, stable UUIDs, checksums, dependency edges and credential placeholders with secrets excluded; every import treats content as untrusted (structure/checksum/schema validation, size and archive limits, JSON-only payloads with no PHP object deserialization or code execution, private non-executable storage, Safe HTTP for remote sources) and runs inspect, compatibility, conflict mapping, semantic diff and dry run before a capability + nonce gated apply, with destructive replace and overwrite-all never default; data imports default to create-only with ownership-marker-scoped synchronize, report rollback coverage before execution and keep AI to analyze/preview; exports exclude passwords, hashes, tokens and secrets, redact PII by privacy class and escape spreadsheet formulas by default. 22 unsafe patterns stay rejected and 6 items (Encrypted Secret Transfer Mode, Concurrent Import Workers, Certified Password Hash Migration, Export From Current Admin Filtered List Snapshot, Blueprint Sample Data, Persisted Deferred Package Objects) are deferred. This promotes planning/Bank truth only; import, export and package execution remain unpromoted."
+    },
+    {
+      "id": 27,
+      "key": "protector",
+      "status": "BANK_REVIEWED",
+      "records": 225,
+      "notes": "Protector Bank Review V1 closes 225 normalized Surface 27 records seeded from the Protector exhaustive spec and #606 readiness evidence after a zero-unresolved WordPress native audit and market audit (Wordfence Security, Solid Security, All-In-One Security, Limit Login Attempts Reloaded; WPS Hide Login, Password Protected, SeedProd Coming Soon & Maintenance, Disable REST API, Headers Security Advanced & HSTS WP, Members, OWASP Authentication, Credential Stuffing Prevention, Logging, HTTP Headers and Content Security Policy Cheat Sheets, MDN Content-Security-Policy-Report-Only and X-Forwarded-For, RFC 7239, RFC 6797, HSTS Preload, RFC 6585 and NIST SP 800-63B specialists), zero semantic overlaps and zero post-market record delta. Protector is fail-safe: Site Gate and login alias are off by default, authenticated administrators keep a dedicated bypass, every high-risk publish runs a lockout preflight with re-auth and a documented wp-config safe-disable recovery path, and blocks are temporary; client IP is the direct remote address unless forwarded headers arrive from configured trusted proxies; security logs never contain passwords, cookies, auth headers or tokens, have bounded retention and IP truncation and make no third-party IP lookups by default; security headers are previewed and CSP starts Report-Only with HSTS preload never automatic; Surface 27 owns the shared rate-limit service consumed by Surface 22 while outbound SSRF/TLS stays with Surface 23, and AI is read/simulate/explain only. 21 unsafe patterns stay rejected and 6 items (time-limited recovery token, geo conditions via explicit provider, advanced regex scope, remote threat feeds, strict distributed rate-limit backend, CDN/provider client-IP adapters) are deferred. This promotes planning/Bank truth only; request blocking, login/admin route changes, header emission and rate-limit execution remain unpromoted."
+    },
+    {
+      "id": 28,
+      "key": "media",
+      "status": "BANK_REVIEWED",
+      "records": 232,
+      "notes": "Media Operations Bank Review V1 closes 232 records with zero unresolved native/market/review items and zero semantic overlaps. 24 items are deliberately deferred, including SVG processing pending separate renderer/security certification, future tinting, and Surface 53 font catalog/file ownership. Original files remain unchanged; WPE derivatives are preferred; format support requires actual active-editor capability; bulk work is bounded/background; offload/CDN, replacement/recovery and generic reference mutation remain gated/delegated. Planning/Bank truth only, not runtime or product parity."
+    },
+    {
+      "id": 29,
+      "key": "xml-rpc",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 30,
+      "key": "roles",
+      "status": "BANK_REVIEWED",
+      "records": 68,
+      "notes": "Roles Bank Review V1 closes 68 normalized Surface 30 records after a zero-unresolved WordPress native audit and market audit across User Role Editor, PublishPress Capabilities, Members and MemberPress User Roles. The Bank preserves explicit allow/deny/absent capability semantics, multi-role users, separate individual user overrides, multisite/Super Admin context, anti-lockout boundaries and a future canonical read-only peer seam. This promotes planning/Bank truth only; production role/user mutation and runtime certification remain unpromoted."
+    },
+    {
+      "id": 31,
+      "key": "platform",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 32,
+      "key": "solutions",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 33,
+      "key": "analytics",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 34,
+      "key": "search",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 35,
+      "key": "decision",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 36,
+      "key": "ledger",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 37,
+      "key": "reservations",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 38,
+      "key": "placement",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 39,
+      "key": "experiments",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 40,
+      "key": "documents",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 41,
+      "key": "sync",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 42,
+      "key": "geo",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 43,
+      "key": "ai",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 44,
+      "key": "redirects",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 45,
+      "key": "transform",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 46,
+      "key": "fixtures",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 47,
+      "key": "link-health",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 48,
+      "key": "db-maintenance",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 49,
+      "key": "admin-theme",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 50,
+      "key": "safe-script",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 51,
+      "key": "content-order",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 52,
+      "key": "security-scanner",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 53,
+      "key": "fonts",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 54,
+      "key": "user-stores",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 55,
+      "key": "staging",
+      "status": "UNSEEDED",
+      "records": 0
+    },
+    {
+      "id": 56,
+      "key": "theme-workspace",
+      "status": "UNSEEDED",
+      "records": 0
+    }
+  ],
+  "truth": {
+    "seeded_surfaces": 29,
+    "native_audited_surfaces": 29,
+    "market_audited_surfaces": 29,
+    "bank_reviewed_surfaces": 29,
+    "total_bank_records": 3165
+  }
+}

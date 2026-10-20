@@ -1,3 +1,9 @@
+# 2026-10-20 — Surface 28 Media Operations Bank Review V1 in progress
+
+- Reconciled exact main b4f2cb5fc707bee0358bdc83323424638cd4ef4f and activated accepted Issue #1458.
+- Created and reviewed the 232-record Bank with native and market mapping; PR #1459 is open, exact-head CI is running.
+- Draft PR #1426 remains unmergeable and unverified for its formal fixtures; its lane is kept distinct.
+
 # Rolling AI Execution Journal
 
 This is a compact rolling journal under `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`.

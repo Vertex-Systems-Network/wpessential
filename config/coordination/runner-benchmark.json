@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "d85f3183e2684a94c0f654fd191d7185dbda1929",
+  "anchor_main_sha": "b4f2cb5fc707bee0358bdc83323424638cd4ef4f",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3901,9 +3901,31 @@
         "Corrected head c24c97eed560f206cd1ab8ad177882ba78fd0f0b 14/14 exact-head CI PASS (PHP Quality, Governance, Distributable, Architecture, Platform 10/10); 7 authorized paths, 0 behind and unresolved reviews; protected merged d85f3183e2684a94c0f654fd191d7185dbda1929. Initial Architecture checkpoint size limit fixed and revalidated."
       ],
       "note": "PASS_DASHBOARD_DRAFT_REVIEW_POSTREAD_AUTH_V1: read-only positive-hint caller recheck, not publishing, provider, full runtime/parity, production or GA."
+    },
+    {
+      "id": "RB-0126",
+      "source": "Issue #1458 / Media Operations Bank Review V1",
+      "category": "MEDIA_OPERATIONS_OPTIONS_BANK_REVIEW_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Path-applicable PHP Quality, Governance Gate, Architecture Guards and Options Bank/JSON checks required by exact-head CI",
+      "environment": "agent/media-operations-options-bank-v1 from main b4f2cb5fc707bee0358bdc83323424638cd4ef4f",
+      "dependencies": [
+        "Surface 28 Bank seed, native audit, market audit, review and shared-truth reconciliation complete"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002; Issue #1458; planning/data/docs only; no attachment/file/reference/provider/runtime/deploy/release mutation",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 20,
+      "dedup_key": "media|surface28-bank-review|issue1458|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Exact-head merge-gate verification is required before PR merge; no CI has run yet."
+      ],
+      "note": "Only validates the data/docs planning milestone. No runtime certification."
     }
   ],
-  "last_reconciled_issue": "#1413",
+  "last_reconciled_issue": "#1458",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
