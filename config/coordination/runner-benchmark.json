@@ -3908,7 +3908,7 @@
       "category": "MEDIA_OPERATIONS_OPTIONS_BANK_REVIEW_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Path-applicable PHP Quality, Governance Gate, Architecture Guards and Options Bank/JSON checks required by exact-head CI",
-      "environment": "agent/media-operations-options-bank-v1 from main b4f2cb5fc707bee0358bdc83323424638cd4ef4f",
+      "environment": "agent/media-operations-options-bank-v1 exact source head 210ace4539c90d3d43deb9120f285ecf319408c6; merged main 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece",
       "dependencies": [
         "Surface 28 Bank seed, native audit, market audit, review and shared-truth reconciliation complete"
       ],
@@ -3918,9 +3918,10 @@
       "expected_minutes": 20,
       "dedup_key": "media|surface28-bank-review|issue1458|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
-        "Exact-head merge-gate verification is required before PR merge; no CI has run yet."
+        "Governance Gate PASS (run 39401843169); Architecture Guards PASS (run 39401843191); Platform Compatibility Matrix 10/10 PASS (run 39401843190).",
+        "PR #1459 merged at 2c9120bbbf7a0a5136e3472b63a5cd09cb130ece. Focused JSON consistency and git diff --check passed."
       ],
       "note": "Only validates the data/docs planning milestone. No runtime certification."
     }
