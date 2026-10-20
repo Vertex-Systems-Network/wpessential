@@ -4,8 +4,8 @@
 - Open issue/PR audit: #1463 is the active safe planning milestone; #858 remains external-admin; #1102/#1425/#1426 remain separately authorization-gated formal P-006 work. No other open implementation PR is merge-ready.
 - Surface 22 Bank evidence: `BANK_REVIEWED`, 46 records, zero unresolved. This milestone is limited to a schema-valid 46/46 contract projection, UX/readiness/gap review and shared-truth reconciliation. Expected dispositions: 33 PARITY / 2 EXCEEDS / 1 DEFERRED / 10 REJECTED_UNSAFE.
 - Runtime boundary: no route registration/execution, auth/CORS widening, provider calls, endpoint writes, deployment or release.
-- Runner Benchmark RB-0127 is registered `IMMEDIATE_REQUIRED` before exact-head CI; no runner result is claimed yet.
-- PR #1463 is open at exact source head `1a32f6635887553cab91be1d8581aeb038f455db`; branch: `agent/rest-api-atomic-contract-ux-v1`. Contract/schema/source checks passed locally; exact-head CI is now the active gate. Next: observe required checks once at closeout, repair if red, and merge only the exact green head.
+- Runner Benchmark RB-0127 exact source head `c8508481270c291e27ba83a091f619b48a500faa`: Governance Gate run `39407798569` PASS; Architecture Guards run `39407798615` PASS; Platform Compatibility Matrix run `39407798625` PASS (10/10 cells).
+- PR #1463 is open at exact source head `c8508481270c291e27ba83a091f619b48a500faa`; branch: `agent/rest-api-atomic-contract-ux-v1`. Contract/schema/source checks and all three exact-head workflows passed. Shared truth now records terminal evidence; rerun required exact-head checks and merge only the resulting green head.
 
 ## Previous checkpoint
 

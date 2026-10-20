@@ -3942,10 +3942,10 @@
       "expected_minutes": 25,
       "dedup_key": "rest-api|surface22-atomic-contract-ux|issue1463|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "Local Draft 2020-12 schema constraints: PASS (0 errors); exact 46/46 projection/disposition checks and git diff --check PASS.",
-        "Initial exact-head 1a32f6635887553cab91be1d8581aeb038f455db: Governance and Platform PASS; Architecture smoke failed because compact-state checkpoint was 17,507 bytes and active issue/PR fields were unquoted. Corrective state/checkpoint patch is included in the next head; rerun required."
+        "Exact source head c8508481270c291e27ba83a091f619b48a500faa: Governance Gate run 39407798569 PASS; Architecture Guards run 39407798615 PASS; Platform Compatibility Matrix run 39407798625 PASS (10/10 cells)."
       ],
       "note": "No endpoint registration/execution or public exposure is certified."
     }
