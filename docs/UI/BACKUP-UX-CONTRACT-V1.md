@@ -1,11 +1,11 @@
-# Backup — Provisional UX Contract V1
+# Backup — UX Contract V1
 
 Surface: **24 / Backup**  
-Planning issue: **#590**  
+Planning issue: **#1467** (contract/UX acceptance); historical Bank planning: #590
 Supervisor wave: **#583**  
-Exact-main claim anchor: `dab9944bf7ad174ceffb3b48ddebffac4ea71bcc`
+Reviewed Bank: `BANK_REVIEWED / 122`, review #1450, zero unresolved. Atomic contract candidate: `config/product/option-contracts/backup.json` (122/122 projected; 78 parity, 10 exceeds, 10 deferred, 24 rejected unsafe).
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 24 remains `UNSEEDED / 0` in the Master Options Bank. This document does not promote `UX_CONTRACT_COMPLETE` or authorize backup/restore side effects.
+Lifecycle status: **UX CONTRACT CANDIDATE — exact-head gates pending**. The Bank is reviewed at 122/122 with zero unresolved. Contract and UX completion are planning states only; they do not authorize backup, upload, restore, delete, archive creation or runtime side effects.
 
 ## Product model
 
@@ -132,7 +132,7 @@ Steps:
 
 Review screen shows included/excluded scope, estimates, destinations, encryption/recovery readiness, verification target, compatibility warnings, destructive locks and runner health.
 
-No actual Start Backup action is authorized by this provisional contract.
+No executable Start Backup action is part of this contract. Any future capture, upload, restore or delete action requires its own accepted runtime scope and authorization.
 
 ## Destination UX
 
@@ -210,6 +210,14 @@ Future normalized contract must explicitly define network vs individual-site cap
 
 Backup manifests/artifacts preserve source environment/provenance/schema/compatibility metadata. Importing a backup does not imply immediate restore; integrity/decryption/dependency preflight remains mandatory. Generic data/package import semantics remain Surface 26.
 
+## Ownership and safety boundaries
+
+Surface 24 owns Backup Set/Plan, capture scope, manifest, verification confidence, retention and restore semantics. Surface 23 owns destination transport and credential/OAuth/Safe HTTP controls; Vault owns secret and recovery material; Surface 18 owns durable scheduling/jobs; Surface 19 owns notifications; Surface 25 consumes restore points; Surface 55 owns staging/restore-test environments; Surface 26 owns generic package import/export.
+
+Manifest and SHA-256 checksums are mandatory. Encryption is reviewed AEAD only; key/recovery material is never stored beside archives, in logs, ordinary options, job payloads or browser storage. Archives are private and never exposed by public URLs. Upload, provider visibility, integrity verification and restore-tested confidence remain separate states. Restore stays blocked until source integrity, decryption, target/environment compatibility, explicit confirmation and a pre-restore point by default are satisfied.
+
+This contract describes planned interactions only. It does not implement archive creation, upload, verification, restore, copy or deletion.
+
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Exact-main Master Options Bank remains `UNSEEDED / 0`; Bank review and schema-valid Atomic Option Contracts must precede UX lifecycle/runtime promotion.
+This UX re-review is paired with the 122-record Atomic Option Contract candidate and reviewed Bank. UX lifecycle promotion depends on exact-head schema/source projection, ownership and CI acceptance. Runtime, provider calls, archive generation and destructive restore/delete remain separately gated.

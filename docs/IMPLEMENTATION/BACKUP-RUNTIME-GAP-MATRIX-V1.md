@@ -5,16 +5,16 @@ Planning issue: **#590**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `dab9944bf7ad174ceffb3b48ddebffac4ea71bcc`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **PLANNING GAP MATRIX / BANK REVIEWED / RUNTIME NOT AUTHORIZED**
 
-Surface 24 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated Backup runtime module. This matrix records prerequisites and owner boundaries only.
+Bank review #1450 accepted 122/122 records with zero unresolved; the Atomic Option Contract and UX candidate are under Issue #1467. Exact main has no dedicated Backup runtime module. This matrix records prerequisites and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market/provider reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **PASS — BANK_REVIEWED / 122; 0 unresolved** | Review #1450 and native/market audit complete. | Contract/UX acceptance is the current gate; no runtime authorization. |
+| Atomic Option Contracts | **CANDIDATE — 122 source records projected** | Exact-head schema/source/ownership validation and CI. | Issue #1467; candidate status until accepted. |
 | Backup definitions/catalog | **ABSENT** | Plans/Sets/Destination refs, revision/CAS/lifecycle. | Surface 24. |
 | Capture engine | **ABSENT** | DB/files/config scopes with manifest/checksum/provenance. | Runtime authorization required later. |
 | DB consistency/chunking | **ABSENT** | certified strategies and warnings for non-transactional/privilege/object limits. | DB adapter evidence. |
@@ -96,7 +96,7 @@ Separate abilities for read/list, Plan create/update/delete, Destination metadat
 
 ## Future implementation order
 
-Only after Bank review + schema-valid option contracts:
+After Bank review + accepted schema-valid option contracts and separate runtime authorization:
 
 1. Plan/Set catalog + manifest/verification model;
 2. read-only preflight/estimation and destination health;
@@ -113,6 +113,4 @@ Restore execution must remain separately gated from basic backup capture.
 
 ## Exit decision
 
-Exact main has a mature exhaustive Backup specification and companion restore/encryption planning, but the Master Options Bank is still `UNSEEDED / 0` and no runtime module exists. `runtime_allowed=false` remains correct.
-
-The next valid action is Bank seeding/native/market/provider review, then schema-valid option contracts and UX re-review — not backup/restore execution from this planning lane.
+The Bank is reviewed at 122/122 with zero unresolved; contract/UX acceptance is the current planning gate. No dedicated Backup runtime module exists and `runtime_allowed=false` remains correct. Restore, archive, upload, delete, provider execution and deployment remain unauthorized in this lane.
