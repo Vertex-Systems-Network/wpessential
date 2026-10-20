@@ -1,11 +1,10 @@
-# 2026-10-20 — Surface 22 REST API Atomic Option Contract / UX V1 active
+# 2026-10-20 — Surface 22 REST API Atomic Option Contract / UX V1 completed
 
-- Exact main refresh: `6c4c7aadb00ab807128ce9321d43ca9a66db0c91` (Surface 28 PR #1462 merged).
-- Open issue/PR audit: #1463 is the active safe planning milestone; #858 remains external-admin; #1102/#1425/#1426 remain separately authorization-gated formal P-006 work. No other open implementation PR is merge-ready.
-- Surface 22 Bank evidence: `BANK_REVIEWED`, 46 records, zero unresolved. This milestone is limited to a schema-valid 46/46 contract projection, UX/readiness/gap review and shared-truth reconciliation. Expected dispositions: 33 PARITY / 2 EXCEEDS / 1 DEFERRED / 10 REJECTED_UNSAFE.
-- Runtime boundary: no route registration/execution, auth/CORS widening, provider calls, endpoint writes, deployment or release.
-- Runner Benchmark RB-0127 exact source head `c8508481270c291e27ba83a091f619b48a500faa`: Governance Gate run `39407798569` PASS; Architecture Guards run `39407798615` PASS; Platform Compatibility Matrix run `39407798625` PASS (10/10 cells).
-- PR #1463 is open at exact source head `c8508481270c291e27ba83a091f619b48a500faa`; branch: `agent/rest-api-atomic-contract-ux-v1`. Contract/schema/source checks and all three exact-head workflows passed. Shared truth now records terminal evidence; rerun required exact-head checks and merge only the resulting green head.
+- Exact main refresh: `11ca1800eeb5c07d49bce6195928d314576310e4` (Issue #1463 / PR #1463 merged).
+- PR #1463 exact tested head: `3636d29112b01edf374c9eb7b89753dd31744d47`; Governance run `39408236547`, Architecture Guards `39408236669`, Platform Compatibility `39408236817` (10/10) all PASS. RB-0127 terminal PASS.
+- Surface 22 Bank: 46/46 reviewed, zero unresolved. Atomic contract is a schema-valid 46/46 source projection: 33 PARITY, 2 EXCEEDS, 1 DEFERRED, 10 REJECTED_UNSAFE. Lifecycle: `UX_CONTRACT_COMPLETE` only.
+- Runtime boundary remains unchanged: no route registration/execution, auth/CORS widening, external exposure, provider calls, endpoint writes, deployment or release.
+- Post-merge state divergence reconciled under Issue #1464; no additional implementation lane was seeded. Refresh open issues/PRs before the next scoped milestone; #858 remains external-admin and #1102/#1425/#1426 remain authorization-gated P-006 work.
 
 ## Previous checkpoint
 
