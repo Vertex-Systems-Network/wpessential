@@ -106,26 +106,6 @@
 - #858 admin, #1102 privileged P-006, #947 independent Worker parked; independent safe source work remains eligible.
 
 
-## 2026-10-09 — RB-0100 PASS; post-merge README/shared truth closeout
+## Archived detail
 
-- RB-0100 Issue #1341 / PR #1342 exact head `d978030f7aca15fd6193307de840248ceed74398`: **13/13 exact-head CI PASS**, including real pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite isolation, Governance, Architecture and Platform Compatibility 10/10.
-- Protected squash merge `c171acebf90ef90def07363ad26c9af52b3f3973`; exact 6-file authorized scope; zero behind and unresolved review threads; Issue #1341 closed.
-- Promote only `PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1`. No native WordPress order/hide/collapse mutation, auto-preset application, full Surface 10 parity, production or GA.
-- Issue #1343 post-merge shared-truth discrepancy reconciliation has five documentation/coordination files only. After protected merge, use fresh main/Issues/PR/queue to select next authorized product work. Park #858/#1102/#947.
-
-
-## 2026-10-09 — RB-0098 PASS; post-merge evidence terminal
-
-- Issue #1335 / PR #1336 merged `78b1bfbd0426e922b514159feebebfbf51f7f667`, exact PR head `098054362615e12e3e5f7617bc03512ec06db487`.
-- 13/13 applicable exact-head CI PASS, including real WP 7.1 / PHP 8.2 / MySQL 8.4 two-site Multisite Isolation step, Governance, Architecture and Platform Compatibility 10/10. Exact seven-file allowlist, zero behind and review blockers; Issue #1335 closed.
-- Promoted only `PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1`; no automatic native preset application, no full Surface 10 parity/certification and no production/GA.
-- Issue #1337 is real post-merge README/state/queue/benchmark divergence reconciliation, five-file scope, no runtime source.
-- Next safe source lane must be freshly evaluated after merging Issue #1337; admin #858, privileged P-006 #1102 and independent Worker #947 remain parked.
-
-
-## 2026-10-09 — RB-0097 PASS; real post-merge shared truth reconciled
-
-- Issue #1327 auto-closed on accepted PR #1332; merge `adb7cfa042e733ec59e530601c9cb6152ba1e526`.
-- Exact implementation PR head `f5844b210e17646ed60e57fa5ddbc0f2a228f18a`; 14/14 checks PASS (Governance, PHP, Distributable, Architecture, Platform Compatibility 10/10); 18 accepted paths, zero behind, zero unresolved review threads.
-- Terminal evidence only: `PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1`. No full Surface 10 runtime parity, native layout preference application, deployment or GA.
-- Issue #1333 records material README/state/queue/benchmark divergence after the merge. This narrow reconciliation does not introduce runtime source changes. Future safe source milestone must be freshly selected and scoped; #858/#1102/#947 remain parked.
+Older RB-0097 and earlier checkpoint details remain in `CHECKPOINT.md` and Git history. Consult them only when the active task needs historical evidence.
