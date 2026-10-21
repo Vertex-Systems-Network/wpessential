@@ -1,3 +1,11 @@
+# 2026-10-21 — Surface 5 Status Atomic Option Contract V1 committed
+
+- Base main `afa31db` (PR #1472 Surface 27 Protector merged; 12/12 CI PASS).
+- `config/product/option-contracts/status.json` projects all 129 BANK_REVIEWED records across 4 Bank shards: 96 PARITY (incl. 6 compatibility-provider mappings), 29 EXCEEDS, 4 REJECTED_UNSAFE; zero missing/unclassified. Lifecycle OPTION_CONTRACT_COMPLETE only (no UX re-review yet). Progress: 25 option-contract / 23 UX-complete.
+- Certified bounded Status V1 runtime unchanged. Next: PR + exact-head CI; then Query/Tables/Listings/Fields contracts.
+
+## Previous checkpoint
+
 # 2026-10-21 — Surface 27 Protector Atomic Option Contract / UX V1 committed
 
 - Base main `837adbb` (PR #1471 Surface 26 Import/Export merged; 12/12 CI PASS).
