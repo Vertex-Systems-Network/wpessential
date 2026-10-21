@@ -1,3 +1,11 @@
+# 2026-10-21 — Surface 26 Import/Export Atomic Option Contract / UX V1 committed
+
+- Base main `0556e8e` (PR #1470 Surface 25 Reset merged; 12/12 CI PASS).
+- `config/product/option-contracts/import-export.json` projects all 188 BANK_REVIEWED records (review #1454): 156 PARITY, 4 EXCEEDS, 6 DEFERRED, 22 REJECTED_UNSAFE; zero missing/unclassified. Progress: 23 option-contract / 22 UX-complete.
+- No import write, export generation, upload parsing or remote fetch authorized. Next: PR + exact-head CI, then Surface 27 Protector.
+
+## Previous checkpoint
+
 # 2026-10-21 — Surface 25 Reset Atomic Option Contract / UX V1 committed
 
 - Base main `e698961`. `config/product/option-contracts/reset.json` projects all 148 BANK_REVIEWED records (review #1452): 113 PARITY, 4 EXCEEDS, 6 DEFERRED, 25 REJECTED_UNSAFE; zero missing/unclassified. Progress: 22 option-contract / 21 UX-complete surfaces.

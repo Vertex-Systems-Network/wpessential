@@ -7,10 +7,10 @@ observed_main_source: "2026-10-20 exact-main refresh after PR #1468 closeout mer
 active_issue: null
 active_pr: null
 active_branch: main
-current_milestone: "Surface 25 Reset Atomic Option Contract and UX V1; 148 reviewed Bank records."
+current_milestone: "Surface 26 Import/Export Atomic Option Contract and UX V1; 188 reviewed Bank records."
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "Issue #1467 / PR #1467 Surface 24 Backup Atomic Option Contract + UX accepted; exact head 3246142053839b1605df6fbf59b2d803af5ca576; 122/122 Bank projection (78 parity, 10 exceeds, 10 deferred, 24 rejected unsafe; zero missing/unclassified); Governance #39423015428, Architecture #39423015376, Platform Compatibility #39423015390 (10/10) PASS; merged e3cf5878f9d19ad80483688426ebae21aac2e62d. Backup/restore runtime remains separately gated."
-next_safe_action: "Integrate branch claude/nice-cori-j4s4hw (Surface 25 Reset contract/UX, 148/148: 113 parity, 4 exceeds, 6 deferred, 25 rejected unsafe) via PR with exact-head CI; then Surface 26 Import/Export contract derivation. Reset runtime remains separately gated."
+last_completed_milestone: "PR #1470 Surface 25 Reset Atomic Option Contract + UX merged 0556e8ebca7120c01af1b38295b0a12e37f4e35e; 148/148 (113 parity, 4 exceeds, 6 deferred, 25 rejected unsafe); 12/12 exact-head CI PASS."
+next_safe_action: "Integrate Surface 26 Import/Export contract/UX PR (188/188: 156/4/6/22) after exact-head CI; then Surface 27 Protector. Runtime remains separately gated."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
 next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
 readme_progress_contract:

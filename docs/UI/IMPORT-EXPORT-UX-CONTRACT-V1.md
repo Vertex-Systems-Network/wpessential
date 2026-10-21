@@ -1,11 +1,11 @@
-# Import/Export — Provisional UX Contract V1
+# Import/Export — UX Contract V1
 
 Surface: **26 / Import-Export**  
 Planning issue: **#592**  
 Supervisor wave: **#583**  
 Exact-main claim anchor: `4350862f3f3397abdf64cc897abdb615faac4af5`
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 26 remains `UNSEEDED / 0` in the Master Options Bank. This document does not promote `UX_CONTRACT_COMPLETE` or authorize data/package mutation.
+Lifecycle status: **UX_CONTRACT_COMPLETE (planning)**. Bank review #1454 accepted 188/188 records with zero unresolved; Atomic Option Contract: `config/product/option-contracts/import-export.json` (188/188 projected; 156 parity, 4 exceeds, 6 deferred, 22 rejected unsafe; zero missing/unclassified). Contract and UX completion are planning states only; they do not authorize import writes, export generation, upload parsing, remote fetch or any data/package mutation.
 
 ## Product model
 
@@ -176,4 +176,10 @@ Configuration package manifests use stable UUIDs/schema versions/checksums/depen
 
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Exact-main Master Options Bank remains `UNSEEDED / 0`; Bank review and schema-valid Atomic Option Contracts must precede UX lifecycle/runtime promotion.
+## Ownership and safety boundaries
+
+Surface 26 owns import/export profiles, format parsing, field mapping, dry-run/preview, conflict and identity resolution, and outcome semantics. Surface 24 owns backup artifacts and restore; Surface 18 durable jobs/chunking; Surface 19 notifications; Surface 23 remote transport and credentials; Surface 55 staging/migration. Owner-module data is written only through owner-registered import adapters.
+
+Uploads are size/type-validated and parsed without XXE, unsafe deserialization or formula injection; exports neutralize CSV formula cells and exclude secrets. Imports require dry-run preview and explicit confirmation; overwrite/delete/synchronize modes require a restore point by default.
+
+This UX review is paired with the 188-record Atomic Option Contract and reviewed Bank. Runtime import/export remains separately gated.

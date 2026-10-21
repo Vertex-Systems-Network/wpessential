@@ -5,9 +5,11 @@ Planning issue: **#592**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `4350862f3f3397abdf64cc897abdb615faac4af5`
 
-Status: **BANK ENTRY READY FOR RESEARCH/SEEDING — NO OPTION CONTRACT PROMOTION**
+Status: **BANK REVIEWED 188/188 — ATOMIC OPTION CONTRACT + UX ACCEPTED (planning)**
 
-> Update (Issue #1454): the Surface 26 Bank is now seeded and `BANK_REVIEWED (188)` — see `config/product/options-bank/import-export.json`, `docs/PRODUCT/IMPORT-EXPORT-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/IMPORT-EXPORT-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/import-export-market-ecosystem.json` and `config/product/options-bank-reviews/import-export-bank-review-v1.json`. Bank seeding, native/market audit and duplicate/ownership/unsafe/deferred resolution are closed; schema-valid Atomic Option Contracts are next. The "Current machine truth" section below is the historical #592 snapshot.
+> Contract: `config/product/option-contracts/import-export.json` (188/188 projected; 156 parity, 4 exceeds, 6 deferred, 22 rejected unsafe; zero missing/unclassified). Runtime remains unauthorized.
+
+> Update (Issue #1454): the Surface 26 Bank is now seeded and `BANK_REVIEWED (188)` — see `config/product/options-bank/import-export.json`, `docs/PRODUCT/IMPORT-EXPORT-NATIVE-WORDPRESS-AUDIT-V1.md`, `docs/PRODUCT/IMPORT-EXPORT-MARKET-AUDIT-V1.md`, `config/product/options-bank-audits/import-export-market-ecosystem.json` and `config/product/options-bank-reviews/import-export-bank-review-v1.json`. Bank seeding, native/market audit and duplicate/ownership/unsafe/deferred resolution are closed; the schema-valid Atomic Option Contract and UX re-review have since been accepted. The "Current machine truth" section below is the historical #592 snapshot.
 
 This document is planning evidence only. It does not seed/review the Master Options Bank, create schema-valid Atomic Option Contracts, import/export data, mutate records/files, execute package orchestration or authorize runtime implementation.
 
@@ -123,4 +125,4 @@ Reject or tightly bound:
 
 Surface 26 has enough semantic material to begin disciplined Master Options Bank seeding/native/market review, but exact-main `UNSEEDED / 0` blocks option-contract, UX and runtime promotion.
 
-Next gate: normalize Bank records → native audit → market audit → resolve ownership/unsafe/deferred items → Bank review with zero unresolved items → schema-valid Atomic Option Contracts → UX re-review → separately authorized runtime slices.
+Historical gate sequence complete through UX re-review. Only a later separately authorized runtime issue may address import/export execution.
