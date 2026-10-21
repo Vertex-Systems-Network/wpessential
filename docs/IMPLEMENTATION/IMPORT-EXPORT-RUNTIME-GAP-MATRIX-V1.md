@@ -5,16 +5,16 @@ Planning issue: **#592**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `4350862f3f3397abdf64cc897abdb615faac4af5`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **PLANNING GAP MATRIX / BANK REVIEWED / CONTRACT ACCEPTED / RUNTIME NOT AUTHORIZED**
 
-Surface 26 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated Import/Export runtime module. This matrix records prerequisites and owner boundaries only.
+Bank review #1454 accepted 188/188 records and the Atomic Option Contract projects all 188; exact main has no dedicated Import/Export runtime module. This matrix records prerequisites and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **PASS — BANK_REVIEWED / 188; 0 unresolved** | Review #1454 and native/market audit complete. | No runtime authorization. |
+| Atomic Option Contracts | **PASS — 188/188 projected (156/4/6/22)** | `config/product/option-contracts/import-export.json`. | Runtime requires separate scoped issue. |
 | Config package runtime | **ABSENT** | manifest/checksum/schema/dependency/conflict/diff/import strategy. | Surface 26 orchestrates; owner definitions validate/mutate. |
 | Data Import definitions | **ABSENT** | stable source/target/mode/mapping/revision lifecycle. | Surface 26. |
 | Parsers/source adapters | **ABSENT** | safe CSV/JSON/XML/XLSX/Connection adapters with limits. | No code/SQL execution. |
@@ -113,6 +113,6 @@ Only after Bank review + schema-valid option contracts:
 
 ## Exit decision
 
-Exact main has a mature exhaustive Import/Export specification and clear owner boundaries, but the Master Options Bank remains `UNSEEDED / 0` and no runtime module exists. `runtime_allowed=false` remains correct.
+Exact main has a mature exhaustive Import/Export specification and clear owner boundaries, the Bank is reviewed (188) with an accepted Atomic Option Contract, and no runtime module exists. `runtime_allowed=false` remains correct.
 
-The next valid action is Bank seeding/native/market review, then schema-valid option contracts and UX re-review — not data/package mutation from this planning lane.
+Data/package mutation remains unauthorized in this planning lane.
