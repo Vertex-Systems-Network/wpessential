@@ -1,3 +1,11 @@
+# 2026-10-21 — Surface 3 Fields Atomic Option Contract V1 committed
+
+- PR #1476 Surface 9 Listings merged (12/12 CI PASS).
+- `config/product/option-contracts/fields.json`: 612 options from all 618 BANK_REVIEWED records across 16 Bank shards; 3 ALIAS and 3 EFFECTIVE_DERIVATION records from `options-bank-semantic-relations.json` map to their canonical targets. 530 PARITY, 78 EXCEEDS, 1 DEFERRED, 3 REJECTED_UNSAFE; zero missing/unclassified. Progress: 29 option-contract / 23 UX-complete.
+- Certified native Fields V1 runtime unchanged. After merge every BANK_REVIEWED surface has a contract; next is Bank seeding from Surface 29.
+
+## Previous checkpoint
+
 # 2026-10-21 — Surface 9 Listings Atomic Option Contract V1 committed
 
 - Base main `1c4724e` (PR #1475 Surface 7 Tables merged; 12/12 CI PASS).
