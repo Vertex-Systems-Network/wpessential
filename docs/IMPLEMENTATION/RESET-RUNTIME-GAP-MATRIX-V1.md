@@ -5,16 +5,16 @@ Planning issue: **#591**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `97f9c29ffad14e1124a7565e8dd4e027e9ef7d10`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **PLANNING GAP MATRIX / BANK REVIEWED / CONTRACT ACCEPTED / RUNTIME NOT AUTHORIZED**
 
-Surface 25 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated Reset runtime module. This matrix records prerequisites and owner boundaries only.
+Bank review #1452 accepted 148/148 records and the Atomic Option Contract projects all 148; exact main has no dedicated Reset runtime module. This matrix records prerequisites and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **PASS — BANK_REVIEWED / 148; 0 unresolved** | Review #1452 and native/market audit complete. | No runtime authorization. |
+| Atomic Option Contracts | **PASS — 148/148 projected (113/4/6/25)** | `config/product/option-contracts/reset.json`. | Runtime requires separate scoped issue. |
 | Reset Profile definitions | **ABSENT** | stable profile identity/revision/lifecycle. | Surface 25. |
 | Scope compiler | **ABSENT** | owner-aware content/settings/module/runtime selections. | No generic wipe. |
 | Impact Preview | **ABSENT** | exact counts/dependencies/preservation/restore-point state + fingerprint. | Must precede destructive execution. |
@@ -102,6 +102,6 @@ Only after Bank review + schema-valid option contracts:
 
 ## Exit decision
 
-Exact main has a mature exhaustive Reset specification and clear Backup/owner boundaries, but the Master Options Bank is still `UNSEEDED / 0` and no Reset runtime exists. `runtime_allowed=false` remains correct.
+Exact main has a mature exhaustive Reset specification and clear Backup/owner boundaries, the Bank is reviewed (148) with an accepted Atomic Option Contract, and no Reset runtime exists. `runtime_allowed=false` remains correct.
 
-The next valid action is Bank seeding/native/market review, then schema-valid option contracts and UX re-review — not destructive execution from this planning lane.
+Destructive execution remains unauthorized in this planning lane.

@@ -1,3 +1,11 @@
+# 2026-10-21 — Surface 25 Reset Atomic Option Contract / UX V1 committed
+
+- Base main `e698961`. `config/product/option-contracts/reset.json` projects all 148 BANK_REVIEWED records (review #1452): 113 PARITY, 4 EXCEEDS, 6 DEFERRED, 25 REJECTED_UNSAFE; zero missing/unclassified. Progress: 22 option-contract / 21 UX-complete surfaces.
+- Local: option-contracts smoke PASS; all tests/Smoke PASS. Reset UX/readiness/gap docs and README row 25 reconciled.
+- No reset/deletion/truncation/restore execution authorized. Next: PR + exact-head CI, then Surface 26 Import/Export.
+
+## Previous checkpoint
+
 # 2026-10-20 — Surface 24 Backup Atomic Option Contract / UX V1 completed
 
 - Issue #1467 / PR #1467 merged as `e3cf5878f9d19ad80483688426ebae21aac2e62d`; exact tested head `3246142053839b1605df6fbf59b2d803af5ca576`.
@@ -51,78 +59,3 @@
 
 - Issue #1411 / PR #1412 corrected exact head `c24c97eed560f206cd1ab8ad177882ba78fd0f0b`: **14/14** exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform 10/10; 7 scoped files, zero behind/review threads; protected merge `d85f3183e2684a94c0f654fd191d7185dbda1929`. Initial Architecture failure was compact checkpoint >16KiB; repaired and reran green.
 - Final WordPress identity/capability check denies a positive read-only `review_candidate` after privilege loss; PHPUnit pass-then-revoke verifies. No publish/public routes/provider/production/full parity. Issue #1413 reconciles stale README/AI PENDING truth. Next source READY; park #858/#947/#1102.
-
-## 2026-10-13 — RB-0124 terminal verified; next safe source READY
-
-- Issue #1407 / PR #1408 exact implementation head `add1a6de5f4edcbf094797ac05934d6b4a2f2513` completed **15/15** GitHub exact-head checks: PHP Quality, Governance, Distributable, Architecture, pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation and 10-cell Platform Compatibility; 8 allowed files, zero unresolved reviews; protected merge `2d884d549b60fb4354149337b079556b407db6c2`. Issue #1407 closed.
-- Bounded `PASS_DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1`: postcreate privilege/current WP user+site+network drift denies a false `created_draft` success with generic `write_failed`; exactly one Draft may persist; no automatic retry, rollback, publication, public import, provider, production or GA.
-- Discrepancy detected on merged main: README, compact AI state/queue/checkpoint and Runner Benchmark still marked RB-0124 PENDING. Issue #1409 covers exactly these five documentation/AI reconciliation files, leaving no recursive implementation slot. After protected merge, fresh main/issues/PRs select a new safe source milestone. #858 admin, #947 independent Worker and #1102 separate authorization remain parked.
-
-## 2026-10-10 — RB-0123 real MySQL PASS; RB-0124 postcreate WP authorization recheck staged
-
-- RB-0123 Issue #1405 / PR #1406 corrected exact head `bf6eb7ecac80a8877fb66f17b4ca02e37931de0a`, **12/12** exact-head CI PASS incl. real disposable MySQL concurrency, Governance, Architecture, Platform 10/10; six paths, 0 behind/reviews; protected merged `49c089329ed1f4f632958ca4c17c57c0f4466b3e`. Initial fixture failed due invalid underscore slug, self-repaired and completely rerun.
-- RB-0124 Issue #1407 branch `agent/dashboard-draft-postcreate-authorization-recheck-v1`: internal-only Draft importer now checks caller `manage_options` and current WP identity after persisted Draft/widget fingerprint verification; loss of authorization cannot claim `created_draft`. Existing created Draft remains, no retry/rollback/publish.
-- PHPUnit capability revocation and real pinned WP two-site user/blog context drift fixtures staged in eight approved paths. All path-applicable CI and protected merge PENDING. External #858/#1102/#947 parked; full parity/provider/GA unpromoted.
-
-
-## 2026-10-09 — RB-0121 terminal PASS; ready next safe source
-
-- RB-0121 Issue #1399 / PR #1400 exact head `f48132cc007b201ecf3f701a827d08d41c5c6aef`: **14/14** path-applicable CI PASS incl. PHP Quality, Distributable, Governance, Architecture and 10-cell Platform; exactly 7 authorized paths, zero behind/reviews, protected merged `5f17579908d15db504ac495565cfd3b297fa63be`; issue closed.
-- Internal-only Draft importer now rechecks CURRENT Published widget references after persisted Draft readback; if target changes after initial preflight, generic `write_failed` replaces false success, without additional write/rollback or publication.
-- Issue #1401 terminal 5-file README/AI state/queue/benchmark reconciliation. No recursive docs-only IN_PROGRESS slot; next safe reversible source fresh audit. Park #858 admin, #1102 privileged P-006, #947 independent Worker; no production/GA/full parity.
-
-
-## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY
-
-- Issue #1391 / PR #1392 exact head `9916b4ca8559c7ac20ed64c366104338b60c83c5`, **12/12** applicable CI PASS incl. actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `574d1f89cb8a1455079182256b4739140a00214c`; issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1`. Silent write acknowledgement, altered stored record and read exception produce generic `write_failed`; neither automatic import/retry/rollback nor public Ability, publishing, native layout/provider/production/GA.
-- Issue #1393 terminal shared-truth correction sets queue `READY_NEXT_SAFE_SOURCE` **without** recursive admin IN_PROGRESS slot; next work chosen by fresh issue-first main audit. #858/#947/#1102 parked.
-
-
-## 2026-10-09 — RB-0116 real MySQL mapped Draft terminal PASS, next safe source READY
-
-- Issue #1385 / PR #1386 exact head `a8248878d00f1b13f2afd99b1bfd4fbbb319603e`: 12/12 applicable exact-head CI PASS including actual disposable MySQL Definition/Audit, Governance, Architecture, Platform Compatibility 10/10; 6 authorized files, zero behind/unresolved reviews, protected merge `dbeece1c1fd81f2aefac9d2ae6820942446acdad`; issue closed.
-- Only bounded `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_REAL_MYSQL_V1` certified. Internal-only Draft create-once; no public importer, publishing, live DB, WordPress layout, provider/cache/GA.
-- Issue #1387 terminates shared truth and leaves queue `READY_NEXT_SAFE_SOURCE` **without** another recursive administrative IN_PROGRESS slot. Fresh main/issues/PR audit next; #858/#947/#1102 remain parked.
-
-
-## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY
-
-- RB-0113 Issue #1377 / PR #1378 exact head `e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c`: **12/12** path-applicable exact-head CI PASS including actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `482c935e1da311737d545736881d2cc35384d2d4`, issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1`: internal-only Draft/revision-one insert-once, typed collision/fingerprint/capability denial, site isolation. No public importer, automatic publishing, native WordPress dashboard usermeta, provider/remote, production release or full GA.
-- Issue #1379 terminal shared-truth reconciliation resets queue to `READY_NEXT_SAFE_SOURCE` **without** creating an administrative IN_PROGRESS queue slot; next cycle picks a meaningful authorized source milestone after fresh issue-first audit.
-
-
-## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
-
-- RB-0108 Issue #1365 / PR #1366 exact head `16f4db02c01cf2129029c3e72245d932635d9ebf`: **13/13** path-applicable CI PASS including pinned real two-site WP7.1/PHP8.2/MySQL8.4 Multisite Isolation, Governance, Architecture and Platform 10/10; exactly 6 authorized files, zero behind/reviews, protected merged `f5083db963b6fa443be6d728d678feae4ce3d3d0`, issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1` only. Deterministic cross-site candidate mapping validates Published target widget refs with non-authenticating content SHA256; `applicable=false`, no actual import, native WordPress preferences writes, cache/provider/deployment or GA.
-- Issue #1367 five-file README/AI state/queue/benchmark closeout deliberately records no new `IN_PROGRESS` admin slot after merge. Next safe source lane needs fresh audit. Park unrelated #858 admin, #1102 privileged P-006 and #947 independent Worker.
-
-
-## 2026-10-09 — RB-0106 read-only import preflight real WordPress PASS
-
-- RB-0106 Issue #1359 / PR #1360 exact head `1cdb9d222b1442650fab7563b6e3aeaf14154ed0`: **13/13** path-applicable CI PASS including pinned real two-site WordPress Multisite, Governance, Architecture and Platform 10/10; 6 authorized files, no behind/review blockers, protected merged `151c70cbffa8346e10dae552d4debe2a4985540f`; issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_IMPORT_PREFLIGHT_REAL_WORDPRESS_V1`; all preflight states `applicable=false`, no importer/native WordPress preferences/provider/cache/deployment/GA.
-- Issue #1361 terminal README/shared-truth status reconciliation; external #858 admin, #1102 P-006 and #947 Worker lanes parked.
-
-
-## 2026-10-09 — RB-0104 real WordPress fingerprint freshness PASS, terminal reconciliation
-
-- Issue #1353 / PR #1354 original candidate failed an invalid test fixture assumption: uppercase of an all-numeric UUID did not change the UUID. Autonomous scoped fix committed a letter-bearing uppercase test UUID; all applicable exact-head CI restarted and passed.
-- Corrected PR exact head `9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e`: **13/13** path-applicable CI PASS incl. pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation, Governance, Architecture, Platform Compatibility 10/10; exactly 6 allowed paths, 0 behind/reviews; protected merged `595f6114e0954736e343255e1cb5766f336d6473`. Issue #1353 closed.
-- Promote only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1`; no import, signature trust, native WordPress dashboard preferences, provider, cache, full Surface10 product parity, production or GA.
-- Issue #1355 is real 5-file post-merge README/queue/benchmark PENDING-to-PASS evidence reconciliation. Fresh audit after protected merge; #858 admin, #1102 privileged P-006 and #947 independent Worker parked.
-
-
-## 2026-10-09 — RB-0102 real WordPress preset snapshot PASS, terminal reconciliation
-
-- RB-0102 Issue #1347 / PR #1348 exact head `6410be52dc80aaec01c7b84849272b7ef60cedf0`, **13/13** path-applicable exact-head CI PASS including pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation and Platform 10/10, Governance/Architecture. Exact six files, zero behind/threads, protected merged `939605b1d7567966e1a95763b76e2c35500e5c43`; issue closed.
-- Only `PASS_DASHBOARD_PRESET_PORTABILITY_REAL_WORDPRESS_READ_V1` promoted; no complete portability import/round-trip, cryptographic signing, usermeta writes, provider, cache, production or GA.
-- Issue #1349 records real post-merge README/AI state/queue benchmark pending-to-PASS divergence; exact 5 shared-truth files and 2 path-applicable CI gates only. Fresh main/Issues/PRs and queue must be re-audited after protected merge.
-- #858 admin, #1102 privileged P-006, #947 independent Worker parked; independent safe source work remains eligible.
-
-
-## Archived detail
-
-Older RB-0097 and earlier checkpoint details remain in `CHECKPOINT.md` and Git history. Consult them only when the active task needs historical evidence.

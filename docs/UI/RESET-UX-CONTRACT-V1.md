@@ -1,11 +1,11 @@
-# Reset — Provisional UX Contract V1
+# Reset — UX Contract V1
 
 Surface: **25 / Reset**  
 Planning issue: **#591**  
 Supervisor wave: **#583**  
 Exact-main claim anchor: `97f9c29ffad14e1124a7565e8dd4e027e9ef7d10`
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 25 remains `UNSEEDED / 0` in the Master Options Bank. This document does not promote `UX_CONTRACT_COMPLETE` or authorize destructive execution.
+Lifecycle status: **UX_CONTRACT_COMPLETE (planning)**. Bank review #1452 accepted 148/148 records with zero unresolved; Atomic Option Contract: `config/product/option-contracts/reset.json` (148/148 projected; 113 parity, 4 exceeds, 6 deferred, 25 rejected unsafe; zero missing/unclassified). Contract and UX completion are planning states only; they do not authorize reset, deletion, truncation, restore or any destructive execution.
 
 ## Product rule
 
@@ -137,4 +137,10 @@ Reset Profile export/import contains configuration and owner references only, no
 
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Exact-main Master Options Bank remains `UNSEEDED / 0`; Bank review and schema-valid Atomic Option Contracts must precede UX lifecycle/runtime promotion.
+## Ownership and safety boundaries
+
+Surface 25 owns Reset Profiles, scope selection, preserve rules, preview/dry-run, confirmation, locks and reset outcome semantics. Surface 24 owns restore points and backup artifacts; Surface 18 durable jobs/chunking; Surface 19 notifications; Surface 26 generic package import/export; Surface 55 staging; Surface 48 database maintenance. Owner-module data is deleted only through owner-registered deletion contracts.
+
+Destructive scopes require server-side preview, typed confirmation bound to the previewed scope hash, a verified restore point by default and operation locks. The current operator, site URLs, salts and Reset/Backup control data are always preserved. Rollback is never claimed unless it occurred.
+
+This UX review is paired with the 148-record Atomic Option Contract and reviewed Bank. Runtime reset/deletion remains separately gated.
