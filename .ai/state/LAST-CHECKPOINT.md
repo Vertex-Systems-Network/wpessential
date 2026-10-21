@@ -1,3 +1,11 @@
+# 2026-10-21 — Surface 9 Listings Atomic Option Contract V1 committed
+
+- Base main `1c4724e` (PR #1475 Surface 7 Tables merged; 12/12 CI PASS).
+- `config/product/option-contracts/listings.json` projects all 150 BANK_REVIEWED records across 5 Bank shards: 127 PARITY, 16 EXCEEDS, 1 DEFERRED, 6 REJECTED_UNSAFE; zero missing/unclassified. Lifecycle OPTION_CONTRACT_COMPLETE. Progress: 28 option-contract / 23 UX-complete.
+- Certified bounded Listings V1 runtime unchanged. Next: PR + CI; then Fields.
+
+## Previous checkpoint
+
 # 2026-10-21 — Surface 7 Custom Tables Atomic Option Contract V1 committed
 
 - Base main `692462e` (PR #1474 Surface 6 Query merged; 12/12 CI PASS).
