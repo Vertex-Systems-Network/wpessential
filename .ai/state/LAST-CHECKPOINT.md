@@ -1,3 +1,11 @@
+# 2026-10-21 — Surface 6 Query Atomic Option Contract V1 committed
+
+- Base main `f637514` (PR #1473 Surface 5 Status merged; 12/12 CI PASS).
+- `config/product/option-contracts/query.json` projects all 169 BANK_REVIEWED records across 5 Bank shards: 159 PARITY (incl. 20 provider mappings), 7 EXCEEDS, 3 REJECTED_UNSAFE; zero missing/unclassified. Lifecycle OPTION_CONTRACT_COMPLETE. Progress: 26 option-contract / 23 UX-complete.
+- Certified bounded Query V1 runtime unchanged. Next: PR + CI; then Tables, Listings, Fields.
+
+## Previous checkpoint
+
 # 2026-10-21 — Surface 5 Status Atomic Option Contract V1 committed
 
 - Base main `afa31db` (PR #1472 Surface 27 Protector merged; 12/12 CI PASS).
