@@ -7,10 +7,10 @@ observed_main_source: "2026-10-20 exact-main refresh after PR #1468 closeout mer
 active_issue: null
 active_pr: null
 active_branch: main
-current_milestone: "Surface 26 Import/Export Atomic Option Contract and UX V1; 188 reviewed Bank records."
+current_milestone: "Surface 27 Protector Atomic Option Contract and UX V1; 225 reviewed Bank records."
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "PR #1470 Surface 25 Reset Atomic Option Contract + UX merged 0556e8ebca7120c01af1b38295b0a12e37f4e35e; 148/148 (113 parity, 4 exceeds, 6 deferred, 25 rejected unsafe); 12/12 exact-head CI PASS."
-next_safe_action: "Integrate Surface 26 Import/Export contract/UX PR (188/188: 156/4/6/22) after exact-head CI; then Surface 27 Protector. Runtime remains separately gated."
+last_completed_milestone: "PR #1471 Surface 26 Import/Export Atomic Option Contract + UX merged 837adbbdbfbf7ee7c134f3bc733b2a508dbf9a9f; 188/188 (156/4/6/22); 12/12 exact-head CI PASS."
+next_safe_action: "Integrate Surface 27 Protector contract/UX PR (225/225: 194/4/6/21) after exact-head CI; then Surface 29 XML-RPC (Surface 28 already UX_CONTRACT_COMPLETE). Runtime remains separately gated."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
 next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
 readme_progress_contract:

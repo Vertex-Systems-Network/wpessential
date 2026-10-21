@@ -5,16 +5,16 @@ Planning issue: **#593**
 Supervisor wave: **#583**  
 Exact-main claim anchor: `588079965734c56b2bda783778c9efa4dbf63530`
 
-Status: **PLANNING GAP MATRIX / RUNTIME NOT AUTHORIZED**
+Status: **PLANNING GAP MATRIX / BANK REVIEWED / CONTRACT ACCEPTED / RUNTIME NOT AUTHORIZED**
 
-Surface 27 remains `UNSEEDED / 0` in the Master Options Bank and exact main has no dedicated Protector runtime module. This matrix records prerequisites and owner boundaries only.
+Bank review #1456 accepted 225/225 records and the Atomic Option Contract projects all 225; exact main has no dedicated Protector runtime module. This matrix records prerequisites and owner boundaries only.
 
 ## Gap matrix
 
 | Area | Exact-main state | Future requirement | Boundary / gate |
 |---|---|---|---|
-| Master Options Bank | **BLOCKED — UNSEEDED / 0** | Native/market reviewed normalized records. | Product gate before option contracts/runtime. |
-| Atomic Option Contracts | **PLANNING INVENTORY ONLY** | Schema-valid contracts after Bank review. | No lifecycle promotion from inventory alone. |
+| Master Options Bank | **PASS — BANK_REVIEWED / 225; 0 unresolved** | Review #1456 and native/market audit complete. | No runtime authorization. |
+| Atomic Option Contracts | **PASS — 225/225 projected (194/4/6/21)** | `config/product/option-contracts/protector.json`. | Runtime requires separate scoped issue. |
 | Protector Rule runtime | **ABSENT** | canonical definitions, revision/CAS, lifecycle, compiled match plan. | Surface 27. |
 | Request normalization/matching | **ABSENT** | exact/prefix/bounded pattern/resource matching. | No Host/header trust shortcuts. |
 | Policy composition | **ABSENT** | outer deny/challenge/rate only; cannot grant underlying access. | Shared Policy remains authority. |
@@ -103,6 +103,6 @@ Login alias, private recovery bypass mechanisms and high-impact network/header c
 
 ## Exit decision
 
-Exact main has a mature exhaustive Protector specification and clear owner boundaries, but the Master Options Bank remains `UNSEEDED / 0` and no runtime module exists. `runtime_allowed=false` remains correct.
+Exact main has a mature exhaustive Protector specification and clear owner boundaries, the Bank is reviewed (225) with an accepted Atomic Option Contract, and no runtime module exists. `runtime_allowed=false` remains correct.
 
-The next valid action is Bank seeding/native/market review, then schema-valid option contracts and UX re-review — not request enforcement from this planning lane.
+Request enforcement remains unauthorized in this planning lane.

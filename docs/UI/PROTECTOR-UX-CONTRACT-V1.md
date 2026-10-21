@@ -1,11 +1,11 @@
-# Protector — Provisional UX Contract V1
+# Protector — UX Contract V1
 
 Surface: **27 / Protector**  
 Planning issue: **#593**  
 Supervisor wave: **#583**  
 Exact-main claim anchor: `588079965734c56b2bda783778c9efa4dbf63530`
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 27 remains `UNSEEDED / 0` in the Master Options Bank. This document does not promote `UX_CONTRACT_COMPLETE` or authorize request enforcement.
+Lifecycle status: **UX_CONTRACT_COMPLETE (planning)**. Bank review #1456 accepted 225/225 records with zero unresolved; Atomic Option Contract: `config/product/option-contracts/protector.json` (225/225 projected; 194 parity, 4 exceeds, 6 deferred, 21 rejected unsafe; zero missing/unclassified). Contract and UX completion are planning states only; they do not authorize request blocking, challenges, lockouts, header emission or login enforcement.
 
 ## Product rule
 
@@ -138,4 +138,10 @@ Future normalized contract must define site/network rule scope, network admin/lo
 
 ## Lifecycle decision
 
-This is provisional interaction guidance only. Exact-main Master Options Bank remains `UNSEEDED / 0`; Bank review and schema-valid Atomic Option Contracts must precede UX lifecycle/runtime promotion.
+## Ownership and safety boundaries
+
+Surface 27 owns Site Gate, outer request deny/challenge/rate limiting, login/admin hardening, lockout and recovery semantics. Resource authorization stays with Policy and Surface 30 Roles; generic redirects with Surface 44; REST endpoint permission with each endpoint and Surface 22; XML-RPC semantics with Surface 29; scanning with Surface 52; notifications with Surface 19; secrets with Vault.
+
+Rules need simulation and a monitor-only mode before enforce. Every lockout path keeps an authenticated recovery route and never locks out the current operator. Client IP comes only from configured trusted proxies; logs keep hashed/truncated identifiers with bounded retention.
+
+This UX review is paired with the 225-record Atomic Option Contract and reviewed Bank. Enforcement runtime remains separately gated.
