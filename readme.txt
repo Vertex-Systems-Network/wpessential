@@ -3,7 +3,7 @@ Tags: automation, structured-data, workflows, integrations, developer-tools
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.1.0-dev
+Stable tag: 3.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -71,12 +71,12 @@ https://wpessential.org
 
 == Changelog ==
 
-= 0.1.0-dev =
+= 3.0.0 =
 * Platform-foundation development line.
 * Added governed kernel, definitions, policy/abilities/events foundations, persistence contracts, compiled-registration architecture, audit/job/integration foundations, and machine-enforced engineering contracts.
 * This development tag is not a stable WordPress.org release declaration.
 
 == Upgrade Notice ==
 
-= 0.1.0-dev =
+= 3.0.0 =
 Development build only. Review project release notes and migration evidence before using a future packaged release on a production site.

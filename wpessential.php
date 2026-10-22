@@ -3,7 +3,7 @@
  * Plugin Name: WPEssential
  * Plugin URI: https://wpessential.org
  * Description: Modular WordPress application platform for structured data, automation, integrations, admin tooling, workflows, and AI-ready operations.
- * Version: 0.1.0-dev
+ * Version: 3.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.2
  * Author: VSN Team
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'WPE_VERSION' ) ) {
-	define( 'WPE_VERSION', '0.1.0-dev' );
+	define( 'WPE_VERSION', '3.0.0' );
 }
 
 if ( ! defined( 'WPE_PLATFORM_API_VERSION' ) ) {

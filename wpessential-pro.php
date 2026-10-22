@@ -3,7 +3,7 @@
  * Plugin Name: WPEssential Pro
  * Plugin URI: https://wpessential.org
  * Description: Premium module add-on for the WPEssential WordPress application platform.
- * Version: 0.1.0-dev
+ * Version: 3.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.2
  * Requires Plugins: wpessential
@@ -21,13 +21,13 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('WPE_PRO_VERSION')) {
-    define('WPE_PRO_VERSION', '0.1.0-dev');
+    define('WPE_PRO_VERSION', '3.0.0');
 }
 if (!defined('WPE_PRO_MIN_FREE_VERSION')) {
-    define('WPE_PRO_MIN_FREE_VERSION', '0.1.0-dev');
+    define('WPE_PRO_MIN_FREE_VERSION', '3.0.0');
 }
 if (!defined('WPE_PRO_MAX_FREE_VERSION')) {
-    define('WPE_PRO_MAX_FREE_VERSION', '0.1.0-dev');
+    define('WPE_PRO_MAX_FREE_VERSION', '3.0.0');
 }
 if (!defined('WPE_PRO_MIN_PLATFORM_API_VERSION')) {
     define('WPE_PRO_MIN_PLATFORM_API_VERSION', '0.1.0');
