@@ -15,6 +15,7 @@ use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\Admin\Ui\Shell;
 
 final class RelationAdminController {
 
@@ -72,7 +73,8 @@ final class RelationAdminController {
 			}
 		}
 
-		echo '<div class="wrap">';
+		echo '<div class="wrap wpe-ui">';
+		echo Shell::topbar( self::PAGE_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
 		echo '<h1>' . esc_html__( 'Relations', 'wpessential' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Create canonical Surface 4 relation definitions and manage individual edges through the shared Ability and Policy layer.', 'wpessential' ) . '</p>';
 		$this->renderNotice( $readError );

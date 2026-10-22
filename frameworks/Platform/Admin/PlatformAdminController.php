@@ -8,10 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WPEssential\Platform\Admin\Ui\Shell;
+
 final class PlatformAdminController {
 
-	public const PAGE_SLUG  = 'wpessential';
-	public const CAPABILITY = 'manage_options';
+	public const PAGE_SLUG   = 'wpessential';
+	public const STATUS_SLUG = 'wpessential-status';
+	public const CAPABILITY  = 'manage_options';
 
 	private ?string $hookSuffix = null;
 
@@ -25,23 +28,23 @@ final class PlatformAdminController {
 			return;
 		}
 
-		add_action( 'admin_menu', [ $this, 'registerMenu' ] );
+		add_action( 'admin_menu', [ $this, 'registerMenu' ], 20 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAssets' ] );
 	}
 
 	public function registerMenu(): void {
-		if ( ! function_exists( 'add_menu_page' ) ) {
+		if ( ! function_exists( 'add_submenu_page' ) ) {
 			return;
 		}
 
-		$hook = add_menu_page(
-			'WPEssential',
-			'WPEssential',
-			self::CAPABILITY,
+		// The WPEssential Core shell owns the top-level menu; runtime diagnostics live under System Status.
+		$hook = add_submenu_page(
 			self::PAGE_SLUG,
+			'System Status',
+			'System Status',
+			self::CAPABILITY,
+			self::STATUS_SLUG,
 			[ $this, 'render' ],
-			'dashicons-admin-generic',
-			58,
 		);
 
 		$this->hookSuffix = is_string( $hook ) && $hook !== '' ? $hook : null;
@@ -98,7 +101,8 @@ final class PlatformAdminController {
 		$moduleInventory  = is_array( $modules['inventory'] ?? null ) ? $modules['inventory'] : [];
 		$proCompatibility = is_array( $modules['pro_compatibility'] ?? null ) ? $modules['pro_compatibility'] : [];
 
-		echo '<div class="wrap wpessential-admin-wrap">';
+		echo '<div class="wrap wpessential-admin-wrap wpe-ui">';
+		echo Shell::topbar( self::STATUS_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
 		echo '<section id="wpessential-admin-root" aria-labelledby="wpessential-admin-title" data-wpessential-surface="runtime-observatory">';
 		echo '<h1 id="wpessential-admin-title">' . esc_html__( 'WPEssential', 'wpessential' ) . '</h1>';
 		echo '<h2>' . esc_html__( 'Runtime Observatory', 'wpessential' ) . '</h2>';

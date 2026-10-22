@@ -37,7 +37,11 @@ use WPEssential\Platform\Assets\NativeWordPressAssetEnvironment;
 use WPEssential\Platform\Assets\TrustedAssetBuildEntryRegistry;
 use WPEssential\Platform\Assets\WordPressAssetLoader;
 use WPEssential\Platform\Admin\AdminAssetManifest;
+use WPEssential\Platform\Admin\Core\CoreAdminController;
+use WPEssential\Platform\Admin\Core\ModuleToggleStore;
+use WPEssential\Platform\Admin\Core\OptionContractReader;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
 use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Audit\InMemoryAuditLogger;
@@ -59,6 +63,7 @@ use WPEssential\Platform\Definitions\WpdbDefinitionTableGateway;
 use WPEssential\Platform\Events\EventBus;
 use WPEssential\Platform\Events\EventServices;
 use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
+use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
 use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
@@ -117,9 +122,8 @@ final class Plugin {
 			return null;
 		}
 
-		self::$kernel = new Kernel(
-			moduleActivationPolicy: self::$moduleActivationPolicy ?? new DefaultModuleActivationPolicy(),
-		);
+		$activationPolicy = self::$moduleActivationPolicy ?? new DefaultModuleActivationPolicy();
+		self::$kernel     = new Kernel( moduleActivationPolicy: $activationPolicy );
 		$services     = self::$kernel->services();
 
 		$nonceAction = defined( 'WPE_NONCE_ACTION' ) ? (string) WPE_NONCE_ACTION : 'wpessential_request';
@@ -161,6 +165,9 @@ final class Plugin {
 		$runtimeDiagnostics = new RuntimeDiagnosticsSnapshot( self::$kernel, $traces, $debug );
 		$adminAssets        = new AdminAssetManifest( $pluginRoot, $pluginUrl );
 		$adminController    = new PlatformAdminController( $runtimeDiagnostics, $adminAssets );
+		$moduleToggles      = new ModuleToggleStore();
+		$coreAdmin          = new CoreAdminController( self::$kernel, $moduleToggles, new OptionContractReader( $pluginRoot ), $adminAssets );
+		Shell::configure( $activationPolicy->allows( new ModuleManifest( id: 'premium-probe', name: 'Premium probe', version: '0.0.0', edition: 'pro' ) ) );
 
 		$services->set( 'platform.nonce', $nonceManager );
 		$services->set( 'platform.ajax.routes', $ajaxRoutes );
@@ -244,19 +251,24 @@ final class Plugin {
 		$services->set( 'platform.admin.diagnostics', $runtimeDiagnostics );
 		$services->set( 'platform.admin.assets', $adminAssets );
 		$services->set( 'platform.admin.controller', $adminController );
+		$services->set( 'platform.admin.core', $coreAdmin );
+		$services->set( 'platform.modules.toggles', $moduleToggles );
 
-		self::$kernel->registerModule( new CustomPostTypeModule() );
-		self::$kernel->registerModule( new TaxonomyModule() );
+		$modules = [ new CustomPostTypeModule(), new TaxonomyModule() ];
 		if ( $customTablesModule instanceof CustomTablesModule ) {
-			self::$kernel->registerModule( $customTablesModule );
+			$modules[] = $customTablesModule;
 		}
-		foreach ( self::$contributedModules as $module ) {
-			self::$kernel->registerModule( $module );
+		foreach ( array_merge( $modules, self::$contributedModules ) as $module ) {
+			// Modules switched off in WPEssential Core are never registered with the kernel.
+			if ( $moduleToggles->isEnabled( $module->manifest()->id ) ) {
+				self::$kernel->registerModule( $module );
+			}
 		}
 
 		if ( function_exists( 'add_action' ) ) {
 			$ajaxGateway->register();
 			$assetLoader->register();
+			$coreAdmin->register();
 			$adminController->register();
 			add_action( 'wp_abilities_api_categories_init', [ $abilityBridge, 'registerCategory' ] );
 			add_action( 'wp_abilities_api_init', [ $abilityBridge, 'registerAbilities' ] );

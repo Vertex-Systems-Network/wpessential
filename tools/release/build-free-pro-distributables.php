@@ -153,6 +153,15 @@ function requiredAdminArtifactTriplet(string $root, string $entry): array
 }
 
 /** @return list<string> */
+function requiredAdminArtifact(string $root, string $relative): array
+{
+    if (!artifactExistsAndIsNonEmpty($root, $relative)) {
+        fail("Build the admin application before packaging; missing {$relative}");
+    }
+    return [$relative];
+}
+
+/** @return list<string> */
 function optionalAdminArtifactTriplet(string $root, string $entry): array
 {
     $triplet = adminArtifactTriplet($entry);
@@ -471,6 +480,8 @@ try {
     $freeAssets = [
         ...requiredAdminArtifactTriplet($root, 'main'),
         ...requiredAdminArtifactTriplet($root, 'taxonomy'),
+        ...requiredAdminArtifactTriplet($root, 'ui'),
+        ...requiredAdminArtifact($root, 'assets/admin/option-contracts.json'),
     ];
     $proAssets = [
         ...requiredAdminArtifactTriplet($root, 'fields'),

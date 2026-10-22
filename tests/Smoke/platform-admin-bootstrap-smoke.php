@@ -40,6 +40,26 @@ function esc_html(string $text): string
     return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function __(string $text, string $domain = 'default'): string
+{
+    return $text;
+}
+
+function esc_attr(string $text): string
+{
+    return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function esc_attr__(string $text, string $domain = 'default'): string
+{
+    return esc_attr($text);
+}
+
+function esc_url(string $url): string
+{
+    return htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
 function wp_json_encode(mixed $value, int $flags = 0, int $depth = 512): string|false
 {
     return json_encode($value, $flags, $depth);

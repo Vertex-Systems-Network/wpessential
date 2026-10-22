@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\Admin\Ui\Shell;
 
 final class AdminColumnsAdminController {
 
@@ -146,7 +147,8 @@ final class AdminColumnsAdminController {
 			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json = is_string( $json ) ? $json : '{}';
 
-		echo '<div class="wrap wpessential-columns-wrap">';
+		echo '<div class="wrap wpe-ui wpessential-columns-wrap">';
+		echo Shell::topbar( self::PAGE_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
 		echo '<section id="wpessential-columns-root" data-wpessential-surface="columns" aria-labelledby="wpessential-columns-page-title">';
 		echo '<h1 id="wpessential-columns-page-title">' . esc_html__( 'Admin Columns', 'wpessential' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Author, reopen and explicitly manage lifecycle for revisioned shared Column Sets. Published saved Views can be previewed through the bounded Query read path. A certified Fields single-row edit path is exposed only when the owner write route is available; bulk mutation and export remain unavailable.', 'wpessential' ) . '</p>';

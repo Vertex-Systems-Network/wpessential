@@ -28,7 +28,7 @@ final class SharedEventAuditServiceWiringTest extends TestCase
 
         $eventPublication = strpos($source, '$services->set( EventServices::BUS, $events );');
         $auditPublication = strpos($source, '$services->set( AuditServices::LOGGER, $audit );');
-        $moduleRegistration = strpos($source, 'self::$kernel->registerModule( new CustomPostTypeModule() );');
+        $moduleRegistration = strpos($source, '$modules = [ new CustomPostTypeModule(), new TaxonomyModule() ];');
 
         self::assertIsInt($eventPublication);
         self::assertIsInt($auditPublication);

@@ -18,6 +18,7 @@ use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeProviderRegistry;
+use WPEssential\Platform\Admin\Ui\Shell;
 
 final class TaxonomyAdminController {
 
@@ -131,7 +132,8 @@ final class TaxonomyAdminController {
 			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json                      = is_string( $json ) ? $json : '{}';
 
-		echo '<div class="wrap wpessential-admin-wrap">';
+		echo '<div class="wrap wpe-ui wpessential-admin-wrap">';
+		echo Shell::topbar( self::PAGE_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
 		echo '<section id="wpessential-taxonomy-root" data-wpessential-surface="taxonomies" aria-labelledby="wpessential-taxonomy-title">';
 		echo '<h1 id="wpessential-taxonomy-title">' . esc_html__( 'Taxonomies', 'wpessential' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Create and manage canonical WPEssential taxonomy definitions. Taxonomy object-type associations are written only through the Taxonomy definition to preserve one source of truth.', 'wpessential' ) . '</p>';

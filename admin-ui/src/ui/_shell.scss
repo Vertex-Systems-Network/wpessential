@@ -1,0 +1,141 @@
+.wpe-ui-topbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px 28px;
+	margin: 20px 0 24px;
+	padding: 12px 20px;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg);
+	background: var(--wpe-card);
+}
+
+.wpe-ui-logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--wpe-text);
+	text-decoration: none;
+
+	&__mark {
+		position: relative;
+		color: var(--wpe-blue);
+		font-family: var(--wpe-font-heading);
+		font-size: 26px;
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: -0.04em;
+
+		i {
+			position: absolute;
+			right: -7px;
+			bottom: 3px;
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background: var(--wpe-orange);
+		}
+	}
+
+	&__word {
+		font-family: var(--wpe-font-heading);
+		font-size: 19px;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+
+	&__tag {
+		padding: 2px 8px;
+		border: 1px solid var(--wpe-line);
+		border-radius: 999px;
+		background: var(--wpe-surface);
+		color: var(--wpe-muted);
+		font-size: 12px;
+	}
+
+	&:hover,
+	&:focus {
+		color: var(--wpe-text);
+	}
+}
+
+.wpe-ui-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+
+	&__item {
+		position: relative;
+		padding: 8px 12px;
+		border-radius: var(--wpe-radius);
+		color: var(--wpe-text-2);
+		font-weight: 600;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			background: var(--wpe-surface);
+			color: var(--wpe-indigo);
+		}
+
+		&.is-current {
+			background: var(--wpe-indigo-tint);
+			color: var(--wpe-indigo);
+		}
+	}
+}
+
+.wpe-ui-topbar__end {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-left: auto;
+}
+
+.wpe-ui-breadcrumb {
+	margin: 0 0 8px;
+	color: var(--wpe-muted);
+	font-size: 13px;
+
+	a {
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	[aria-current] {
+		color: var(--wpe-text);
+		font-weight: 600;
+	}
+}
+
+.wpe-ui-page-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 20px;
+
+	&__copy {
+		flex: 1 1 28rem;
+	}
+
+	&__desc {
+		max-width: 52rem;
+		margin: 6px 0 0;
+		color: var(--wpe-muted);
+		font-size: 15px;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 10px;
+	}
+}
+
+@media (max-width: 782px) {
+
+	.wpe-ui-topbar__end {
+		margin-left: 0;
+	}
+}
