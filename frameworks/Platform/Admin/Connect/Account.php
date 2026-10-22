@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use WP_Error;
 
 /**
- * wpessential.org account (ported from hi-wpessential core `Account`).
+ * Account on wpessential.org (ported from hi-wpessential core `Account`).
  *
  * Server-to-server only: the Bearer token lives in a non-autoloaded option, is shared by the
  * site's administrators and is never sent to the browser.

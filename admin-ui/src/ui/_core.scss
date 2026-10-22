@@ -511,4 +511,68 @@
 
 .wpe-ui-inline {
 	display: inline-flex;
+	align-items: flex-end;
+	gap: 10px;
+
+	.wpe-ui-field {
+		margin: 0;
+	}
+}
+
+// Demo Library.
+.wpe-ui-demo-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+	gap: 20px;
+}
+
+.wpe-ui-demo {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg, 14px);
+	background: var(--wpe-card);
+	box-shadow: var(--wpe-shadow);
+
+	&__shot {
+		display: grid;
+		width: 100%;
+		aspect-ratio: 16 / 10;
+		place-items: center;
+		background: var(--wpe-surface-2);
+		color: var(--wpe-muted);
+		object-fit: cover;
+	}
+
+	&__body {
+		display: grid;
+		gap: 8px;
+		padding: 16px 18px 18px;
+	}
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+
+		h2 {
+			margin: 0;
+			font-size: 16px;
+		}
+	}
+
+	&__foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 4px;
+	}
+
+	&__builders {
+		display: inline-flex;
+		gap: 8px;
+		color: var(--wpe-muted);
+	}
 }

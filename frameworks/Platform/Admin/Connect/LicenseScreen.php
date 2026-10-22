@@ -153,7 +153,7 @@ final class LicenseScreen implements AdminScreen {
 		if ( $active ) {
 			$rows  = [
 				__( 'Key', 'wpessential' )     => '<code>' . esc_html( (string) $data['key'] ) . '</code>',
-				__( 'Plan', 'wpessential' )    => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'premium' : 'free' ),
+				__( 'Plan', 'wpessential' )    => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ),
 				__( 'Expires', 'wpessential' ) => esc_html( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ),
 				__( 'Domain', 'wpessential' )  => esc_html( (string) $data['domain'] ),
 				__( 'Server', 'wpessential' )  => esc_html( (string) $data['provider'] ),

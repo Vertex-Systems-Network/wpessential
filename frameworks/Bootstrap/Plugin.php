@@ -38,9 +38,15 @@ use WPEssential\Platform\Assets\TrustedAssetBuildEntryRegistry;
 use WPEssential\Platform\Assets\WordPressAssetLoader;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\Connect\Account;
+use WPEssential\Platform\Admin\Connect\AiConnect;
+use WPEssential\Platform\Admin\Connect\AiConnectScreen;
+use WPEssential\Platform\Admin\Connect\Mcp\SettingsAbilities;
+use WPEssential\Platform\Admin\Connect\McpServer;
 use WPEssential\Platform\Admin\Connect\LicenseScreen;
 use WPEssential\Platform\Admin\Connect\LicenseService;
 use WPEssential\Platform\Admin\Core\CoreAdminController;
+use WPEssential\Platform\Admin\Demos\DemoCatalog;
+use WPEssential\Platform\Admin\Demos\DemosScreen;
 use WPEssential\Platform\Admin\Docs\DocsScreen;
 use WPEssential\Platform\Admin\Elements\ElementRegistry;
 use WPEssential\Platform\Admin\Elements\ElementsScreen;
@@ -174,13 +180,19 @@ final class Plugin {
 		$moduleToggles      = new ModuleToggleStore();
 		$license            = new LicenseService();
 		$license->schedule();
+		$elements           = new ElementRegistry();
+		$aiConnect          = new AiConnect();
+		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
+		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
 		$coreAdmin          = new CoreAdminController(
 			self::$kernel,
 			$moduleToggles,
 			new OptionContractReader( $pluginRoot ),
 			$adminAssets,
 			[
-				new ElementsScreen( new ElementRegistry() ),
+				new DemosScreen( new DemoCatalog() ),
+				new ElementsScreen( $elements ),
+				new AiConnectScreen( $aiConnect ),
 				new LicenseScreen( $license, new Account( $license ) ),
 				new DocsScreen(),
 			]

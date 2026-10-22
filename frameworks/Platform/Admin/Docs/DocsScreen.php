@@ -37,14 +37,83 @@ final class DocsScreen implements AdminScreen {
 	/** @return list<array{0:string,1:string,2:string,3:array<string,string>}> */
 	private function topics(): array {
 		return [
-			[ 'rocket', __( 'Getting started', 'wpessential' ), __( 'Install, activate and tour the dashboard.', 'wpessential' ), [ 'getting-started/installation' => __( 'Installation', 'wpessential' ), 'getting-started/first-steps' => __( 'First steps', 'wpessential' ), 'getting-started/free-vs-premium' => __( 'Free vs Premium', 'wpessential' ) ] ],
-			[ 'layers', __( 'Modules', 'wpessential' ), __( 'Turn modules on or off and configure each one.', 'wpessential' ), [ 'modules/manager' => __( 'Module manager', 'wpessential' ), 'modules/dependencies' => __( 'Dependencies', 'wpessential' ), 'modules/option-tiers' => __( 'Option tiers', 'wpessential' ) ] ],
-			[ 'grid', __( 'Demo Library', 'wpessential' ), __( 'Import complete websites and roll them back.', 'wpessential' ), [ 'demos/import' => __( 'Importing a demo', 'wpessential' ), 'demos/plugins' => __( 'Required plugins', 'wpessential' ), 'demos/remove' => __( 'Removing a demo', 'wpessential' ) ] ],
-			[ 'brush', __( 'Elements', 'wpessential' ), __( 'Gutenberg blocks and Elementor widgets.', 'wpessential' ), [ 'elements/enable' => __( 'Enable elements', 'wpessential' ), 'elements/builders' => __( 'Builders', 'wpessential' ) ] ],
-			[ 'spark', __( 'AI Connect', 'wpessential' ), __( 'Connect Claude, Cursor or VS Code through MCP.', 'wpessential' ), [ 'ai-connect/connect' => __( 'Connect a client', 'wpessential' ), 'ai-connect/abilities' => __( 'Approved abilities', 'wpessential' ), 'ai-connect/revoke' => __( 'Revoking access', 'wpessential' ) ] ],
-			[ 'key', __( 'Licence & account', 'wpessential' ), __( 'Activate Premium and manage your plan.', 'wpessential' ), [ 'license/activate' => __( 'Activate a key', 'wpessential' ), 'license/account' => __( 'Account & billing', 'wpessential' ) ] ],
-			[ 'code', __( 'Developers', 'wpessential' ), __( 'Hooks, filters, abilities and REST.', 'wpessential' ), [ 'developers/abilities' => __( 'Abilities API', 'wpessential' ), 'developers/hooks' => __( 'Hooks reference', 'wpessential' ), 'developers/rest' => __( 'REST routes', 'wpessential' ) ] ],
-			[ 'help', __( 'Troubleshooting', 'wpessential' ), __( 'System status and common fixes.', 'wpessential' ), [ 'troubleshooting/system-status' => __( 'System status', 'wpessential' ), 'troubleshooting/imports' => __( 'Import problems', 'wpessential' ) ] ],
+			[
+				'rocket',
+				__( 'Getting started', 'wpessential' ),
+				__( 'Install, activate and tour the dashboard.', 'wpessential' ),
+				[
+					'getting-started/installation'    => __( 'Installation', 'wpessential' ),
+					'getting-started/first-steps'     => __( 'First steps', 'wpessential' ),
+					'getting-started/free-vs-premium' => __( 'Free vs Premium', 'wpessential' ),
+				],
+			],
+			[
+				'layers',
+				__( 'Modules', 'wpessential' ),
+				__( 'Turn modules on or off and configure each one.', 'wpessential' ),
+				[
+					'modules/manager'      => __( 'Module manager', 'wpessential' ),
+					'modules/dependencies' => __( 'Dependencies', 'wpessential' ),
+					'modules/option-tiers' => __( 'Option tiers', 'wpessential' ),
+				],
+			],
+			[
+				'grid',
+				__( 'Demo Library', 'wpessential' ),
+				__( 'Import complete websites and roll them back.', 'wpessential' ),
+				[
+					'demos/import'  => __( 'Importing a demo', 'wpessential' ),
+					'demos/plugins' => __( 'Required plugins', 'wpessential' ),
+					'demos/remove'  => __( 'Removing a demo', 'wpessential' ),
+				],
+			],
+			[
+				'brush',
+				__( 'Elements', 'wpessential' ),
+				__( 'Gutenberg blocks and Elementor widgets.', 'wpessential' ),
+				[
+					'elements/enable'   => __( 'Enable elements', 'wpessential' ),
+					'elements/builders' => __( 'Builders', 'wpessential' ),
+				],
+			],
+			[
+				'spark',
+				__( 'AI Connect', 'wpessential' ),
+				__( 'Connect Claude, Cursor or VS Code through MCP.', 'wpessential' ),
+				[
+					'ai-connect/connect'   => __( 'Connect a client', 'wpessential' ),
+					'ai-connect/abilities' => __( 'Approved abilities', 'wpessential' ),
+					'ai-connect/revoke'    => __( 'Revoking access', 'wpessential' ),
+				],
+			],
+			[
+				'key',
+				__( 'Licence & account', 'wpessential' ),
+				__( 'Activate Premium and manage your plan.', 'wpessential' ),
+				[
+					'license/activate' => __( 'Activate a key', 'wpessential' ),
+					'license/account'  => __( 'Account & billing', 'wpessential' ),
+				],
+			],
+			[
+				'code',
+				__( 'Developers', 'wpessential' ),
+				__( 'Hooks, filters, abilities and REST.', 'wpessential' ),
+				[
+					'developers/abilities' => __( 'Abilities API', 'wpessential' ),
+					'developers/hooks'     => __( 'Hooks reference', 'wpessential' ),
+					'developers/rest'      => __( 'REST routes', 'wpessential' ),
+				],
+			],
+			[
+				'help',
+				__( 'Troubleshooting', 'wpessential' ),
+				__( 'System status and common fixes.', 'wpessential' ),
+				[
+					'troubleshooting/system-status' => __( 'System status', 'wpessential' ),
+					'troubleshooting/imports'       => __( 'Import problems', 'wpessential' ),
+				],
+			],
 		];
 	}
 
