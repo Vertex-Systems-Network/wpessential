@@ -131,10 +131,9 @@
 		height: 56px;
 		border-radius: var(--wpe-radius-lg);
 
-		.dashicons {
+		.wpe-ui-icon-svg {
 			width: 26px;
 			height: 26px;
-			font-size: 26px;
 		}
 	}
 }
@@ -365,5 +364,215 @@
 	.wpe-ui-hero,
 	.wpe-ui-columns {
 		grid-template-columns: 1fr;
+	}
+}
+
+// Elements, Docs and other framework screens.
+.wpe-ui-tabs a.wpe-ui-tab {
+	text-decoration: none;
+}
+
+.wpe-ui-empty--dashed {
+	border-style: dashed;
+
+	.wpe-ui-icon {
+		margin: 0 auto;
+	}
+
+	p {
+		max-width: 34rem;
+		margin: 0 auto 16px;
+	}
+}
+
+.wpe-ui-panel--flush {
+	padding: 0;
+}
+
+.wpe-ui-option__copy--row {
+	flex-direction: row;
+	align-items: center;
+	gap: 14px;
+}
+
+.wpe-ui-card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+	gap: 20px;
+	margin-bottom: 20px;
+
+	.wpe-ui-panel {
+		margin: 0;
+	}
+}
+
+.wpe-ui-doc {
+	h2 {
+		margin: 14px 0 6px;
+	}
+
+	&__links {
+		margin: 14px 0 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0 0 8px;
+		}
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			color: var(--wpe-indigo);
+			font-weight: 600;
+			text-decoration: none;
+		}
+	}
+}
+
+.wpe-ui-docs-search {
+	.wpe-ui-input {
+		flex: 1 1 auto;
+	}
+}
+
+.wpe-ui-upsell--row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+
+	p {
+		margin: 0;
+	}
+}
+
+// License & Account.
+.wpe-ui-card-grid--two {
+	grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+	align-items: start;
+}
+
+.wpe-ui-panel__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+
+	h2 {
+		flex: 1;
+		margin: 0;
+	}
+}
+
+.wpe-ui-form {
+	h3 {
+		margin: 0 0 12px;
+	}
+}
+
+.wpe-ui-field {
+	display: grid;
+	gap: 6px;
+	margin: 0 0 14px;
+
+	label {
+		font-weight: 600;
+	}
+
+	input {
+		width: 100%;
+	}
+}
+
+.wpe-ui-facts {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 10px 20px;
+	margin: 0 0 16px;
+
+	dt {
+		color: var(--wpe-muted);
+	}
+
+	dd {
+		margin: 0;
+	}
+}
+
+.wpe-ui-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+}
+
+.wpe-ui-inline {
+	display: inline-flex;
+	align-items: flex-end;
+	gap: 10px;
+
+	.wpe-ui-field {
+		margin: 0;
+	}
+}
+
+// Demo Library.
+.wpe-ui-demo-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+	gap: 20px;
+}
+
+.wpe-ui-demo {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg, 14px);
+	background: var(--wpe-card);
+	box-shadow: var(--wpe-shadow);
+
+	&__shot {
+		display: grid;
+		width: 100%;
+		aspect-ratio: 16 / 10;
+		place-items: center;
+		background: var(--wpe-surface-2);
+		color: var(--wpe-muted);
+		object-fit: cover;
+	}
+
+	&__body {
+		display: grid;
+		gap: 8px;
+		padding: 16px 18px 18px;
+	}
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+
+		h2 {
+			margin: 0;
+			font-size: 16px;
+		}
+	}
+
+	&__foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 4px;
+	}
+
+	&__builders {
+		display: inline-flex;
+		gap: 8px;
+		color: var(--wpe-muted);
 	}
 }

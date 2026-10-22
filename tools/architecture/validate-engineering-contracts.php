@@ -34,13 +34,13 @@ $entrypoint = (string) @file_get_contents($entrypointPath);
 foreach ([
     'Plugin URI: https://wpessential.org',
     'Description: Modular WordPress application platform for structured data, automation, integrations, admin tooling, workflows, and AI-ready operations.',
-    'Version: 0.1.0-dev',
+    'Version: 3.0.0',
     'Requires at least: 6.9',
     'Requires PHP: 8.2',
     'Author: VSN Team',
     'Author URI: https://wpessential.org',
     'License: GPL-3.0-or-later',
-    "define('WPE_VERSION', '0.1.0-dev')",
+    "define('WPE_VERSION', '3.0.0')",
     "define('WPE_AJAX_ACTION', 'wpessential_dispatch')",
     "define('WPE_NONCE_ACTION', 'wpessential_request')",
 ] as $requiredMarker) {
@@ -60,7 +60,7 @@ foreach ([
     'Requires at least: 6.9',
     'Tested up to: 7.1',
     'Requires PHP: 8.2',
-    'Stable tag: 0.1.0-dev',
+    'Stable tag: 3.0.0',
     'License: GPLv3 or later',
     'https://wpessential.org',
 ] as $requiredMarker) {

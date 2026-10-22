@@ -100,6 +100,18 @@ function initOptionFilters( root: HTMLElement ): void {
 	search?.addEventListener( 'input', apply );
 }
 
+// In "system" mode the server cannot know the effective scheme, so submit its opposite.
+function initModeToggle(): void {
+	const target = document.querySelector< HTMLInputElement >( '[data-wpe-mode-target]' );
+	if ( ! target || ! document.body.classList.contains( 'wpe-mode-system' ) ) {
+		return;
+	}
+	const dark = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
+	target.value = dark ? 'light' : 'dark';
+}
+
+initModeToggle();
+
 const root = document.querySelector< HTMLElement >( '[data-wpessential-surface="core"]' );
 if ( root ) {
 	initModuleFilters( root );

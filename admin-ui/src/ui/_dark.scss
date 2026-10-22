@@ -1,0 +1,95 @@
+// Dark tokens (ported from the hi-wpessential core token table onto the --wpe-* names).
+@mixin dark-tokens {
+	--wpe-ink: #0b1a3d;
+	--wpe-on-ink: #fff;
+	--wpe-on-ink-muted: #a9b6d3;
+	--wpe-text: #fff;
+	--wpe-text-2: #cbd5ea;
+	--wpe-muted: #a9b6d3;
+	--wpe-line: #20325e;
+	--wpe-surface: #081330;
+	--wpe-surface-2: #14254f;
+	--wpe-card: #0e1c40;
+	--wpe-orange-tint: #3a2510;
+	--wpe-orange-text: #f7a23e;
+	--wpe-indigo: #7aa3f2;
+	--wpe-indigo-tint: #1b2d5c;
+	--wpe-blue: #9dbcf6;
+	--wpe-blue-tint: #1b2d5c;
+	--wpe-success: #4ade80;
+	--wpe-success-tint: #123a2a;
+	--wpe-warning: #fbbf24;
+	--wpe-warning-tint: #3a2d0e;
+	--wpe-danger-tint: #3d1512;
+	--wpe-shadow: 0 1px 2px rgb(0 0 0 / 40%);
+	--wpe-shadow-lg: 0 24px 64px rgb(0 0 0 / 55%);
+
+	color-scheme: dark;
+
+	// Light accent fills need dark text to keep AA contrast.
+	.wpe-ui-button--secondary,
+	.wpe-ui-button--secondary:hover,
+	.wpe-ui-button--secondary:focus {
+		color: var(--wpe-ink);
+	}
+}
+
+body.wpe-mode-dark .wpe-ui {
+	@include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+
+	body.wpe-mode-system .wpe-ui {
+		@include dark-tokens;
+	}
+}
+
+// The toolkit paints its own page background so dark mode covers the whole content area.
+body.wpe-ui-screen #wpcontent,
+body.wpe-ui-screen #wpbody-content {
+	background: var(--wpe-page, #f0f0f1);
+}
+
+body.wpe-ui-screen.wpe-mode-dark {
+	--wpe-page: #081330;
+}
+
+@media (prefers-color-scheme: dark) {
+
+	body.wpe-ui-screen.wpe-mode-system {
+		--wpe-page: #081330;
+	}
+}
+
+.wpe-ui {
+
+	.wpe-ui-mode__sun {
+		display: none;
+	}
+}
+
+body.wpe-mode-dark .wpe-ui {
+
+	.wpe-ui-mode__sun {
+		display: inline-flex;
+	}
+
+	.wpe-ui-mode__moon {
+		display: none;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+
+	body.wpe-mode-system .wpe-ui {
+
+		.wpe-ui-mode__sun {
+			display: inline-flex;
+		}
+
+		.wpe-ui-mode__moon {
+			display: none;
+		}
+	}
+}

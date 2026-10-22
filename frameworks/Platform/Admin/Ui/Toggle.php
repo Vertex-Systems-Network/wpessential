@@ -30,6 +30,6 @@ final class Toggle {
 	}
 
 	public static function locked( string $upgradeUrl ): string {
-		return '<a class="wpe-ui-toggle wpe-ui-toggle--locked" href="' . esc_url( $upgradeUrl ) . '" target="_blank" rel="noopener noreferrer"><span class="dashicons dashicons-lock" aria-hidden="true"></span>' . esc_html__( 'Premium', 'wpessential' ) . '</a>';
+		return '<a class="wpe-ui-toggle wpe-ui-toggle--locked" href="' . esc_url( $upgradeUrl ) . '" target="_blank" rel="noopener noreferrer">' . Icon::render( 'lock', 14 ) . esc_html__( 'Premium', 'wpessential' ) . '</a>';
 	}
 }

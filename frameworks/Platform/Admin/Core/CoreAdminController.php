@@ -14,8 +14,10 @@ use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Badge;
 use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
 use WPEssential\Platform\Admin\Ui\PageHeader;
+use WPEssential\Platform\Admin\Ui\Screen;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\Ui\StatTile;
 use WPEssential\Platform\Admin\Ui\StatusPill;
@@ -23,7 +25,7 @@ use WPEssential\Platform\Admin\Ui\Toggle;
 use WPEssential\Platform\Modules\ModuleState;
 
 /**
- * WPEssential Core admin: dashboard, module manager (Free + Premium on/off) and one overview
+ * WPEssential admin: dashboard, module manager (Free + Premium on/off) and one overview
  * page per module. Built only from the `Platform\Admin\Ui` toolkit components.
  */
 final class CoreAdminController {
@@ -31,11 +33,13 @@ final class CoreAdminController {
 	public const MODULE_PREFIX = 'wpessential-module-';
 	public const TOGGLE_ACTION = 'wpessential_module_toggle';
 
+	/** @param list<AdminScreen> $screens */
 	public function __construct(
 		private readonly Kernel $kernel,
 		private readonly ModuleToggleStore $toggles,
 		private readonly OptionContractReader $contracts,
 		private readonly AdminAssetManifest $assets,
+		private readonly array $screens = [],
 	) {}
 
 	public function register(): void {
@@ -46,6 +50,37 @@ final class CoreAdminController {
 		add_action( 'admin_menu', [ $this, 'registerMenu' ], 9 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAssets' ] );
 		add_action( 'admin_post_' . self::TOGGLE_ACTION, [ $this, 'handleToggle' ] );
+		add_action( 'admin_post_' . Shell::MODE_ACTION, [ $this, 'handleMode' ] );
+		if ( function_exists( 'add_filter' ) ) {
+			add_filter( 'admin_body_class', [ $this, 'bodyClass' ] );
+		}
+		foreach ( $this->screens as $screen ) {
+			$screen->register();
+		}
+	}
+
+	/** Marks WPEssential screens so the toolkit can paint the page and apply the user's colour mode. */
+	public function bodyClass( string $classes ): string {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( (string) $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- presentation only.
+		if ( ! str_starts_with( $page, 'wpessential' ) ) {
+			return $classes;
+		}
+
+		return trim( $classes . ' wpe-ui-screen wpe-mode-' . Shell::mode() );
+	}
+
+	public function handleMode(): void {
+		$this->requireCapability();
+		check_admin_referer( Shell::MODE_ACTION );
+
+		$mode   = isset( $_POST['mode'] ) ? sanitize_key( wp_unslash( (string) $_POST['mode'] ) ) : '';
+		$return = isset( $_POST['return'] ) ? sanitize_key( wp_unslash( (string) $_POST['return'] ) ) : Shell::DASHBOARD_SLUG;
+		if ( in_array( $mode, Shell::MODES, true ) ) {
+			update_user_meta( get_current_user_id(), Shell::MODE_META, $mode );
+		}
+
+		wp_safe_redirect( AdminUrl::page( str_starts_with( $return, 'wpessential' ) ? $return : Shell::DASHBOARD_SLUG ) );
+		exit;
 	}
 
 	public function registerMenu(): void {
@@ -56,9 +91,12 @@ final class CoreAdminController {
 		$parent = PlatformAdminController::PAGE_SLUG;
 		$cap    = PlatformAdminController::CAPABILITY;
 
-		add_menu_page( 'WPEssential Core', 'WPEssential Core', $cap, $parent, [ $this, 'renderDashboard' ], self::menuIcon(), 58 );
+		add_menu_page( 'WPEssential', 'WPEssential', $cap, $parent, [ $this, 'renderDashboard' ], self::menuIcon(), 58 );
 		add_submenu_page( $parent, __( 'Dashboard', 'wpessential' ), __( 'Dashboard', 'wpessential' ), $cap, $parent, [ $this, 'renderDashboard' ] );
 		add_submenu_page( $parent, __( 'Modules', 'wpessential' ), __( 'Modules', 'wpessential' ), $cap, Shell::MODULES_SLUG, [ $this, 'renderModules' ] );
+		foreach ( $this->screens as $screen ) {
+			add_submenu_page( $parent, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
+		}
 
 		// Module overview pages stay out of the sidebar; they are reached from the Modules screen.
 		foreach ( ModuleCatalog::all() as $module ) {
@@ -118,6 +156,18 @@ final class CoreAdminController {
 		exit;
 	}
 
+	public function renderScreen(): void {
+		$this->requireCapability();
+
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( (string) $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- routing only.
+		foreach ( $this->screens as $screen ) {
+			if ( $screen->slug() === $page ) {
+				$screen->render();
+				return;
+			}
+		}
+	}
+
 	public function renderDashboard(): void {
 		$this->requireCapability();
 
@@ -130,7 +180,7 @@ final class CoreAdminController {
 		}
 
 		$html  = '<section class="wpe-ui-hero"><div>';
-		$html .= '<p class="wpe-ui-eyebrow">' . esc_html__( 'WPEssential Core', 'wpessential' ) . '</p>';
+		$html .= '<p class="wpe-ui-eyebrow">' . esc_html__( 'WPEssential Framework', 'wpessential' ) . '</p>';
 		$html .= '<h1>' . esc_html__( 'Everything your WordPress site needs, in one place.', 'wpessential' ) . '</h1>';
 		$html .= '<p>' . esc_html__( 'Switch modules on or off, configure every system and keep your site lean. Free modules are always included; Premium unlocks the full platform.', 'wpessential' ) . '</p>';
 		$html .= '<div class="wpe-ui-hero__actions">' . Button::link( __( 'Manage modules', 'wpessential' ), AdminUrl::page( Shell::MODULES_SLUG ) ) . Button::link( __( 'System status', 'wpessential' ), AdminUrl::page( Shell::STATUS_SLUG ), 'ghost' ) . '</div></div>';
@@ -356,7 +406,7 @@ final class CoreAdminController {
 
 	/** @param array{edition:string,icon:string} $module */
 	private function icon( array $module ): string {
-		return '<span class="wpe-ui-icon' . ( $module['edition'] === 'pro' ? ' wpe-ui-icon--pro' : '' ) . '"><span class="dashicons ' . esc_attr( $module['icon'] ) . '" aria-hidden="true"></span></span>';
+		return '<span class="wpe-ui-icon' . ( $module['edition'] === 'pro' ? ' wpe-ui-icon--pro' : '' ) . '">' . Icon::render( $module['icon'], 20 ) . '</span>';
 	}
 
 	private function upsell(): string {
@@ -367,11 +417,7 @@ final class CoreAdminController {
 	}
 
 	private function output( string $current, string $content ): void {
-		echo '<div class="wrap wpe-ui" data-wpessential-surface="core">';
-		echo Shell::topbar( $current ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
-		echo $this->notice(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by Notice::render().
-		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built only from escaping toolkit components.
-		echo '</div>';
+		Screen::render( $current, $content, $this->notice() );
 	}
 
 	private function notice(): string {

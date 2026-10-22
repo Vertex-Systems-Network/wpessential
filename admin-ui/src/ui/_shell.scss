@@ -44,6 +44,12 @@
 		letter-spacing: -0.02em;
 	}
 
+	&__version {
+		color: var(--wpe-muted);
+		font-family: var(--wpe-font-mono);
+		font-size: 11px;
+	}
+
 	&__tag {
 		padding: 2px 8px;
 		border: 1px solid var(--wpe-line);
@@ -66,6 +72,9 @@
 
 	&__item {
 		position: relative;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
 		padding: 8px 12px;
 		border-radius: var(--wpe-radius);
 		color: var(--wpe-text-2);
@@ -83,6 +92,27 @@
 			color: var(--wpe-indigo);
 		}
 	}
+}
+
+.wpe-ui-icon-svg {
+	flex: none;
+}
+
+.wpe-ui-mode {
+	display: inline-flex;
+	margin: 0;
+
+	&__button {
+		min-width: 34px;
+		padding-right: 8px;
+		padding-left: 8px;
+	}
+}
+
+.wpe-ui-topbar .wpe-ui-button.is-current {
+	border-color: var(--wpe-indigo);
+	background: var(--wpe-indigo-tint);
+	color: var(--wpe-indigo);
 }
 
 .wpe-ui-topbar__end {
