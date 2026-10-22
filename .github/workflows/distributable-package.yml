@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for entry in main taxonomy fields query columns-runtime; do
+          for entry in main ui taxonomy fields query columns-runtime; do
             test -s "assets/admin/${entry}.js"
             test -s "assets/admin/${entry}.css"
             test -s "assets/admin/${entry}.asset.php"
@@ -263,6 +263,10 @@ jobs:
             wpessential/assets/admin/main.js \
             wpessential/assets/admin/main.css \
             wpessential/assets/admin/main.asset.php \
+            wpessential/assets/admin/ui.js \
+            wpessential/assets/admin/ui.css \
+            wpessential/assets/admin/ui.asset.php \
+            wpessential/assets/admin/option-contracts.json \
             wpessential/assets/admin/taxonomy.js \
             wpessential/assets/admin/taxonomy.css \
             wpessential/assets/admin/taxonomy.asset.php

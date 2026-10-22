@@ -17,6 +17,7 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\Admin\Ui\Shell;
 
 final class FieldAdminController {
 
@@ -137,7 +138,8 @@ final class FieldAdminController {
 			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json                                = is_string( $json ) ? $json : '{}';
 
-		echo '<div class="wrap wpessential-fields-wrap">';
+		echo '<div class="wrap wpe-ui wpessential-fields-wrap">';
+		echo Shell::topbar( self::PAGE_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
 		echo '<section id="wpessential-fields-root" aria-labelledby="wpessential-fields-title">';
 		echo '<h1 id="wpessential-fields-title">' . esc_html__( 'Custom Fields', 'wpessential' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Build canonical Field Groups through the shared Ability layer. Existing field UUIDs and storage keys remain immutable in ordinary editing.', 'wpessential' ) . '</p>';

@@ -1,0 +1,358 @@
+// Code counterparts of the Figma "Core/*" components.
+.wpe-ui-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: 40px;
+	padding: 9px 18px;
+	border: 1px solid transparent;
+	border-radius: var(--wpe-radius);
+	background: var(--wpe-card);
+	color: var(--wpe-text);
+	font-family: var(--wpe-font-body);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+
+	&--primary {
+		background: var(--wpe-orange);
+		color: var(--wpe-ink);
+
+		&:hover,
+		&:focus {
+			background: var(--wpe-orange-deep);
+			color: var(--wpe-on-ink);
+		}
+	}
+
+	&--secondary {
+		background: var(--wpe-indigo);
+		color: var(--wpe-on-ink);
+
+		&:hover,
+		&:focus {
+			background: var(--wpe-blue);
+			color: var(--wpe-on-ink);
+		}
+	}
+
+	&--ghost {
+		border-color: var(--wpe-line);
+
+		&:hover,
+		&:focus {
+			border-color: var(--wpe-indigo);
+			color: var(--wpe-indigo);
+		}
+	}
+
+	&--danger {
+		background: var(--wpe-danger);
+		color: var(--wpe-on-ink);
+	}
+
+	&--sm {
+		min-height: 32px;
+		padding: 5px 12px;
+		font-size: 13px;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wpe-blue);
+		outline-offset: 2px;
+	}
+
+	&:disabled,
+	&[aria-disabled="true"] {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+.wpe-ui-badge {
+	display: inline-block;
+	padding: 3px 9px;
+	border-radius: 999px;
+	font-family: var(--wpe-font-mono);
+	font-size: 10px;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	vertical-align: middle;
+
+	&--free {
+		background: var(--wpe-blue-tint);
+		color: var(--wpe-indigo);
+	}
+
+	&--pro {
+		background: var(--wpe-orange-tint);
+		color: var(--wpe-orange-text);
+	}
+}
+
+.wpe-ui-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+
+	&::before {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: currentcolor;
+		content: "";
+	}
+
+	&--running {
+		background: var(--wpe-success-tint);
+		color: var(--wpe-success);
+	}
+
+	&--off {
+		background: var(--wpe-surface-2);
+		color: var(--wpe-muted);
+	}
+
+	&--locked {
+		background: var(--wpe-orange-tint);
+		color: var(--wpe-orange-text);
+	}
+
+	&--soon,
+	&--waiting {
+		background: var(--wpe-warning-tint);
+		color: var(--wpe-warning);
+	}
+}
+
+.wpe-ui-count {
+	display: inline-block;
+	min-width: 22px;
+	padding: 1px 7px;
+	border-radius: 999px;
+	background: var(--wpe-surface-2);
+	color: var(--wpe-text-2);
+	font-size: 12px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.wpe-ui-panel {
+	margin: 0 0 20px;
+	padding: 22px;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg);
+	background: var(--wpe-card);
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 16px;
+
+		h2 {
+			margin: 0;
+		}
+	}
+}
+
+.wpe-ui-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 16px 18px;
+	border: 1px solid var(--wpe-line);
+	border-radius: 12px;
+	background: var(--wpe-card);
+
+	&__value {
+		font-family: var(--wpe-font-heading);
+		font-size: 26px;
+		font-weight: 600;
+		line-height: 1.1;
+	}
+
+	&__label {
+		color: var(--wpe-muted);
+		font-size: 13px;
+	}
+}
+
+.wpe-ui-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.wpe-ui-notice {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 16px;
+	padding: 12px 16px;
+	border-left: 4px solid var(--wpe-blue);
+	border-radius: var(--wpe-radius);
+	background: var(--wpe-card);
+	box-shadow: var(--wpe-shadow);
+	font-weight: 600;
+
+	&--success {
+		border-color: var(--wpe-success);
+	}
+
+	&--warning {
+		border-color: var(--wpe-orange);
+	}
+
+	&--error {
+		border-color: var(--wpe-danger);
+	}
+}
+
+.wpe-ui-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--wpe-muted);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+
+	&__track {
+		position: relative;
+		width: 40px;
+		height: 22px;
+		border-radius: 999px;
+		background: #c9d2e3;
+		transition: background 0.15s ease;
+	}
+
+	&__thumb {
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: #fff;
+		box-shadow: 0 1px 2px rgb(11 26 61 / 30%);
+		transition: transform 0.15s ease;
+	}
+
+	&[aria-checked="true"] {
+		color: var(--wpe-text);
+
+		.wpe-ui-toggle__track {
+			background: var(--wpe-orange);
+		}
+
+		.wpe-ui-toggle__thumb {
+			transform: translateX(18px);
+		}
+	}
+
+	&:focus-visible .wpe-ui-toggle__track {
+		outline: 2px solid var(--wpe-blue);
+		outline-offset: 2px;
+	}
+
+	&--locked {
+		padding: 5px 12px;
+		border: 1px solid var(--wpe-orange);
+		border-radius: 999px;
+		background: var(--wpe-orange-tint);
+		color: var(--wpe-orange-text);
+		text-decoration: none;
+	}
+}
+
+.wpe-ui-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: 4px;
+	border-radius: 12px;
+	background: var(--wpe-surface-2);
+}
+
+.wpe-ui-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 14px;
+	border: 0;
+	border-radius: 9px;
+	background: transparent;
+	color: var(--wpe-text-2);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+
+	&.is-active,
+	&[aria-selected="true"],
+	&[aria-pressed="true"] {
+		background: var(--wpe-card);
+		box-shadow: var(--wpe-shadow);
+		color: var(--wpe-indigo);
+	}
+}
+
+.wpe-ui-empty {
+	padding: 48px 24px;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg);
+	background: var(--wpe-card);
+	color: var(--wpe-muted);
+	text-align: center;
+
+	h2 {
+		margin: 12px 0 4px;
+	}
+}
+
+.wpe-ui-input,
+.wpe-ui-select {
+	width: 100%;
+	min-height: 40px;
+	padding: 0 12px;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius);
+	background: var(--wpe-card);
+	color: var(--wpe-text);
+	font-size: 14px;
+}
+
+.wpe-ui-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 20px;
+	padding: 10px;
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg);
+	background: var(--wpe-card);
+
+	.wpe-ui-input {
+		flex: 1 1 16rem;
+		width: auto;
+	}
+
+	.wpe-ui-select {
+		width: auto;
+	}
+}

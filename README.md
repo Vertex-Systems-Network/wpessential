@@ -10,6 +10,8 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 **Overall terminal milestone completion (equal-weight): `5 / 10 = 50%`.** Active/partial milestones: **3 / 10** (M6-M8). Full-parity/release milestones not promoted: **2 / 10** (M9-M10).
 
+**Core UI toolkit checkpoint (outside the 10-milestone completion score):** ADR-0230 adds the WPEssential Core admin shell. It includes a Dashboard, a Free + Premium module manager with an on/off switch per module, a module overview page for each of the 29 surfaces, and System Status. These pages are built from the `Platform\Admin\Ui` toolkit, which is designed in Figma on the pages "WPEssential Core" and "WPEssential Core · UI Toolkit". The toolkit is applied to the five 100% module screens: Taxonomies, Custom Fields, Relations, Query and Admin Columns. Milestone progress bars remain unchanged.
+
 **Quality recovery checkpoint (outside the 10-milestone completion score):** Repository quality profile ADR-0223 merged in PR [#1427](https://github.com/Vertex-Systems-Network/wpessential/pull/1427). Its exact-head CI completed 55/55 checks successfully; the reviewed local run reported 0 PHPStan errors and PHPUnit 1,421 tests / 7,489 assertions. PR #1416 and Issue #1417 were superseded by the profile-based gate. Whole-tree PHPCS remains a distinct known baseline and is not represented as clean. Milestone progress bars remain unchanged.
 
 | Milestone | Scope | Evidence-based progress | State | Current gate |

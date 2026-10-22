@@ -1,0 +1,35 @@
+// Values mirror the Figma "WPE.org" variable collection.
+.wpe-ui {
+	--wpe-ink: #0b1a3d;
+	--wpe-on-ink: #fff;
+	--wpe-on-ink-muted: #a9b6d3;
+	--wpe-text: #0b1a3d;
+	--wpe-text-2: #33405c;
+	--wpe-muted: #5d6780;
+	--wpe-line: #dde4f0;
+	--wpe-surface: #f3f6fc;
+	--wpe-surface-2: #e8eef8;
+	--wpe-card: #fff;
+	--wpe-orange: #ec7d1a;
+	--wpe-orange-deep: #b85d0b;
+	--wpe-orange-tint: #fdf1e6;
+	--wpe-orange-text: #a24f06;
+	--wpe-indigo: #1f48a6;
+	--wpe-indigo-tint: #e9eef9;
+	--wpe-blue: #2f6be0;
+	--wpe-blue-tint: #e8f0fd;
+	--wpe-success: #17704a;
+	--wpe-success-tint: #e3f4ec;
+	--wpe-warning: #8a5300;
+	--wpe-warning-tint: #fbf0dc;
+	--wpe-danger: #c0362c;
+	--wpe-danger-tint: #fbe9e7;
+	--wpe-radius-sm: 6px;
+	--wpe-radius: 10px;
+	--wpe-radius-lg: 14px;
+	--wpe-shadow: 0 1px 2px rgb(11 26 61 / 12%);
+	--wpe-shadow-lg: 0 16px 40px rgb(11 26 61 / 25%);
+	--wpe-font-heading: "Bricolage Grotesque", "Plus Jakarta Sans", -apple-system, blinkmacsystemfont, "Segoe UI", sans-serif;
+	--wpe-font-body: "Plus Jakarta Sans", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, sans-serif;
+	--wpe-font-mono: "JetBrains Mono", ui-monospace, sfmono-regular, menlo, consolas, monospace;
+}

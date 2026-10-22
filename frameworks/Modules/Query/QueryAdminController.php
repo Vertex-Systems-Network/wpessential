@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\Ui\Shell;
 
 final class QueryAdminController {
 
@@ -91,7 +92,8 @@ final class QueryAdminController {
 			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json      = is_string( $json ) ? $json : '{}';
 
-		echo '<div class="wrap wpessential-query-wrap">';
+		echo '<div class="wrap wpe-ui wpessential-query-wrap">';
+		echo Shell::topbar( self::PAGE_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
 		echo '<section id="wpessential-query-root" data-wpessential-surface="query" aria-labelledby="wpessential-query-page-title">';
 		echo '<h1 id="wpessential-query-page-title">' . esc_html__( 'Query Builder', 'wpessential' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Author a bounded Query definition from registered data-source metadata. Execution preview remains unavailable.', 'wpessential' ) . '</p>';

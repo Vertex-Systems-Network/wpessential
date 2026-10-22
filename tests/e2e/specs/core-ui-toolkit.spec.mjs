@@ -1,0 +1,117 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import process from 'node:process';
+
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test } from '@playwright/test';
+import { runCLI } from '@wp-playground/cli';
+
+const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
+
+if (!pluginDirectory) {
+  throw new Error('WPE_E2E_PLUGIN_DIR must point to the unpacked WPEssential distributable.');
+}
+
+let playground;
+
+async function visitCore(page, slug) {
+  const response = await page.goto(
+    `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
+    { waitUntil: 'domcontentloaded' },
+  );
+
+  expect(response?.ok(), `${slug} should return a successful HTTP response.`).toBe(true);
+  const root = page.locator('[data-wpessential-surface="core"]');
+  await expect(root).toBeVisible();
+  return root;
+}
+
+async function screenshot(page, name) {
+  const directory = path.resolve(process.cwd(), 'test-results', 'core-ui');
+  await fs.mkdir(directory, { recursive: true });
+  await page.screenshot({ path: path.join(directory, `${name}.png`), fullPage: true });
+}
+
+test.beforeAll(async () => {
+  playground = await runCLI({
+    command: 'server',
+    port: 0,
+    quiet: true,
+    skipBrowser: true,
+    mount: [
+      {
+        hostPath: pluginDirectory,
+        vfsPath: '/wordpress/wp-content/plugins/wpessential',
+      },
+    ],
+    blueprint: {
+      preferredVersions: {
+        php: '8.2',
+        wp: '7.1',
+      },
+      login: true,
+      steps: [
+        {
+          step: 'activatePlugin',
+          pluginPath: '/wordpress/wp-content/plugins/wpessential/wpessential.php',
+        },
+      ],
+    },
+  });
+});
+
+test.afterAll(async () => {
+  await playground?.server?.close();
+});
+
+test('Core dashboard renders inside the toolkit shell', async ({ page }) => {
+  await visitCore(page, 'wpessential');
+
+  await expect(page.getByRole('navigation', { name: 'WPEssential Core' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Everything your WordPress site needs, in one place.', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Active modules', level: 2 })).toBeVisible();
+  await screenshot(page, 'dashboard');
+});
+
+test('Free module can be switched off and on from the module manager', async ({ page }) => {
+  await visitCore(page, 'wpessential-modules');
+
+  const card = page.locator('[data-wpe-module]').filter({ has: page.getByRole('heading', { name: 'Taxonomies' }) });
+  const toggle = card.getByRole('switch', { name: 'Turn Taxonomies on or off' });
+  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+
+  await toggle.click();
+  await expect(page.getByRole('status').filter({ hasText: 'Taxonomies is now off.' })).toBeVisible();
+  await expect(card.getByRole('switch')).toHaveAttribute('aria-checked', 'false');
+
+  await card.getByRole('switch').click();
+  await expect(page.getByRole('status').filter({ hasText: 'Taxonomies is now on.' })).toBeVisible();
+  await expect(card.getByRole('switch')).toHaveAttribute('aria-checked', 'true');
+
+  const premium = page.locator('[data-wpe-module][data-edition="pro"]').first();
+  await expect(premium.getByRole('link', { name: 'Premium' })).toBeVisible();
+  await screenshot(page, 'modules');
+});
+
+test('module overview lists contract options with tier filters', async ({ page }) => {
+  await visitCore(page, 'wpessential-module-taxonomies');
+
+  await expect(page.getByRole('heading', { name: /Taxonomies/, level: 1 })).toBeVisible();
+  await page.getByRole('tab', { name: /Essential/ }).click();
+  await expect(page.locator('[data-wpe-option]:not([hidden])').first()).toHaveAttribute('data-tier', 'Essential');
+  await screenshot(page, 'module-taxonomies');
+});
+
+test('completed module screens adopt the toolkit shell', async ({ page }) => {
+  await page.goto(`${playground.serverUrl}/wp-admin/admin.php?page=wpessential-taxonomy`, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.wrap.wpe-ui .wpe-ui-topbar')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Taxonomies', level: 1 })).toBeVisible();
+  await screenshot(page, 'taxonomies-builder');
+});
+
+test('Core module manager has zero axe violations', async ({ page }) => {
+  await visitCore(page, 'wpessential-modules');
+
+  const results = await new AxeBuilder({ page }).include('[data-wpessential-surface="core"]').analyze();
+  expect(results.violations.map((violation) => violation.id)).toEqual([]);
+});

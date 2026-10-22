@@ -21,6 +21,7 @@ const assetRoot = path.join(root, 'assets', 'admin');
 
 const entries = {
   main: path.join(sourceRoot, 'main.ts'),
+  ui: path.join(sourceRoot, 'ui.ts'),
   taxonomy: path.join(sourceRoot, 'taxonomy.ts'),
   fields: path.join(sourceRoot, 'fields.ts'),
   query: path.join(sourceRoot, 'query.ts'),
@@ -30,6 +31,7 @@ const entries = {
 
 const styles = {
   main: path.join(sourceRoot, 'admin.scss'),
+  ui: path.join(sourceRoot, 'ui.scss'),
   taxonomy: path.join(sourceRoot, 'admin.scss'),
   fields: path.join(sourceRoot, 'fields.scss'),
   query: path.join(sourceRoot, 'query.scss'),
@@ -225,6 +227,34 @@ function assetVersion(entry) {
   return hash.digest('hex').slice(0, 20);
 }
 
+// Compact bundle of the atomic option contracts, shipped with the plugin for the Core module
+// overview pages (the config/ tree is development-only and not packaged).
+function writeOptionContracts() {
+  const contractRoot = path.join(root, 'config', 'product', 'option-contracts');
+  const bundle = {};
+  for (const file of readdirSync(contractRoot).filter((name) => name.endsWith('.json')).sort()) {
+    const data = JSON.parse(readFileSync(path.join(contractRoot, file), 'utf8'));
+    bundle[file.replace(/\.json$/, '')] = {
+      status: data.status ?? '',
+      coverage_summary: data.coverage_summary ?? {},
+      feature_groups: (data.feature_groups ?? []).map((group) => ({
+        label: group.label ?? '',
+        options: (group.options ?? []).map((option) => ({
+          id: option.id ?? '',
+          label: option.label ?? '',
+          parity_status: option.parity_status ?? '',
+          ui: {
+            tier: option.ui?.tier ?? '',
+            group: option.ui?.group ?? '',
+            control: option.ui?.control ?? '',
+          },
+        })),
+      })),
+    };
+  }
+  writeFileSync(path.join(assetRoot, 'option-contracts.json'), `${JSON.stringify(bundle)}\n`, 'utf8');
+}
+
 function writeAssetMetadata() {
   for (const entry of Object.keys(entries)) {
     const version = assetVersion(entry);
@@ -280,6 +310,7 @@ async function buildAdmin() {
 
   compileStyles();
   writeAssetMetadata();
+  writeOptionContracts();
   verifyAssets();
 }
 

@@ -29,7 +29,7 @@ async function visitAdminPage(page, slug) {
 }
 
 async function visitRuntimeObservatory(page) {
-  return visitAdminPage(page, 'wpessential');
+  return visitAdminPage(page, 'wpessential-status');
 }
 
 async function visitCustomPostTypes(page) {

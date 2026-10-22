@@ -1,0 +1,273 @@
+// Restyles the WordPress markup that existing module screens already output, so they adopt
+// the toolkit without changing IDs, data attributes or JavaScript hooks.
+.wpe-ui {
+
+	> section > h1 + p,
+	> h1 + p {
+		max-width: 52rem;
+		margin: 6px 0 20px;
+		color: var(--wpe-muted);
+		font-size: 15px;
+	}
+
+	.wpessential-cpt-panel,
+	.wpessential-fields-panel,
+	> section:not([class]) > section:not([class]),
+	> section:not([id]):not([class]):not([data-wpe-category-group]) {
+		margin: 0 0 20px;
+		padding: 22px;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius-lg);
+		background: var(--wpe-card);
+	}
+
+	.wpessential-cpt-options,
+	fieldset {
+		margin: 16px 0;
+		padding: 0;
+		border: 0;
+
+		legend {
+			margin-bottom: 8px;
+			font-weight: 600;
+		}
+	}
+
+	input[type="text"],
+	input[type="number"],
+	input[type="search"],
+	input[type="url"],
+	textarea,
+	select {
+		min-height: 40px;
+		padding: 0 12px;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius);
+		background-color: var(--wpe-card);
+		box-shadow: none;
+		color: var(--wpe-text);
+		font-size: 14px;
+
+		&:focus {
+			border-color: var(--wpe-blue);
+			outline: 2px solid var(--wpe-blue-tint);
+			box-shadow: none;
+		}
+
+		&:disabled,
+		&[readonly] {
+			background-color: var(--wpe-surface);
+			color: var(--wpe-muted);
+		}
+	}
+
+	textarea {
+		padding: 10px 12px;
+	}
+
+	select {
+		padding-right: 32px;
+	}
+
+	input[type="checkbox"],
+	input[type="radio"] {
+		border-color: #b7c2d8;
+		box-shadow: none;
+
+		&:checked {
+			border-color: var(--wpe-orange);
+			background: var(--wpe-orange);
+		}
+
+		&:checked::before {
+			filter: brightness(0);
+		}
+
+		&:focus {
+			outline: 2px solid var(--wpe-blue-tint);
+			box-shadow: none;
+		}
+	}
+
+	input[type="radio"]:checked::before {
+		background: var(--wpe-ink);
+	}
+
+	label strong {
+		color: var(--wpe-text);
+		font-weight: 600;
+	}
+
+	.button {
+		min-height: 38px;
+		padding: 0 16px;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius);
+		background: var(--wpe-card);
+		box-shadow: none;
+		color: var(--wpe-text);
+		font-weight: 600;
+		line-height: 36px;
+
+		&:hover,
+		&:focus {
+			border-color: var(--wpe-indigo);
+			background: var(--wpe-card);
+			color: var(--wpe-indigo);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--wpe-blue-tint);
+		}
+	}
+
+	.button-primary {
+		border-color: var(--wpe-orange);
+		background: var(--wpe-orange);
+		color: var(--wpe-ink);
+
+		&:hover,
+		&:focus {
+			border-color: var(--wpe-orange-deep);
+			background: var(--wpe-orange-deep);
+			color: var(--wpe-on-ink);
+		}
+	}
+
+	.button-small {
+		min-height: 30px;
+		padding: 0 10px;
+		font-size: 12px;
+		line-height: 28px;
+	}
+
+	.notice {
+		margin: 0 0 16px;
+		padding: 10px 16px;
+		border: 0;
+		border-left: 4px solid var(--wpe-blue);
+		border-radius: var(--wpe-radius);
+		background: var(--wpe-card);
+		box-shadow: var(--wpe-shadow);
+
+		p {
+			margin: 0;
+			font-weight: 600;
+		}
+	}
+
+	.notice-success {
+		border-left-color: var(--wpe-success);
+	}
+
+	.notice-warning {
+		border-left-color: var(--wpe-orange);
+	}
+
+	.notice-error {
+		border-left-color: var(--wpe-danger);
+	}
+
+	.widefat {
+		overflow: hidden;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius-lg);
+		border-collapse: separate;
+		border-spacing: 0;
+		background: var(--wpe-card);
+		box-shadow: none;
+
+		thead th,
+		thead td {
+			padding: 10px 14px;
+			border-bottom: 0;
+			background: var(--wpe-surface);
+			color: var(--wpe-muted);
+			font-family: var(--wpe-font-mono);
+			font-size: 11px;
+			font-weight: 500;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+		}
+
+		tbody td,
+		tbody th {
+			padding: 13px 14px;
+			border-top: 1px solid var(--wpe-surface-2);
+			color: var(--wpe-text-2);
+			vertical-align: middle;
+		}
+
+		tbody tr:first-child td,
+		tbody tr:first-child th {
+			border-top: 0;
+		}
+
+		&.striped > tbody > :nth-child(odd) {
+			background: transparent;
+		}
+
+		tbody tr:hover {
+			background: var(--wpe-surface);
+		}
+	}
+
+	.form-table {
+		th {
+			width: 220px;
+			padding: 16px 20px 16px 0;
+			color: var(--wpe-text);
+			font-weight: 600;
+		}
+
+		td {
+			padding: 12px 0;
+		}
+
+		tr {
+			border-bottom: 1px solid var(--wpe-surface-2);
+		}
+	}
+
+	.submit {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin: 20px 0 0;
+		padding: 0;
+	}
+
+	.wpessential-taxonomy-tier-navigation {
+		display: inline-flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		margin-bottom: 8px;
+		padding: 4px;
+		border-radius: 12px;
+		background: var(--wpe-surface-2);
+
+		.button,
+		.button-primary {
+			min-height: 32px;
+			border: 0;
+			background: transparent;
+			color: var(--wpe-text-2);
+			line-height: 32px;
+		}
+
+		.button[aria-pressed="true"],
+		.button-primary {
+			background: var(--wpe-card);
+			box-shadow: var(--wpe-shadow);
+			color: var(--wpe-indigo);
+		}
+	}
+
+	.wpessential-cpt-validation {
+		margin: 16px 0;
+		padding: 14px 16px;
+		border-left: 4px solid var(--wpe-blue);
+		border-radius: var(--wpe-radius);
+		background: var(--wpe-blue-tint);
+	}
+}
