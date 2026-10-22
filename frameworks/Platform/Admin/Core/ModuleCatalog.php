@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Presentation catalog of every WPEssential Core module surface.
+ * Presentation catalog of every WPEssential module surface.
  *
  * Editions mirror the runtime `ModuleManifest` editions. `runtime` marks surfaces that ship a
  * kernel module; the others are contract-complete surfaces without a runtime module yet.

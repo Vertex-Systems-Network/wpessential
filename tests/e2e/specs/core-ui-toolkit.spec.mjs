@@ -64,10 +64,10 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('Core dashboard renders inside the toolkit shell', async ({ page }) => {
+test('Dashboard renders inside the toolkit shell', async ({ page }) => {
   await visitCore(page, 'wpessential');
 
-  await expect(page.getByRole('navigation', { name: 'WPEssential Core' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'WPEssential', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Everything your WordPress site needs, in one place.', level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Active modules', level: 2 })).toBeVisible();
   await screenshot(page, 'dashboard');
@@ -109,7 +109,7 @@ test('completed module screens adopt the toolkit shell', async ({ page }) => {
   await screenshot(page, 'taxonomies-builder');
 });
 
-test('Core module manager has zero axe violations', async ({ page }) => {
+test('Module manager has zero axe violations', async ({ page }) => {
   await visitCore(page, 'wpessential-modules');
 
   const results = await new AxeBuilder({ page }).include('[data-wpessential-surface="core"]').analyze();

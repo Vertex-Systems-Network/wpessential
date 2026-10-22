@@ -23,7 +23,7 @@ use WPEssential\Platform\Admin\Ui\Toggle;
 use WPEssential\Platform\Modules\ModuleState;
 
 /**
- * WPEssential Core admin: dashboard, module manager (Free + Premium on/off) and one overview
+ * WPEssential admin: dashboard, module manager (Free + Premium on/off) and one overview
  * page per module. Built only from the `Platform\Admin\Ui` toolkit components.
  */
 final class CoreAdminController {
@@ -56,7 +56,7 @@ final class CoreAdminController {
 		$parent = PlatformAdminController::PAGE_SLUG;
 		$cap    = PlatformAdminController::CAPABILITY;
 
-		add_menu_page( 'WPEssential Core', 'WPEssential Core', $cap, $parent, [ $this, 'renderDashboard' ], self::menuIcon(), 58 );
+		add_menu_page( 'WPEssential', 'WPEssential', $cap, $parent, [ $this, 'renderDashboard' ], self::menuIcon(), 58 );
 		add_submenu_page( $parent, __( 'Dashboard', 'wpessential' ), __( 'Dashboard', 'wpessential' ), $cap, $parent, [ $this, 'renderDashboard' ] );
 		add_submenu_page( $parent, __( 'Modules', 'wpessential' ), __( 'Modules', 'wpessential' ), $cap, Shell::MODULES_SLUG, [ $this, 'renderModules' ] );
 
@@ -130,7 +130,7 @@ final class CoreAdminController {
 		}
 
 		$html  = '<section class="wpe-ui-hero"><div>';
-		$html .= '<p class="wpe-ui-eyebrow">' . esc_html__( 'WPEssential Core', 'wpessential' ) . '</p>';
+		$html .= '<p class="wpe-ui-eyebrow">' . esc_html__( 'WPEssential Framework', 'wpessential' ) . '</p>';
 		$html .= '<h1>' . esc_html__( 'Everything your WordPress site needs, in one place.', 'wpessential' ) . '</h1>';
 		$html .= '<p>' . esc_html__( 'Switch modules on or off, configure every system and keep your site lean. Free modules are always included; Premium unlocks the full platform.', 'wpessential' ) . '</p>';
 		$html .= '<div class="wpe-ui-hero__actions">' . Button::link( __( 'Manage modules', 'wpessential' ), AdminUrl::page( Shell::MODULES_SLUG ) ) . Button::link( __( 'System status', 'wpessential' ), AdminUrl::page( Shell::STATUS_SLUG ), 'ghost' ) . '</div></div>';

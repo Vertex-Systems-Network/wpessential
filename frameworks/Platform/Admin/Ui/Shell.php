@@ -32,9 +32,9 @@ final class Shell {
 	public static function topbar( string $current ): string {
 		$html  = '<div class="wpe-ui-topbar">';
 		$html .= '<a class="wpe-ui-logo" href="' . esc_url( AdminUrl::page( self::DASHBOARD_SLUG ) ) . '">';
-		$html .= '<span class="wpe-ui-logo__mark" aria-hidden="true">W<i></i></span><span class="wpe-ui-logo__word">wpessential</span><span class="wpe-ui-logo__tag">Core</span>';
+		$html .= '<span class="wpe-ui-logo__mark" aria-hidden="true">W<i></i></span><span class="wpe-ui-logo__word">wpessential</span><span class="wpe-ui-logo__tag">' . esc_html__( 'Framework', 'wpessential' ) . '</span>';
 		$html .= '<span class="screen-reader-text"> ' . esc_html__( 'dashboard', 'wpessential' ) . '</span></a>';
-		$html .= '<nav class="wpe-ui-nav" aria-label="' . esc_attr__( 'WPEssential Core', 'wpessential' ) . '">';
+		$html .= '<nav class="wpe-ui-nav" aria-label="' . esc_attr__( 'WPEssential', 'wpessential' ) . '">';
 		foreach (
 			[
 				self::DASHBOARD_SLUG => __( 'Dashboard', 'wpessential' ),
