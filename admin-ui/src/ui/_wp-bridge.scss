@@ -2,6 +2,15 @@
 // the toolkit without changing IDs, data attributes or JavaScript hooks.
 .wpe-ui {
 
+	// Toolkit screens use the full admin width; per-screen caps from older stylesheets are lifted.
+	// `&.wrap` raises specificity so load order against the screen stylesheets does not matter.
+	&.wrap #wpessential-admin-root,
+	&.wrap #wpessential-fields-root,
+	&.wrap .wpessential-columns,
+	&.wrap .wpessential-query {
+		max-width: none;
+	}
+
 	> section > h1 + p,
 	> h1 + p {
 		max-width: 52rem;
