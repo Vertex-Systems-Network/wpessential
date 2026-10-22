@@ -27,13 +27,13 @@ final class PageHeader {
 
 	/** $actions must already be escaped HTML built from toolkit components. */
 	public static function render( string $eyebrow, string $title, string $description = '', string $actions = '' ): string {
-		$html  = '<header class="wpe-ui-page-header"><div class="wpe-ui-page-header__copy">';
+		$html  = '<div class="wpe-ui-page-header"><div class="wpe-ui-page-header__copy">';
 		$html .= $eyebrow !== '' ? '<p class="wpe-ui-eyebrow">' . esc_html( $eyebrow ) . '</p>' : '';
 		$html .= '<h1>' . esc_html( $title ) . '</h1>';
 		$html .= $description !== '' ? '<p class="wpe-ui-page-header__desc">' . esc_html( $description ) . '</p>' : '';
 		$html .= '</div>';
 		$html .= $actions !== '' ? '<div class="wpe-ui-page-header__actions">' . $actions . '</div>' : '';
 
-		return $html . '</header>';
+		return $html . '</div>';
 	}
 }

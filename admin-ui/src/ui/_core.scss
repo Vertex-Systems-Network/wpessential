@@ -123,7 +123,7 @@
 
 	&--pro {
 		background: var(--wpe-orange-tint);
-		color: var(--wpe-orange-deep);
+		color: var(--wpe-orange-text);
 	}
 
 	&--lg {
@@ -231,7 +231,8 @@
 	}
 
 	&.is-off {
-		opacity: 0.75;
+		border-style: dashed;
+		background: var(--wpe-surface);
 	}
 }
 
@@ -355,7 +356,7 @@
 
 	&--accent {
 		background: var(--wpe-orange-tint);
-		color: var(--wpe-orange-deep);
+		color: var(--wpe-orange-text);
 	}
 }
 

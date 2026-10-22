@@ -30,9 +30,10 @@ final class Shell {
 
 	/** $current is a page slug; module screens pass their own slug and highlight "Modules". */
 	public static function topbar( string $current ): string {
-		$html  = '<header class="wpe-ui-topbar">';
-		$html .= '<a class="wpe-ui-logo" href="' . esc_url( AdminUrl::page( self::DASHBOARD_SLUG ) ) . '" aria-label="' . esc_attr__( 'WPEssential Core dashboard', 'wpessential' ) . '">';
-		$html .= '<span class="wpe-ui-logo__mark" aria-hidden="true">W<i></i></span><span class="wpe-ui-logo__word">wpessential</span><span class="wpe-ui-logo__tag">Core</span></a>';
+		$html  = '<div class="wpe-ui-topbar">';
+		$html .= '<a class="wpe-ui-logo" href="' . esc_url( AdminUrl::page( self::DASHBOARD_SLUG ) ) . '">';
+		$html .= '<span class="wpe-ui-logo__mark" aria-hidden="true">W<i></i></span><span class="wpe-ui-logo__word">wpessential</span><span class="wpe-ui-logo__tag">Core</span>';
+		$html .= '<span class="screen-reader-text"> ' . esc_html__( 'dashboard', 'wpessential' ) . '</span></a>';
 		$html .= '<nav class="wpe-ui-nav" aria-label="' . esc_attr__( 'WPEssential Core', 'wpessential' ) . '">';
 		foreach (
 			[
@@ -49,6 +50,6 @@ final class Shell {
 			? '<span class="wpe-ui-badge wpe-ui-badge--pro">' . esc_html__( 'Premium active', 'wpessential' ) . '</span>'
 			: Button::link( __( 'Go Premium', 'wpessential' ), self::UPGRADE_URL, 'primary', true, true );
 
-		return $html . '</div></header>';
+		return $html . '</div></div>';
 	}
 }

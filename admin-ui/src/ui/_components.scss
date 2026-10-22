@@ -90,7 +90,7 @@
 
 	&--pro {
 		background: var(--wpe-orange-tint);
-		color: var(--wpe-orange-deep);
+		color: var(--wpe-orange-text);
 	}
 }
 
@@ -124,7 +124,7 @@
 
 	&--locked {
 		background: var(--wpe-orange-tint);
-		color: var(--wpe-orange-deep);
+		color: var(--wpe-orange-text);
 	}
 
 	&--soon,
@@ -275,7 +275,7 @@
 		border: 1px solid var(--wpe-orange);
 		border-radius: 999px;
 		background: var(--wpe-orange-tint);
-		color: var(--wpe-orange-deep);
+		color: var(--wpe-orange-text);
 		text-decoration: none;
 	}
 }

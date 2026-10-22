@@ -236,7 +236,7 @@ final class CoreAdminController {
 			]
 		);
 
-		$html .= '<header class="wpe-ui-module-head">' . str_replace( 'wpe-ui-icon', 'wpe-ui-icon wpe-ui-icon--lg', $this->icon( $module ) );
+		$html .= '<div class="wpe-ui-module-head">' . str_replace( 'wpe-ui-icon', 'wpe-ui-icon wpe-ui-icon--lg', $this->icon( $module ) );
 		$html .= '<div class="wpe-ui-module-head__copy"><h1>' . esc_html( $module['name'] ) . ' ' . Badge::edition( $module['edition'] ) . '</h1>';
 		$html .= '<p class="wpe-ui-muted">' . esc_html( $module['description'] ) . '</p>';
 		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Status:', 'wpessential' ) . ' ' . $this->statusPill( $module ) . '</p></div>';
@@ -244,7 +244,7 @@ final class CoreAdminController {
 		if ( $module['builder'] !== null && $this->isActive( $module ) ) {
 			$html .= Button::link( __( 'Open builder', 'wpessential' ), AdminUrl::page( $module['builder'] ), 'secondary' );
 		}
-		$html .= $this->toggle( $module, $page ) . '</div></header>';
+		$html .= $this->toggle( $module, $page ) . '</div></div>';
 
 		if ( $this->isLocked( $module ) ) {
 			$html .= $this->upsell();
