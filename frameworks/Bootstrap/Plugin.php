@@ -37,7 +37,13 @@ use WPEssential\Platform\Assets\NativeWordPressAssetEnvironment;
 use WPEssential\Platform\Assets\TrustedAssetBuildEntryRegistry;
 use WPEssential\Platform\Assets\WordPressAssetLoader;
 use WPEssential\Platform\Admin\AdminAssetManifest;
+use WPEssential\Platform\Admin\Connect\Account;
+use WPEssential\Platform\Admin\Connect\LicenseScreen;
+use WPEssential\Platform\Admin\Connect\LicenseService;
 use WPEssential\Platform\Admin\Core\CoreAdminController;
+use WPEssential\Platform\Admin\Docs\DocsScreen;
+use WPEssential\Platform\Admin\Elements\ElementRegistry;
+use WPEssential\Platform\Admin\Elements\ElementsScreen;
 use WPEssential\Platform\Admin\Core\ModuleToggleStore;
 use WPEssential\Platform\Admin\Core\OptionContractReader;
 use WPEssential\Platform\Admin\PlatformAdminController;
@@ -166,7 +172,19 @@ final class Plugin {
 		$adminAssets        = new AdminAssetManifest( $pluginRoot, $pluginUrl );
 		$adminController    = new PlatformAdminController( $runtimeDiagnostics, $adminAssets );
 		$moduleToggles      = new ModuleToggleStore();
-		$coreAdmin          = new CoreAdminController( self::$kernel, $moduleToggles, new OptionContractReader( $pluginRoot ), $adminAssets );
+		$license            = new LicenseService();
+		$license->schedule();
+		$coreAdmin          = new CoreAdminController(
+			self::$kernel,
+			$moduleToggles,
+			new OptionContractReader( $pluginRoot ),
+			$adminAssets,
+			[
+				new ElementsScreen( new ElementRegistry() ),
+				new LicenseScreen( $license, new Account( $license ) ),
+				new DocsScreen(),
+			]
+		);
 		Shell::configure( $activationPolicy->allows( new ModuleManifest( id: 'premium-probe', name: 'Premium probe', version: '0.0.0', edition: 'pro' ) ) );
 
 		$services->set( 'platform.nonce', $nonceManager );
