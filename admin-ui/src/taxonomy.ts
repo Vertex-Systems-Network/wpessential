@@ -1,5 +1,6 @@
 import { TAXONOMY_LABEL_TEMPLATES, bindAutofill } from './core/autofill';
 import { bindCounters } from './core/counter';
+import { bindWizard } from './core/wizard';
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName } from './core/levels';
 import { TAXONOMY_DEPENDENCIES } from './taxonomy-dependencies';
@@ -1403,6 +1404,7 @@ function boot(): void {
 	if ( taxonomyForm instanceof HTMLFormElement ) {
 		bindDependencies( taxonomyForm, TAXONOMY_DEPENDENCIES, 'taxonomy' );
 		bindCounters( taxonomyForm );
+		bindWizard( taxonomyForm, { prefix: 'taxonomy' } );
 	}
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );

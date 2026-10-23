@@ -574,3 +574,128 @@ th[aria-sort="descending"] .wpe-ui-sort::after {
 	max-width: 100%;
 	text-overflow: ellipsis;
 }
+
+// Wizard mode: one section per step with an explanation and an illustration.
+.wpe-ui-wizard-switch {
+	margin-bottom: var(--wpe-space-3);
+}
+
+.is-wizard [data-wpe-wizard-off] {
+	display: none !important;
+}
+
+// Section headings and hints the wizard already shows: kept for screen readers only.
+.is-wizard [data-wpe-wizard-copy] {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+.wpe-ui-wizard {
+	margin: 0 0 var(--wpe-space-5);
+	padding: var(--wpe-space-5);
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg, 16px);
+	background: var(--wpe-surface);
+
+	&__steps {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0 0 var(--wpe-space-4);
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+		}
+	}
+
+	&__step {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 4px 10px 4px 4px;
+		border: 1px solid var(--wpe-line);
+		border-radius: 999px;
+		background: var(--wpe-card);
+		color: var(--wpe-text-2);
+		font: inherit;
+		font-size: 12px;
+		cursor: pointer;
+
+		&[data-state="current"] {
+			border-color: var(--wpe-indigo);
+			background: var(--wpe-indigo-tint);
+			color: var(--wpe-indigo);
+			font-weight: 600;
+		}
+
+		&[data-state="done"] .wpe-ui-wizard__dot {
+			background: var(--wpe-indigo);
+			color: var(--wpe-on-ink, #fff);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wpe-blue);
+			outline-offset: 2px;
+		}
+	}
+
+	&__dot {
+		display: inline-grid;
+		width: 20px;
+		height: 20px;
+		place-items: center;
+		border-radius: 50%;
+		background: var(--wpe-line);
+		font-size: 11px;
+		font-weight: 700;
+	}
+
+	&__body {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+		gap: var(--wpe-space-5);
+		align-items: center;
+	}
+
+	&__title {
+		margin: 0 0 var(--wpe-space-2);
+		font-size: 20px;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	&__explain {
+		margin: 0;
+		color: var(--wpe-text-2);
+		font-size: 14px;
+		line-height: 1.6;
+	}
+
+	&__art svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	&__nav {
+		display: flex;
+		justify-content: space-between;
+		margin: var(--wpe-space-5) 0;
+		padding-top: var(--wpe-space-4);
+		border-top: 1px dashed var(--wpe-line);
+	}
+}
+
+@media (max-width: 782px) {
+	.wpe-ui-wizard__body {
+		grid-template-columns: 1fr;
+	}
+}

@@ -375,3 +375,26 @@ test('CPT editor fills the singular name, key and labels from the plural name, w
   await expect(page.locator('#wpessential-cpt-label-not_found')).toHaveValue('No movies found.');
   await expect(page.locator('[data-wpessential-cpt-opt="show_ui"] option[value=""]')).toHaveText('Default: Yes (as Public)');
 });
+
+test('CPT editor wizard mode walks one section per step with explanations', async ({ page }) => {
+  await visitCpts(page);
+  await page.getByRole('switch', { name: 'Wizard mode' }).check();
+  const wizard = page.locator('.wpe-ui-wizard');
+  await expect(wizard).toContainText('Step 1 of 4');
+  await expect(wizard.locator('.wpe-ui-wizard__title')).toHaveText('Basics');
+  await expect(page.getByLabel('Plural name')).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Public' })).toBeHidden();
+
+  await page.getByRole('button', { name: 'Next →' }).click();
+  await expect(wizard.locator('.wpe-ui-wizard__title')).toHaveText('Behavior');
+  await expect(page.getByRole('switch', { name: 'Public' })).toBeVisible();
+  await expect(page.getByLabel('Plural name')).toBeHidden();
+
+  // More steps at the Advanced level.
+  await page.getByRole('button', { name: 'Advanced', exact: true }).click();
+  await expect(wizard).toContainText('Step 2 of 9');
+
+  await page.getByRole('switch', { name: 'Wizard mode' }).uncheck();
+  await expect(page.getByLabel('Plural name')).toBeVisible();
+  await expect(wizard).toBeHidden();
+});

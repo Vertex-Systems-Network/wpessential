@@ -1,5 +1,6 @@
 import { CPT_LABEL_TEMPLATES, bindAutofill } from './core/autofill';
 import { bindCounters } from './core/counter';
+import { CPT_WIZARD_EXPLANATIONS, bindWizard } from './core/wizard';
 import { bindCptDefaults } from './cpt-defaults';
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName, bindLevels, refreshLevel } from './core/levels';
@@ -671,6 +672,7 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		bindDependencies( cptForm, CPT_DEPENDENCIES, 'cpt' );
 		bindCounters( cptForm );
 		bindCptDefaults( cptForm );
+		bindWizard( cptForm, { prefix: 'cpt', explanations: CPT_WIZARD_EXPLANATIONS } );
 	}
 	let definitions = [ ...bootstrap.definitions ];
 	let busy = false;
