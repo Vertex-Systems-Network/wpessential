@@ -62,17 +62,17 @@ final class McpServerTest extends TestCase
         $names  = self::toolNames($server);
 
         self::assertContains('site_info', $names);
-        self::assertContains('wpessential_modules_list', $names);
-        self::assertNotContains('wpessential_modules_toggle', $names);
-        self::assertNotContains('wpessential_settings_update', $names);
+        self::assertContains('wpessential_framework_modules_list', $names);
+        self::assertNotContains('wpessential_framework_modules_toggle', $names);
+        self::assertNotContains('wpessential_framework_settings_update', $names);
 
         $this->connect->set('allow_writes', true);
-        self::assertContains('wpessential_modules_toggle', self::toolNames($server));
+        self::assertContains('wpessential_framework_modules_toggle', self::toolNames($server));
     }
 
     public function testHiddenWriteToolCannotBeCalled(): void
     {
-        $response = $this->server()->dispatch(2, 'tools/call', ['name' => 'wpessential_modules_toggle', 'arguments' => ['module' => 'relations', 'enabled' => false]]);
+        $response = $this->server()->dispatch(2, 'tools/call', ['name' => 'wpessential_framework_modules_toggle', 'arguments' => ['module' => 'relations', 'enabled' => false]]);
 
         self::assertSame(-32602, $response['error']['code']);
         self::assertTrue($this->toggles->isEnabled('relations'));
@@ -82,7 +82,7 @@ final class McpServerTest extends TestCase
     {
         $server = $this->server();
         $this->connect->set('allow_writes', true);
-        $response = $server->dispatch(3, 'tools/call', ['name' => 'wpessential_modules_toggle', 'arguments' => ['module' => 'relations', 'enabled' => false]]);
+        $response = $server->dispatch(3, 'tools/call', ['name' => 'wpessential_framework_modules_toggle', 'arguments' => ['module' => 'relations', 'enabled' => false]]);
 
         self::assertFalse($response['result']['isError']);
         self::assertSame(['module' => 'relations', 'from' => true, 'to' => false], $response['result']['structuredContent']['changed']);
@@ -94,14 +94,14 @@ final class McpServerTest extends TestCase
         Shell::configure(false);
         $server = $this->server();
         $this->connect->set('allow_writes', true);
-        $response = $server->dispatch(4, 'tools/call', ['name' => 'wpessential_modules_toggle', 'arguments' => ['module' => 'backup', 'enabled' => true]]);
+        $response = $server->dispatch(4, 'tools/call', ['name' => 'wpessential_framework_modules_toggle', 'arguments' => ['module' => 'backup', 'enabled' => true]]);
 
         self::assertTrue($response['result']['isError']);
     }
 
     public function testCapabilityPolicyStillApplies(): void
     {
-        $response = $this->server(false)->dispatch(5, 'tools/call', ['name' => 'wpessential_modules_list', 'arguments' => []]);
+        $response = $this->server(false)->dispatch(5, 'tools/call', ['name' => 'wpessential_framework_modules_list', 'arguments' => []]);
 
         self::assertTrue($response['result']['isError']);
     }

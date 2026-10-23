@@ -45,8 +45,8 @@ The owner made five further requests:
 
      | Kind | Abilities |
      |---|---|
-     | Read | `wpessential/modules/list`, `wpessential/elements/list`, `wpessential/license/status` (masked key), `wpessential/settings/get` |
-     | Write | `wpessential/modules/toggle` (Premium-locked modules refused), `wpessential/elements/toggle`, `wpessential/settings/update` (whitelisted: `ui_mode`) |
+     | Read | `wpessential/framework-modules/list`, `wpessential/framework-elements/list`, `wpessential/framework-license/status` (masked key), `wpessential/framework-settings/get` |
+     | Write | `wpessential/framework-modules/toggle` (Premium-locked modules refused), `wpessential/framework-elements/toggle`, `wpessential/framework-settings/update` (whitelisted: `ui_mode`) |
 
    - **Writes.** Write tools are listed and callable only when **"Allow AI to change settings"** is on. It is off by default, and turning AI Connect off also turns it off and revokes every client. Write results return a `changed` summary (from/to) so the assistant can confirm the change with the user.
    - **What the AI can never change.** No AI ability can change AI Connect itself, the licence, or the account.
@@ -58,3 +58,7 @@ The owner made five further requests:
 - The five tabs added to the top bar each lead to a real screen.
 - AI assistants can manage WPEssential settings, but only through audited, capability-checked abilities, and writes need an explicit opt-in.
 - Demo import, the licence-to-entitlement link and Elementor/Gutenberg elements remain open work.
+
+## Amendment (2026-10-23)
+
+The Framework abilities use the `framework-*` domains (`wpessential/framework-settings/get`, …). The first names clashed with the Pro Settings module's `wpessential/settings/get`, and Pro failed to boot. Ability names must be unique across Free and Pro. A unit test now registers the Free and Pro ability sets together to check this.
