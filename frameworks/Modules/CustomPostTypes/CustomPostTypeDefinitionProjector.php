@@ -52,6 +52,8 @@ final class CustomPostTypeDefinitionProjector {
 		'delete_with_user',
 		// Entry lock: an admin safeguard that blocks deleting the definition; not a WordPress arg.
 		'locked',
+		// Trash flag (WordPress-style trash); a trashed definition is never published.
+		'trashed',
 	];
 
 	/** @var list<string> */

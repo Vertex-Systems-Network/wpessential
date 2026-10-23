@@ -479,3 +479,50 @@ th[aria-sort="descending"] .wpe-ui-sort::after {
 	border-color: var(--wpe-danger);
 	color: var(--wpe-danger);
 }
+
+// Row actions (Edit / Publish / Lock / Trash; Restore / Delete permanently in the Trash).
+.wpe-ui-row-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+
+	.wpe-ui-button:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+}
+
+.wpe-ui-tablenav__bulk {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-right: var(--wpe-space-3);
+
+	select {
+		width: auto;
+		min-width: 150px;
+	}
+}
+
+.wpe-ui-tablenav:has(.wpe-ui-tablenav__bulk) {
+	justify-content: flex-start;
+
+	.wpe-ui-tablenav__pages {
+		margin-left: auto;
+	}
+}
+
+.wpe-ui-table__check {
+	width: 2.25rem;
+
+	input {
+		margin: 0;
+	}
+}
+
+// Footer: the column headings again, as in WordPress list tables.
+.wpe-ui table tfoot th {
+	border-top: 1px solid var(--wpe-line);
+	color: var(--wpe-text-2);
+	font-weight: 600;
+}

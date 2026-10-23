@@ -391,3 +391,53 @@
 		transform: translateY(4px);
 	}
 }
+
+// Confirmation dialog (Figma: UI/Table · Modal · Tooltip · Empty, Kind=Modal).
+.wpe-ui-dialog {
+	width: min(28rem, calc(100vw - 2 * var(--wpe-space-6)));
+	padding: var(--wpe-space-6);
+	border: 1px solid var(--wpe-line);
+	border-radius: 16px;
+	background: var(--wpe-card);
+	color: var(--wpe-text);
+	box-shadow: 0 24px 48px rgb(15 23 42 / 18%);
+
+	&::backdrop {
+		background: rgb(15 23 42 / 45%);
+	}
+
+	&[open] {
+		animation: wpe-dialog-in var(--wpe-dur-2) var(--wpe-ease);
+	}
+
+	&__title {
+		margin: 0 0 var(--wpe-space-2);
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	&__message {
+		margin: 0 0 var(--wpe-space-5);
+		color: var(--wpe-text-2);
+		line-height: 1.5;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--wpe-space-2);
+	}
+}
+
+@keyframes wpe-dialog-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px) scale(0.98);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wpe-ui-dialog[open] {
+		animation: none;
+	}
+}

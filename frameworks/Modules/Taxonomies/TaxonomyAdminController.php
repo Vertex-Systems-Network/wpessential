@@ -151,6 +151,18 @@ final class TaxonomyAdminController {
 					'type'  => 'taxonomy.delete',
 					'nonce' => $this->ajax->createNonce( 'taxonomy.delete' ),
 				],
+				'trash'    => [
+					'type'  => 'taxonomy.trash',
+					'nonce' => $this->ajax->createNonce( 'taxonomy.trash' ),
+				],
+				'restore'  => [
+					'type'  => 'taxonomy.restore',
+					'nonce' => $this->ajax->createNonce( 'taxonomy.restore' ),
+				],
+				'lock'     => [
+					'type'  => 'taxonomy.lock',
+					'nonce' => $this->ajax->createNonce( 'taxonomy.lock' ),
+				],
 			],
 			'definitions' => $definitions,
 			'view'        => $view,

@@ -20,12 +20,15 @@ use WPEssential\Platform\Definitions\DefinitionStatus;
 
 final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface {
 
-	public const LIST   = 'list';
-	public const GET    = 'get';
-	public const SAVE   = 'save';
-	public const STATUS = 'status';
-	public const DELETE = 'delete';
-	public const IMPORT = 'import';
+	public const LIST    = 'list';
+	public const GET     = 'get';
+	public const SAVE    = 'save';
+	public const STATUS  = 'status';
+	public const DELETE  = 'delete';
+	public const TRASH   = 'trash';
+	public const RESTORE = 'restore';
+	public const LOCK    = 'lock';
+	public const IMPORT  = 'import';
 
 	public function __construct(
 		private DefinitionRepositoryInterface $definitions,
@@ -35,7 +38,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface {
 		private ?TaxonomyRewriteRefreshCoordinator $rewriteRefresh = null,
 		private ?TaxonomyRoleImpactReadModel $roleImpact = null,
 	) {
-		if ( ! in_array( $this->action, [ self::LIST, self::GET, self::SAVE, self::STATUS, self::DELETE, self::IMPORT ], true ) ) {
+		if ( ! in_array( $this->action, [ self::LIST, self::GET, self::SAVE, self::STATUS, self::DELETE, self::TRASH, self::RESTORE, self::LOCK, self::IMPORT ], true ) ) {
 			throw new InvalidArgumentException( 'Unsupported Taxonomy ability action.' );
 		}
 	}
@@ -47,6 +50,9 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface {
 			self::SAVE => $this->save( $input, $context ),
 			self::STATUS => $this->changeStatus( $input, $context ),
 			self::IMPORT => $this->importDefinition( $input, $context ),
+			self::TRASH => $this->trash( $input, $context ),
+			self::RESTORE => $this->restore( $input, $context ),
+			self::LOCK => $this->lock( $input, $context ),
 			self::DELETE => $this->delete( $input ),
 			default => throw new RuntimeException( 'Unsupported Taxonomy ability action.' ),
 		};
@@ -137,9 +143,107 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface {
 	}
 
 	/**
-	 * Deletes a definition permanently, like WordPress' "Delete Permanently". Refused while the
-	 * entry is locked, while it is published (disable or archive it first, so the runtime
-	 * registration is withdrawn), or while other definitions depend on it.
+	 * Moves a definition to the Trash, as WordPress does with posts. A published entry is disabled
+	 * on the way (its runtime registration is withdrawn); a locked entry cannot be trashed.
+	 *
+	 * @param array<string,mixed> $input
+	 * @return array{definition:array<string,mixed>}
+	 */
+	private function trash( array $input, ExecutionContext $context ): array {
+		return $this->rewriteLifecycle(
+			$input,
+			function ( Definition $existing ): array {
+				if ( ( $existing->payload['locked'] ?? false ) === true ) {
+					throw new InvalidArgumentException( 'This taxonomy is locked. Turn off the entry lock before moving it to the Trash.' );
+				}
+				if ( ( $existing->payload['trashed'] ?? false ) === true ) {
+					throw new InvalidArgumentException( 'This taxonomy is already in the Trash.' );
+				}
+				$status = $existing->status === DefinitionStatus::Published ? DefinitionStatus::Disabled : $existing->status;
+
+				return [ $status, [ 'trashed' => true ] + $existing->payload ];
+			},
+			$context
+		);
+	}
+
+	/**
+	 * Restores a definition from the Trash as a draft (WordPress restores trashed posts as drafts).
+	 *
+	 * @param array<string,mixed> $input
+	 * @return array{definition:array<string,mixed>}
+	 */
+	private function restore( array $input, ExecutionContext $context ): array {
+		return $this->rewriteLifecycle(
+			$input,
+			function ( Definition $existing ): array {
+				if ( ( $existing->payload['trashed'] ?? false ) !== true ) {
+					throw new InvalidArgumentException( 'This taxonomy is not in the Trash.' );
+				}
+				$payload = $existing->payload;
+				unset( $payload['trashed'] );
+
+				return [ DefinitionStatus::Draft, $payload ];
+			},
+			$context
+		);
+	}
+
+	/**
+	 * Turns the entry lock on or off. A locked entry cannot be trashed or deleted.
+	 *
+	 * @param array<string,mixed> $input
+	 * @return array{definition:array<string,mixed>}
+	 */
+	private function lock( array $input, ExecutionContext $context ): array {
+		$locked = $input['locked'] ?? null;
+		if ( ! is_bool( $locked ) ) {
+			throw new InvalidArgumentException( 'Taxonomy lock requires locked: true or false.' );
+		}
+
+		return $this->rewriteLifecycle(
+			$input,
+			static function ( Definition $existing ) use ( $locked ): array {
+				$payload = $existing->payload;
+				unset( $payload['locked'] );
+				if ( $locked ) {
+					$payload['locked'] = true;
+				}
+
+				return [ $existing->status, $payload ];
+			},
+			$context
+		);
+	}
+
+	/**
+	 * @param array<string,mixed>                                            $input
+	 * @param callable(Definition):array{0:DefinitionStatus,1:array<string,mixed>} $change
+	 * @return array{definition:array<string,mixed>}
+	 */
+	private function rewriteLifecycle( array $input, callable $change, ExecutionContext $context ): array {
+		$existing = $this->owned( $this->requiredUuid( $input, 'id' ) );
+		$this->assertExpectedRevision( $input, $existing );
+		[ $status, $payload ] = $change( $existing );
+		$candidate            = new Definition(
+			id: $existing->id,
+			slug: $existing->slug,
+			type: $existing->type,
+			schemaVersion: $existing->schemaVersion,
+			ownerSurfaceId: $existing->ownerSurfaceId,
+			status: $status,
+			payload: $payload,
+			revision: $existing->revision + 1,
+			dependencies: $existing->dependencies,
+		);
+		$candidate            = $this->persistMutation( $existing, $candidate );
+
+		return [ 'definition' => $this->serialize( $candidate, context: $context ) ];
+	}
+
+	/**
+	 * Deletes a definition permanently, like WordPress' "Delete Permanently": only from the Trash,
+	 * never while the entry is locked, and never while other definitions depend on it.
 	 *
 	 * @param array<string,mixed> $input
 	 * @return array{deleted:string}
@@ -150,8 +254,8 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface {
 		if ( ( $existing->payload['locked'] ?? false ) === true ) {
 			throw new InvalidArgumentException( 'This taxonomy is locked. Turn off the entry lock before deleting it.' );
 		}
-		if ( $existing->status === DefinitionStatus::Published ) {
-			throw new InvalidArgumentException( 'Disable or archive this taxonomy before deleting it.' );
+		if ( ( $existing->payload['trashed'] ?? false ) !== true ) {
+			throw new InvalidArgumentException( 'Move this taxonomy to the Trash before deleting it permanently.' );
 		}
 		if ( $this->definitions->dependentsOf( $existing->id ) !== [] ) {
 			throw new InvalidArgumentException( 'Other definitions depend on this taxonomy; remove those links first.' );

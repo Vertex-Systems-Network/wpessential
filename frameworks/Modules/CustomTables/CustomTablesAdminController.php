@@ -100,7 +100,7 @@ final class CustomTablesAdminController {
 	public function bootstrap( string $ajaxUrl ): array {
 		$routes = [];
 		foreach ( CustomTablesMigrationAbilityHandler::ACTIONS as $action ) {
-			$type             = CustomTablesModule::routeType( $action );
+			$type              = CustomTablesModule::routeType( $action );
 			$routes[ $action ] = [
 				'type'  => $type,
 				'nonce' => $this->ajax->createNonce( $type ),

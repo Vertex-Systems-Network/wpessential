@@ -100,10 +100,22 @@ final class CoreAdminController {
 		return self::currentPage() !== '' ? PlatformAdminController::PAGE_SLUG : $parentFile;
 	}
 
+	/** The open module's own sidebar entry stays highlighted: its list, editor or overview page. */
 	public function submenuFile( mixed $submenuFile ): mixed {
 		$page = self::currentPage();
+		if ( isset( self::SUBMENU_ALIASES[ $page ] ) ) {
+			return self::SUBMENU_ALIASES[ $page ];
+		}
+		if ( str_starts_with( $page, self::MODULE_PREFIX ) ) {
+			$id = substr( $page, strlen( self::MODULE_PREFIX ) );
+			foreach ( ModuleCatalog::all() as $module ) {
+				if ( $module['id'] === $id && is_string( $module['builder'] ?? null ) && $module['builder'] !== '' ) {
+					return $module['builder'];
+				}
+			}
+		}
 
-		return self::SUBMENU_ALIASES[ $page ] ?? $submenuFile;
+		return $submenuFile;
 	}
 
 	private static function currentPage(): string {
