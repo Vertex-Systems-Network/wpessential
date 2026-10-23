@@ -15,12 +15,21 @@ export interface TableOptions {
 	/** Plural item name for the search button and counts, e.g. "Post Types". */
 	itemsLabel: string;
 	perPage?: number;
+	/** Fixed views matched on row state (All / Published / Draft / Locked / Trash); replaces viewsColumn. */
+	views?: Array< { key: string; label: string; match: ( row: HTMLTableRowElement ) => boolean } >;
+	/** Bulk actions: adds a checkbox column with select-all, and a "Bulk actions" select with Apply. */
+	bulk?: {
+		actions: ( view: string ) => Array< [ string, string ] >;
+		run: ( action: string, ids: string[] ) => void | Promise< void >;
+		/** Row attribute holding the item id. */
+		idOf: ( row: HTMLTableRowElement ) => string;
+	};
 }
 
 type Direction = 'ascending' | 'descending';
 
-function cellText( row: HTMLTableRowElement, column: number ): string {
-	return ( row.cells[ column ]?.textContent ?? '' ).replace( /\s+/g, ' ' ).trim();
+function cellText( row: HTMLTableRowElement, column: number, offset = 0 ): string {
+	return ( row.cells[ column + offset ]?.textContent ?? '' ).replace( /\s+/g, ' ' ).trim();
 }
 
 function el< K extends keyof HTMLElementTagNameMap >(
@@ -80,6 +89,9 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	const body: HTMLTableSectionElement = maybeBody;
 	table.dataset.wpeTable = 'ready';
 	const id = table.id || 'wpe-table';
+	// The bulk checkbox column comes first; option columns count from the first data column.
+	const offset = options.bulk ? 1 : 0;
+	const text = ( row: HTMLTableRowElement, column: number ): string => cellText( row, column, offset );
 	const state = {
 		view: '',
 		query: '',
@@ -109,6 +121,10 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		selects.push( { column: filter.column, label: filter.label, select } );
 		filterBox.append( select );
 	}
+	const bulkSelect = el( 'select', { class: 'wpe-ui-select', id: `${ id }-bulk`, 'aria-label': 'Bulk actions' } );
+	const bulkApply = el( 'button', { type: 'button', class: 'wpe-ui-button wpe-ui-button--secondary wpe-ui-button--sm' }, 'Apply' );
+	const bulkBox = el( 'div', { class: 'wpe-ui-tablenav__bulk' } );
+	bulkBox.append( bulkSelect, bulkApply );
 	const filterButton = el( 'button', { type: 'button', class: 'wpe-ui-button wpe-ui-button--secondary wpe-ui-button--sm' }, 'Filter' );
 	if ( selects.length ) {
 		filterBox.append( filterButton );
@@ -118,7 +134,7 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		apply();
 	};
 	const topPager = pagerControls( `${ id }-page`, goTo );
-	nav.append( filterBox, topPager.wrap );
+	nav.append( ...( options.bulk ? [ bulkBox ] : [] ), filterBox, topPager.wrap );
 	const bottomNav = el( 'div', { class: 'wpe-ui-tablenav wpe-ui-tablenav--bottom' } );
 	const bottomPager = pagerControls( `${ id }-page-bottom`, goTo );
 	bottomNav.append( bottomPager.wrap );
@@ -126,10 +142,26 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	table.before( top, nav );
 	table.after( bottomNav );
 
+	// Bulk selection: a checkbox column with select-all in the header (and footer).
+	const selectAll: HTMLInputElement[] = [];
+	const checkCell = ( tag: 'th' | 'td', label: string ): { cell: HTMLTableCellElement; box: HTMLInputElement } => {
+		const cell = el( tag, { class: 'wpe-ui-table__check' } );
+		const box = el( 'input', { type: 'checkbox', class: 'wpe-ui-checkbox', 'aria-label': label } );
+		cell.append( box );
+		return { cell, box };
+	};
+	const headRow = table.tHead?.rows[ 0 ];
+	if ( options.bulk && headRow ) {
+		const { cell, box } = checkCell( 'th', 'Select all' );
+		cell.setAttribute( 'scope', 'col' );
+		headRow.prepend( cell );
+		selectAll.push( box );
+	}
+
 	// Sortable headers: a button inside each th, aria-sort on the th.
-	const headers = Array.from( table.tHead?.rows[ 0 ]?.cells ?? [] );
+	const headers = Array.from( headRow?.cells ?? [] );
 	for ( const sortable of options.sortable ?? [] ) {
-		const th = headers[ sortable.column ];
+		const th = headers[ sortable.column + offset ];
 		if ( ! th ) {
 			continue;
 		}
@@ -149,13 +181,96 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		} );
 	}
 
+	// Footer: the column headings again, as in WordPress list tables.
+	if ( headRow && ! table.tFoot ) {
+		const footRow = el( 'tr' );
+		for ( const [ index, header ] of headers.entries() ) {
+			if ( options.bulk && index === 0 ) {
+				const { cell, box } = checkCell( 'th', 'Select all' );
+				selectAll.push( box );
+				footRow.append( cell );
+				continue;
+			}
+			footRow.append( el( 'th', { scope: 'col' }, header.textContent?.trim() ?? '' ) );
+		}
+		table.createTFoot().append( footRow );
+	}
+
 	const empty = el( 'tr', { class: 'wpe-ui-table-nomatch', hidden: '' } );
 	empty.append( el( 'td', { colspan: String( headers.length || 1 ) }, `No ${ options.itemsLabel.toLowerCase() } found.` ) );
 
 	let observer: MutationObserver | null = null;
 	const rows = (): HTMLTableRowElement[] => Array.from( body.querySelectorAll< HTMLTableRowElement >( options.rowSelector ) );
 
+	const viewMatches = ( row: HTMLTableRowElement ): boolean => {
+		if ( options.views ) {
+			return ( options.views.find( ( view ) => view.key === ( state.view || options.views?.[ 0 ]?.key ) )?.match ?? ( () => true ) )( row );
+		}
+		return options.viewsColumn === undefined || state.view === '' || text( row, options.viewsColumn ) === state.view;
+	};
+
+	function renderFixedViews( all: HTMLTableRowElement[] ): void {
+		const list = options.views ?? [];
+		if ( ! list.some( ( view ) => view.key === state.view ) ) {
+			state.view = list[ 0 ]?.key ?? '';
+		}
+		views.replaceChildren(
+			...list
+				.map( ( view ) => ( { view, n: all.filter( view.match ).length } ) )
+				// Like WordPress, a view with no items is not listed (except the first, All).
+				.filter( ( { view, n }, index ) => index === 0 || n > 0 || view.key === state.view )
+				.map( ( { view, n } ) => {
+					const current = state.view === view.key;
+					const link = el( 'a', { href: '#', class: `wpe-ui-tab${ current ? ' is-active' : '' }`, 'data-wpe-view': view.key } );
+					if ( current ) {
+						link.setAttribute( 'aria-current', 'page' );
+					}
+					link.append( view.label, el( 'span', { class: 'wpe-ui-count' }, String( n ) ) );
+					link.addEventListener( 'click', ( event ) => {
+						event.preventDefault();
+						state.view = view.key;
+						state.page = 1;
+						apply();
+					} );
+					return link;
+				} )
+		);
+	}
+
+	function renderBulk( all: HTMLTableRowElement[] ): void {
+		if ( ! options.bulk ) {
+			return;
+		}
+		const current = bulkSelect.value;
+		const actions = options.bulk.actions( state.view );
+		bulkSelect.replaceChildren( el( 'option', { value: '' }, 'Bulk actions' ), ...actions.map( ( [ value, label ] ) => el( 'option', { value }, label ) ) );
+		bulkSelect.value = actions.some( ( [ value ] ) => value === current ) ? current : '';
+		for ( const row of all ) {
+			if ( ! row.querySelector( ':scope > .wpe-ui-table__check' ) ) {
+				const name = text( row, 0 );
+				row.prepend( checkCell( 'td', `Select ${ name }` ).cell );
+			}
+		}
+		// Non-data rows (the empty state) span the extra column.
+		for ( const row of Array.from( body.rows ) ) {
+			const only = row.cells.length === 1 ? row.cells[ 0 ] : undefined;
+			if ( only && only.colSpan < headers.length ) {
+				only.colSpan = headers.length;
+			}
+		}
+	}
+
+	const checkedIds = (): string[] =>
+		rows()
+			.filter( ( row ) => ! row.hidden && row.querySelector< HTMLInputElement >( ':scope > .wpe-ui-table__check input' )?.checked )
+			.map( ( row ) => options.bulk?.idOf( row ) ?? '' )
+			.filter( Boolean );
+
 	function renderViews( all: HTMLTableRowElement[] ): void {
+		if ( options.views ) {
+			renderFixedViews( all );
+			return;
+		}
 		if ( options.viewsColumn === undefined ) {
 			views.hidden = true;
 			return;
@@ -163,7 +278,7 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		const column = options.viewsColumn;
 		const counts = new Map< string, number >();
 		for ( const row of all ) {
-			const value = cellText( row, column );
+			const value = text( row, column );
 			counts.set( value, ( counts.get( value ) ?? 0 ) + 1 );
 		}
 		if ( state.view !== '' && ! counts.has( state.view ) ) {
@@ -192,7 +307,7 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	function renderFilterOptions( all: HTMLTableRowElement[] ): void {
 		for ( const { column, label, select } of selects ) {
 			const current = select.value;
-			const values = Array.from( new Set( all.map( ( row ) => cellText( row, column ) ).filter( Boolean ) ) ).sort();
+			const values = Array.from( new Set( all.map( ( row ) => text( row, column ) ).filter( Boolean ) ) ).sort();
 			select.replaceChildren( el( 'option', { value: '' }, `All ${ label.toLowerCase() }` ), ...values.map( ( value ) => el( 'option', { value }, value ) ) );
 			select.value = values.includes( current ) ? current : '';
 			if ( ! values.includes( state.filters.get( column ) ?? '' ) ) {
@@ -204,18 +319,22 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	function apply(): void {
 		observer?.disconnect();
 		const all = rows();
+		renderBulk( all );
 		renderViews( all );
 		renderFilterOptions( all );
+		for ( const box of selectAll ) {
+			box.checked = false;
+		}
 		const query = state.query.toLowerCase();
 		const matching = all.filter( ( row ) => {
-			if ( options.viewsColumn !== undefined && state.view !== '' && cellText( row, options.viewsColumn ) !== state.view ) {
+			if ( ! viewMatches( row ) ) {
 				return false;
 			}
 			if ( query !== '' && ! ( row.textContent ?? '' ).toLowerCase().includes( query ) ) {
 				return false;
 			}
 			for ( const [ column, value ] of state.filters ) {
-				if ( value !== '' && cellText( row, column ) !== value ) {
+				if ( value !== '' && text( row, column ) !== value ) {
 					return false;
 				}
 			}
@@ -225,8 +344,8 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		if ( sort ) {
 			const factor = sort.direction === 'ascending' ? 1 : -1;
 			matching.sort( ( a, b ) => {
-				const x = cellText( a, sort.column );
-				const y = cellText( b, sort.column );
+				const x = text( a, sort.column );
+				const y = text( b, sort.column );
 				return factor * ( sort.numeric ? Number( x ) - Number( y ) : x.localeCompare( y, undefined, { numeric: true, sensitivity: 'base' } ) );
 			} );
 			for ( const row of matching ) {
@@ -246,6 +365,9 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 			body.append( empty );
 		}
 		top.hidden = nav.hidden = ! hasData;
+		if ( table.tFoot ) {
+			table.tFoot.hidden = ! hasData;
+		}
 		bottomNav.hidden = ! hasData || pages <= 1;
 		topPager.update( matching.length, state.page, pages );
 		bottomPager.update( matching.length, state.page, pages );
@@ -271,6 +393,28 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		}
 		state.page = 1;
 		apply();
+	} );
+
+	for ( const box of selectAll ) {
+		box.addEventListener( 'change', () => {
+			for ( const other of selectAll ) {
+				other.checked = box.checked;
+			}
+			for ( const row of rows() ) {
+				const check = row.querySelector< HTMLInputElement >( ':scope > .wpe-ui-table__check input' );
+				if ( check && ! row.hidden ) {
+					check.checked = box.checked;
+				}
+			}
+		} );
+	}
+	bulkApply.addEventListener( 'click', () => {
+		const action = bulkSelect.value;
+		const ids = checkedIds();
+		if ( action === '' || ids.length === 0 || ! options.bulk ) {
+			return;
+		}
+		void options.bulk.run( action, ids );
 	} );
 
 	// Rows are re-rendered by the page script on refresh and status changes.

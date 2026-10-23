@@ -33,37 +33,43 @@ final class CustomPostTypeAbilityHandlerTest extends TestCase
         self::assertCount(1, $repository->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
     }
 
-    public function testDeleteHonoursLockStatusAndRevision(): void
+    public function testTrashRestoreLockAndDeleteFollowWordPressRules(): void
     {
         $repository = new InMemoryDefinitionRepository();
-        $locked = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
-            'payload' => array_merge($this->payload(), ['locked' => true]),
-        ], $this->context())['definition'];
+        $run = fn (string $action, array $input) => $this->handler($repository, $action)->handle($input, $this->context());
+        $created = $run(CustomPostTypeAbilityHandler::SAVE, ['payload' => $this->payload(), 'status' => 'published'])['definition'];
 
+        // Locked: cannot be trashed.
+        $locked = $run(CustomPostTypeAbilityHandler::LOCK, ['id' => $created['id'], 'expected_revision' => 1, 'locked' => true])['definition'];
+        self::assertTrue($locked['payload']['locked']);
         try {
-            $this->handler($repository, CustomPostTypeAbilityHandler::DELETE)->handle(['id' => $locked['id'], 'expected_revision' => 1], $this->context());
-            self::fail('A locked entry must not be deletable.');
+            $run(CustomPostTypeAbilityHandler::TRASH, ['id' => $created['id'], 'expected_revision' => 2]);
+            self::fail('A locked entry must not be trashed.');
         } catch (InvalidArgumentException $exception) {
             self::assertStringContainsString('locked', $exception->getMessage());
         }
+        $run(CustomPostTypeAbilityHandler::LOCK, ['id' => $created['id'], 'expected_revision' => 2, 'locked' => false]);
 
-        $unlocked = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
-            'id' => $locked['id'],
-            'expected_revision' => 1,
-            'payload' => $this->payload(),
-            'status' => 'published',
-        ], $this->context())['definition'];
+        // Delete needs the Trash first.
         try {
-            $this->handler($repository, CustomPostTypeAbilityHandler::DELETE)->handle(['id' => $unlocked['id'], 'expected_revision' => 2], $this->context());
-            self::fail('A published entry must be disabled before deleting.');
+            $run(CustomPostTypeAbilityHandler::DELETE, ['id' => $created['id'], 'expected_revision' => 3]);
+            self::fail('Only trashed entries can be deleted permanently.');
         } catch (InvalidArgumentException $exception) {
-            self::assertStringContainsString('Disable or archive', $exception->getMessage());
+            self::assertStringContainsString('Trash', $exception->getMessage());
         }
 
-        $this->handler($repository, CustomPostTypeAbilityHandler::STATUS)->handle(['id' => $unlocked['id'], 'expected_revision' => 2, 'status' => 'disabled'], $this->context());
-        $result = $this->handler($repository, CustomPostTypeAbilityHandler::DELETE)->handle(['id' => $unlocked['id'], 'expected_revision' => 3], $this->context());
-        self::assertSame($unlocked['id'], $result['deleted']);
-        self::assertNull($repository->get($unlocked['id']));
+        // Trashing a published entry disables it; restoring brings it back as a draft.
+        $trashed = $run(CustomPostTypeAbilityHandler::TRASH, ['id' => $created['id'], 'expected_revision' => 3])['definition'];
+        self::assertSame('disabled', $trashed['status']);
+        self::assertTrue($trashed['payload']['trashed']);
+        $restored = $run(CustomPostTypeAbilityHandler::RESTORE, ['id' => $created['id'], 'expected_revision' => 4])['definition'];
+        self::assertSame('draft', $restored['status']);
+        self::assertArrayNotHasKey('trashed', $restored['payload']);
+
+        $run(CustomPostTypeAbilityHandler::TRASH, ['id' => $created['id'], 'expected_revision' => 5]);
+        $result = $run(CustomPostTypeAbilityHandler::DELETE, ['id' => $created['id'], 'expected_revision' => 6]);
+        self::assertSame($created['id'], $result['deleted']);
+        self::assertNull($repository->get($created['id']));
     }
 
     public function testAiCannotSetOrClearTheEntryLock(): void

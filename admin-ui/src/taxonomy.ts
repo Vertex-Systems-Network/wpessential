@@ -1,6 +1,7 @@
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName } from './core/levels';
 import { TAXONOMY_DEPENDENCIES } from './taxonomy-dependencies';
+import { BULK_ACTIONS, LIFECYCLE_VIEWS, type LifecycleAction, markRow, rowActions, runLifecycle } from './core/lifecycle';
 import { enhanceTable } from './core/table';
 import { statusCell } from './core/status-pill';
 import './admin.scss';
@@ -112,6 +113,9 @@ type Bootstrap = {
 		save: Route;
 		status: Route;
 		delete?: Route;
+		trash?: Route;
+		restore?: Route;
+		lock?: Route;
 	};
 	definitions: TaxonomyDefinition[];
 	objectTypes: ObjectTypeOption[];
@@ -269,9 +273,10 @@ function parseBootstrap( value: unknown ): Bootstrap | null {
 			validate: value.routes.validate,
 			save: value.routes.save,
 			status: value.routes.status,
-			...( isRoute( value.routes.delete )
-				? { delete: value.routes.delete }
-				: {} ),
+			...( isRoute( value.routes.delete ) ? { delete: value.routes.delete } : {} ),
+			...( isRoute( value.routes.trash ) ? { trash: value.routes.trash } : {} ),
+			...( isRoute( value.routes.restore ) ? { restore: value.routes.restore } : {} ),
+			...( isRoute( value.routes.lock ) ? { lock: value.routes.lock } : {} ),
 		},
 		definitions: value.definitions,
 		objectTypes: value.objectTypes,
@@ -891,20 +896,6 @@ function cell( text: string ): HTMLTableCellElement {
 	return element;
 }
 
-function actionButton(
-	label: string,
-	attributes: Record< string, string >
-): HTMLButtonElement {
-	const button = document.createElement( 'button' );
-	button.type = 'button';
-	button.className = 'button button-small';
-	button.textContent = label;
-	for ( const [ key, value ] of Object.entries( attributes ) ) {
-		button.dataset[ key ] = value;
-	}
-	return button;
-}
-
 function sortedDefinitions(
 	definitions: TaxonomyDefinition[]
 ): TaxonomyDefinition[] {
@@ -1000,47 +991,8 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		);
 
 		const actions = document.createElement( 'td' );
-		actions.append(
-			actionButton( 'Edit', { wpessentialTaxonomyEdit: definition.id } ),
-			document.createTextNode( ' ' )
-		);
-		if ( definition.status === 'published' ) {
-			actions.append(
-				actionButton( 'Disable', {
-					wpessentialTaxonomyStatus: 'disabled',
-					wpessentialTaxonomyId: definition.id,
-				} ),
-				document.createTextNode( ' ' )
-			);
-		} else {
-			actions.append(
-				actionButton( 'Publish', {
-					wpessentialTaxonomyStatus: 'published',
-					wpessentialTaxonomyId: definition.id,
-				} ),
-				document.createTextNode( ' ' )
-			);
-		}
-		if ( definition.status !== 'archived' ) {
-			actions.append(
-				actionButton( 'Archive', {
-					wpessentialTaxonomyStatus: 'archived',
-					wpessentialTaxonomyId: definition.id,
-				} )
-			);
-		}
-		// Delete Permanently, as in WordPress: not while locked or published.
-		const remove = actionButton( 'Delete', {
-			wpessentialTaxonomyDelete: definition.id,
-		} );
-		remove.classList.add( 'is-danger' );
-		if ( locked || definition.status === 'published' ) {
-			remove.disabled = true;
-			remove.title = locked
-				? 'Locked: turn off the entry lock to delete it.'
-				: 'Disable or archive it before deleting.';
-		}
-		actions.append( document.createTextNode( ' ' ), remove );
+		actions.append( rowActions( definition ) );
+		markRow( row, definition );
 		row.append( actions );
 		rows.append( row );
 	}
@@ -1337,98 +1289,84 @@ function boot(): void {
 		}
 	);
 
+	// Row and bulk actions: Publish / Disable, Lock / Unlock, Trash, Restore, Delete permanently.
+	const send = async ( action: LifecycleAction, definition: TaxonomyDefinition ): Promise< void > => {
+		const routes = bootstrap.routes;
+		const route =
+			action === 'publish' || action === 'disable'
+				? routes.status
+				: action === 'unlock'
+					? routes.lock
+					: routes[ action ];
+		if ( ! route ) {
+			throw new Error( 'This action is not available.' );
+		}
+		const extra =
+			action === 'publish'
+				? { status: 'published' }
+				: action === 'disable'
+					? { status: 'disabled' }
+					: action === 'lock' || action === 'unlock'
+						? { locked: action === 'lock' }
+						: {};
+		await postRoute( bootstrap, route, { id: definition.id, expected_revision: definition.revision, ...extra } );
+	};
+	const DONE: Record< LifecycleAction, string > = {
+		trash: 'moved to the Trash',
+		restore: 'restored',
+		delete: 'deleted permanently',
+		lock: 'locked',
+		unlock: 'unlocked',
+		publish: 'published',
+		disable: 'disabled',
+	};
+	const lifecycle = async ( action: LifecycleAction, ids: string[] ): Promise< void > => {
+		const chosen = definitions.filter( ( definition ) => ids.includes( definition.id ) );
+		if ( chosen.length === 0 ) {
+			setNotice( 'The selected taxonomy is no longer available.', true );
+			return;
+		}
+		await run( async () => {
+			const changed = await runLifecycle( action, chosen, {
+				noun: { one: 'taxonomy', many: 'taxonomies' },
+				send,
+			} );
+			if ( changed === 0 ) {
+				return;
+			}
+			await refresh();
+			if ( chosen.some( ( definition ) => definition.id === textInput( 'wpessential-taxonomy-id' )?.value ) ) {
+				resetForm();
+				editorSafety?.acceptBaseline();
+			}
+			setNotice( `${ changed } ${ changed === 1 ? 'taxonomy' : 'taxonomies' } ${ DONE[ action ] }.` );
+		} );
+	};
+
 	root.addEventListener( 'click', ( event ) => {
-		const target = event.target;
+		const target = event.target instanceof Element ? event.target.closest( 'button' ) : null;
 		if ( ! ( target instanceof HTMLButtonElement ) ) {
 			return;
 		}
-		const editId = target.dataset.wpessentialTaxonomyEdit;
-		if ( editId && bootstrap.view === 'list' ) {
-			const url = new URL(
-				bootstrap.editorUrl || window.location.href,
-				window.location.href
-			);
-			url.searchParams.set( 'definition', editId );
+		const action = target.dataset.wpeRowAction;
+		const id = target.dataset.wpeRowId ?? '';
+		if ( action === 'edit' && bootstrap.view === 'list' ) {
+			const url = new URL( bootstrap.editorUrl || window.location.href, window.location.href );
+			url.searchParams.set( 'definition', id );
 			window.location.assign( url.toString() );
 			return;
 		}
-		if ( editId ) {
-			const definition = definitions.find(
-				( candidate ) => candidate.id === editId
-			);
+		if ( action === 'edit' ) {
+			const definition = definitions.find( ( candidate ) => candidate.id === id );
 			if ( definition ) {
 				editDefinition( definition );
 				editorSafety?.acceptBaseline();
 			}
 			return;
 		}
-
-		const deleteId = target.dataset.wpessentialTaxonomyDelete;
-		const deleteRoute = bootstrap.routes.delete;
-		if ( deleteId && deleteRoute ) {
-			const definition = definitions.find(
-				( candidate ) => candidate.id === deleteId
-			);
-			const label =
-				typeof definition?.payload.name === 'string'
-					? definition.payload.name
-					: 'this taxonomy';
-			if (
-				! definition ||
-				! window.confirm(
-					`Delete “${ label }” permanently? This cannot be undone.`
-				)
-			) {
-				return;
-			}
-			void run( async () => {
-				await postRoute( bootstrap, deleteRoute, {
-					id: definition.id,
-					expected_revision: definition.revision,
-				} );
-				definitions = definitions.filter(
-					( candidate ) => candidate.id !== definition.id
-				);
-				renderRows( definitions );
-				setNotice( 'Taxonomy deleted.' );
-			} );
-			return;
+		if ( action ) {
+			void lifecycle( action as LifecycleAction, [ id ] );
 		}
-
-		const status = target.dataset.wpessentialTaxonomyStatus;
-		const id = target.dataset.wpessentialTaxonomyId;
-		if ( ! status || ! id ) {
-			return;
-		}
-		const definition = definitions.find(
-			( candidate ) => candidate.id === id
-		);
-		if ( ! definition ) {
-			setNotice( 'The selected taxonomy is no longer available.', true );
-			return;
-		}
-
-		void run( async () => {
-			const data = await postRoute( bootstrap, bootstrap.routes.status, {
-				id,
-				expected_revision: definition.revision,
-				status,
-			} );
-			const changed = parseMutationDefinition( data );
-			if ( ! changed ) {
-				throw new Error( 'The Taxonomy status response was invalid.' );
-			}
-			definitions = upsertDefinition( definitions, changed );
-			renderRows( definitions );
-			if ( status === 'published' ) {
-				await refresh();
-			}
-			if ( textInput( 'wpessential-taxonomy-id' )?.value === id ) {
-				resetForm();
-				editorSafety?.acceptBaseline();
-			}
-			setNotice( `Taxonomy status changed to ${ status }.` );
-		} );
 	} );
 
 	ensureDiagnosticsPanel();
@@ -1453,7 +1391,12 @@ function boot(): void {
 		enhanceTable( taxonomyTable, {
 			rowSelector: '[data-wpessential-taxonomy-row]',
 			itemsLabel: 'Taxonomies',
-			viewsColumn: 3,
+			views: LIFECYCLE_VIEWS,
+			bulk: {
+				actions: BULK_ACTIONS,
+				run: ( action, ids ) => lifecycle( action as LifecycleAction, ids ),
+				idOf: ( row ) => row.dataset.wpeRowId ?? '',
+			},
 			filters: [ { column: 5, label: 'Runtime health' } ],
 			sortable: [
 				{ column: 0 },

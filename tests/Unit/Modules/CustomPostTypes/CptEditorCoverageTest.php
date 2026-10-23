@@ -28,7 +28,12 @@ final class CptEditorCoverageTest extends TestCase
     {
         $source  = $this->editorSource();
         $missing = [];
+        // Set from the list page (Trash / Restore), not from the editor.
+        $listManaged = ['trashed'];
         foreach (CustomPostTypeDefinitionProjector::TOP_LEVEL_KEYS as $key) {
+            if (in_array($key, $listManaged, true)) {
+                continue;
+            }
             if (! str_contains($source, "'" . $key . "'") && ! str_contains($source, $key . ':')) {
                 $missing[] = $key;
             }

@@ -59,8 +59,8 @@ final class ModuleCatalog {
 	/** @return list<array{0:string,1:string,2:string,3:string,4:string,5:string,6:bool,7:?string,8:string}> */
 	private static function definitions(): array {
 		return [
-			[ 'custom-post-types', 'Custom Post Types', 'free', 'content', 'cpt', 'file', true, 'wpessential-cpt', 'Register and manage custom post types with labels, supports, rewrites and REST.' ],
-			[ 'taxonomies', 'Taxonomies', 'free', 'content', 'taxonomy', 'tag', true, 'wpessential-taxonomy', 'Hierarchical and flat taxonomies with object types and CPT UI import.' ],
+			[ 'custom-post-types', 'Custom Post Types', 'free', 'content', 'cpt', 'file', true, 'wpessential-post-types', 'Register and manage custom post types with labels, supports, rewrites and REST.' ],
+			[ 'taxonomies', 'Taxonomies', 'free', 'content', 'taxonomy', 'tag', true, 'wpessential-taxonomies', 'Hierarchical and flat taxonomies with object types and CPT UI import.' ],
 			[ 'custom-fields', 'Custom Fields', 'pro', 'content', 'fields', 'form', true, 'wpessential-fields', 'Field groups, field types, location rules and typed storage.' ],
 			[ 'relations', 'Relations', 'pro', 'content', 'relations', 'link', true, 'wpessential-relations', 'Many-to-many relationships between posts, terms and users.' ],
 			[ 'custom-tables', 'Custom Tables', 'pro', 'content', 'tables', 'database', true, 'wpessential-custom-tables', 'Dedicated database tables with migrations, indexes and admin views.' ],

@@ -292,7 +292,104 @@ final class CustomPostTypeModule implements ModuleInterface {
 				CustomPostTypeAbilityHandler::DELETE,
 			),
 			'Delete custom post type',
-			'Permanently deletes an unlocked, unpublished custom post type definition (never available to AI).',
+			'Permanently deletes an unlocked custom post type from the Trash (never available to AI).',
+		);
+
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/cpt/trash',
+				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type'       => 'object',
+					'required'   => [ 'id', 'expected_revision' ],
+					'properties' => [
+						'id'                => [ 'type' => 'string' ],
+						'expected_revision' => [
+							'type'    => 'integer',
+							'minimum' => 1,
+						],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new CustomPostTypeAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				CustomPostTypeAbilityHandler::TRASH,
+			),
+			'Move custom post type to Trash',
+			'Moves a custom post type to the Trash (published entries are disabled); refused while locked.',
+		);
+
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/cpt/restore',
+				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type'       => 'object',
+					'required'   => [ 'id', 'expected_revision' ],
+					'properties' => [
+						'id'                => [ 'type' => 'string' ],
+						'expected_revision' => [
+							'type'    => 'integer',
+							'minimum' => 1,
+						],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new CustomPostTypeAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				CustomPostTypeAbilityHandler::RESTORE,
+			),
+			'Restore custom post type',
+			'Restores a custom post type from the Trash as a draft.',
+		);
+
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/cpt/lock',
+				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type'       => 'object',
+					'required'   => [ 'id', 'expected_revision', 'locked' ],
+					'properties' => [
+						'id'                => [ 'type' => 'string' ],
+						'expected_revision' => [
+							'type'    => 'integer',
+							'minimum' => 1,
+						],
+						'locked'            => [ 'type' => 'boolean' ],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new CustomPostTypeAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				CustomPostTypeAbilityHandler::LOCK,
+			),
+			'Lock or unlock custom post type',
+			'Turns the entry lock on or off; locked entries cannot be trashed or deleted.',
 		);
 	}
 
@@ -366,6 +463,30 @@ final class CustomPostTypeModule implements ModuleInterface {
 			$contexts,
 			'cpt.delete',
 			'wpessential/cpt/delete',
+			NonceOperation::Update,
+		);
+		$this->registerAjaxRoute(
+			$routes,
+			$abilities,
+			$contexts,
+			'cpt.trash',
+			'wpessential/cpt/trash',
+			NonceOperation::Update,
+		);
+		$this->registerAjaxRoute(
+			$routes,
+			$abilities,
+			$contexts,
+			'cpt.restore',
+			'wpessential/cpt/restore',
+			NonceOperation::Update,
+		);
+		$this->registerAjaxRoute(
+			$routes,
+			$abilities,
+			$contexts,
+			'cpt.lock',
+			'wpessential/cpt/lock',
 			NonceOperation::Update,
 		);
 	}

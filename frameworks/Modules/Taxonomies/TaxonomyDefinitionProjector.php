@@ -24,6 +24,8 @@ final class TaxonomyDefinitionProjector {
 	private const TOP_LEVEL_KEYS = [
 		// Entry lock: an admin safeguard that blocks deleting the definition; not a WordPress arg.
 		'locked',
+		// Trash flag (WordPress-style trash); a trashed definition is never published.
+		'trashed',
 		'taxonomy_key',
 		'object_types',
 		'name',

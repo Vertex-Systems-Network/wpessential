@@ -153,6 +153,18 @@ final class CustomPostTypeAdminController {
 					'type'  => 'cpt.delete',
 					'nonce' => $this->ajax->createNonce( 'cpt.delete' ),
 				],
+				'trash'    => [
+					'type'  => 'cpt.trash',
+					'nonce' => $this->ajax->createNonce( 'cpt.trash' ),
+				],
+				'restore'  => [
+					'type'  => 'cpt.restore',
+					'nonce' => $this->ajax->createNonce( 'cpt.restore' ),
+				],
+				'lock'     => [
+					'type'  => 'cpt.lock',
+					'nonce' => $this->ajax->createNonce( 'cpt.lock' ),
+				],
 			],
 			'definitions' => $definitions,
 			'view'        => $view,

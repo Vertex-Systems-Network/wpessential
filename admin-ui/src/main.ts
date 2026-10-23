@@ -1,5 +1,6 @@
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName, bindLevels, refreshLevel } from './core/levels';
+import { BULK_ACTIONS, LIFECYCLE_VIEWS, type LifecycleAction, markRow, rowActions, runLifecycle } from './core/lifecycle';
 import { enhanceTable } from './core/table';
 import { statusCell } from './core/status-pill';
 import {
@@ -51,6 +52,9 @@ type CptBootstrap = {
 		save: CptRoute;
 		status: CptRoute;
 		delete?: CptRoute;
+		trash?: CptRoute;
+		restore?: CptRoute;
+		lock?: CptRoute;
 	};
 	definitions: CptDefinition[];
 	/** Which page this is: the list or the Add/Edit editor. */
@@ -172,9 +176,10 @@ function parseCptBootstrap( value: unknown ): CptBootstrap | null {
 			validate: value.routes.validate,
 			save: value.routes.save,
 			status: value.routes.status,
-			...( isCptRoute( value.routes.delete )
-				? { delete: value.routes.delete }
-				: {} ),
+			...( isCptRoute( value.routes.delete ) ? { delete: value.routes.delete } : {} ),
+			...( isCptRoute( value.routes.trash ) ? { trash: value.routes.trash } : {} ),
+			...( isCptRoute( value.routes.restore ) ? { restore: value.routes.restore } : {} ),
+			...( isCptRoute( value.routes.lock ) ? { lock: value.routes.lock } : {} ),
 		},
 		definitions: value.definitions,
 		view: value.view === 'list' ? 'list' : 'editor',
@@ -412,20 +417,6 @@ function createCell( text: string ): HTMLTableCellElement {
 	return cell;
 }
 
-function actionButton(
-	label: string,
-	attributes: Record< string, string >
-): HTMLButtonElement {
-	const button = document.createElement( 'button' );
-	button.type = 'button';
-	button.className = 'button button-small';
-	button.textContent = label;
-	for ( const [ key, value ] of Object.entries( attributes ) ) {
-		button.dataset[ key ] = value;
-	}
-	return button;
-}
-
 function renderCptRows( definitions: CptDefinition[] ): void {
 	const rows = document.getElementById( 'wpessential-cpt-rows' );
 	if ( ! ( rows instanceof HTMLTableSectionElement ) ) {
@@ -473,47 +464,8 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 		);
 
 		const actions = document.createElement( 'td' );
-		actions.append(
-			actionButton( 'Edit', { wpessentialCptEdit: definition.id } ),
-			document.createTextNode( ' ' )
-		);
-		if ( definition.status === 'published' ) {
-			actions.append(
-				actionButton( 'Disable', {
-					wpessentialCptStatus: 'disabled',
-					wpessentialCptId: definition.id,
-				} ),
-				document.createTextNode( ' ' )
-			);
-		} else {
-			actions.append(
-				actionButton( 'Publish', {
-					wpessentialCptStatus: 'published',
-					wpessentialCptId: definition.id,
-				} ),
-				document.createTextNode( ' ' )
-			);
-		}
-		if ( definition.status !== 'archived' ) {
-			actions.append(
-				actionButton( 'Archive', {
-					wpessentialCptStatus: 'archived',
-					wpessentialCptId: definition.id,
-				} )
-			);
-		}
-		// Delete Permanently, as in WordPress: not while locked or published.
-		const remove = actionButton( 'Delete', {
-			wpessentialCptDelete: definition.id,
-		} );
-		remove.classList.add( 'is-danger' );
-		if ( locked || definition.status === 'published' ) {
-			remove.disabled = true;
-			remove.title = locked
-				? 'Locked: turn off the entry lock to delete it.'
-				: 'Disable or archive it before deleting.';
-		}
-		actions.append( document.createTextNode( ' ' ), remove );
+		actions.append( rowActions( definition ) );
+		markRow( row, definition );
 		row.append( actions );
 		rows.append( row );
 	}
@@ -830,84 +782,79 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		} );
 	} );
 
+	// Row and bulk actions: Publish / Disable, Lock / Unlock, Trash, Restore, Delete permanently.
+	const send = async ( action: LifecycleAction, definition: CptDefinition ): Promise< void > => {
+		const base = { id: definition.id, expected_revision: definition.revision };
+		const routes = bootstrap.routes;
+		const route =
+			action === 'publish' || action === 'disable'
+				? routes.status
+				: action === 'unlock'
+					? routes.lock
+					: routes[ action ];
+		if ( ! route ) {
+			throw new Error( 'This action is not available.' );
+		}
+		const extra =
+			action === 'publish'
+				? { status: 'published' }
+				: action === 'disable'
+					? { status: 'disabled' }
+					: action === 'lock' || action === 'unlock'
+						? { locked: action === 'lock' }
+						: {};
+		await postCptRoute( bootstrap, route, { ...base, ...extra } );
+	};
+	const DONE: Record< LifecycleAction, string > = {
+		trash: 'moved to the Trash',
+		restore: 'restored',
+		delete: 'deleted permanently',
+		lock: 'locked',
+		unlock: 'unlocked',
+		publish: 'published',
+		disable: 'disabled',
+	};
+	const lifecycle = async ( action: LifecycleAction, ids: string[] ): Promise< void > => {
+		const chosen = definitions.filter( ( definition ) => ids.includes( definition.id ) );
+		if ( chosen.length === 0 ) {
+			setNotice( 'The selected custom post type is no longer available.', true );
+			return;
+		}
+		await run( async () => {
+			const changed = await runLifecycle( action, chosen, {
+				noun: { one: 'custom post type', many: 'custom post types' },
+				send,
+			} );
+			if ( changed === 0 ) {
+				return;
+			}
+			await refresh();
+			setNotice( `${ changed } custom post type${ changed === 1 ? '' : 's' } ${ DONE[ action ] }.` );
+		} );
+	};
+
 	root.addEventListener( 'click', ( event ) => {
-		const target = event.target;
+		const target = event.target instanceof Element ? event.target.closest( 'button' ) : null;
 		if ( ! ( target instanceof HTMLButtonElement ) ) {
 			return;
 		}
 
-		const editId = target.dataset.wpessentialCptEdit;
-		if ( editId && bootstrap.view === 'list' ) {
-			window.location.assign( cptEditorUrl( bootstrap, editId ) );
+		const action = target.dataset.wpeRowAction;
+		const id = target.dataset.wpeRowId ?? '';
+		if ( action === 'edit' && bootstrap.view === 'list' ) {
+			window.location.assign( cptEditorUrl( bootstrap, id ) );
 			return;
 		}
-		if ( editId ) {
-			const definition = definitions.find(
-				( candidate ) => candidate.id === editId
-			);
+		if ( action === 'edit' ) {
+			const definition = definitions.find( ( candidate ) => candidate.id === id );
 			if ( definition ) {
 				editCptDefinition( definition );
 			}
 			return;
 		}
-
-		const deleteId = target.dataset.wpessentialCptDelete;
-		const deleteRoute = bootstrap.routes.delete;
-		if ( deleteId && deleteRoute ) {
-			const definition = definitions.find(
-				( candidate ) => candidate.id === deleteId
-			);
-			const label =
-				typeof definition?.payload.name === 'string'
-					? definition.payload.name
-					: 'this custom post type';
-			if (
-				! definition ||
-				! window.confirm(
-					`Delete “${ label }” permanently? This cannot be undone.`
-				)
-			) {
-				return;
-			}
-			void run( async () => {
-				await postCptRoute( bootstrap, deleteRoute, {
-					id: definition.id,
-					expected_revision: definition.revision,
-				} );
-				await refresh();
-				setNotice( 'Custom post type deleted.' );
-			} );
-			return;
+		if ( action ) {
+			void lifecycle( action as LifecycleAction, [ id ] );
 		}
-
-		const status = target.dataset.wpessentialCptStatus;
-		const id = target.dataset.wpessentialCptId;
-		if ( ! status || ! id ) {
-			return;
-		}
-		const definition = definitions.find(
-			( candidate ) => candidate.id === id
-		);
-		if ( ! definition ) {
-			setNotice(
-				'The selected custom post type is no longer available.',
-				true
-			);
-			return;
-		}
-
-		void run( async () => {
-			await postCptRoute( bootstrap, bootstrap.routes.status, {
-				id,
-				expected_revision: definition.revision,
-				status,
-			} );
-			await refresh();
-			if ( textInput( 'wpessential-cpt-id' )?.value === id ) {
-				resetCptForm();
-			}
-			setNotice( `Custom post type status changed to ${ status }.` );
-		} );
 	} );
 
 	renderCptRows( definitions );
@@ -916,7 +863,12 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		enhanceTable( cptTable, {
 			rowSelector: '[data-wpessential-cpt-row]',
 			itemsLabel: 'Post Types',
-			viewsColumn: 2,
+			views: LIFECYCLE_VIEWS,
+			bulk: {
+				actions: BULK_ACTIONS,
+				run: ( action, ids ) => lifecycle( action as LifecycleAction, ids ),
+				idOf: ( row ) => row.dataset.wpeRowId ?? '',
+			},
 			sortable: [
 				{ column: 0 },
 				{ column: 1 },

@@ -282,7 +282,7 @@ test('CPT list page has WordPress-style views, search and sortable columns', asy
   await page.getByRole('button', { name: 'First page' }).first().click();
 
   // Sortable columns.
-  const revision = page.getByRole('columnheader', { name: 'Revision' });
+  const revision = page.locator('thead').getByRole('columnheader', { name: 'Revision' });
   await revision.getByRole('button').click();
   await revision.getByRole('button').click();
   await expect(revision).toHaveAttribute('aria-sort', 'descending');
@@ -292,40 +292,75 @@ test('CPT list page has WordPress-style views, search and sortable columns', asy
   expect(results.violations.map((violation) => violation.id)).toEqual([]);
 });
 
-test('CPT list deletes unlocked drafts and blocks locked or published entries', async ({ page }) => {
-  const make = (index, status, locked) => ({
+test('CPT list trashes, restores, locks and deletes like WordPress, with our confirm dialog', async ({ page }) => {
+  const make = (index, status, extra = {}) => ({
     id: `33333333-3333-4333-8333-${String(index).padStart(12, '0')}`,
     status,
     revision: 1,
-    payload: { post_type_key: `del_${index}`, name: `Delete type ${index}`, singular_name: `Delete type ${index}`, ...(locked ? { locked: true } : {}) },
+    payload: { post_type_key: `del_${index}`, name: `Delete type ${index}`, singular_name: `Delete type ${index}`, ...extra },
   });
-  let definitions = [make(1, 'draft', false), make(2, 'draft', true), make(3, 'published', false)];
-  let deleted = null;
+  let definitions = [make(1, 'draft'), make(2, 'draft', { locked: true }), make(3, 'disabled', { trashed: true }), make(4, 'draft', { trashed: true })];
+  const calls = [];
   await visitCpts(page, 'wpessential-post-types');
   await page.route('**/wp-admin/admin-ajax.php', async (route) => {
     const body = new URLSearchParams(route.request().postData() ?? '');
-    if (body.get('type') === 'cpt.list') {
+    const type = body.get('type') ?? '';
+    if (type === 'cpt.list') {
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { definitions } }) });
       return;
     }
-    if (body.get('type') === 'cpt.delete') {
-      deleted = JSON.parse(body.get('payload_json') ?? '{}');
-      definitions = definitions.filter((definition) => definition.id !== deleted.id);
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { deleted: deleted.id } }) });
+    if (['cpt.trash', 'cpt.restore', 'cpt.lock', 'cpt.delete'].includes(type)) {
+      const input = JSON.parse(body.get('payload_json') ?? '{}');
+      calls.push([type, input]);
+      definitions = definitions.flatMap((definition) => {
+        if (definition.id !== input.id) return [definition];
+        if (type === 'cpt.delete') return [];
+        const payload = { ...definition.payload };
+        if (type === 'cpt.trash') payload.trashed = true;
+        if (type === 'cpt.restore') delete payload.trashed;
+        if (type === 'cpt.lock') payload.locked = input.locked;
+        return [{ ...definition, revision: definition.revision + 1, payload }];
+      });
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: {} }) });
       return;
     }
     await route.continue();
   });
   await page.getByRole('button', { name: 'Refresh' }).click();
 
+  const views = page.locator('.wpe-ui-views');
+  await expect(views).toContainText('All2');
+  await expect(views).toContainText('Locked1');
+  await expect(views).toContainText('Trash2');
   const row = (index) => page.locator(`tr[data-wpessential-cpt-row="${make(index).id}"]`);
   await expect(row(2)).toContainText('Locked');
-  await expect(row(2).getByRole('button', { name: 'Delete' })).toBeDisabled();
-  await expect(row(3).getByRole('button', { name: 'Delete' })).toBeDisabled();
+  await expect(row(2).getByRole('button', { name: 'Trash' })).toBeDisabled();
 
-  page.once('dialog', (dialog) => dialog.accept());
-  await row(1).getByRole('button', { name: 'Delete' }).click();
-  await expect(page.getByText('Custom post type deleted.')).toBeVisible();
-  expect(deleted).toEqual({ id: make(1).id, expected_revision: 1 });
-  await expect(row(1)).toHaveCount(0);
+  // Trash asks in our own dialog; Cancel changes nothing.
+  await row(1).getByRole('button', { name: 'Trash' }).click();
+  const dialog = page.locator('dialog.wpe-ui-dialog');
+  await expect(dialog).toContainText('Move this custom post type to the Trash?');
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  expect(calls).toEqual([]);
+  await row(1).getByRole('button', { name: 'Trash' }).click();
+  await dialog.getByRole('button', { name: 'Move to Trash' }).click();
+  await expect(page.getByText('1 custom post type moved to the Trash.')).toBeVisible();
+
+  // Unlock (no confirmation needed).
+  await row(2).getByRole('button', { name: 'Unlock' }).click();
+  await expect(page.getByText('1 custom post type unlocked.')).toBeVisible();
+
+  // Trash view: Restore one, then bulk-delete the rest permanently.
+  await views.getByRole('link', { name: /^Trash/ }).click();
+  await row(4).getByRole('button', { name: 'Restore' }).click();
+  await expect(page.getByText('1 custom post type restored.')).toBeVisible();
+  await page.locator('thead .wpe-ui-table__check input').check();
+  await page.getByRole('combobox', { name: 'Bulk actions' }).selectOption('delete');
+  await page.getByRole('button', { name: 'Apply' }).click();
+  await expect(dialog).toContainText('Delete 2 custom post types permanently?');
+  await dialog.getByRole('button', { name: 'Delete permanently' }).click();
+  await expect(page.getByText('2 custom post types deleted permanently.')).toBeVisible();
+  expect(calls.map(([type]) => type)).toEqual(['cpt.trash', 'cpt.lock', 'cpt.restore', 'cpt.delete', 'cpt.delete']);
+  expect(calls[1][1]).toEqual({ id: make(2).id, expected_revision: 1, locked: false });
+  await expect(page.locator('tfoot')).toContainText('Revision');
 });

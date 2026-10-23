@@ -128,7 +128,7 @@ final readonly class CustomTablesMigrationAbilityHandler implements AbilityHandl
 		Ct1ManagedTableIdentity $identity,
 		ProviderCapabilityProfile $capabilities,
 	): array {
-		$operations  = array_map( static fn ( MigrationOperation $operation ): string => $operation->type, $plan->operations );
+		$operations   = array_map( static fn ( MigrationOperation $operation ): string => $operation->type, $plan->operations );
 		$createsTable = in_array( 'create_table', $operations, true );
 
 		$lockNotes = [];
