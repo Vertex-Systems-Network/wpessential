@@ -45,6 +45,7 @@ use WPEssential\Platform\Admin\Connect\McpServer;
 use WPEssential\Platform\Admin\Connect\LicenseScreen;
 use WPEssential\Platform\Admin\Connect\LicenseService;
 use WPEssential\Platform\Admin\Core\CoreAdminController;
+use WPEssential\Platform\Admin\Core\CoreAjaxRoutes;
 use WPEssential\Platform\Admin\Demos\DemoCatalog;
 use WPEssential\Platform\Admin\Demos\DemosScreen;
 use WPEssential\Platform\Admin\Docs\DocsScreen;
@@ -184,6 +185,7 @@ final class Plugin {
 		$aiConnect          = new AiConnect();
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
+		( new CoreAjaxRoutes( $ajaxRoutes, $ajaxDispatcher, $abilities, $abilityContexts, $aiConnect, $ajaxAction ) )->register();
 		$coreAdmin          = new CoreAdminController(
 			self::$kernel,
 			$moduleToggles,

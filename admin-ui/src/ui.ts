@@ -1,4 +1,5 @@
 import './ui.scss';
+import { initAjaxForms } from './core/forms';
 
 function matches( element: HTMLElement, query: string ): boolean {
 	return query === '' || ( element.dataset.search ?? '' ).includes( query );
@@ -111,6 +112,7 @@ function initModeToggle(): void {
 }
 
 initModeToggle();
+initAjaxForms();
 
 const root = document.querySelector< HTMLElement >( '[data-wpessential-surface="core"]' );
 if ( root ) {

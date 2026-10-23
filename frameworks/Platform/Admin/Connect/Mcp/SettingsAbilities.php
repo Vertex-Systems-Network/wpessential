@@ -91,7 +91,7 @@ final class SettingsAbilities {
 				ownerSurfaceId: self::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: $mutates,
-				channels: [ ExecutionChannel::Internal, ExecutionChannel::Ai ],
+				channels: [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Ai ],
 				inputSchema: [
 					'type'                 => 'object',
 					'description'          => $description,

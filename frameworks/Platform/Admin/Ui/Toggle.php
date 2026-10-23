@@ -15,7 +15,10 @@ final class Toggle {
 
 	/** @param array<string,string> $hidden */
 	public static function form( string $action, string $nonceAction, bool $enabled, string $accessibleLabel, array $hidden = [] ): string {
-		$html  = '<form class="wpe-ui-toggle-form" method="post" action="' . esc_url( function_exists( 'admin_url' ) ? (string) admin_url( 'admin-post.php' ) : 'admin-post.php' ) . '">';
+		$html  = '<form class="wpe-ui-toggle-form" method="post" action="' . esc_url( function_exists( 'admin_url' ) ? (string) admin_url( 'admin-post.php' ) : 'admin-post.php' ) . '"'
+			. ' data-label-on="' . esc_attr__( 'On', 'wpessential' ) . '" data-label-off="' . esc_attr__( 'Off', 'wpessential' ) . '"'
+			. ' data-pill-on="' . esc_attr__( 'Running', 'wpessential' ) . '" data-pill-off="' . esc_attr__( 'Off', 'wpessential' ) . '"'
+			. ' data-done-on="' . esc_attr__( 'Switched on.', 'wpessential' ) . '" data-done-off="' . esc_attr__( 'Switched off.', 'wpessential' ) . '">';
 		$html .= function_exists( 'wp_nonce_field' ) ? (string) wp_nonce_field( $nonceAction, '_wpnonce', true, false ) : '';
 		$html .= '<input type="hidden" name="action" value="' . esc_attr( $action ) . '">';
 		foreach ( $hidden as $name => $value ) {

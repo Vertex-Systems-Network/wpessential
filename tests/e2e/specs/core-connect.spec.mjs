@@ -14,6 +14,9 @@ if (!pluginDirectory) {
 
 let playground;
 
+// Entrance animations fade colours in; axe must measure the settled page.
+test.use({ reducedMotion: 'reduce' });
+
 async function visitCore(page, slug) {
   const response = await page.goto(
     `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
@@ -121,6 +124,8 @@ test('dark mode is saved per user and every screen passes axe in dark', async ({
     await page.waitForLoadState('domcontentloaded');
   }
   await expect(page.locator('body')).toHaveClass(/wpe-mode-dark/);
+  await page.reload();
+  await expect(page.locator('body'), 'the AJAX mode switch must be saved').toHaveClass(/wpe-mode-dark/);
 
   for (const [slug] of screens) {
     await visitCore(page, slug);

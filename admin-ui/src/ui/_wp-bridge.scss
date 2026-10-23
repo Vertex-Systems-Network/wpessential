@@ -14,7 +14,7 @@
 	> section > h1 + p,
 	> h1 + p {
 		max-width: 52rem;
-		margin: 6px 0 20px;
+		margin: 6px 0 var(--wpe-space-5);
 		color: var(--wpe-muted);
 		font-size: 15px;
 	}
@@ -23,8 +23,8 @@
 	.wpessential-fields-panel,
 	> section:not([class]) > section:not([class]),
 	> section:not([id]):not([class]):not([data-wpe-category-group]) {
-		margin: 0 0 20px;
-		padding: 22px;
+		margin: 0 0 var(--wpe-space-5);
+		padding: var(--wpe-space-6);
 		border: 1px solid var(--wpe-line);
 		border-radius: var(--wpe-radius-lg);
 		background: var(--wpe-card);
@@ -32,12 +32,12 @@
 
 	.wpessential-cpt-options,
 	fieldset {
-		margin: 16px 0;
+		margin: var(--wpe-space-4) 0;
 		padding: 0;
 		border: 0;
 
 		legend {
-			margin-bottom: 8px;
+			margin-bottom: var(--wpe-space-2);
 			font-weight: 600;
 		}
 	}
@@ -51,7 +51,7 @@
 	textarea,
 	select {
 		min-height: 40px;
-		padding: 0 12px;
+		padding: 0 var(--wpe-space-3);
 		border: 1px solid var(--wpe-line);
 		border-radius: var(--wpe-radius);
 		background-color: var(--wpe-card);
@@ -73,11 +73,11 @@
 	}
 
 	textarea {
-		padding: 10px 12px;
+		padding: var(--wpe-space-3) var(--wpe-space-3);
 	}
 
 	select {
-		padding-right: 32px;
+		padding-right: var(--wpe-space-7);
 	}
 
 	input[type="checkbox"],
@@ -111,7 +111,7 @@
 
 	.button {
 		min-height: 38px;
-		padding: 0 16px;
+		padding: 0 var(--wpe-space-4);
 		border: 1px solid var(--wpe-line);
 		border-radius: var(--wpe-radius);
 		background: var(--wpe-card);
@@ -147,14 +147,14 @@
 
 	.button-small {
 		min-height: 30px;
-		padding: 0 10px;
+		padding: 0 var(--wpe-space-3);
 		font-size: 12px;
 		line-height: 28px;
 	}
 
 	.notice {
-		margin: 0 0 16px;
-		padding: 10px 16px;
+		margin: 0 0 var(--wpe-space-5);
+		padding: var(--wpe-space-3) var(--wpe-space-4);
 		border: 0;
 		border-left: 4px solid var(--wpe-blue);
 		border-radius: var(--wpe-radius);
@@ -190,7 +190,7 @@
 
 		thead th,
 		thead td {
-			padding: 10px 14px;
+			padding: var(--wpe-space-3) var(--wpe-space-3);
 			border-bottom: 0;
 			background: var(--wpe-surface);
 			color: var(--wpe-muted);
@@ -203,7 +203,7 @@
 
 		tbody td,
 		tbody th {
-			padding: 13px 14px;
+			padding: 13px var(--wpe-space-3);
 			border-top: 1px solid var(--wpe-surface-2);
 			color: var(--wpe-text-2);
 			vertical-align: middle;
@@ -226,13 +226,13 @@
 	.form-table {
 		th {
 			width: 220px;
-			padding: 16px 20px 16px 0;
+			padding: var(--wpe-space-4) var(--wpe-space-5) var(--wpe-space-4) 0;
 			color: var(--wpe-text);
 			font-weight: 600;
 		}
 
 		td {
-			padding: 12px 0;
+			padding: var(--wpe-space-3) 0;
 		}
 
 		tr {
@@ -243,17 +243,17 @@
 	.submit {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 10px;
-		margin: 20px 0 0;
+		gap: var(--wpe-space-3);
+		margin: var(--wpe-space-5) 0 0;
 		padding: 0;
 	}
 
 	.wpessential-taxonomy-tier-navigation {
 		display: inline-flex;
 		flex-wrap: wrap;
-		gap: 4px;
-		margin-bottom: 8px;
-		padding: 4px;
+		gap: var(--wpe-space-1);
+		margin-bottom: var(--wpe-space-2);
+		padding: var(--wpe-space-1);
 		border-radius: 12px;
 		background: var(--wpe-surface-2);
 
@@ -275,8 +275,8 @@
 	}
 
 	.wpessential-cpt-validation {
-		margin: 16px 0;
-		padding: 14px 16px;
+		margin: var(--wpe-space-4) 0;
+		padding: var(--wpe-space-3) var(--wpe-space-4);
 		border-left: 4px solid var(--wpe-blue);
 		border-radius: var(--wpe-radius);
 		background: var(--wpe-blue-tint);

@@ -14,6 +14,9 @@ if (!pluginDirectory) {
 
 let playground;
 
+// Entrance animations fade colours in; axe must measure the settled page.
+test.use({ reducedMotion: 'reduce' });
+
 async function visitCore(page, slug) {
   const response = await page.goto(
     `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
@@ -80,12 +83,14 @@ test('Free module can be switched off and on from the module manager', async ({ 
   const toggle = card.getByRole('switch', { name: 'Turn Taxonomies on or off' });
   await expect(toggle).toHaveAttribute('aria-checked', 'true');
 
+  const url = page.url();
   await toggle.click();
-  await expect(page.getByRole('status').filter({ hasText: 'Taxonomies is now off.' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Switched off.' })).toBeVisible();
+  expect(page.url(), 'the switch must update in place over AJAX').toBe(url);
   await expect(card.getByRole('switch')).toHaveAttribute('aria-checked', 'false');
 
   await card.getByRole('switch').click();
-  await expect(page.getByRole('status').filter({ hasText: 'Taxonomies is now on.' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Switched on.' })).toBeVisible();
   await expect(card.getByRole('switch')).toHaveAttribute('aria-checked', 'true');
 
   const premium = page.locator('[data-wpe-module][data-edition="pro"]').first();

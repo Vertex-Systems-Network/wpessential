@@ -29,18 +29,18 @@
 	}
 
 	h2 {
-		margin: 0 0 16px;
+		margin: 0 0 var(--wpe-space-4);
 		font-size: 18px;
 		line-height: 1.3;
 	}
 
 	h3 {
-		margin: 20px 0 12px;
+		margin: var(--wpe-space-5) 0 var(--wpe-space-3);
 		font-size: 16px;
 	}
 
 	h4 {
-		margin: 16px 0 8px;
+		margin: var(--wpe-space-4) 0 var(--wpe-space-2);
 		font-size: 14px;
 	}
 
