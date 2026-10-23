@@ -35,10 +35,10 @@ final class SettingsAbilities {
 	) {}
 
 	public function register( AbilityRegistry $abilities ): void {
-		$this->add( $abilities, 'modules/list', false, 'List WPEssential modules with edition and on/off state.', [], fn (): array => $this->modules() );
+		$this->add( $abilities, 'framework-modules/list', false, 'List WPEssential modules with edition and on/off state.', [], fn (): array => $this->modules() );
 		$this->add(
 			$abilities,
-			'modules/toggle',
+			'framework-modules/toggle',
 			true,
 			'Switch a WPEssential module on or off. Premium modules need an active Premium license.',
 			[
@@ -47,10 +47,10 @@ final class SettingsAbilities {
 			],
 			fn ( array $input ): array => $this->toggleModule( (string) ( $input['module'] ?? '' ), (bool) ( $input['enabled'] ?? false ) )
 		);
-		$this->add( $abilities, 'elements/list', false, 'List Gutenberg blocks and Elementor widgets with their on/off state.', [], fn (): array => $this->elementList() );
+		$this->add( $abilities, 'framework-elements/list', false, 'List Gutenberg blocks and Elementor widgets with their on/off state.', [], fn (): array => $this->elementList() );
 		$this->add(
 			$abilities,
-			'elements/toggle',
+			'framework-elements/toggle',
 			true,
 			'Switch a Gutenberg block or Elementor widget on or off.',
 			[
@@ -63,11 +63,11 @@ final class SettingsAbilities {
 			],
 			fn ( array $input ): array => $this->toggleElement( (string) ( $input['type'] ?? '' ), (string) ( $input['element'] ?? '' ), (bool) ( $input['enabled'] ?? false ) )
 		);
-		$this->add( $abilities, 'license/status', false, 'Read the site license status. The key is always masked.', [], fn (): array => $this->licenseStatus() );
-		$this->add( $abilities, 'settings/get', false, 'Read WPEssential settings that AI may change.', [], fn (): array => $this->settings() );
+		$this->add( $abilities, 'framework-license/status', false, 'Read the site license status. The key is always masked.', [], fn (): array => $this->licenseStatus() );
+		$this->add( $abilities, 'framework-settings/get', false, 'Read WPEssential settings that AI may change.', [], fn (): array => $this->settings() );
 		$this->add(
 			$abilities,
-			'settings/update',
+			'framework-settings/update',
 			true,
 			'Change WPEssential settings for the connected user. Only the listed keys are accepted.',
 			[
