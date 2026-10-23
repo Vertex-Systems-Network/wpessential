@@ -18,6 +18,7 @@ use WPEssential\Platform\Admin\Ui\Button;
 use WPEssential\Platform\Admin\Ui\Check;
 use WPEssential\Platform\Admin\Ui\Field;
 use WPEssential\Platform\Admin\Ui\Icon;
+use WPEssential\Platform\Admin\Ui\Levels;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
@@ -169,9 +170,9 @@ final class TaxonomyAdminController {
 
 		echo '<h3 class="wpe-ui-builder__section">' . esc_html__( 'Basics', 'wpessential' ) . '</h3>';
 		echo '<div class="wpessential-cpt-grid wpe-ui-field-grid">';
-		$this->renderTextField( 'wpessential-taxonomy-key', __( 'Taxonomy key', 'wpessential' ), 'taxonomy_key', 'book_genre', true, __( 'Lowercase; maximum 32 characters. Existing runtime keys are immutable.', 'wpessential' ) );
 		$this->renderTextField( 'wpessential-taxonomy-name', __( 'Plural name', 'wpessential' ), 'name', 'Genres', true );
 		$this->renderTextField( 'wpessential-taxonomy-singular', __( 'Singular name', 'wpessential' ), 'singular_name', 'Genre', true );
+		$this->renderTextField( 'wpessential-taxonomy-key', __( 'Taxonomy key', 'wpessential' ), 'taxonomy_key', 'book_genre', true, __( 'Filled in from the singular name. Lowercase, up to 32 characters; it cannot change after saving.', 'wpessential' ) );
 		$this->renderTextField( 'wpessential-taxonomy-description', __( 'Description', 'wpessential' ), 'description', '', false );
 		echo '</div>';
 
@@ -236,17 +237,7 @@ final class TaxonomyAdminController {
 	}
 
 	private function renderTierNavigation(): void {
-		echo '<div class="wpessential-taxonomy-tier-navigation" role="group" aria-label="' . esc_attr__( 'Editor level', 'wpessential' ) . '">';
-		foreach ( [
-			'essential' => __( 'Essential', 'wpessential' ),
-			'advanced'  => __( 'Advanced', 'wpessential' ),
-			'expert'    => __( 'Expert', 'wpessential' ),
-		] as $tier => $label ) {
-			$active = $tier === 'essential';
-			echo '<button type="button" class="button' . ( $active ? ' button-primary' : '' ) . '" data-wpessential-taxonomy-tier="' . esc_attr( $tier ) . '" aria-pressed="' . ( $active ? 'true' : 'false' ) . '">' . esc_html( $label ) . '</button> ';
-		}
-		echo '</div>';
-		echo '<p id="wpessential-taxonomy-tier-status" class="description" aria-live="polite">' . esc_html__( 'Essential controls are shown. Stored Advanced and Expert values remain preserved.', 'wpessential' ) . '</p>';
+		echo Levels::render( 'taxonomy', __( 'Essential controls are shown: the settings most sites need. Advanced and Expert values you saved stay as they are.', 'wpessential' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 	}
 
 	private function renderAdvancedVisibility(): void {

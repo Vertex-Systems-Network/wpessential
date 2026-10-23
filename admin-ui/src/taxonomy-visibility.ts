@@ -98,12 +98,12 @@ function inheritanceStateLabel( value: string ): string {
 
 function tierStatusMessage( tier: TaxonomyTier ): string {
 	if ( tier === 'essential' ) {
-		return 'Essential controls are shown. Stored Advanced and Expert values remain preserved.';
+		return 'Essential controls are shown: the settings most sites need. Advanced and Expert values you saved stay as they are.';
 	}
 	if ( tier === 'advanced' ) {
-		return 'Essential and Advanced controls are shown. Stored Expert values remain preserved.';
+		return 'Essential and Advanced controls are shown. Expert values you saved stay as they are.';
 	}
-	return 'Essential, Advanced and currently promoted Expert controls are shown.';
+	return 'Essential, Advanced and Expert controls are shown.';
 }
 
 function visibilityValue( value: string ): boolean | undefined {
@@ -775,7 +775,7 @@ export function setTaxonomyTier( tier: TaxonomyTier ): void {
 		const buttonTier = button.dataset.wpessentialTaxonomyTier;
 		const active = buttonTier === tier;
 		button.setAttribute( 'aria-pressed', active ? 'true' : 'false' );
-		button.classList.toggle( 'button-primary', active );
+		button.parentElement?.classList.toggle( 'is-active', active );
 	}
 
 	for ( const section of Array.from(

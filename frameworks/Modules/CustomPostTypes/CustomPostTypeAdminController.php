@@ -17,6 +17,7 @@ use WPEssential\Platform\Admin\Ui\Button;
 use WPEssential\Platform\Admin\Ui\Check;
 use WPEssential\Platform\Admin\Ui\Field;
 use WPEssential\Platform\Admin\Ui\Icon;
+use WPEssential\Platform\Admin\Ui\Levels;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\Ui\StatusPill;
 use WPEssential\Platform\Auth\ExecutionChannel;
@@ -166,15 +167,18 @@ final class CustomPostTypeAdminController {
 		echo '<form id="wpessential-cpt-form">';
 		echo '<input type="hidden" id="wpessential-cpt-id" value="">';
 		echo '<input type="hidden" id="wpessential-cpt-revision" value="">';
+		echo Levels::render( 'cpt', __( 'Essential controls are shown: the settings most sites need. Advanced and Expert values you saved stay as they are.', 'wpessential' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '<h3 class="wpe-ui-builder__section">' . esc_html__( 'Basics', 'wpessential' ) . '</h3>';
+		echo '<p class="wpe-ui-muted">' . esc_html__( 'What are you adding? For example Books, Events or Team members.', 'wpessential' ) . '</p>';
 		echo '<div class="wpessential-cpt-grid wpe-ui-field-grid">';
-		$this->renderTextField( 'wpessential-cpt-key', __( 'Post type key', 'wpessential' ), 'post_type_key', 'book', true, __( 'Lowercase; maximum 20 characters. Existing runtime keys are immutable through this first UI slice.', 'wpessential' ) );
 		$this->renderTextField( 'wpessential-cpt-name', __( 'Plural name', 'wpessential' ), 'name', 'Books', true );
 		$this->renderTextField( 'wpessential-cpt-singular', __( 'Singular name', 'wpessential' ), 'singular_name', 'Book', true );
+		$this->renderTextField( 'wpessential-cpt-key', __( 'Post type key', 'wpessential' ), 'post_type_key', 'book', true, __( 'Filled in from the singular name. Lowercase, up to 20 characters; it cannot change after saving.', 'wpessential' ) );
 		$this->renderTextField( 'wpessential-cpt-description', __( 'Description', 'wpessential' ), 'description', '', false );
 		echo '</div>';
 
 		echo '<fieldset class="wpessential-cpt-options wpe-ui-checks"><legend class="wpe-ui-builder__section">' . esc_html__( 'Behavior', 'wpessential' ) . '</legend>';
+		echo '<p class="wpe-ui-muted wpe-ui-checks__hint">' . esc_html__( 'Public: visitors can see these on the website. Show in REST API: needed for the block editor. Hierarchical: items can have parents, like Pages. Has archive: a listing page such as /books/.', 'wpessential' ) . '</p>';
 		$this->renderCheckbox( 'wpessential-cpt-public', __( 'Public', 'wpessential' ), true );
 		$this->renderCheckbox( 'wpessential-cpt-rest', __( 'Show in REST API', 'wpessential' ), true );
 		$this->renderCheckbox( 'wpessential-cpt-hierarchical', __( 'Hierarchical', 'wpessential' ), false );
@@ -182,6 +186,7 @@ final class CustomPostTypeAdminController {
 		echo '</fieldset>';
 
 		echo '<fieldset class="wpessential-cpt-options wpe-ui-checks"><legend class="wpe-ui-builder__section">' . esc_html__( 'Editor supports', 'wpessential' ) . '</legend>';
+		echo '<p class="wpe-ui-muted wpe-ui-checks__hint">' . esc_html__( 'The boxes shown on the edit screen.', 'wpessential' ) . '</p>';
 		foreach ( [
 			'title'           => __( 'Title', 'wpessential' ),
 			'editor'          => __( 'Editor', 'wpessential' ),
@@ -197,9 +202,12 @@ final class CustomPostTypeAdminController {
 			'autosave'        => __( 'Autosave', 'wpessential' ),
 		] as $support => $label ) {
 			$checked = in_array( $support, [ 'title', 'editor' ], true );
+			if ( $support === 'custom-fields' ) {
+				echo '<span class="wpe-ui-checks__more" data-wpessential-cpt-tier-min="advanced" hidden>';
+			}
 			echo Check::render( $label, [ 'data-wpessential-cpt-support' => $support ], $checked ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		}
-		echo '</fieldset>';
+		echo '</span></fieldset>';
 
 		echo $this->renderAdvanced(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 
@@ -307,29 +315,26 @@ final class CustomPostTypeAdminController {
 				'data-wpessential-cpt-opt-custom' => $key,
 			]
 		);
-		$section  = static fn ( string $title, string $desc, string $body ): string => '<details class="wpe-ui-builder__group"><summary class="wpe-ui-builder__section">' . esc_html( $title ) . '</summary>'
-			. '<p class="wpe-ui-muted">' . esc_html( $desc ) . '</p><div class="wpe-ui-field-grid">' . $body . '</div></details>';
+		$section  = static fn ( string $tier, string $title, string $desc, string $body ): string => '<section class="wpe-ui-builder__group" data-wpessential-cpt-tier-min="' . esc_attr( $tier ) . '" hidden><h3 class="wpe-ui-builder__section">' . esc_html( $title ) . '</h3>'
+			. '<p class="wpe-ui-muted">' . esc_html( $desc ) . '</p><div class="wpe-ui-field-grid">' . $body . '</div></section>';
 
 		$icons = [ '' => __( 'Default (Posts icon)', 'wpessential' ) ];
 		foreach ( self::DASHICONS as $icon ) {
 			$icons[ 'dashicons-' . $icon ] = ucwords( str_replace( '-', ' ', $icon ) );
 		}
 		$icons['none'] = __( 'No icon', 'wpessential' );
+		$yesNo         = [
+			''      => __( 'Default', 'wpessential' ),
+			'true'  => __( 'Yes', 'wpessential' ),
+			'false' => __( 'No', 'wpessential' ),
+		];
 
-		$html = Field::input(
-			'wpessential-cpt-archive-slug',
-			__( 'Archive slug', 'wpessential' ),
-			[ 'placeholder' => 'books' ],
-			__( 'Optional. Used when "Has archive" is on; empty uses the post type key.', 'wpessential' )
-		);
-
-		$html .= $section(
-			__( 'Visibility & admin', 'wpessential' ),
-			__( 'Where the post type shows up in the admin, menus and search.', 'wpessential' ),
-			$tri( 'show_ui', __( 'Show admin screens', 'wpessential' ) )
-			. $boolText( 'show_in_menu', __( 'Show in admin menu', 'wpessential' ), __( 'Under another menu', 'wpessential' ), 'tools.php' )
-			. $text( 'menu_position', __( 'Menu position', 'wpessential' ), '25', __( '0–999. 5 is below Posts, 20 below Pages.', 'wpessential' ), 'int' )
-			. Field::select(
+		// Advanced: where it appears.
+		$html = $section(
+			'advanced',
+			__( 'Where it appears', 'wpessential' ),
+			__( 'The admin menu, navigation menus, the admin bar and site search.', 'wpessential' ),
+			Field::select(
 				'wpessential-cpt-opt-menu_icon',
 				__( 'Menu icon', 'wpessential' ),
 				$icons,
@@ -339,98 +344,50 @@ final class CustomPostTypeAdminController {
 					'data-kind'                => 'text',
 				]
 			)
+			. $text( 'menu_position', __( 'Menu position', 'wpessential' ), '25', __( '0–999. 5 is below Posts, 20 below Pages.', 'wpessential' ), 'int' )
+			. $tri( 'show_ui', __( 'Show admin screens', 'wpessential' ), __( 'The list and edit screens in the dashboard.', 'wpessential' ) )
+			. $boolText( 'show_in_menu', __( 'Show in admin menu', 'wpessential' ), __( 'Under another menu', 'wpessential' ), 'tools.php' )
 			. $tri( 'show_in_nav_menus', __( 'Available in navigation menus', 'wpessential' ) )
 			. $tri( 'show_in_admin_bar', __( 'Show in the admin bar "New" menu', 'wpessential' ) )
 			. $tri( 'exclude_from_search', __( 'Exclude from front-end search', 'wpessential' ) )
-			. $tri( 'publicly_queryable', __( 'Publicly queryable', 'wpessential' ) )
+			. $tri( 'publicly_queryable', __( 'Publicly queryable', 'wpessential' ), __( 'Off hides single pages and archives from visitors while keeping the admin screens.', 'wpessential' ) )
 		);
 
-		$rewrite = Field::select(
-			'wpessential-cpt-opt-rewrite',
-			__( 'Pretty permalinks', 'wpessential' ),
-			[
-				''       => __( 'Default (on, key as slug)', 'wpessential' ),
-				'false'  => __( 'Off', 'wpessential' ),
-				'custom' => __( 'Custom', 'wpessential' ),
-			],
-			'',
-			[
-				'data-wpessential-cpt-opt' => 'rewrite',
-				'data-kind'                => 'rewrite',
-			]
-		)
+		// Advanced: web address.
+		$html .= $section(
+			'advanced',
+			__( 'Web address', 'wpessential' ),
+			__( 'How the archive and single pages are reached, for example /books/ and /books/my-book/.', 'wpessential' ),
+			Field::input(
+				'wpessential-cpt-archive-slug',
+				__( 'Archive slug', 'wpessential' ),
+				[ 'placeholder' => 'books' ],
+				__( 'Used when "Has archive" is on; empty uses the post type key.', 'wpessential' )
+			)
+			. Field::select(
+				'wpessential-cpt-opt-rewrite',
+				__( 'Pretty permalinks', 'wpessential' ),
+				[
+					''       => __( 'Default (on, key as slug)', 'wpessential' ),
+					'false'  => __( 'Off', 'wpessential' ),
+					'custom' => __( 'Custom', 'wpessential' ),
+				],
+				'',
+				[
+					'data-wpessential-cpt-opt' => 'rewrite',
+					'data-kind'                => 'rewrite',
+				]
+			)
 			. Field::input(
 				'wpessential-cpt-rewrite-slug',
 				__( 'Permalink slug', 'wpessential' ),
 				[
 					'placeholder'                  => 'library/books',
 					'data-wpessential-cpt-rewrite' => 'slug',
-				]
-			);
-		foreach ( [
-			'with_front' => __( 'Prefix with the permalink front base', 'wpessential' ),
-			'feeds'      => __( 'Feed permalinks', 'wpessential' ),
-			'pages'      => __( 'Paged permalinks', 'wpessential' ),
-		] as $key => $label ) {
-			$rewrite .= Field::select(
-				'wpessential-cpt-rewrite-' . $key,
-				$label,
-				[
-					''      => __( 'Default', 'wpessential' ),
-					'true'  => __( 'Yes', 'wpessential' ),
-					'false' => __( 'No', 'wpessential' ),
 				],
-				'',
-				[ 'data-wpessential-cpt-rewrite' => $key ]
-			);
-		}
-		$html .= $section(
-			__( 'Archives, rewrite & query', 'wpessential' ),
-			__( 'Front-end URLs, query variables and export.', 'wpessential' ),
-			$rewrite
+				__( 'Used when Pretty permalinks is Custom.', 'wpessential' )
+			)
 			. $boolText( 'query_var', __( 'Query variable', 'wpessential' ), __( 'Custom query variable', 'wpessential' ), 'book' )
-			. $tri( 'can_export', __( 'Include in Tools → Export', 'wpessential' ) )
-		);
-
-		$html .= $section(
-			__( 'REST API', 'wpessential' ),
-			__( 'Used when "Show in REST API" is on (required for the block editor).', 'wpessential' ),
-			$text( 'rest_base', __( 'REST base', 'wpessential' ), 'books' )
-			. $text( 'rest_namespace', __( 'REST namespace', 'wpessential' ), 'wp/v2' )
-		);
-
-		$caps = '';
-		foreach ( self::CAPABILITY_KEYS as $cap ) {
-			$caps .= Field::input(
-				'wpessential-cpt-cap-' . $cap,
-				$cap,
-				[
-					'placeholder'              => '',
-					'data-wpessential-cpt-cap' => $cap,
-				]
-			);
-		}
-		$html .= $section(
-			__( 'Capabilities & permissions', 'wpessential' ),
-			__( 'Leave empty to use the standard post capabilities.', 'wpessential' ),
-			Field::input(
-				'wpessential-cpt-opt-capability_type',
-				__( 'Capability type (singular)', 'wpessential' ),
-				[
-					'placeholder'              => 'book',
-					'data-wpessential-cpt-opt' => 'capability_type',
-					'data-kind'                => 'pair',
-				]
-			)
-			. Field::input(
-				'wpessential-cpt-capability-plural',
-				__( 'Capability type (plural)', 'wpessential' ),
-				[ 'placeholder' => 'books' ],
-				__( 'Optional. Empty adds an "s".', 'wpessential' )
-			)
-			. $tri( 'map_meta_cap', __( 'Map meta capabilities', 'wpessential' ) )
-			. $tri( 'delete_with_user', __( 'Delete posts with their author', 'wpessential' ) )
-			. $caps
 		);
 
 		$taxonomies = '';
@@ -439,9 +396,9 @@ final class CustomPostTypeAdminController {
 				$taxonomies .= Check::render( (string) $taxonomy->label . ' (' . $taxonomy->name . ')', [ 'data-wpessential-cpt-taxonomy' => $taxonomy->name ] );
 			}
 		}
-		$html .= '<details class="wpe-ui-builder__group"><summary class="wpe-ui-builder__section">' . esc_html__( 'Taxonomies', 'wpessential' ) . '</summary>'
-			. '<p class="wpe-ui-muted">' . esc_html__( 'Registered taxonomies attached to this post type.', 'wpessential' ) . '</p>'
-			. '<div class="wpe-ui-checks">' . ( $taxonomies !== '' ? $taxonomies : '<span class="wpe-ui-muted">' . esc_html__( 'No taxonomies found.', 'wpessential' ) . '</span>' ) . '</div></details>';
+		$html .= '<section class="wpe-ui-builder__group" data-wpessential-cpt-tier-min="advanced" hidden><h3 class="wpe-ui-builder__section">' . esc_html__( 'Taxonomies', 'wpessential' ) . '</h3>'
+			. '<p class="wpe-ui-muted">' . esc_html__( 'Categories, tags or your own taxonomies to use with this post type.', 'wpessential' ) . '</p>'
+			. '<div class="wpe-ui-checks">' . ( $taxonomies !== '' ? $taxonomies : '<span class="wpe-ui-muted">' . esc_html__( 'No taxonomies found.', 'wpessential' ) . '</span>' ) . '</div></section>';
 
 		$labels = $tri( 'automatic_labels', __( 'Generate missing labels automatically', 'wpessential' ) );
 		foreach ( CustomPostTypeDefinitionProjector::LABEL_KEYS as $key ) {
@@ -452,9 +409,66 @@ final class CustomPostTypeAdminController {
 			);
 		}
 		$html .= $section(
+			'advanced',
 			__( 'Labels', 'wpessential' ),
-			__( 'Empty labels are generated from the plural and singular names.', 'wpessential' ),
+			__( 'The words WordPress shows for this post type. Empty labels are written for you from the names.', 'wpessential' ),
 			$labels
+		);
+
+		$html .= $section(
+			'advanced',
+			__( 'Permissions, export & REST', 'wpessential' ),
+			__( 'Who can edit, what happens on export or when a user is deleted, and the REST address.', 'wpessential' ),
+			Field::input(
+				'wpessential-cpt-opt-capability_type',
+				__( 'Capability type (singular)', 'wpessential' ),
+				[
+					'placeholder'              => 'book',
+					'data-wpessential-cpt-opt' => 'capability_type',
+					'data-kind'                => 'pair',
+				],
+				__( 'Empty uses the same permissions as Posts.', 'wpessential' )
+			)
+			. Field::input(
+				'wpessential-cpt-capability-plural',
+				__( 'Capability type (plural)', 'wpessential' ),
+				[ 'placeholder' => 'books' ],
+				__( 'Optional. Empty adds an "s".', 'wpessential' )
+			)
+			. $tri( 'can_export', __( 'Include in Tools → Export', 'wpessential' ) )
+			. $tri( 'delete_with_user', __( 'Delete posts with their author', 'wpessential' ) )
+			. $text( 'rest_base', __( 'REST base', 'wpessential' ), 'books', __( 'Used when "Show in REST API" is on.', 'wpessential' ) )
+		);
+
+		// Expert: developer settings.
+		$developer = $text( 'rest_namespace', __( 'REST namespace', 'wpessential' ), 'wp/v2' );
+		foreach ( [
+			'with_front' => __( 'Prefix with the permalink front base', 'wpessential' ),
+			'feeds'      => __( 'Feed permalinks', 'wpessential' ),
+			'pages'      => __( 'Paged permalinks', 'wpessential' ),
+		] as $key => $label ) {
+			$developer .= Field::select( 'wpessential-cpt-rewrite-' . $key, $label, $yesNo, '', [ 'data-wpessential-cpt-rewrite' => $key ], __( 'Used when Pretty permalinks is Custom.', 'wpessential' ) );
+		}
+		$html .= $section(
+			'expert',
+			__( 'Developer settings', 'wpessential' ),
+			__( 'REST namespace and permalink details. Leave on Default unless you know you need them.', 'wpessential' ),
+			$developer
+		);
+
+		$caps = $tri( 'map_meta_cap', __( 'Map meta capabilities', 'wpessential' ), __( 'Lets WordPress check per-post permissions (editing others\' posts and so on).', 'wpessential' ) );
+		foreach ( self::CAPABILITY_KEYS as $cap ) {
+			$caps .= Field::input(
+				'wpessential-cpt-cap-' . $cap,
+				$cap,
+				[ 'data-wpessential-cpt-cap' => $cap ]
+			);
+		}
+		$html .= $section(
+			'expert',
+			__( 'Capability map', 'wpessential' ),
+			__( 'Rename individual capabilities. Leave empty to use the ones made from the capability type.', 'wpessential' ),
+			$caps
 		);
 
 		return $html;

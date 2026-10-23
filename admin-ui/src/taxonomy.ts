@@ -1,3 +1,4 @@
+import { bindKeyFromName } from './core/levels';
 import { statusCell } from './core/status-pill';
 import './admin.scss';
 import {
@@ -1336,6 +1337,14 @@ function boot(): void {
 	ensureDiagnosticsPanel();
 	bindTaxonomyLabelEditor();
 	bindTaxonomyVisibility();
+	const keyField = document.getElementById( 'wpessential-taxonomy-key' );
+	const singularField = document.getElementById( 'wpessential-taxonomy-singular' );
+	if (
+		keyField instanceof HTMLInputElement &&
+		singularField instanceof HTMLInputElement
+	) {
+		bindKeyFromName( keyField, singularField, 32 );
+	}
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
 	editorSafety?.acceptBaseline();

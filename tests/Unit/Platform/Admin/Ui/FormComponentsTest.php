@@ -58,7 +58,7 @@ namespace WPEssential\Tests\Unit\Platform\Admin\Ui {
 		public function testCheckChip(): void
 		{
 			self::assertSame(
-				'<label class="wpe-ui-check" for="c"><input type="checkbox" id="c" checked> Public</label>',
+				'<label class="wpe-ui-check" for="c"><input type="checkbox" role="switch" id="c" checked> Public</label>',
 				Check::render( 'Public', [ 'id' => 'c' ], true )
 			);
 		}
