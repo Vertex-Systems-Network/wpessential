@@ -8,18 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use WP_Error;
 use WPEssential\Platform\Admin\Core\AdminScreen;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Badge;
 use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Field;
 use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
 use WPEssential\Platform\Admin\Ui\PageHeader;
 use WPEssential\Platform\Admin\Ui\Screen;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\Ui\StatusPill;
+use WP_Error;
 
 /**
  * License & Account screen (Figma: "License & Account", "Sign in / Create account").
@@ -124,15 +125,22 @@ final class LicenseScreen implements AdminScreen {
 	}
 
 	private static function submit( string $label, string $variant = 'primary', bool $small = false ): string {
-		return '<button type="submit" class="' . esc_attr( Button::classes( $variant, $small ) ) . '">' . esc_html( $label ) . '</button>';
+		return Button::button( $label, $variant, [ 'type' => 'submit' ], $small );
 	}
 
 	private static function input( string $name, string $label, string $type = 'text', string $autocomplete = '' ): string {
 		$id = 'wpe-license-' . $name;
 
-		return '<p class="wpe-ui-field"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>'
-			. '<input id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" type="' . esc_attr( $type ) . '" required'
-			. ( $autocomplete !== '' ? ' autocomplete="' . esc_attr( $autocomplete ) . '"' : '' ) . '></p>';
+		return Field::input(
+			$id,
+			$label,
+			[
+				'name'         => $name,
+				'type'         => $type,
+				'required'     => true,
+				'autocomplete' => $autocomplete !== '' ? $autocomplete : null,
+			]
+		);
 	}
 
 	public function render(): void {

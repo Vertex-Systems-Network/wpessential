@@ -12,6 +12,7 @@ use WPEssential\Platform\Admin\Core\CoreAjaxRoutes;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Check;
 use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
 use WPEssential\Platform\Admin\Ui\PageHeader;
@@ -179,8 +180,17 @@ final class SiteKitAdmin {
 			$html .= self::field( $key, $field, $values[ $key ] ?? '' );
 		}
 		$html .= '</div><div class="wpe-ui-builder__actions">';
-		$html .= '<button type="submit" name="reset" value="1" class="wpe-ui-button wpe-ui-button--ghost" data-wpe-reset>' . esc_html__( 'Reset group', 'wpessential' ) . '</button>';
-		$html .= '<button type="submit" class="wpe-ui-button wpe-ui-button--primary">' . esc_html__( 'Save changes', 'wpessential' ) . '</button>';
+		$html .= Button::button(
+			__( 'Reset group', 'wpessential' ),
+			'ghost',
+			[
+				'type'           => 'submit',
+				'name'           => 'reset',
+				'value'          => '1',
+				'data-wpe-reset' => true,
+			]
+		);
+		$html .= Button::button( __( 'Save changes', 'wpessential' ), 'primary', [ 'type' => 'submit' ] );
 
 		return $html . '</div></form></section>';
 	}
@@ -325,10 +335,17 @@ final class SiteKitAdmin {
 				],
 				(string) $row['location']
 			) . '</span>';
-			$html  .= '<input type="hidden" name="' . esc_attr( $prefix . '[enabled]' ) . '" value=""><label class="wpe-ui-check"><input type="checkbox" name="' . esc_attr( $prefix . '[enabled]' ) . '" value="1"' . ( $row['enabled'] ? ' checked' : '' ) . '> ' . esc_html__( 'Enabled', 'wpessential' ) . '</label>';
+			$html  .= '<input type="hidden" name="' . esc_attr( $prefix . '[enabled]' ) . '" value="">' . Check::render(
+				__( 'Enabled', 'wpessential' ),
+				[
+					'name'  => $prefix . '[enabled]',
+					'value' => '1',
+				],
+				(bool) $row['enabled']
+			);
 			$html  .= '</div><textarea class="wpe-ui-sitekit__code" name="' . esc_attr( $prefix . '[code]' ) . '" rows="6" spellcheck="false" aria-label="' . esc_attr__( 'Code', 'wpessential' ) . '">' . esc_textarea( (string) $row['code'] ) . '</textarea></fieldset>';
 		}
-		$html .= '<div class="wpe-ui-builder__actions"><button type="submit" class="wpe-ui-button wpe-ui-button--primary">' . esc_html__( 'Save snippets', 'wpessential' ) . '</button></div></form></section>';
+		$html .= '<div class="wpe-ui-builder__actions">' . Button::button( __( 'Save snippets', 'wpessential' ), 'primary', [ 'type' => 'submit' ] ) . '</div></form></section>';
 
 		return $html;
 	}

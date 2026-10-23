@@ -89,8 +89,7 @@ final class ElementsScreen implements AdminScreen {
 		$html .= '</nav></div>';
 
 		if ( $type === 'elementor' && ! did_action( 'elementor/loaded' ) ) {
-			$html .= '<div class="wpe-ui-notice wpe-ui-notice--warning" role="status">' . Icon::render( 'warn', 18 ) . '<span>'
-				. esc_html__( 'Elementor is not active. Install and activate Elementor to use WPEssential Elementor widgets.', 'wpessential' ) . '</span></div>';
+			$html .= Notice::render( 'warning', __( 'Elementor is not active. Install and activate Elementor to use WPEssential Elementor widgets.', 'wpessential' ), true );
 		}
 
 		$elements = $this->elements->all( $type );

@@ -8,14 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use WPEssential\Platform\Admin\Ui\Icon;
-use WPEssential\Platform\Admin\Ui\Shell;
-use WPEssential\Platform\Admin\Ui\StatusPill;
 use InvalidArgumentException;
 use Throwable;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Check;
+use WPEssential\Platform\Admin\Ui\Field;
+use WPEssential\Platform\Admin\Ui\Icon;
+use WPEssential\Platform\Admin\Ui\Shell;
+use WPEssential\Platform\Admin\Ui\StatusPill;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
@@ -190,7 +193,7 @@ final class CustomPostTypeAdminController {
 			'page-attributes' => __( 'Page attributes', 'wpessential' ),
 		] as $support => $label ) {
 			$checked = in_array( $support, [ 'title', 'editor' ], true );
-			echo '<label class="wpe-ui-check"><input type="checkbox" data-wpessential-cpt-support="' . esc_attr( $support ) . '"' . checked( $checked, true, false ) . '> ' . esc_html( $label ) . '</label>';
+			echo Check::render( $label, [ 'data-wpessential-cpt-support' => $support ], $checked ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		}
 		echo '</fieldset>';
 
@@ -213,9 +216,25 @@ final class CustomPostTypeAdminController {
 		echo '</div>';
 
 		echo '<div class="wpe-ui-builder__actions">';
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost" id="wpessential-cpt-cancel" hidden>' . esc_html__( 'Cancel edit', 'wpessential' ) . '</button>';
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--secondary" id="wpessential-cpt-validate">' . esc_html__( 'Validate', 'wpessential' ) . '</button>';
-		echo '<button type="submit" class="wpe-ui-button wpe-ui-button--primary" id="wpessential-cpt-save">' . esc_html__( 'Save custom post type', 'wpessential' ) . '</button>';
+		$html = Button::button(
+			__( 'Cancel edit', 'wpessential' ),
+			'ghost',
+			[
+				'id'     => 'wpessential-cpt-cancel',
+				'hidden' => true,
+			]
+		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo Button::button( __( 'Validate', 'wpessential' ), 'secondary', [ 'id' => 'wpessential-cpt-validate' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		$html = Button::button(
+			__( 'Save custom post type', 'wpessential' ),
+			'primary',
+			[
+				'type' => 'submit',
+				'id'   => 'wpessential-cpt-save',
+			]
+		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '</div>';
 		echo '</form>';
 		echo '</section>';
@@ -225,7 +244,7 @@ final class CustomPostTypeAdminController {
 	private function renderDefinitions( array $definitions ): void {
 		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-panel--flush wpe-ui-builder__list" aria-labelledby="wpessential-cpt-list-title">';
 		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-cpt-list-title">' . esc_html__( 'Saved custom post types', 'wpessential' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm" id="wpessential-cpt-refresh">' . Icon::render( 'refresh', 16 ) . esc_html__( 'Refresh', 'wpessential' ) . '</button></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo Button::button( __( 'Refresh', 'wpessential' ), 'ghost', [ 'id' => 'wpessential-cpt-refresh' ], true, 'refresh' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '<table class="widefat striped" id="wpessential-cpt-table" aria-label="' . esc_attr__( 'Saved custom post types', 'wpessential' ) . '">';
 		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
 		echo '<tbody id="wpessential-cpt-rows">';
@@ -285,16 +304,22 @@ final class CustomPostTypeAdminController {
 		bool $required,
 		string $help = '',
 	): void {
-		echo '<p class="wpe-ui-field"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
-		echo '<input class="regular-text" type="text" id="' . esc_attr( $id ) . '" data-wpessential-cpt-field="' . esc_attr( $field ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . '>';
-		if ( $help !== '' ) {
-			echo '<span class="description wpe-ui-muted">' . esc_html( $help ) . '</span>';
-		}
-		echo '</p>';
+		$html = Field::input(
+			$id,
+			$label,
+			[
+				'class'                      => 'regular-text',
+				'data-wpessential-cpt-field' => $field,
+				'placeholder'                => $placeholder,
+				'required'                   => $required,
+			],
+			$help
+		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 	}
 
 	private function renderCheckbox( string $id, string $label, bool $checkedByDefault ): void {
-		echo '<label class="wpe-ui-check" for="' . esc_attr( $id ) . '"><input type="checkbox" id="' . esc_attr( $id ) . '"' . checked( $checkedByDefault, true, false ) . '> ' . esc_html( $label ) . '</label>';
+		echo Check::render( $label, [ 'id' => $id ], $checkedByDefault ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 	}
 
 	/** @return array{list<array<string,mixed>>,?string} */

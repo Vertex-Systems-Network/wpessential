@@ -8,19 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use WPEssential\Modules\CustomPostTypes\CustomPostTypeAdminController;
-use WPEssential\Platform\Admin\Ui\Icon;
 use InvalidArgumentException;
 use Throwable;
+use WPEssential\Modules\CustomPostTypes\CustomPostTypeAdminController;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Check;
+use WPEssential\Platform\Admin\Ui\Field;
+use WPEssential\Platform\Admin\Ui\Icon;
+use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeProviderRegistry;
-use WPEssential\Platform\Admin\Ui\Shell;
 
 final class TaxonomyAdminController {
 
@@ -210,9 +213,25 @@ final class TaxonomyAdminController {
 		echo '</div>';
 
 		echo '<div class="wpe-ui-builder__actions">';
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost" id="wpessential-taxonomy-cancel" hidden>' . esc_html__( 'Cancel edit', 'wpessential' ) . '</button>';
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--secondary" id="wpessential-taxonomy-validate">' . esc_html__( 'Validate', 'wpessential' ) . '</button>';
-		echo '<button type="submit" class="wpe-ui-button wpe-ui-button--primary" id="wpessential-taxonomy-save">' . esc_html__( 'Save taxonomy', 'wpessential' ) . '</button>';
+		$html = Button::button(
+			__( 'Cancel edit', 'wpessential' ),
+			'ghost',
+			[
+				'id'     => 'wpessential-taxonomy-cancel',
+				'hidden' => true,
+			]
+		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo Button::button( __( 'Validate', 'wpessential' ), 'secondary', [ 'id' => 'wpessential-taxonomy-validate' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		$html = Button::button(
+			__( 'Save taxonomy', 'wpessential' ),
+			'primary',
+			[
+				'type' => 'submit',
+				'id'   => 'wpessential-taxonomy-save',
+			]
+		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '</div></form></section>';
 	}
 
@@ -411,7 +430,7 @@ final class TaxonomyAdminController {
 	private function renderDefinitions( array $definitions ): void {
 		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-panel--flush wpe-ui-builder__list" aria-labelledby="wpessential-taxonomy-list-title">';
 		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-taxonomy-list-title">' . esc_html__( 'Saved taxonomies', 'wpessential' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm" id="wpessential-taxonomy-refresh">' . Icon::render( 'refresh', 16 ) . esc_html__( 'Refresh', 'wpessential' ) . '</button></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo Button::button( __( 'Refresh', 'wpessential' ), 'ghost', [ 'id' => 'wpessential-taxonomy-refresh' ], true, 'refresh' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '<table class="widefat striped" id="wpessential-taxonomy-table" aria-label="' . esc_attr__( 'Saved taxonomies', 'wpessential' ) . '">';
 		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Object types', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Runtime health', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Dependencies', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
 		echo '<tbody id="wpessential-taxonomy-rows">';
@@ -467,16 +486,22 @@ final class TaxonomyAdminController {
 		bool $required,
 		string $help = '',
 	): void {
-		echo '<p class="wpe-ui-field"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
-		echo '<input class="regular-text" type="text" id="' . esc_attr( $id ) . '" data-wpessential-taxonomy-field="' . esc_attr( $field ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . '>';
-		if ( $help !== '' ) {
-			echo '<span class="description">' . esc_html( $help ) . '</span>';
-		}
-		echo '</p>';
+		$html = Field::input(
+			$id,
+			$label,
+			[
+				'class'                           => 'regular-text',
+				'data-wpessential-taxonomy-field' => $field,
+				'placeholder'                     => $placeholder,
+				'required'                        => $required,
+			],
+			$help
+		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 	}
 
 	private function renderCheckbox( string $id, string $label, bool $checkedByDefault ): void {
-		echo '<label class="wpe-ui-check" for="' . esc_attr( $id ) . '"><input type="checkbox" id="' . esc_attr( $id ) . '"' . checked( $checkedByDefault, true, false ) . '> ' . esc_html( $label ) . '</label>';
+		echo Check::render( $label, [ 'id' => $id ], $checkedByDefault ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 	}
 
 	/** @return array{list<array<string,mixed>>,?string} */

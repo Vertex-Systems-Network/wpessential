@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WPEssential\Platform\Admin\Core\AdminScreen;
 use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Field;
 use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\PageHeader;
 use WPEssential\Platform\Admin\Ui\Screen;
@@ -123,7 +124,7 @@ final class DocsScreen implements AdminScreen {
 		$html  = PageHeader::render( __( 'Docs', 'wpessential' ), __( 'Learn WPEssential', 'wpessential' ), __( 'Guides, references and how-tos from wpessential.org. Links open in a new tab.', 'wpessential' ), Button::link( __( 'Open full documentation', 'wpessential' ), $base, 'ghost', false, true ) );
 		$html .= '<form class="wpe-ui-toolbar wpe-ui-docs-search" role="search" method="get" action="' . esc_url( $base ) . '" target="_blank">';
 		$html .= Icon::render( 'search', 20 ) . '<label class="screen-reader-text" for="wpe-docs-search">' . esc_html__( 'Search the documentation', 'wpessential' ) . '</label>';
-		$html .= '<input type="search" id="wpe-docs-search" name="s" class="wpe-ui-input" placeholder="' . esc_attr__( 'Search the documentation…', 'wpessential' ) . '">';
+		$html .= Field::search( 'wpe-docs-search', __( 'Search the documentation…', 'wpessential' ), [ 'name' => 's' ] );
 		$html .= '<button type="submit" class="' . esc_attr( Button::classes( 'secondary' ) ) . '">' . esc_html__( 'Search', 'wpessential' ) . '</button></form>';
 
 		$html .= '<div class="wpe-ui-card-grid">';
