@@ -182,7 +182,7 @@ final class Plugin {
 		$license            = new LicenseService();
 		$license->schedule();
 		$elements           = new ElementRegistry();
-		$aiConnect          = new AiConnect();
+		$aiConnect          = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
 		( new CoreAjaxRoutes( $ajaxRoutes, $ajaxDispatcher, $abilities, $abilityContexts, $aiConnect, $ajaxAction ) )->register();

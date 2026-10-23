@@ -25,6 +25,7 @@ final class ModuleCatalog {
 			'frontend'   => 'Frontend & builders',
 			'automation' => 'Automation & messaging',
 			'tools'      => 'Site tools',
+			'ai'         => 'Developer & AI',
 		];
 	}
 
@@ -87,6 +88,7 @@ final class ModuleCatalog {
 			[ 'media', 'Media Manager', 'pro', 'tools', 'media', 'image', false, null, 'Folders, optimisation, replacement and usage tracking.' ],
 			[ 'protector', 'Site Protector', 'pro', 'tools', 'protector', 'shield', false, null, 'Login hardening, firewall rules and security monitoring.' ],
 			[ 'connections', 'Connections', 'pro', 'tools', 'connections', 'plug', false, null, 'External services and APIs with secure credentials.' ],
+			[ 'ai-connect', 'AI Connect', 'pro', 'ai', 'ai', 'spark', false, 'wpessential-ai', 'Let Claude, Cursor and other MCP clients read and, if you allow it, change WPEssential settings.' ],
 		];
 	}
 }

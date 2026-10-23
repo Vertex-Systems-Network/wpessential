@@ -65,7 +65,7 @@ final class Shell {
 			self::DEMOS_SLUG     => [ __( 'Demo Library', 'wpessential' ), 'grid' ],
 			self::ELEMENTS_SLUG  => [ __( 'Elements', 'wpessential' ), 'brush' ],
 			self::AI_SLUG        => [ __( 'AI Connect', 'wpessential' ), 'spark' ],
-			self::LICENSE_SLUG   => [ __( 'License', 'wpessential' ), 'key' ],
+			self::LICENSE_SLUG   => [ __( 'Account', 'wpessential' ), 'user' ],
 			self::STATUS_SLUG    => [ __( 'System Status', 'wpessential' ), 'pulse' ],
 		];
 	}

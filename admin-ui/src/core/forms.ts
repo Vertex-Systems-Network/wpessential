@@ -75,7 +75,11 @@ async function submit( form: HTMLFormElement, route: Route, data: FormData ): Pr
 			flipSwitch( form, payload.enabled === true );
 			toast( payload.enabled === true ? form.dataset.doneOn ?? 'Switched on.' : form.dataset.doneOff ?? 'Switched off.', payload.enabled === true ? 'success' : 'info' );
 		}
-		if ( result?.reload ) {
+		// A switch that changes what the current screen shows (AI Connect power, a module's own
+		// screen) asks for a reload; so does a module form that returns to the page it is on.
+		const returnTo = data.get( 'return' );
+		const onOwnScreen = typeof returnTo === 'string' && new URLSearchParams( window.location.search ).get( 'page' ) === returnTo;
+		if ( result?.reload || onOwnScreen ) {
 			window.location.reload();
 		}
 	} catch ( error ) {

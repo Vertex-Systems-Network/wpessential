@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WP_Error;
 use WPEssential\Platform\Admin\Core\AdminScreen;
+use WPEssential\Platform\Admin\Core\CoreAdminController;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Button;
@@ -104,18 +105,27 @@ final class AiConnectScreen implements AdminScreen {
 
 	public function render(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only notice routing.
-		$notice   = isset( $_GET['wpe-notice'] ) ? sanitize_key( wp_unslash( (string) $_GET['wpe-notice'] ) ) : '';
-		$settings = $this->connect->settings();
-		$user     = get_current_user_id();
+		$notice = isset( $_GET['wpe-notice'] ) ? sanitize_key( wp_unslash( (string) $_GET['wpe-notice'] ) ) : '';
+		$user   = get_current_user_id();
 
-		$html  = PageHeader::render( __( 'AI Connect', 'wpessential' ), __( 'Connect your AI assistant', 'wpessential' ), __( 'Let Claude, Cursor, VS Code and other MCP clients read and, if you allow it, change WPEssential settings on this site.', 'wpessential' ) );
-		$html .= '<section class="wpe-ui-panel wpe-ui-panel--flush" aria-label="' . esc_attr__( 'AI Connect switches', 'wpessential' ) . '">';
-		$html .= self::row( 'spark', __( 'AI Connect', 'wpessential' ), __( 'Turns on the WPEssential MCP server. Turning it off disconnects every client.', 'wpessential' ), Toggle::form( self::ACTION, self::ACTION, $settings['enabled'], __( 'Turn AI Connect on or off', 'wpessential' ), [ 'op' => 'power' ] ) );
-		$writes = $settings['enabled']
+		$html = PageHeader::render( __( 'AI Connect', 'wpessential' ), __( 'Connect your AI assistant', 'wpessential' ), __( 'Let Claude, Cursor, VS Code and other MCP clients read and, if you allow it, change WPEssential settings on this site.', 'wpessential' ) );
+
+		if ( ! $this->connect->available() ) {
+			Screen::render( Shell::AI_SLUG, $html . $this->unavailable() );
+			return;
+		}
+
+		$settings = [
+			'enabled'      => $this->connect->enabled(),
+			'allow_writes' => $this->connect->allowWrites(),
+		];
+		$html    .= '<section class="wpe-ui-panel wpe-ui-panel--flush" aria-label="' . esc_attr__( 'AI Connect switches', 'wpessential' ) . '">';
+		$html    .= self::row( 'spark', __( 'AI Connect', 'wpessential' ), __( 'Turns on the WPEssential MCP server. Turning it off disconnects every client.', 'wpessential' ), Toggle::form( self::ACTION, self::ACTION, $settings['enabled'], __( 'Turn AI Connect on or off', 'wpessential' ), [ 'op' => 'power' ] ) );
+		$writes   = $settings['enabled']
 			? Toggle::form( self::ACTION, self::ACTION, $settings['allow_writes'], __( 'Allow AI to change settings', 'wpessential' ), [ 'op' => 'writes' ] )
-			: StatusPill::render( 'neutral', __( 'Off', 'wpessential' ) );
-		$html  .= self::row( 'cog', __( 'Allow AI to change settings', 'wpessential' ), __( 'Off: AI can only read. On: AI can switch modules and elements on or off and change your settings. Every call is audited.', 'wpessential' ), $writes );
-		$html  .= '</section>';
+			: StatusPill::render( 'off', __( 'Off', 'wpessential' ) );
+		$html    .= self::row( 'cog', __( 'Allow AI to change settings', 'wpessential' ), __( 'Off: AI can only read. On: AI can switch modules and elements on or off and change your settings. Every call is audited.', 'wpessential' ), $writes );
+		$html    .= '</section>';
 
 		if ( $settings['enabled'] ) {
 			$html .= $this->oneTime( $user ) . $this->connectPanel() . $this->sessionsPanel( $user );
@@ -132,6 +142,28 @@ final class AiConnectScreen implements AdminScreen {
 		];
 
 		Screen::render( Shell::AI_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '' );
+	}
+
+	/** AI Connect is a Premium module: locked without Premium, or switched off in Modules. */
+	private function unavailable(): string {
+		$locked = ! Shell::premiumAvailable();
+		$html   = '<div class="wpe-ui-empty wpe-ui-empty--dashed"><span class="wpe-ui-icon wpe-ui-icon--lg">' . Icon::render( $locked ? 'lock' : 'spark', 26 ) . '</span>';
+		$html  .= '<h2>' . esc_html( $locked ? __( 'AI Connect is a Premium module', 'wpessential' ) : __( 'AI Connect is switched off', 'wpessential' ) ) . '</h2>';
+		$html  .= '<p>' . esc_html( $locked ? __( 'Activate a Premium subscription to connect AI assistants to WPEssential.', 'wpessential' ) : __( 'Switch the AI Connect module on to use the WPEssential MCP server. While it is off, no AI client can connect.', 'wpessential' ) ) . '</p>';
+		$html  .= $locked
+			? Button::link( __( 'Go Premium', 'wpessential' ), Shell::UPGRADE_URL, 'primary', false, true )
+			: Toggle::form(
+				CoreAdminController::TOGGLE_ACTION,
+				CoreAdminController::TOGGLE_ACTION,
+				false,
+				__( 'Turn AI Connect on or off', 'wpessential' ),
+				[
+					'module' => 'ai-connect',
+					'return' => Shell::AI_SLUG,
+				]
+			);
+
+		return $html . '</div>';
 	}
 
 	private static function row( string $icon, string $label, string $help, string $control ): string {

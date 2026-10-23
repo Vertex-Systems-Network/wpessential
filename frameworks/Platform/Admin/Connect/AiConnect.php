@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Closure;
 use WP_Error;
 
 /**
@@ -31,6 +32,18 @@ final class AiConnect {
 	/** @var array<string,bool> Used when WordPress options are unavailable (unit tests, early boot). */
 	private array $memory = [];
 
+	/** @var Closure():bool AI Connect is a Premium module: unavailable when locked or switched off. */
+	private readonly Closure $available;
+
+	/** @param (Closure():bool)|null $available */
+	public function __construct( ?Closure $available = null ) {
+		$this->available = $available ?? static fn (): bool => true;
+	}
+
+	public function available(): bool {
+		return ( $this->available )();
+	}
+
 	/** @return array{enabled:bool,allow_writes:bool} */
 	public function settings(): array {
 		$stored = function_exists( 'get_option' ) ? get_option( self::OPTION, [] ) : $this->memory;
@@ -43,11 +56,11 @@ final class AiConnect {
 	}
 
 	public function enabled(): bool {
-		return $this->settings()['enabled'];
+		return $this->available() && $this->settings()['enabled'];
 	}
 
 	public function allowWrites(): bool {
-		return $this->settings()['allow_writes'];
+		return $this->enabled() && $this->settings()['allow_writes'];
 	}
 
 	public function set( string $key, bool $value ): void {
