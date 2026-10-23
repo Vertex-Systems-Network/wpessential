@@ -10,8 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use RuntimeException;
 use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
+use WPEssential\Contracts\DefinitionDeletableRepositoryInterface;
 
-final class InMemoryDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface {
+final class InMemoryDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface, DefinitionDeletableRepositoryInterface {
 
 	/** @var array<string, Definition> */
 	private array $definitions = [];
@@ -51,6 +52,15 @@ final class InMemoryDefinitionRepository implements DefinitionCreateOnlyReposito
 			throw new RuntimeException( 'Definition checksum does not match canonical payload.' );
 		}
 		$this->definitions[ $definition->id ] = $definition;
+	}
+
+	public function deleteIfCurrentRevision( string $id, int $expectedRevision ): bool {
+		$existing = $this->definitions[ $id ] ?? null;
+		if ( ! $existing instanceof Definition || $existing->revision !== $expectedRevision ) {
+			return false;
+		}
+		unset( $this->definitions[ $id ] );
+		return true;
 	}
 
 	public function get( string $id ): ?Definition {

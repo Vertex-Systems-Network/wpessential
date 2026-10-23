@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use RuntimeException;
-use WPEssential\Contracts\DefinitionTableGatewayInterface;
+use WPEssential\Contracts\DefinitionDeletableTableGatewayInterface;
 
-final class InMemoryDefinitionTableGateway implements DefinitionTableGatewayInterface {
+final class InMemoryDefinitionTableGateway implements DefinitionDeletableTableGatewayInterface {
 
 	/** @var array<string, array<string, scalar|null>> */
 	private array $rows = [];
@@ -56,6 +56,15 @@ final class InMemoryDefinitionTableGateway implements DefinitionTableGatewayInte
 		}
 		$this->rows[ $id ]         = $row;
 		$this->dependencies[ $id ] = array_values( $dependencies );
+		return true;
+	}
+
+	public function deleteIfCurrentRevision( string $id, int $expectedRevision ): bool {
+		$current = $this->rows[ $id ] ?? null;
+		if ( $current === null || (int) ( $current['revision'] ?? 0 ) !== $expectedRevision ) {
+			return false;
+		}
+		unset( $this->rows[ $id ], $this->dependencies[ $id ] );
 		return true;
 	}
 

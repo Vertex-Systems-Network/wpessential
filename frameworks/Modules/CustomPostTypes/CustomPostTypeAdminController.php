@@ -149,6 +149,10 @@ final class CustomPostTypeAdminController {
 					'type'  => 'cpt.status',
 					'nonce' => $this->ajax->createNonce( 'cpt.status' ),
 				],
+				'delete'   => [
+					'type'  => 'cpt.delete',
+					'nonce' => $this->ajax->createNonce( 'cpt.delete' ),
+				],
 			],
 			'definitions' => $definitions,
 			'view'        => $view,
@@ -236,6 +240,11 @@ final class CustomPostTypeAdminController {
 			echo Check::render( $label, [ 'data-wpessential-cpt-support' => $support ], $checked ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		}
 		echo '</span></fieldset>';
+
+		echo '<fieldset class="wpessential-cpt-options wpe-ui-checks"><legend class="wpe-ui-builder__section">' . esc_html__( 'Protection', 'wpessential' ) . '</legend>';
+		echo '<p class="wpe-ui-muted wpe-ui-checks__hint">' . esc_html__( 'A locked entry cannot be deleted until the lock is turned off.', 'wpessential' ) . '</p>';
+		echo Check::render( __( 'Lock this entry', 'wpessential' ), [ 'id' => 'wpessential-cpt-locked' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo '</fieldset>';
 
 		echo $this->renderAdvanced(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 

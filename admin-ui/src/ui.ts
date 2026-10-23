@@ -1,5 +1,6 @@
 import './ui.scss';
 import { initAjaxForms } from './core/forms';
+import { initAjaxNav } from './core/nav';
 import { initSiteKit } from './core/sitekit';
 
 function matches( element: HTMLElement, query: string ): boolean {
@@ -112,12 +113,17 @@ function initModeToggle(): void {
 	target.value = dark ? 'light' : 'dark';
 }
 
-initModeToggle();
-initAjaxForms();
-initSiteKit();
-
-const root = document.querySelector< HTMLElement >( '[data-wpessential-surface="core"]' );
-if ( root ) {
-	initModuleFilters( root );
-	initOptionFilters( root );
+/** Binds the screen-specific behaviour; runs on load and after each in-place navigation. */
+function initScreen(): void {
+	initModeToggle();
+	initSiteKit();
+	const root = document.querySelector< HTMLElement >( '[data-wpessential-surface="core"]' );
+	if ( root ) {
+		initModuleFilters( root );
+		initOptionFilters( root );
+	}
 }
+
+initAjaxForms();
+initAjaxNav( initScreen );
+initScreen();

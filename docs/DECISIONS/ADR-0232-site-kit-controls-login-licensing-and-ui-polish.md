@@ -118,3 +118,16 @@ The owner asked that Modules, Demo Library, Elements, Docs, AI Connect, Account 
   - After a save the editor stays on the saved item, WordPress-style, and puts its id in the URL.
   - "Cancel edit" starts a fresh item.
   - The page-header link returns to the list.
+
+## Amendment — AI channel, delete with entry lock, Dashboard link, in-place navigation (2026-10-23)
+
+- **AI channel.** The CPT and Taxonomy read, validate and save abilities are on the AI channel.
+  - AI saves are drafts and never change status.
+  - AI cannot set or clear the entry lock.
+  - Status, import-commit and delete stay human-only.
+- **Delete with entry lock.**
+  - `wpessential/{cpt,taxonomy}/delete` permanently removes a definition through the new `DefinitionDeletableRepositoryInterface`. The removal is revision-checked.
+  - Delete is refused while the entry is locked (payload `locked: true`, an admin flag that is never registered), while it is published, or while other definitions depend on it.
+- **WordPress sidebar.** The sidebar keeps "Dashboard" first, followed by the modules.
+- **In-place navigation.** Top-navigation screens load in place (`core/nav.ts`) with history support. A screen that needs a script the page has not loaded falls back to a full page load.
+- **Taxonomy dependency notes.** Taxonomy has soft dependency notes: they explain the link and dim the field, but do not disable it.

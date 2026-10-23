@@ -114,7 +114,9 @@ final class CustomPostTypeModule implements ModuleInterface {
 		CustomPostTypeDefinitionProjector $projector,
 		CustomPostTypeValidationService $validation,
 	): void {
-		$channels     = [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ];
+		$channels = [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ];
+		// AI may read, validate and draft; status changes and imports stay human-only.
+		$aiChannels   = [ ...$channels, ExecutionChannel::Ai ];
 		$outputSchema = [ 'type' => 'object' ];
 
 		$this->registerAbility(
@@ -125,7 +127,7 @@ final class CustomPostTypeModule implements ModuleInterface {
 				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [ 'type' => 'object' ],
 				outputSchema: $outputSchema,
 			),
@@ -147,7 +149,7 @@ final class CustomPostTypeModule implements ModuleInterface {
 				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'id' ],
@@ -173,7 +175,7 @@ final class CustomPostTypeModule implements ModuleInterface {
 				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'payload' ],
@@ -197,7 +199,7 @@ final class CustomPostTypeModule implements ModuleInterface {
 				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: true,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'payload' ],
@@ -260,6 +262,37 @@ final class CustomPostTypeModule implements ModuleInterface {
 			),
 			'Change custom post type status',
 			'Changes CPT lifecycle status without deleting its canonical persisted definition.',
+		);
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/cpt/delete',
+				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type'       => 'object',
+					'required'   => [ 'id', 'expected_revision' ],
+					'properties' => [
+						'id'                => [ 'type' => 'string' ],
+						'expected_revision' => [
+							'type'    => 'integer',
+							'minimum' => 1,
+						],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new CustomPostTypeAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				CustomPostTypeAbilityHandler::DELETE,
+			),
+			'Delete custom post type',
+			'Permanently deletes an unlocked, unpublished custom post type definition (never available to AI).',
 		);
 	}
 
@@ -325,6 +358,14 @@ final class CustomPostTypeModule implements ModuleInterface {
 			$contexts,
 			'cpt.status',
 			'wpessential/cpt/status',
+			NonceOperation::Update,
+		);
+		$this->registerAjaxRoute(
+			$routes,
+			$abilities,
+			$contexts,
+			'cpt.delete',
+			'wpessential/cpt/delete',
 			NonceOperation::Update,
 		);
 	}

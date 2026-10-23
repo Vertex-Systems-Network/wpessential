@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 use JsonException;
 use RuntimeException;
 use Throwable;
-use WPEssential\Contracts\DefinitionTableGatewayInterface;
+use WPEssential\Contracts\DefinitionDeletableTableGatewayInterface;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
-final class WpdbDefinitionTableGateway implements DefinitionTableGatewayInterface {
+final class WpdbDefinitionTableGateway implements DefinitionDeletableTableGatewayInterface {
 
 	private readonly DefinitionTableNames $tables;
 
@@ -102,6 +102,31 @@ final class WpdbDefinitionTableGateway implements DefinitionTableGatewayInterfac
 		} catch ( Throwable $exception ) {
 			$this->safeRollback();
 			throw new RuntimeException( 'Definition update transaction failed.', 0, $exception );
+		}
+	}
+
+	public function deleteIfCurrentRevision( string $id, int $expectedRevision ): bool {
+		$this->database->beginTransaction();
+		try {
+			$affected = $this->database->query(
+				$this->database->prepare(
+					"DELETE FROM `{$this->tables->definitions}` WHERE network_id = %d AND site_id = %d AND id = %s AND revision = %d",
+					$this->scope->networkId,
+					$this->scope->databaseSiteId(),
+					$id,
+					$expectedRevision,
+				)
+			);
+			if ( $affected !== 1 ) {
+				$this->database->rollBack();
+				return false;
+			}
+			$this->replaceDependencies( $id, [] );
+			$this->database->commit();
+			return true;
+		} catch ( Throwable $exception ) {
+			$this->safeRollback();
+			throw new RuntimeException( 'Definition delete transaction failed.', 0, $exception );
 		}
 	}
 

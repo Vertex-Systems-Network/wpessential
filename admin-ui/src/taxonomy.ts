@@ -1,4 +1,6 @@
+import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName } from './core/levels';
+import { TAXONOMY_DEPENDENCIES } from './taxonomy-dependencies';
 import { enhanceTable } from './core/table';
 import { statusCell } from './core/status-pill';
 import './admin.scss';
@@ -104,7 +106,13 @@ type Bootstrap = {
 	surface: 'taxonomies';
 	ajaxUrl: string;
 	ajaxAction: string;
-	routes: { list: Route; validate: Route; save: Route; status: Route };
+	routes: {
+		list: Route;
+		validate: Route;
+		save: Route;
+		status: Route;
+		delete?: Route;
+	};
 	definitions: TaxonomyDefinition[];
 	objectTypes: ObjectTypeOption[];
 	/** Which page this is: the list or the Add/Edit editor. */
@@ -261,6 +269,9 @@ function parseBootstrap( value: unknown ): Bootstrap | null {
 			validate: value.routes.validate,
 			save: value.routes.save,
 			status: value.routes.status,
+			...( isRoute( value.routes.delete )
+				? { delete: value.routes.delete }
+				: {} ),
 		},
 		definitions: value.definitions,
 		objectTypes: value.objectTypes,
@@ -970,8 +981,16 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		dependencies.dataset.wpessentialTaxonomyDependencyCount =
 			String( dependencyCount );
 
+		const locked = definition.payload.locked === true;
+		const nameCell = cell( name );
+		if ( locked ) {
+			const badge = document.createElement( 'span' );
+			badge.className = 'wpe-ui-lock-badge';
+			badge.textContent = 'Locked';
+			nameCell.append( ' ', badge );
+		}
 		row.append(
-			cell( name ),
+			nameCell,
 			cell( key ),
 			cell( objectTypes ),
 			statusCell( definition.status ),
@@ -1010,6 +1029,18 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 				} )
 			);
 		}
+		// Delete Permanently, as in WordPress: not while locked or published.
+		const remove = actionButton( 'Delete', {
+			wpessentialTaxonomyDelete: definition.id,
+		} );
+		remove.classList.add( 'is-danger' );
+		if ( locked || definition.status === 'published' ) {
+			remove.disabled = true;
+			remove.title = locked
+				? 'Locked: turn off the entry lock to delete it.'
+				: 'Disable or archive it before deleting.';
+		}
+		actions.append( document.createTextNode( ' ' ), remove );
 		row.append( actions );
 		rows.append( row );
 	}
@@ -1085,6 +1116,7 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 		'wpessential-taxonomy-admin-column',
 		definition.payload.show_admin_column
 	);
+	setBoolInput( 'wpessential-taxonomy-locked', definition.payload.locked );
 	setTaxonomyLabels( definition.payload );
 	setTaxonomyVisibility( definition.payload );
 	const status = selectInput( 'wpessential-taxonomy-status' );
@@ -1132,6 +1164,8 @@ function collectEditor( definitions: TaxonomyDefinition[] ): EditorRequest {
 			show_in_rest: boolInput( 'wpessential-taxonomy-rest' ),
 			hierarchical: boolInput( 'wpessential-taxonomy-hierarchical' ),
 			show_admin_column: boolInput( 'wpessential-taxonomy-admin-column' ),
+			// Entry lock; undefined drops the key when the lock is off.
+			locked: boolInput( 'wpessential-taxonomy-locked' ) ? true : undefined,
 		},
 	};
 }
@@ -1329,6 +1363,38 @@ function boot(): void {
 			return;
 		}
 
+		const deleteId = target.dataset.wpessentialTaxonomyDelete;
+		const deleteRoute = bootstrap.routes.delete;
+		if ( deleteId && deleteRoute ) {
+			const definition = definitions.find(
+				( candidate ) => candidate.id === deleteId
+			);
+			const label =
+				typeof definition?.payload.name === 'string'
+					? definition.payload.name
+					: 'this taxonomy';
+			if (
+				! definition ||
+				! window.confirm(
+					`Delete “${ label }” permanently? This cannot be undone.`
+				)
+			) {
+				return;
+			}
+			void run( async () => {
+				await postRoute( bootstrap, deleteRoute, {
+					id: definition.id,
+					expected_revision: definition.revision,
+				} );
+				definitions = definitions.filter(
+					( candidate ) => candidate.id !== definition.id
+				);
+				renderRows( definitions );
+				setNotice( 'Taxonomy deleted.' );
+			} );
+			return;
+		}
+
 		const status = target.dataset.wpessentialTaxonomyStatus;
 		const id = target.dataset.wpessentialTaxonomyId;
 		if ( ! status || ! id ) {
@@ -1375,6 +1441,10 @@ function boot(): void {
 		singularField instanceof HTMLInputElement
 	) {
 		bindKeyFromName( keyField, singularField, 32 );
+	}
+	const taxonomyForm = document.getElementById( 'wpessential-taxonomy-form' );
+	if ( taxonomyForm instanceof HTMLFormElement ) {
+		bindDependencies( taxonomyForm, TAXONOMY_DEPENDENCIES, 'taxonomy' );
 	}
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );

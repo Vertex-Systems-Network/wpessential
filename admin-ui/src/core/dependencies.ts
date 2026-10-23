@@ -11,6 +11,8 @@ export interface Dependency {
 	when: ( control: HTMLInputElement | HTMLSelectElement ) => boolean;
 	/** What the controlling setting must be, in plain words ("is on", "is Custom"). */
 	need: string;
+	/** Soft rules only explain and dim the field; they never disable it. */
+	soft?: boolean;
 }
 
 const LEVEL_NAMES: Record< string, string > = {
@@ -85,7 +87,9 @@ export function applyDependencies( rules: Dependency[], prefix: string ): void {
 		const met = rule.when( on );
 		const onName = `“${ labelOf( on ) }”`;
 		const where = visible( on ) ? '' : ` (${ whereOf( on, prefix ) })`;
-		field.disabled = ! met;
+		if ( ! rule.soft ) {
+			field.disabled = ! met;
+		}
 		holder( field ).classList.toggle( 'is-dep-blocked', ! met );
 		setNote(
 			field,
