@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WPEssential\Platform\Admin\Core\CoreAjaxRoutes;
+
 /**
  * Figma: Core/App Header. The WPEssential top bar shared by every WPEssential admin screen.
  */
@@ -27,6 +29,21 @@ final class Shell {
 	public const MODES          = [ 'system', 'light', 'dark' ];
 
 	private static bool $premiumAvailable = false;
+
+	private static ?CoreAjaxRoutes $ajax = null;
+
+	public static function configureAjax( CoreAjaxRoutes $ajax ): void {
+		self::$ajax = $ajax;
+	}
+
+	/** JSON bootstrap that lets ui.ts upgrade the toolkit forms to AJAX. Empty when AJAX is not wired. */
+	public static function ajaxBootstrap(): string {
+		if ( self::$ajax === null || ! function_exists( 'wp_json_encode' ) || ! function_exists( 'wp_create_nonce' ) ) {
+			return '';
+		}
+
+		return '<script type="application/json" id="wpe-ui-ajax">' . (string) wp_json_encode( self::$ajax->bootstrap(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES ) . '</script>';
+	}
 
 	public static function configure( bool $premiumAvailable ): void {
 		self::$premiumAvailable = $premiumAvailable;
@@ -48,7 +65,7 @@ final class Shell {
 			self::DEMOS_SLUG     => [ __( 'Demo Library', 'wpessential' ), 'grid' ],
 			self::ELEMENTS_SLUG  => [ __( 'Elements', 'wpessential' ), 'brush' ],
 			self::AI_SLUG        => [ __( 'AI Connect', 'wpessential' ), 'spark' ],
-			self::LICENSE_SLUG   => [ __( 'License', 'wpessential' ), 'key' ],
+			self::LICENSE_SLUG   => [ __( 'Account', 'wpessential' ), 'user' ],
 			self::STATUS_SLUG    => [ __( 'System Status', 'wpessential' ), 'pulse' ],
 		];
 	}
@@ -90,7 +107,7 @@ final class Shell {
 			? '<span class="wpe-ui-badge wpe-ui-badge--pro">' . esc_html__( 'Premium active', 'wpessential' ) . '</span>'
 			: Button::link( __( 'Go Premium', 'wpessential' ), self::UPGRADE_URL, 'primary', true, true );
 
-		return $html . '</div></div>';
+		return $html . '</div></div>' . self::ajaxBootstrap() . '<div class="wpe-ui-toast-region" role="status" aria-live="polite" data-wpe-toasts></div>';
 	}
 
 	/**

@@ -8,18 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use WP_Error;
 use WPEssential\Platform\Admin\Core\AdminScreen;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Badge;
 use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Field;
 use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
 use WPEssential\Platform\Admin\Ui\PageHeader;
 use WPEssential\Platform\Admin\Ui\Screen;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\Ui\StatusPill;
+use WP_Error;
 
 /**
  * License & Account screen (Figma: "License & Account", "Sign in / Create account").
@@ -28,7 +29,7 @@ use WPEssential\Platform\Admin\Ui\StatusPill;
 final class LicenseScreen implements AdminScreen {
 
 	public const ACTION = 'wpessential_license';
-	private const OPS   = [ 'activate', 'deactivate', 'refresh', 'login', 'register', 'logout', 'use', 'checkout', 'manage' ];
+	private const OPS   = [ 'connect', 'deactivate', 'refresh', 'login', 'register', 'logout', 'use', 'checkout', 'manage' ];
 	private const FLASH = 'wpessential_license_flash_';
 
 	public function __construct( private readonly LicenseService $license, private readonly Account $account ) {}
@@ -38,7 +39,7 @@ final class LicenseScreen implements AdminScreen {
 	}
 
 	public function title(): string {
-		return __( 'License', 'wpessential' );
+		return __( 'Account', 'wpessential' );
 	}
 
 	public function register(): void {
@@ -76,13 +77,13 @@ final class LicenseScreen implements AdminScreen {
 		$done = static fn ( mixed $r, string $msg ): string|WP_Error => $r instanceof WP_Error ? $r : $msg;
 
 		return match ( $op ) {
-			'activate'   => $done( $this->license->activate( $this->field( 'key' ) ), __( 'License activated on this site.', 'wpessential' ) ),
-			'deactivate' => $done( $this->license->deactivate(), __( 'License deactivated on this site.', 'wpessential' ) ),
+			'connect'    => $done( $this->account->connectSite(), __( 'This site is connected to your subscription.', 'wpessential' ) ),
+			'deactivate' => $done( $this->license->deactivate(), __( 'This site was disconnected and its slot is free again.', 'wpessential' ) ),
 			'refresh'    => $this->refreshed(),
-			'login'      => $done( $this->account->login( $this->field( 'login' ), (string) wp_unslash( $_POST['password'] ?? '' ) ), __( 'Signed in to your WPEssential account.', 'wpessential' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are sent as typed.
-			'register'   => $done( $this->account->register( $this->field( 'name' ), sanitize_email( $this->field( 'email' ) ), (string) wp_unslash( $_POST['password'] ?? '' ) ), __( 'Account created and your free license activated.', 'wpessential' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are sent as typed.
+			'login'      => $done( $this->account->login( $this->field( 'login' ), (string) wp_unslash( $_POST['password'] ?? '' ) ), __( 'Signed in. This site is connected to your subscription when a slot is available.', 'wpessential' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are sent as typed.
+			'register'   => $done( $this->account->register( $this->field( 'name' ), sanitize_email( $this->field( 'email' ) ), (string) wp_unslash( $_POST['password'] ?? '' ) ), __( 'Account created and this site connected.', 'wpessential' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are sent as typed.
 			'logout'     => $done( $this->account->logout(), __( 'Signed out.', 'wpessential' ) ),
-			'use'        => $done( $this->account->useLicense( (int) $this->field( 'license' ) ), __( 'License activated on this site.', 'wpessential' ) ),
+			'use'        => $done( $this->account->useLicense( (int) $this->field( 'license' ) ), __( 'This site now uses that subscription.', 'wpessential' ) ),
 			'checkout'   => $this->account->checkout( sanitize_key( $this->field( 'plan' ) ), (int) $this->field( 'license' ), sanitize_key( $this->field( 'mode' ) ) ?: 'buy' ),
 			default      => $done( $this->account->licenseAction( (int) $this->field( 'license' ), sanitize_key( $this->field( 'do' ) ) ), __( 'License updated.', 'wpessential' ) ),
 		};
@@ -91,7 +92,7 @@ final class LicenseScreen implements AdminScreen {
 	private function refreshed(): string {
 		$this->license->refresh();
 
-		return __( 'License status refreshed.', 'wpessential' );
+		return __( 'Subscription status refreshed.', 'wpessential' );
 	}
 
 	/** @param array{0:string,1:string} $message */
@@ -124,45 +125,53 @@ final class LicenseScreen implements AdminScreen {
 	}
 
 	private static function submit( string $label, string $variant = 'primary', bool $small = false ): string {
-		return '<button type="submit" class="' . esc_attr( Button::classes( $variant, $small ) ) . '">' . esc_html( $label ) . '</button>';
+		return Button::button( $label, $variant, [ 'type' => 'submit' ], $small );
 	}
 
 	private static function input( string $name, string $label, string $type = 'text', string $autocomplete = '' ): string {
 		$id = 'wpe-license-' . $name;
 
-		return '<p class="wpe-ui-field"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>'
-			. '<input id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" type="' . esc_attr( $type ) . '" required'
-			. ( $autocomplete !== '' ? ' autocomplete="' . esc_attr( $autocomplete ) . '"' : '' ) . '></p>';
+		return Field::input(
+			$id,
+			$label,
+			[
+				'name'         => $name,
+				'type'         => $type,
+				'required'     => true,
+				'autocomplete' => $autocomplete !== '' ? $autocomplete : null,
+			]
+		);
 	}
 
 	public function render(): void {
-		$html  = PageHeader::render( __( 'License', 'wpessential' ), __( 'License & Account', 'wpessential' ), __( 'Activate WPEssential Premium on this site and manage your wpessential.org account.', 'wpessential' ) );
+		$html  = PageHeader::render( __( 'Account', 'wpessential' ), __( 'Account & subscription', 'wpessential' ), __( 'Sign in with your wpessential.org account. This site is connected to your subscription automatically.', 'wpessential' ) );
 		$html .= '<div class="wpe-ui-card-grid wpe-ui-card-grid--two">' . $this->licenseCard() . $this->accountCard() . '</div>';
-		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Your license key and account token are stored in this site\'s database without encryption and are never sent to the browser.', 'wpessential' ) . '</p>';
+		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Your account token and subscription credentials are stored in this site\'s database without encryption and are never sent to the browser.', 'wpessential' ) . '</p>';
 
 		Screen::render( Shell::LICENSE_SLUG, $html, $this->takeFlash() );
 	}
 
 	private function licenseCard(): string {
-		$data   = $this->license->publicData();
-		$active = $data['status'] === 'active';
-		$html   = '<section class="wpe-ui-panel" aria-labelledby="wpe-license-title"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'key', 20 ) . '</span>';
-		$html  .= '<h2 id="wpe-license-title">' . esc_html__( 'Site license', 'wpessential' ) . '</h2>';
-		$html  .= StatusPill::render( $active ? 'success' : ( $data['status'] === 'expired' ? 'warning' : 'neutral' ), $active ? __( 'Active', 'wpessential' ) : ( $data['status'] === 'expired' ? __( 'Expired', 'wpessential' ) : __( 'Not active', 'wpessential' ) ) ) . '</div>';
+		$data     = $this->license->publicData();
+		$active   = $data['status'] === 'active';
+		$signedIn = $this->account->signedIn();
+		$html     = '<section class="wpe-ui-panel" aria-labelledby="wpe-license-title"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'monitor', 20 ) . '</span>';
+		$html    .= '<h2 id="wpe-license-title">' . esc_html__( 'This site', 'wpessential' ) . '</h2>';
+		$html    .= StatusPill::render( $active ? 'running' : ( $data['status'] === 'expired' ? 'waiting' : 'off' ), $active ? __( 'Connected', 'wpessential' ) : ( $data['status'] === 'expired' ? __( 'Expired', 'wpessential' ) : __( 'Not connected', 'wpessential' ) ) ) . '</div>';
 
 		if ( $active ) {
+			$limit = (int) $data['sites_limit'];
 			$rows  = [
-				__( 'Key', 'wpessential' )     => '<code>' . esc_html( (string) $data['key'] ) . '</code>',
-				__( 'Plan', 'wpessential' )    => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ),
-				__( 'Expires', 'wpessential' ) => esc_html( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ),
-				__( 'Domain', 'wpessential' )  => esc_html( (string) $data['domain'] ),
-				__( 'Server', 'wpessential' )  => esc_html( (string) $data['provider'] ),
+				__( 'Plan', 'wpessential' )   => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ),
+				__( 'Renews', 'wpessential' ) => esc_html( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ),
+				__( 'Sites', 'wpessential' )  => esc_html( $limit === 0 ? sprintf( /* translators: %d: sites used. */ __( '%d of unlimited', 'wpessential' ), (int) $data['sites_used'] ) : sprintf( /* translators: 1: sites used, 2: site limit. */ __( '%1$d of %2$d', 'wpessential' ), (int) $data['sites_used'], $limit ) ),
+				__( 'Domain', 'wpessential' ) => esc_html( (string) $data['domain'] ),
 			];
 			$html .= '<dl class="wpe-ui-facts">';
 			foreach ( $rows as $label => $value ) {
 				$html .= '<dt>' . esc_html( $label ) . '</dt><dd>' . $value . '</dd>';
 			}
-			$html .= '</dl><div class="wpe-ui-actions">' . self::form( 'refresh', self::submit( __( 'Check now', 'wpessential' ), 'ghost', true ) ) . self::form( 'deactivate', self::submit( __( 'Deactivate', 'wpessential' ), 'secondary', true ) ) . '</div>';
+			$html .= '</dl><div class="wpe-ui-actions">' . self::form( 'refresh', self::submit( __( 'Check now', 'wpessential' ), 'ghost', true ) ) . self::form( 'deactivate', self::submit( __( 'Disconnect this site', 'wpessential' ), 'secondary', true ) ) . '</div>';
 
 			return $html . '</section>';
 		}
@@ -170,9 +179,11 @@ final class LicenseScreen implements AdminScreen {
 		if ( $data['message'] !== '' ) {
 			$html .= Notice::render( 'warning', (string) $data['message'] );
 		}
-		$html .= self::form( 'activate', self::input( 'key', __( 'License key', 'wpessential' ), 'text', 'off' ) . self::submit( __( 'Activate', 'wpessential' ) ) );
+		$html .= $signedIn
+			? '<p>' . esc_html__( 'Connect this site to one of your subscriptions. WPEssential keeps the one already on this domain, or uses a free site slot.', 'wpessential' ) . '</p>' . self::form( 'connect', self::submit( __( 'Connect this site', 'wpessential' ) ) )
+			: '<p>' . esc_html__( 'Sign in with your WPEssential account. This site is connected to your subscription automatically, no key needed.', 'wpessential' ) . '</p>';
 
-		return $html . '<p class="wpe-ui-muted">' . esc_html__( 'Free modules work without a license. A Premium license unlocks every Premium module.', 'wpessential' ) . '</p></section>';
+		return $html . '<p class="wpe-ui-muted">' . esc_html__( 'Free modules work without an account. A Premium subscription unlocks every Premium module.', 'wpessential' ) . '</p></section>';
 	}
 
 	private function accountCard(): string {

@@ -1,0 +1,132 @@
+// Motion layer: transitions for controls and entrance/state animations.
+// Every rule here is switched off for people who ask for reduced motion.
+
+@keyframes wpe-rise {
+
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes wpe-fade {
+
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.wpe-ui {
+
+	// Controls.
+	.wpe-ui-button,
+	.button,
+	.wpe-ui-tab,
+	.wpe-ui-topbar nav a,
+	.wpe-ui-toggle,
+	.wpe-ui-badge,
+	.wpe-ui-pill {
+		transition:
+			background-color var(--wpe-dur-2) var(--wpe-ease),
+			border-color var(--wpe-dur-2) var(--wpe-ease),
+			color var(--wpe-dur-2) var(--wpe-ease),
+			box-shadow var(--wpe-dur-2) var(--wpe-ease),
+			transform var(--wpe-dur-1) var(--wpe-ease);
+	}
+
+	.wpe-ui-button:active,
+	.button:active {
+		transform: translateY(1px) scale(0.99);
+	}
+
+	input:not([type="checkbox"], [type="radio"]),
+	select,
+	textarea {
+		transition:
+			border-color var(--wpe-dur-2) var(--wpe-ease),
+			box-shadow var(--wpe-dur-2) var(--wpe-ease),
+			background-color var(--wpe-dur-2) var(--wpe-ease);
+	}
+
+	input[type="checkbox"],
+	input[type="radio"] {
+		transition: background-color var(--wpe-dur-1) var(--wpe-ease), border-color var(--wpe-dur-1) var(--wpe-ease);
+	}
+
+	// Cards and panels lift slightly on hover.
+	.wpe-ui-module,
+	.wpe-ui-demo,
+	.wpe-ui-doc {
+		transition: box-shadow var(--wpe-dur-2) var(--wpe-ease), transform var(--wpe-dur-2) var(--wpe-ease), border-color var(--wpe-dur-2) var(--wpe-ease);
+
+		&:hover {
+			box-shadow: var(--wpe-shadow-lg);
+			transform: translateY(-2px);
+		}
+	}
+
+	// Appearance.
+	.wpe-ui-page-header,
+	.wpe-ui-hero,
+	.wpe-ui-panel,
+	.wpe-ui-stats,
+	.wpe-ui-card-grid,
+	.wpe-ui-module-grid,
+	.wpe-ui-demo-grid,
+	.wpe-ui-empty,
+	.wpe-ui-category {
+		animation: wpe-rise var(--wpe-dur-3) var(--wpe-ease) both;
+	}
+
+	.wpe-ui-notice,
+	.wpe-ui-toast {
+		animation: wpe-rise var(--wpe-dur-2) var(--wpe-ease) both;
+	}
+
+	// Content revealed by a tab, filter or toggle.
+	[data-wpe-module]:not([hidden]),
+	[data-wpe-option]:not([hidden]),
+	[data-wpe-panel]:not([hidden]),
+	.is-entering {
+		animation: wpe-fade var(--wpe-dur-2) var(--wpe-ease) both;
+	}
+
+	// A control waiting on an AJAX response.
+	.is-busy {
+		cursor: progress;
+		opacity: 0.7;
+		pointer-events: none;
+		transition: opacity var(--wpe-dur-1) var(--wpe-ease);
+	}
+}
+
+// Colour-mode switch cross-fades instead of snapping.
+body.wpe-ui-screen.is-mode-switching .wpe-ui,
+body.wpe-ui-screen.is-mode-switching .wpe-ui * {
+	transition: background-color var(--wpe-dur-3) var(--wpe-ease), color var(--wpe-dur-3) var(--wpe-ease), border-color var(--wpe-dur-3) var(--wpe-ease) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.wpe-ui *,
+	.wpe-ui *::before,
+	.wpe-ui *::after {
+		animation: none !important;
+		transition: none !important;
+	}
+
+	.wpe-ui .wpe-ui-module:hover,
+	.wpe-ui .wpe-ui-demo:hover,
+	.wpe-ui .wpe-ui-doc:hover {
+		transform: none;
+	}
+}

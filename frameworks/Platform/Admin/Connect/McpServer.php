@@ -136,7 +136,7 @@ final class McpServer {
 			],
 		];
 		foreach ( $this->exposed() as $tool => $descriptor ) {
-			$schema = $descriptor->inputSchema !== [] ? $descriptor->inputSchema : [
+			$schema  = $descriptor->inputSchema !== [] ? $descriptor->inputSchema : [
 				'type'       => 'object',
 				'properties' => (object) [],
 			];

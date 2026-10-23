@@ -1,0 +1,484 @@
+{
+	"schema_version": 1,
+	"surface_id": 43,
+	"surface_key": "ai",
+	"benchmark_snapshot": {
+		"date": "2026-10-23",
+		"products": [
+			{
+				"name": "WordPress MCP Adapter",
+				"role": "primary",
+				"official_sources": [
+					"https://github.com/WordPress/mcp-adapter"
+				]
+			},
+			{
+				"name": "AI Engine (MCP server)",
+				"role": "primary",
+				"official_sources": [
+					"https://wordpress.org/plugins/ai-engine/"
+				]
+			},
+			{
+				"name": "Model Context Protocol specification",
+				"role": "specialist",
+				"official_sources": [
+					"https://modelcontextprotocol.io/specification"
+				]
+			}
+		]
+	},
+	"status": "OPTION_CONTRACT_COMPLETE",
+	"feature_groups": [
+		{
+			"id": "ai-server",
+			"label": "MCP server",
+			"options": [
+				{
+					"id": "ai.connect.enabled",
+					"label": "AI Connect (MCP server)",
+					"description": "Turns on WPEssential's own MCP server at wpessential/v1/mcp.",
+					"kind": "wpe_option",
+					"parity_status": "PARITY",
+					"requiredness": "optional",
+					"value_type": "boolean",
+					"default_behavior": {
+						"mode": "wpe_default",
+						"notes": "Off. Turning it off revokes every client."
+					},
+					"ui": {
+						"tier": "Essential",
+						"group": "MCP server",
+						"control": "toggle",
+						"search_terms": [
+							"ai.connect.enabled",
+							"AI Connect (MCP server)"
+						],
+						"help": "Turns on WPEssential's own MCP server at wpessential/v1/mcp.",
+						"danger_level": "low"
+					},
+					"validation": {
+						"server_authoritative": true,
+						"rules": [
+							"Sanitized and validated on the server before storage."
+						]
+					},
+					"storage": {
+						"owner": "ai-connect",
+						"mode": "site_option"
+					},
+					"runtime": {
+						"effect": "AI Connect (MCP server)",
+						"mutation_class": "reversible",
+						"performance_class": "P1"
+					},
+					"security": {
+						"class": "privileged",
+						"capability": "manage_options"
+					},
+					"portability": {
+						"export": true,
+						"import": true
+					},
+					"testing": {
+						"required_evidence": [
+							"unit",
+							"browser",
+							"accessibility",
+							"security"
+						]
+					},
+					"competitor_evidence": [
+						{
+							"product": "WordPress MCP Adapter",
+							"capability": "AI Connect (MCP server)",
+							"source": "https://github.com/WordPress/mcp-adapter"
+						},
+						{
+							"product": "AI Engine (MCP server)",
+							"capability": "AI Connect (MCP server)",
+							"source": "https://wordpress.org/plugins/ai-engine/"
+						}
+					],
+					"multisite": {
+						"scope": "site"
+					}
+				},
+				{
+					"id": "ai.connect.allow_writes",
+					"label": "Allow AI to change settings",
+					"description": "When on, write tools (module, element and settings changes) are listed. Every call is audited.",
+					"kind": "wpe_option",
+					"parity_status": "EXCEEDS",
+					"requiredness": "optional",
+					"value_type": "boolean",
+					"default_behavior": {
+						"mode": "wpe_default",
+						"notes": "Off: AI can only read."
+					},
+					"ui": {
+						"tier": "Essential",
+						"group": "MCP server",
+						"control": "toggle",
+						"search_terms": [
+							"ai.connect.allow_writes",
+							"Allow AI to change settings"
+						],
+						"help": "When on, write tools (module, element and settings changes) are listed. Every call is audited.",
+						"danger_level": "high"
+					},
+					"validation": {
+						"server_authoritative": true,
+						"rules": [
+							"Sanitized and validated on the server before storage."
+						]
+					},
+					"storage": {
+						"owner": "ai-connect",
+						"mode": "site_option"
+					},
+					"runtime": {
+						"effect": "Allow AI to change settings",
+						"mutation_class": "high_impact",
+						"performance_class": "P1"
+					},
+					"security": {
+						"class": "privileged",
+						"capability": "manage_options"
+					},
+					"portability": {
+						"export": true,
+						"import": true
+					},
+					"testing": {
+						"required_evidence": [
+							"unit",
+							"browser",
+							"accessibility",
+							"security"
+						]
+					},
+					"competitor_evidence": [
+						{
+							"product": "WordPress MCP Adapter",
+							"capability": "Allow AI to change settings",
+							"source": "https://github.com/WordPress/mcp-adapter"
+						},
+						{
+							"product": "AI Engine (MCP server)",
+							"capability": "Allow AI to change settings",
+							"source": "https://wordpress.org/plugins/ai-engine/"
+						}
+					],
+					"multisite": {
+						"scope": "site"
+					},
+					"wpe_exceed": {
+						"reason": "Explicit read-only default with a separate write opt-in; benchmarks expose writes once connected."
+					}
+				}
+			]
+		},
+		{
+			"id": "ai-clients",
+			"label": "Clients",
+			"options": [
+				{
+					"id": "ai.connect.client_connection",
+					"label": "Connect a client (one-time snippet)",
+					"description": "Claude Code, Claude Desktop, Cursor, VS Code, Windsurf, Gemini CLI or a generic MCP client. The credential is shown once.",
+					"kind": "workflow",
+					"parity_status": "PARITY",
+					"requiredness": "optional",
+					"value_type": "policy",
+					"default_behavior": {
+						"mode": "wpe_default",
+						"notes": "WPEssential default."
+					},
+					"ui": {
+						"tier": "Essential",
+						"group": "Clients",
+						"control": "select",
+						"search_terms": [
+							"ai.connect.client_connection",
+							"Connect a client (one-time snippet)"
+						],
+						"help": "Claude Code, Claude Desktop, Cursor, VS Code, Windsurf, Gemini CLI or a generic MCP client. The credential is shown once.",
+						"danger_level": "low"
+					},
+					"validation": {
+						"server_authoritative": true,
+						"rules": [
+							"Sanitized and validated on the server before storage."
+						]
+					},
+					"storage": {
+						"owner": "ai-connect",
+						"mode": "site_option"
+					},
+					"runtime": {
+						"effect": "Connect a client (one-time snippet)",
+						"mutation_class": "reversible",
+						"performance_class": "P1"
+					},
+					"security": {
+						"class": "privileged",
+						"capability": "manage_options"
+					},
+					"portability": {
+						"export": false,
+						"import": false
+					},
+					"testing": {
+						"required_evidence": [
+							"unit",
+							"browser",
+							"accessibility",
+							"security"
+						]
+					},
+					"competitor_evidence": [
+						{
+							"product": "WordPress MCP Adapter",
+							"capability": "Connect a client (one-time snippet)",
+							"source": "https://github.com/WordPress/mcp-adapter"
+						},
+						{
+							"product": "AI Engine (MCP server)",
+							"capability": "Connect a client (one-time snippet)",
+							"source": "https://wordpress.org/plugins/ai-engine/"
+						}
+					],
+					"multisite": {
+						"scope": "site"
+					}
+				},
+				{
+					"id": "ai.connect.client_revoke",
+					"label": "Disconnect a client",
+					"description": "Revokes that client's Application Password immediately.",
+					"kind": "workflow",
+					"parity_status": "PARITY",
+					"requiredness": "optional",
+					"value_type": "policy",
+					"default_behavior": {
+						"mode": "wpe_default",
+						"notes": "WPEssential default."
+					},
+					"ui": {
+						"tier": "Essential",
+						"group": "Clients",
+						"control": "button",
+						"search_terms": [
+							"ai.connect.client_revoke",
+							"Disconnect a client"
+						],
+						"help": "Revokes that client's Application Password immediately.",
+						"danger_level": "medium"
+					},
+					"validation": {
+						"server_authoritative": true,
+						"rules": [
+							"Sanitized and validated on the server before storage."
+						]
+					},
+					"storage": {
+						"owner": "ai-connect",
+						"mode": "site_option"
+					},
+					"runtime": {
+						"effect": "Disconnect a client",
+						"mutation_class": "destructive",
+						"performance_class": "P1"
+					},
+					"security": {
+						"class": "privileged",
+						"capability": "manage_options"
+					},
+					"portability": {
+						"export": false,
+						"import": false
+					},
+					"testing": {
+						"required_evidence": [
+							"unit",
+							"browser",
+							"accessibility",
+							"security"
+						]
+					},
+					"competitor_evidence": [
+						{
+							"product": "WordPress MCP Adapter",
+							"capability": "Disconnect a client",
+							"source": "https://github.com/WordPress/mcp-adapter"
+						},
+						{
+							"product": "AI Engine (MCP server)",
+							"capability": "Disconnect a client",
+							"source": "https://wordpress.org/plugins/ai-engine/"
+						}
+					],
+					"multisite": {
+						"scope": "site"
+					}
+				}
+			]
+		},
+		{
+			"id": "ai-exposure",
+			"label": "Tools & audit",
+			"options": [
+				{
+					"id": "ai.connect.tools",
+					"label": "Exposed tools",
+					"description": "Abilities whose descriptor allows the AI channel, plus site_info. Write tools only when writes are allowed.",
+					"kind": "capability",
+					"parity_status": "PARITY",
+					"requiredness": "optional",
+					"value_type": "computed",
+					"default_behavior": {
+						"mode": "wpe_default",
+						"notes": "WPEssential default."
+					},
+					"ui": {
+						"tier": "Advanced",
+						"group": "Tools & audit",
+						"control": "readonly",
+						"search_terms": [
+							"ai.connect.tools",
+							"Exposed tools"
+						],
+						"help": "Abilities whose descriptor allows the AI channel, plus site_info. Write tools only when writes are allowed.",
+						"danger_level": "low"
+					},
+					"validation": {
+						"server_authoritative": true,
+						"rules": [
+							"Sanitized and validated on the server before storage."
+						]
+					},
+					"storage": {
+						"owner": "ai-connect",
+						"mode": "site_option"
+					},
+					"runtime": {
+						"effect": "Exposed tools",
+						"mutation_class": "read_only",
+						"performance_class": "P1"
+					},
+					"security": {
+						"class": "privileged",
+						"capability": "manage_options"
+					},
+					"portability": {
+						"export": false,
+						"import": false
+					},
+					"testing": {
+						"required_evidence": [
+							"unit",
+							"browser",
+							"accessibility",
+							"security"
+						]
+					},
+					"competitor_evidence": [
+						{
+							"product": "WordPress MCP Adapter",
+							"capability": "Exposed tools",
+							"source": "https://github.com/WordPress/mcp-adapter"
+						},
+						{
+							"product": "AI Engine (MCP server)",
+							"capability": "Exposed tools",
+							"source": "https://wordpress.org/plugins/ai-engine/"
+						}
+					],
+					"multisite": {
+						"scope": "site"
+					}
+				},
+				{
+					"id": "ai.connect.audit",
+					"label": "Audit log",
+					"description": "Every MCP tool call is recorded with outcome and ability name under surface 43.",
+					"kind": "capability",
+					"parity_status": "PARITY",
+					"requiredness": "optional",
+					"value_type": "computed",
+					"default_behavior": {
+						"mode": "wpe_default",
+						"notes": "WPEssential default."
+					},
+					"ui": {
+						"tier": "Expert",
+						"group": "Tools & audit",
+						"control": "readonly",
+						"search_terms": [
+							"ai.connect.audit",
+							"Audit log"
+						],
+						"help": "Every MCP tool call is recorded with outcome and ability name under surface 43.",
+						"danger_level": "low"
+					},
+					"validation": {
+						"server_authoritative": true,
+						"rules": [
+							"Sanitized and validated on the server before storage."
+						]
+					},
+					"storage": {
+						"owner": "ai-connect",
+						"mode": "site_option"
+					},
+					"runtime": {
+						"effect": "Audit log",
+						"mutation_class": "read_only",
+						"performance_class": "P1"
+					},
+					"security": {
+						"class": "privileged",
+						"capability": "manage_options"
+					},
+					"portability": {
+						"export": false,
+						"import": false
+					},
+					"testing": {
+						"required_evidence": [
+							"unit",
+							"browser",
+							"accessibility",
+							"security"
+						]
+					},
+					"competitor_evidence": [
+						{
+							"product": "WordPress MCP Adapter",
+							"capability": "Audit log",
+							"source": "https://github.com/WordPress/mcp-adapter"
+						},
+						{
+							"product": "AI Engine (MCP server)",
+							"capability": "Audit log",
+							"source": "https://wordpress.org/plugins/ai-engine/"
+						}
+					],
+					"multisite": {
+						"scope": "site"
+					}
+				}
+			]
+		}
+	],
+	"coverage_summary": {
+		"atomic_options": 6,
+		"parity": 5,
+		"exceeds": 1,
+		"deferred": 0,
+		"rejected_unsafe": 0,
+		"missing": 0,
+		"unclassified": 0
+	}
+}

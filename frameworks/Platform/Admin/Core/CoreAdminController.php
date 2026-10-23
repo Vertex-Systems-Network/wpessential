@@ -14,6 +14,7 @@ use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Badge;
 use WPEssential\Platform\Admin\Ui\Button;
+use WPEssential\Platform\Admin\Ui\Field;
 use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
 use WPEssential\Platform\Admin\Ui\PageHeader;
@@ -225,15 +226,15 @@ final class CoreAdminController {
 		$modules = ModuleCatalog::all();
 		$free    = count( array_filter( $modules, static fn ( array $m ): bool => $m['edition'] === 'free' ) );
 		$active  = count( array_filter( $modules, fn ( array $m ): bool => $this->isActive( $m ) ) );
-		$counts  = '<span class="wpe-ui-badge wpe-ui-badge--free">' . esc_html( sprintf( /* translators: %d: count. */ __( '%d Free', 'wpessential' ), $free ) ) . '</span> '
-			. '<span class="wpe-ui-badge wpe-ui-badge--pro">' . esc_html( sprintf( /* translators: %d: count. */ __( '%d Premium', 'wpessential' ), count( $modules ) - $free ) ) . '</span> '
+		$counts  = Badge::label( 'free', sprintf( /* translators: %d: count. */ __( '%d Free', 'wpessential' ), $free ) ) . ' '
+			. Badge::label( 'pro', sprintf( /* translators: %d: count. */ __( '%d Premium', 'wpessential' ), count( $modules ) - $free ) ) . ' '
 			. Badge::count( $active );
 
 		$html     = PageHeader::render( __( 'Modules', 'wpessential' ), __( 'Free + Premium modules', 'wpessential' ), __( 'Turn modules on or off. Disabled modules load no code on your site.', 'wpessential' ), $counts );
 		$selected = isset( $_GET['category'] ) ? sanitize_key( wp_unslash( (string) $_GET['category'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filter.
 
 		$html .= '<div class="wpe-ui-toolbar"><label class="screen-reader-text" for="wpe-module-search">' . esc_html__( 'Search modules', 'wpessential' ) . '</label>';
-		$html .= '<input type="search" id="wpe-module-search" class="wpe-ui-input" placeholder="' . esc_attr__( 'Search modules…', 'wpessential' ) . '" data-wpe-search>';
+		$html .= Field::search( 'wpe-module-search', __( 'Search modules…', 'wpessential' ), [ 'data-wpe-search' => true ] );
 		$html .= '<div class="wpe-ui-tabs" role="group" aria-label="' . esc_attr__( 'Filter by edition', 'wpessential' ) . '">';
 		foreach ( [
 			'all'      => __( 'All', 'wpessential' ),
@@ -333,7 +334,7 @@ final class CoreAdminController {
 			}
 		}
 		$html .= '</div><label class="screen-reader-text" for="wpe-option-search">' . esc_html__( 'Search options', 'wpessential' ) . '</label>';
-		$html .= '<input type="search" id="wpe-option-search" class="wpe-ui-input" placeholder="' . esc_attr( sprintf( /* translators: %d: option count. */ __( 'Search %d options…', 'wpessential' ), $total ) ) . '" data-wpe-option-search></div>';
+		$html .= Field::search( 'wpe-option-search', sprintf( /* translators: %d: option count. */ __( 'Search %d options…', 'wpessential' ), $total ), [ 'data-wpe-option-search' => true ] ) . '</div>';
 
 		foreach ( $contract['groups'] as $index => $group ) {
 			$html .= '<details class="wpe-ui-group" data-wpe-group' . ( $index < 2 ? ' open' : '' ) . '><summary><span class="wpe-ui-group__title">' . esc_html( $group['label'] ) . '</span>' . Badge::count( count( $group['options'] ) ) . '</summary>';

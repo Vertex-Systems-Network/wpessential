@@ -1,3 +1,4 @@
+import { statusCell } from './core/status-pill';
 import './admin.scss';
 
 type BootstrapRecord = Record< string, unknown >;
@@ -420,10 +421,7 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 		row.append(
 			createCell( name ),
 			createCell( key ),
-			createCell(
-				definition.status.charAt( 0 ).toUpperCase() +
-					definition.status.slice( 1 )
-			),
+			statusCell( definition.status ),
 			createCell( String( definition.revision ) )
 		);
 

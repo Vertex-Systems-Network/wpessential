@@ -52,6 +52,22 @@ function removeTree(string $path): void
 }
 
 /** @return list<string> */
+/** WPE Server (server/) runs only on the owner's sites and must never ship to users (ADR-0233). */
+function assertNoServerCode(string $stageRoot, string $label): void
+{
+    foreach (relativeFiles($stageRoot) as $relative) {
+        if (str_starts_with($relative, 'server/') || str_contains($relative, 'wpessential-server')) {
+            fail("{$label} distributable must not contain WPE Server files: {$relative}");
+        }
+        if (str_ends_with($relative, '.php')) {
+            $contents = (string) file_get_contents($stageRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative));
+            if (str_contains($contents, 'WPEssential\\Server\\') || str_contains($contents, 'WPES_SERVER_')) {
+                fail("{$label} distributable must not contain WPE Server code: {$relative}");
+            }
+        }
+    }
+}
+
 function relativeFiles(string $root): array
 {
     if (!is_dir($root)) {
@@ -377,6 +393,8 @@ function validateProStage(string $stageRoot, array $proAssets): void
         'frameworks/Modules/Notifications/NotificationsModule.php',
         'frameworks/Modules/Emails/EmailsModule.php',
         'frameworks/Modules/Chat/ChatModule.php',
+        'frameworks/Modules/SiteKit/SiteKitModule.php',
+        'frameworks/Modules/SiteKit/data/google-fonts.json',
         ...$proAssets,
     ] as $relative) {
         $path = $stageRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
@@ -498,6 +516,8 @@ try {
 
     stageFreePackage($root, $freeStage, $freeAssets);
     stageProPackage($root, $proStage, $proAssets);
+    assertNoServerCode($freeStage, 'Free');
+    assertNoServerCode($proStage, 'Pro');
     validateFreeStage($freeStage, $freeAssets);
     validateProStage($proStage, $proAssets);
 

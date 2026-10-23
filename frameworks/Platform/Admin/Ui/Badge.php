@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Figma: UI Kit Badge (Free / Pro).
+ * Figma: UI/Pill (Kind=Free badge / Premium badge).
  */
 final class Badge {
 
@@ -17,6 +17,11 @@ final class Badge {
 		return $edition === 'pro'
 			? '<span class="wpe-ui-badge wpe-ui-badge--pro">' . esc_html__( 'Premium', 'wpessential' ) . '</span>'
 			: '<span class="wpe-ui-badge wpe-ui-badge--free">' . esc_html__( 'Free', 'wpessential' ) . '</span>';
+	}
+
+	/** A Free or Premium badge with custom text, e.g. "12 Free". */
+	public static function label( string $edition, string $text ): string {
+		return '<span class="wpe-ui-badge wpe-ui-badge--' . ( $edition === 'pro' ? 'pro' : 'free' ) . '">' . esc_html( $text ) . '</span>';
 	}
 
 	public static function count( int $count ): string {

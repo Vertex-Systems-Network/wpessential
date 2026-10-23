@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset name="WPEssential Server">
+	<description>WordPress Coding Standards for the WPEssential Server plugin.</description>
+	<file>.</file>
+	<arg name="extensions" value="php"/>
+	<arg value="ps"/>
+	<config name="testVersion" value="7.4-"/>
+	<config name="minimum_wp_version" value="6.5"/>
+	<rule ref="WordPress"/>
+	<rule ref="WordPress.WP.I18n">
+		<properties><property name="text_domain" type="array"><element value="wpessential-server"/></property></properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties><property name="prefixes" type="array"><element value="wpes"/><element value="WPES"/><element value="WPEssential\Server"/></property></properties>
+	</rule>
+	<rule ref="WordPress.WP.Capabilities">
+		<properties><property name="custom_capabilities" type="array"><element value="manage_woocommerce"/></property></properties>
+	</rule>
+	<!-- PSR-4 class files. -->
+	<rule ref="WordPress.Files.FileName"><exclude-pattern>src/*</exclude-pattern></rule>
+</ruleset>

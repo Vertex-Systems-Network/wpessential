@@ -1,3 +1,4 @@
+import { statusCell } from './core/status-pill';
 import './admin.scss';
 import {
 	bindTaxonomyEditorSafety,
@@ -953,10 +954,7 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 			cell( name ),
 			cell( key ),
 			cell( objectTypes ),
-			cell(
-				definition.status.charAt( 0 ).toUpperCase() +
-					definition.status.slice( 1 )
-			),
+			statusCell( definition.status ),
 			cell( String( definition.revision ) ),
 			runtimeHealth,
 			dependencies

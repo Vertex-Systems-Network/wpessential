@@ -25,6 +25,7 @@ final class ModuleCatalog {
 			'frontend'   => 'Frontend & builders',
 			'automation' => 'Automation & messaging',
 			'tools'      => 'Site tools',
+			'ai'         => 'Developer & AI',
 		];
 	}
 
@@ -74,6 +75,7 @@ final class ModuleCatalog {
 			[ 'membership', 'Membership', 'pro', 'users', 'membership', 'star', true, null, 'Restrict content by plan, role or rule with access audit.' ],
 			[ 'dashboard', 'Frontend Dashboard', 'pro', 'frontend', 'dashboard', 'home', true, null, 'Account dashboards for members and customers.' ],
 			[ 'listings', 'Dynamic Listings', 'pro', 'frontend', 'listings', 'grid', true, null, 'Grids, lists and maps of dynamic content with filters.' ],
+			[ 'site-kit', 'Site Kit', 'pro', 'frontend', 'admin-theme', 'brush', true, 'wpessential-site-kit', 'Site-wide colours, fonts, buttons, forms, layout, dark mode, custom code and SEO basics for any theme.' ],
 			[ 'builder-widgets', 'Builder Widgets', 'pro', 'frontend', 'builder-widgets', 'brush', true, null, 'Blocks and page-builder widgets bound to WPEssential data.' ],
 			[ 'forms-workflows', 'Forms & Workflows', 'pro', 'automation', 'forms-workflows', 'form', true, null, 'Forms with conditional logic and post-submit workflows.' ],
 			[ 'notifications', 'Notifications', 'pro', 'automation', 'notifications', 'bell', true, null, 'Event-driven notifications across email, admin and webhooks.' ],
@@ -87,6 +89,7 @@ final class ModuleCatalog {
 			[ 'media', 'Media Manager', 'pro', 'tools', 'media', 'image', false, null, 'Folders, optimisation, replacement and usage tracking.' ],
 			[ 'protector', 'Site Protector', 'pro', 'tools', 'protector', 'shield', false, null, 'Login hardening, firewall rules and security monitoring.' ],
 			[ 'connections', 'Connections', 'pro', 'tools', 'connections', 'plug', false, null, 'External services and APIs with secure credentials.' ],
+			[ 'ai-connect', 'AI Connect', 'pro', 'ai', 'ai', 'spark', false, 'wpessential-ai', 'Let Claude, Cursor and other MCP clients read and, if you allow it, change WPEssential settings.' ],
 		];
 	}
 }

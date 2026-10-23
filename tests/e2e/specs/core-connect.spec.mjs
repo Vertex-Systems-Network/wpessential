@@ -14,6 +14,9 @@ if (!pluginDirectory) {
 
 let playground;
 
+// Entrance animations fade colours in; axe must measure the settled page.
+test.use({ reducedMotion: 'reduce' });
+
 async function visitCore(page, slug) {
   const response = await page.goto(
     `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
@@ -72,7 +75,7 @@ const screens = [
   ['wpessential-demos', 'Start from a ready-made site'],
   ['wpessential-elements', 'Blocks & widgets'],
   ['wpessential-ai', 'Connect your AI assistant'],
-  ['wpessential-license', 'License & Account'],
+  ['wpessential-license', 'Account & subscription'],
   ['wpessential-docs', 'Learn WPEssential'],
 ];
 
@@ -97,19 +100,15 @@ test('Elements ships empty for Gutenberg and Elementor', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'No Elementor widgets yet' })).toBeVisible();
 });
 
-test('AI Connect is off by default and AI writes stay off until allowed', async ({ page }) => {
+test('AI Connect is a Premium module and stays locked without Premium', async ({ page }) => {
   await visitCore(page, 'wpessential-ai');
-  const power = page.getByRole('switch', { name: 'Turn AI Connect on or off' });
-  await expect(power).toHaveAttribute('aria-checked', 'false');
-
-  await power.click();
-  await expect(page.getByRole('switch', { name: 'Turn AI Connect on or off' })).toHaveAttribute('aria-checked', 'true');
-  await expect(page.getByRole('switch', { name: 'Allow AI to change settings' })).toHaveAttribute('aria-checked', 'false');
-  await expect(page.getByRole('heading', { name: 'Connected clients' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'AI Connect is a Premium module' })).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Turn AI Connect on or off' })).toHaveCount(0);
   await expectNoAxeViolations(page);
 
-  await page.getByRole('switch', { name: 'Turn AI Connect on or off' }).click();
-  await expect(page.getByRole('switch', { name: 'Turn AI Connect on or off' })).toHaveAttribute('aria-checked', 'false');
+  await visitCore(page, 'wpessential-modules');
+  const card = page.locator('[data-wpe-module]').filter({ has: page.getByRole('heading', { name: 'AI Connect' }) });
+  await expect(card.getByRole('link', { name: 'Premium' })).toBeVisible();
 });
 
 test('dark mode is saved per user and every screen passes axe in dark', async ({ page }) => {
@@ -121,6 +120,8 @@ test('dark mode is saved per user and every screen passes axe in dark', async ({
     await page.waitForLoadState('domcontentloaded');
   }
   await expect(page.locator('body')).toHaveClass(/wpe-mode-dark/);
+  await page.reload();
+  await expect(page.locator('body'), 'the AJAX mode switch must be saved').toHaveClass(/wpe-mode-dark/);
 
   for (const [slug] of screens) {
     await visitCore(page, slug);

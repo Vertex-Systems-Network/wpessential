@@ -18,7 +18,7 @@ use WP_Error;
  */
 final class Account {
 
-	public const OPTION         = 'wpessential_account';
+	public const OPTION          = 'wpessential_account';
 	public const LICENSE_ACTIONS = [ 'auto_renew_on', 'auto_renew_off', 'cancel', 'deactivate_domain' ];
 
 	public function __construct( private readonly LicenseService $license ) {}
@@ -154,6 +154,7 @@ final class Account {
 			return $data;
 		}
 		$this->store( $data );
+		$this->connectSite();
 
 		return $this->me();
 	}
@@ -175,15 +176,79 @@ final class Account {
 			return $data;
 		}
 		$this->store( $data );
-		$me = $this->me();
+		$this->connectSite();
 
-		// New accounts get a Free licence: put it on this site straight away.
-		$first = $data['licenses'][0]['key'] ?? null;
-		if ( ! $me instanceof WP_Error && ! $this->license->isActive() && is_string( $first ) && $first !== '' ) {
-			$this->license->activate( $first );
+		return $this->me();
+	}
+
+	/**
+	 * Connects this site to the signed-in account without a key: keeps the subscription already on
+	 * this domain, otherwise takes a free slot on the best active subscription (Premium first).
+	 *
+	 * @return array<string,mixed>|WP_Error
+	 */
+	public function connectSite(): array|WP_Error {
+		// WPE Server picks and assigns the slot itself (account/connect); older servers do not have it.
+		$connected = $this->request( 'POST', '/account/connect', [ 'site' => home_url() ] );
+		if ( ! $connected instanceof WP_Error && is_string( $connected['key'] ?? null ) && $connected['key'] !== '' ) {
+			if ( $this->license->isActive() && $this->license->data()['key'] !== $connected['key'] ) {
+				$this->license->deactivate();
+			}
+
+			return $this->license->activate( $connected['key'] );
+		}
+		if ( $connected instanceof WP_Error && in_array( $connected->get_error_code(), [ 'wpe_no_slot', 'wpe_signed_out' ], true ) ) {
+			return $connected;
 		}
 
-		return $me;
+		$data = $this->request( 'GET', '/account/me' );
+		if ( $data instanceof WP_Error ) {
+			return $data;
+		}
+		$licenses = array_values( array_filter( (array) ( $data['licenses'] ?? [] ), 'is_array' ) );
+		$pick     = self::pickLicense( $licenses, LicenseService::domain() );
+		if ( $pick === null ) {
+			return new WP_Error( 'wpe_no_slot', __( 'Every site slot on your subscriptions is in use. Upgrade or free a slot to connect this site.', 'wpessential' ) );
+		}
+		$key = (string) $pick['key'];
+		if ( $this->license->isActive() && $this->license->data()['key'] !== $key ) {
+			$this->license->deactivate();
+		}
+
+		return $this->license->activate( $key );
+	}
+
+	/**
+	 * @param list<array<string,mixed>> $licenses Owner-shaped licences from account/me (with keys).
+	 * @return array<string,mixed>|null
+	 */
+	public static function pickLicense( array $licenses, string $domain ): ?array {
+		$domain = preg_replace( '/^www\./', '', strtolower( $domain ) );
+		$usable = [];
+		foreach ( $licenses as $license ) {
+			if ( ( $license['status'] ?? '' ) !== 'active' || ! is_string( $license['key'] ?? null ) || $license['key'] === '' ) {
+				continue;
+			}
+			$domains = array_map( static fn ( mixed $d ): string => preg_replace( '/^www\./', '', strtolower( (string) $d ) ) ?? '', (array) ( $license['domains'] ?? [] ) );
+			if ( in_array( $domain, $domains, true ) ) {
+				return $license;
+			}
+			$limit = (int) ( $license['sites_limit'] ?? 1 );
+			$used  = (int) ( $license['sites_used'] ?? count( $domains ) );
+			if ( $limit === 0 || $used < $limit ) {
+				$usable[] = $license;
+			}
+		}
+		usort(
+			$usable,
+			static function ( array $a, array $b ): int {
+				$free = static fn ( array $l ): int => (int) ( $l['sites_limit'] ?? 1 ) === 0 ? PHP_INT_MAX : (int) ( $l['sites_limit'] ?? 1 ) - (int) ( $l['sites_used'] ?? 0 );
+
+				return [ empty( $b['pro'] ) ? 0 : 1, $free( $b ) ] <=> [ empty( $a['pro'] ) ? 0 : 1, $free( $a ) ];
+			}
+		);
+
+		return $usable[0] ?? null;
 	}
 
 	/** @return array{signed_in:false} */
