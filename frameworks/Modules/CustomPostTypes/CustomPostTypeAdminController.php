@@ -159,7 +159,7 @@ final class CustomPostTypeAdminController {
 
 	private function renderEditor(): void {
 		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-builder__editor" aria-labelledby="wpessential-cpt-editor-title">';
-		echo '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'file', 20 ) . '</span><h2 id="wpessential-cpt-editor-title">' . esc_html__( 'Add custom post type', 'wpessential' ) . '</h2></div>';
+		echo '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'file', 20 ) . '</span><h2 id="wpessential-cpt-editor-title">' . esc_html__( 'Add custom post type', 'wpessential' ) . '</h2></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '<form id="wpessential-cpt-form">';
 		echo '<input type="hidden" id="wpessential-cpt-id" value="">';
 		echo '<input type="hidden" id="wpessential-cpt-revision" value="">';
@@ -224,8 +224,8 @@ final class CustomPostTypeAdminController {
 	/** @param list<array<string,mixed>> $definitions */
 	private function renderDefinitions( array $definitions ): void {
 		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-panel--flush wpe-ui-builder__list" aria-labelledby="wpessential-cpt-list-title">';
-		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-cpt-list-title">' . esc_html__( 'Saved custom post types', 'wpessential' ) . '</h2>';
-		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm" id="wpessential-cpt-refresh">' . Icon::render( 'refresh', 16 ) . esc_html__( 'Refresh', 'wpessential' ) . '</button></div>';
+		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-cpt-list-title">' . esc_html__( 'Saved custom post types', 'wpessential' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm" id="wpessential-cpt-refresh">' . Icon::render( 'refresh', 16 ) . esc_html__( 'Refresh', 'wpessential' ) . '</button></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '<table class="widefat striped" id="wpessential-cpt-table" aria-label="' . esc_attr__( 'Saved custom post types', 'wpessential' ) . '">';
 		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
 		echo '<tbody id="wpessential-cpt-rows">';

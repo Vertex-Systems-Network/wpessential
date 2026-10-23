@@ -1,3 +1,4 @@
+import { statusCell } from './core/status-pill';
 import './admin.scss';
 
 type BootstrapRecord = Record< string, unknown >;
@@ -369,23 +370,6 @@ async function postCptRoute(
 function createCell( text: string ): HTMLTableCellElement {
 	const cell = document.createElement( 'td' );
 	cell.textContent = text;
-	return cell;
-}
-
-const STATUS_TONES: Record< string, string > = {
-	published: 'running',
-	draft: 'waiting',
-	disabled: 'off',
-	archived: 'locked',
-};
-
-// Mirrors CustomPostTypeAdminController::statusPill() so refreshed rows match server-rendered ones.
-function statusCell( status: string ): HTMLTableCellElement {
-	const cell = document.createElement( 'td' );
-	const pill = document.createElement( 'span' );
-	pill.className = `wpe-ui-pill wpe-ui-pill--${ STATUS_TONES[ status ] ?? 'off' }`;
-	pill.textContent = status.charAt( 0 ).toUpperCase() + status.slice( 1 );
-	cell.append( pill );
 	return cell;
 }
 
