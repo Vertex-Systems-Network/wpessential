@@ -1,3 +1,6 @@
+import { CPT_LABEL_TEMPLATES, bindAutofill } from './core/autofill';
+import { bindCounters } from './core/counter';
+import { bindCptDefaults } from './cpt-defaults';
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName, bindLevels, refreshLevel } from './core/levels';
 import { BULK_ACTIONS, LIFECYCLE_VIEWS, type LifecycleAction, markRow, rowActions, runLifecycle } from './core/lifecycle';
@@ -650,8 +653,24 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		bindKeyFromName( keyInput, singularInput, 20 );
 	}
 	const cptForm = document.getElementById( 'wpessential-cpt-form' );
+	const pluralInput = textInput( 'wpessential-cpt-name' );
+	if ( cptForm instanceof HTMLFormElement && pluralInput && singularInput ) {
+		bindAutofill( {
+			form: cptForm,
+			plural: pluralInput,
+			singular: singularInput,
+			templates: CPT_LABEL_TEMPLATES,
+			labels: () =>
+				Array.from( cptForm.querySelectorAll< HTMLInputElement >( '[data-wpessential-cpt-label]' ) ).map( ( input ) => ( {
+					input,
+					key: input.dataset.wpessentialCptLabel ?? '',
+				} ) ),
+		} );
+	}
 	if ( cptForm instanceof HTMLFormElement ) {
 		bindDependencies( cptForm, CPT_DEPENDENCIES, 'cpt' );
+		bindCounters( cptForm );
+		bindCptDefaults( cptForm );
 	}
 	let definitions = [ ...bootstrap.definitions ];
 	let busy = false;

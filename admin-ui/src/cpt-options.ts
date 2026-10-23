@@ -139,7 +139,8 @@ export function collectAdvanced(): Payload {
 	for ( const el of all< HTMLInputElement >(
 		'[data-wpessential-cpt-label]'
 	) ) {
-		if ( el.value.trim() !== '' ) {
+		// Generated labels are left out: WordPress writes the same text itself.
+		if ( el.value.trim() !== '' && el.dataset.wpeAuto !== '1' ) {
 			labels[ el.dataset.wpessentialCptLabel ?? '' ] = el.value.trim();
 		}
 	}

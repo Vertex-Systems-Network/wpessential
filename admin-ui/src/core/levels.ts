@@ -124,6 +124,7 @@ export function bindKeyFromName(
 	name: HTMLInputElement,
 	maxLength: number
 ): void {
+	key.maxLength = maxLength;
 	let touched = key.value !== '';
 	key.addEventListener( 'input', () => {
 		touched = key.value !== '';
@@ -142,5 +143,6 @@ export function bindKeyFromName(
 			.trim()
 			.replace( /[\s-]+/g, '_' )
 			.slice( 0, maxLength );
+		key.dispatchEvent( new Event( 'wpe:autofill' ) );
 	} );
 }
