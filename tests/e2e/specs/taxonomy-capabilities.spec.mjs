@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, reopenTaxonomyFromList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -141,13 +142,10 @@ test('packaged Taxonomy Expert UX authors, diagnoses, hydrates and resets native
     assign_terms: 'assign_library_genres',
   });
 
+  const saved = captureTaxonomySave(page);
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
-  const savedRow = page.locator('[data-wpessential-taxonomy-row]');
-  await expect(savedRow).toContainText('cap_genre');
-  await expect(savedRow).toContainText('Published');
-  await waitForIdle(page);
-
-  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  await expect(page.getByText(/Taxonomy (created|updated)\./)).toBeVisible();
+  await reopenTaxonomyFromList(page, playground.serverUrl, await saved, 'Published');
   await page.getByRole('button', { name: 'Expert', exact: true }).click();
   await expect(page.getByLabel('Manage terms capability')).toHaveValue('manage_library_genres');
   await expect(page.getByLabel('Edit terms capability')).toHaveValue('edit_library_genres');

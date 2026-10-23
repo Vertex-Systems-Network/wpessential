@@ -14,9 +14,10 @@ if (!pluginDirectory) {
 
 let playground;
 
-async function visitCpts(page) {
+// The editor (Add/Edit) and the list are separate pages.
+async function visitCpts(page, slug = 'wpessential-cpt') {
   const response = await page.goto(
-    `${playground.serverUrl}/wp-admin/admin.php?page=wpessential-cpt`,
+    `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
     { waitUntil: 'domcontentloaded' },
   );
 
@@ -77,11 +78,18 @@ test('packaged CPT Builder renders the bounded editor and progressively enhances
   await expect(page.getByRole('group', { name: 'Editor supports' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save custom post type' })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
-  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
-
+  await expect(page.getByRole('link', { name: '‹ All post types' })).toBeVisible();
   await expect(root).toHaveAttribute('data-wpessential-surface', 'custom-post-types');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
+
+  // The list is its own page, with a way to add a new post type.
+  const listRoot = await visitCpts(page, 'wpessential-post-types');
+  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
+  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
+  await expect(page.getByLabel('Post type key')).toHaveCount(0);
+  await expect(listRoot).toHaveAttribute('data-wpessential-enhanced', 'ready');
+  await page.getByRole('link', { name: 'Add new post type' }).click();
+  await expect(page.getByRole('heading', { name: 'Add custom post type', level: 2 })).toBeVisible();
   expect(pageErrors, `Unexpected CPT Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
@@ -110,7 +118,7 @@ test('bounded CPT editor preserves hidden runtime options and supports in its sa
   let currentDefinition = seeded;
   let capturedSavePayload = null;
 
-  await visitCpts(page);
+  await visitCpts(page, 'wpessential-post-types');
   await page.route('**/wp-admin/admin-ajax.php', async (route) => {
     const request = route.request();
     if (request.method() !== 'POST') {
@@ -174,7 +182,9 @@ test('bounded CPT editor preserves hidden runtime options and supports in its sa
   await expect(row).toBeVisible();
   await expect(row).toContainText('RC Books');
   await expect(row).toContainText('rc_book');
+  // Edit opens the separate editor page for this definition.
   await row.getByRole('button', { name: 'Edit' }).click();
+  await page.waitForURL(/page=wpessential-cpt&definition=/);
 
   await expect(page.getByLabel('Post type key')).toHaveAttribute('readonly', '');
   await expect(page.getByLabel('Plural name')).toHaveValue('RC Books');

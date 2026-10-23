@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, reopenTaxonomyFromList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -146,13 +147,10 @@ test('packaged Taxonomy Advanced UX authors, diagnoses, hydrates and resets REST
 
   await page.getByLabel('Show in REST API').check();
   await validate(page);
+  const saved = captureTaxonomySave(page);
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
-  const savedRow = page.locator('[data-wpessential-taxonomy-row]');
-  await expect(savedRow).toContainText('rest_genre');
-  await expect(savedRow).toContainText('Published');
-  await waitForIdle(page);
-
-  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  await expect(page.getByText(/Taxonomy (created|updated)\./)).toBeVisible();
+  await reopenTaxonomyFromList(page, playground.serverUrl, await saved, 'Published');
   await page.getByRole('button', { name: 'Advanced', exact: true }).click();
   await expect(page.getByLabel('REST base')).toHaveValue('genres');
   await expect(page.getByLabel('REST namespace')).toHaveValue('acme/v1');

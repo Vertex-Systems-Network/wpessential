@@ -4,6 +4,7 @@ import process from 'node:process';
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, showTaxonomiesInList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -14,9 +15,10 @@ if (!pluginDirectory) {
 
 let playground;
 
-async function visitTaxonomies(page) {
+// The editor (Add/Edit) and the list are separate pages.
+async function visitTaxonomies(page, slug = 'wpessential-taxonomy') {
   const response = await page.goto(
-    `${playground.serverUrl}/wp-admin/admin.php?page=wpessential-taxonomy`,
+    `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
     { waitUntil: 'domcontentloaded' },
   );
 
@@ -78,10 +80,7 @@ test('packaged Taxonomy Builder renders searchable grouped object type linking a
   await expect(page.getByLabel('Additional/external post type keys')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save taxonomy' })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Saved taxonomies' })).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'Runtime health' })).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'Dependencies' })).toBeVisible();
-  await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
+  await expect(page.getByRole('link', { name: '‹ All taxonomies' })).toBeVisible();
   await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeHidden();
 
   await expect(root).toHaveAttribute('data-wpessential-surface', 'taxonomies');
@@ -115,6 +114,13 @@ test('packaged Taxonomy Builder renders searchable grouped object type linking a
   await search.fill('');
   await expect(postRow).toBeVisible();
   await expect(postType).toBeChecked();
+
+  await visitTaxonomies(page, 'wpessential-taxonomies');
+  await expect(page.getByRole('table', { name: 'Saved taxonomies' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Runtime health' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Dependencies' })).toBeVisible();
+  await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Add new taxonomy' })).toBeVisible();
   expect(pageErrors, `Unexpected Taxonomy Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
@@ -154,7 +160,6 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await expect(validation).toContainText(/Validation blocked by \d+ issue/);
   await expect(validation).toContainText('reserved by WordPress');
   await expect(diagnostics).toBeHidden();
-  await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
 
   await page.getByLabel('Taxonomy key').fill('library_genre');
   await page.getByLabel('Plural name').fill('Genres');
@@ -176,10 +181,13 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await expect(diagnostics.locator('[data-wpessential-taxonomy-effective-args]')).toContainText('"show_in_rest": true');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-overrides]')).toContainText('"public": true');
 
+  const saved = captureTaxonomySave(page);
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
 
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
   await expect(diagnostics).toBeHidden();
+
+  await showTaxonomiesInList(page, playground.serverUrl, [await saved]);
   const row = page.getByRole('row', {
     name: /Genres library_genre post, external_book Draft 1 Inactive 2/,
   });
@@ -190,6 +198,7 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await expect(row.getByRole('button', { name: 'Publish' })).toBeVisible();
 
   await row.getByRole('button', { name: 'Edit' }).click();
+  await page.waitForURL(/page=wpessential-taxonomy&definition=/);
   await expect(postType).toBeChecked();
   await expect(externalTypes).toHaveValue('external_book');
   await expect(preservedGroup).toBeVisible();

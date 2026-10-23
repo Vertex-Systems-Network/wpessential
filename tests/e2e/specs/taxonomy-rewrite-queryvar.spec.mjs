@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, reopenTaxonomyFromList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -148,11 +149,10 @@ test('packaged Taxonomy Expert UX authors, hydrates and resets rewrite/query-var
     query_var: 'library_genre_query',
   });
 
+  const saved = captureTaxonomySave(page);
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
-  const savedRow = page.locator('[data-wpessential-taxonomy-row]');
-  await expect(savedRow).toContainText('routing_genre');
-  await expect(savedRow).toContainText('Published');
-  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  await expect(page.getByText(/Taxonomy (created|updated)\./)).toBeVisible();
+  await reopenTaxonomyFromList(page, playground.serverUrl, await saved, 'Published');
   await page.getByRole('button', { name: 'Expert', exact: true }).click();
   await expect(page.getByLabel('Rewrite mode')).toHaveValue('custom');
   await expect(page.getByLabel('Rewrite slug')).toHaveValue('library/genre');

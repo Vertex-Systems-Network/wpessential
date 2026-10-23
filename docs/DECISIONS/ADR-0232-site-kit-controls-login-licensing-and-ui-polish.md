@@ -98,3 +98,23 @@ Behaviour:
 - Switching to a simpler level only hides fields. Saved values are kept, and the status line counts the changed settings that sit in a higher level.
 - The level is remembered per browser.
 - Machine keys are filled in from the singular name until the user edits them.
+
+## Amendment — the WordPress sidebar lists modules; builders get list and editor pages (2026-10-23)
+
+The owner asked that Modules, Demo Library, Elements, Docs, AI Connect, Account and System Status appear only in the WPEssential top navigation. The WordPress sidebar under WPEssential lists modules only.
+
+- **Product pages leave the sidebar.**
+  - They are registered under the hidden `options.php` parent, so their URLs are unchanged.
+  - `CoreAdminController::trimMenu()` removes WordPress's automatic "WPEssential" first submenu. The top-level item still opens the Dashboard.
+  - The `parent_file` / `submenu_file` filters keep the WPEssential item highlighted on every WPEssential page.
+- **CPT and Taxonomy have separate list and editor pages.**
+
+  | | List (sidebar) | Add / Edit (`&definition=<id>`) |
+  |---|---|---|
+  | CPT | `wpessential-post-types` | `wpessential-cpt` |
+  | Taxonomy | `wpessential-taxonomies` | `wpessential-taxonomy` |
+
+- **Editor behaviour.**
+  - After a save the editor stays on the saved item, WordPress-style, and puts its id in the URL.
+  - "Cancel edit" starts a fresh item.
+  - The page-header link returns to the list.

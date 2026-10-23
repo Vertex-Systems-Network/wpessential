@@ -13,6 +13,7 @@ use Throwable;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Button;
 use WPEssential\Platform\Admin\Ui\Check;
 use WPEssential\Platform\Admin\Ui\Field;
@@ -28,9 +29,11 @@ use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 final class CustomPostTypeAdminController {
 
 	public const PAGE_SLUG   = 'wpessential-cpt';
+	public const LIST_SLUG   = 'wpessential-post-types';
 	private const CAPABILITY = 'manage_options';
 
-	private ?string $hookSuffix = null;
+	/** @var list<string> */
+	private array $hookSuffixes = [];
 
 	public function __construct(
 		private readonly AbilityRegistry $abilities,
@@ -58,20 +61,31 @@ final class CustomPostTypeAdminController {
 			return;
 		}
 
-		$hook = add_submenu_page(
-			PlatformAdminController::PAGE_SLUG,
-			__( 'Custom Post Types', 'wpessential' ),
-			__( 'Custom Post Types', 'wpessential' ),
-			self::CAPABILITY,
-			self::PAGE_SLUG,
-			[ $this, 'render' ],
-		);
+		// The list is the sidebar entry; Add/Edit is its own page, reached from the list.
+		$hooks = [
+			add_submenu_page(
+				PlatformAdminController::PAGE_SLUG,
+				__( 'Post Types', 'wpessential' ),
+				__( 'Post Types', 'wpessential' ),
+				self::CAPABILITY,
+				self::LIST_SLUG,
+				[ $this, 'renderList' ],
+			),
+			add_submenu_page(
+				'options.php',
+				__( 'Edit custom post type', 'wpessential' ),
+				__( 'Edit custom post type', 'wpessential' ),
+				self::CAPABILITY,
+				self::PAGE_SLUG,
+				[ $this, 'render' ],
+			),
+		];
 
-		$this->hookSuffix = is_string( $hook ) && $hook !== '' ? $hook : null;
+		$this->hookSuffixes = array_values( array_filter( $hooks, static fn ( mixed $hook ): bool => is_string( $hook ) && $hook !== '' ) );
 	}
 
 	public function enqueueAssets( string $hookSuffix ): void {
-		if ( $this->hookSuffix === null || $hookSuffix !== $this->hookSuffix ) {
+		if ( ! in_array( $hookSuffix, $this->hookSuffixes, true ) ) {
 			return;
 		}
 
@@ -97,7 +111,11 @@ final class CustomPostTypeAdminController {
 		}
 	}
 
-	public function render(): void {
+	public function renderList(): void {
+		$this->render( 'list' );
+	}
+
+	public function render( string $view = 'editor' ): void {
 		if ( ! function_exists( 'current_user_can' ) || ! current_user_can( self::CAPABILITY ) ) {
 			if ( function_exists( 'wp_die' ) ) {
 				wp_die(
@@ -133,6 +151,9 @@ final class CustomPostTypeAdminController {
 				],
 			],
 			'definitions' => $definitions,
+			'view'        => $view,
+			'listUrl'     => AdminUrl::page( self::LIST_SLUG ),
+			'editorUrl'   => AdminUrl::page( self::PAGE_SLUG ),
 		];
 		$json                      = function_exists( 'wp_json_encode' )
 			? wp_json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )
@@ -144,16 +165,23 @@ final class CustomPostTypeAdminController {
 		echo '<section id="wpessential-admin-root" class="wpe-ui-builder" data-wpessential-surface="custom-post-types" aria-labelledby="wpessential-cpt-title">';
 		echo '<div class="wpe-ui-page-header"><div><p class="wpe-ui-eyebrow">' . esc_html__( 'Content modeling', 'wpessential' ) . '</p>';
 		echo '<h1 id="wpessential-cpt-title">' . esc_html__( 'Custom Post Types', 'wpessential' ) . '</h1>';
-		echo '<p class="wpe-ui-page-header__desc">' . esc_html__( 'Create and manage WPEssential post types. Every change is revision-safe and runs through the shared policy and ability layer.', 'wpessential' ) . '</p></div></div>';
+		echo '<p class="wpe-ui-page-header__desc">' . esc_html__( 'Create and manage WPEssential post types. Every change is revision-safe and runs through the shared policy and ability layer.', 'wpessential' ) . '</p></div>';
+		$action = $view === 'list'
+			? Button::link( __( 'Add new post type', 'wpessential' ), AdminUrl::page( self::PAGE_SLUG ) )
+			: Button::link( __( '‹ All post types', 'wpessential' ), AdminUrl::page( self::LIST_SLUG ), 'ghost' );
+		echo $action . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 
 		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html( $readError ) . '</p></div>';
 		}
 
 		echo '<div id="wpessential-cpt-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
-		echo '<div class="wpe-ui-builder__layout">';
-		$this->renderDefinitions( $definitions );
-		$this->renderEditor();
+		echo '<div class="wpe-ui-builder__layout wpe-ui-builder__layout--' . esc_attr( $view ) . '">';
+		if ( $view === 'list' ) {
+			$this->renderDefinitions( $definitions );
+		} else {
+			$this->renderEditor();
+		}
 		echo '</div>';
 		echo '<noscript><p class="notice notice-warning inline">' . esc_html__( 'JavaScript is required to create or change Custom Post Type definitions. Existing definitions remain readable in the table.', 'wpessential' ) . '</p></noscript>';
 		echo '</section>';

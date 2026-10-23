@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, reopenTaxonomyFromList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -150,15 +151,12 @@ test('packaged Taxonomy label authoring reports truthful sources and exposes opt
   expect(defaultsOnly.labels).not.toHaveProperty('parent_item');
   expect(defaultsOnly.labels).not.toHaveProperty('popular_items');
 
+  const saved = captureTaxonomySave(page);
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
-  await expect(labelEditor).not.toHaveAttribute('open', '');
 
-  const row = page.getByRole('row', {
-    name: /Genres authoring_genre post Draft 1/,
-  });
-  await expect(row).toBeVisible();
-  await row.getByRole('button', { name: 'Edit' }).click();
+  // The list is its own page; Edit reopens the saved taxonomy in the editor.
+  await reopenTaxonomyFromList(page, playground.serverUrl, await saved, 'Genres', 'Draft');
 
   await expect(labelEditor).toHaveAttribute('open', '');
   await expect(automatic).not.toBeChecked();

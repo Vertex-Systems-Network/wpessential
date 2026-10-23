@@ -51,6 +51,10 @@ type CptBootstrap = {
 		status: CptRoute;
 	};
 	definitions: CptDefinition[];
+	/** Which page this is: the list or the Add/Edit editor. */
+	view: 'list' | 'editor';
+	listUrl: string;
+	editorUrl: string;
 };
 
 type AjaxEnvelope = {
@@ -168,7 +172,28 @@ function parseCptBootstrap( value: unknown ): CptBootstrap | null {
 			status: value.routes.status,
 		},
 		definitions: value.definitions,
+		view: value.view === 'list' ? 'list' : 'editor',
+		listUrl: typeof value.listUrl === 'string' ? value.listUrl : '',
+		editorUrl: typeof value.editorUrl === 'string' ? value.editorUrl : '',
 	};
+}
+
+/** Editor URL for one definition (the list's Edit links). */
+function cptEditorUrl( bootstrap: CptBootstrap, id: string ): string {
+	const url = new URL( bootstrap.editorUrl || window.location.href, window.location.href );
+	url.searchParams.set( 'definition', id );
+	return url.toString();
+}
+
+/** Keeps the address bar on the definition being edited, so a reload stays on it. */
+function rememberEditedDefinition( id: string ): void {
+	const url = new URL( window.location.href );
+	if ( id === '' ) {
+		url.searchParams.delete( 'definition' );
+	} else {
+		url.searchParams.set( 'definition', id );
+	}
+	window.history.replaceState( null, '', url );
 }
 
 function bootRuntimeObservatory(
@@ -734,7 +759,20 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 					saveRequest( editor )
 				);
 				await refresh();
-				resetCptForm();
+				// Stay on the saved definition (WordPress-style editor page).
+				const saved = definitions.find(
+					( candidate ) =>
+						candidate.id === editor.id ||
+						( editor.id === '' &&
+							candidate.payload.post_type_key ===
+								editor.payload.post_type_key )
+				);
+				if ( saved ) {
+					editCptDefinition( saved );
+					rememberEditedDefinition( saved.id );
+				} else {
+					resetCptForm();
+				}
 				setNotice(
 					editor.id === ''
 						? 'Custom post type created.'
@@ -754,6 +792,7 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 	);
 	buttonInput( 'wpessential-cpt-cancel' )?.addEventListener( 'click', () => {
 		resetCptForm();
+		rememberEditedDefinition( '' );
 		setNotice( '' );
 	} );
 	buttonInput( 'wpessential-cpt-refresh' )?.addEventListener( 'click', () => {
@@ -770,6 +809,10 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		}
 
 		const editId = target.dataset.wpessentialCptEdit;
+		if ( editId && bootstrap.view === 'list' ) {
+			window.location.assign( cptEditorUrl( bootstrap, editId ) );
+			return;
+		}
 		if ( editId ) {
 			const definition = definitions.find(
 				( candidate ) => candidate.id === editId
@@ -811,6 +854,29 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 	} );
 
 	renderCptRows( definitions );
+
+	// Editor page opened for one definition (?definition=<id>): load it, from the list if needed.
+	const requested =
+		bootstrap.view === 'editor'
+			? new URL( window.location.href ).searchParams.get( 'definition' ) ?? ''
+			: '';
+	if ( requested !== '' ) {
+		const open = ( list: CptDefinition[] ): boolean => {
+			const found = list.find( ( candidate ) => candidate.id === requested );
+			if ( found ) {
+				editCptDefinition( found );
+			}
+			return found !== undefined;
+		};
+		if ( ! open( definitions ) ) {
+			void run( async () => {
+				await refresh();
+				if ( ! open( definitions ) ) {
+					setNotice( 'That custom post type no longer exists.', true );
+				}
+			} );
+		}
+	}
 	root.dataset.wpessentialEnhanced = 'ready';
 	window.dispatchEvent(
 		new CustomEvent( 'wpessential:admin-ready', {

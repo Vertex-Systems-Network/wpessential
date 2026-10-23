@@ -49,11 +49,14 @@ final class CoreAdminController {
 		}
 
 		add_action( 'admin_menu', [ $this, 'registerMenu' ], 9 );
+		add_action( 'admin_menu', [ $this, 'trimMenu' ], 999 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAssets' ] );
 		add_action( 'admin_post_' . self::TOGGLE_ACTION, [ $this, 'handleToggle' ] );
 		add_action( 'admin_post_' . Shell::MODE_ACTION, [ $this, 'handleMode' ] );
 		if ( function_exists( 'add_filter' ) ) {
 			add_filter( 'admin_body_class', [ $this, 'bodyClass' ] );
+			add_filter( 'parent_file', [ $this, 'parentFile' ] );
+			add_filter( 'submenu_file', [ $this, 'submenuFile' ] );
 		}
 		foreach ( $this->screens as $screen ) {
 			$screen->register();
@@ -84,6 +87,45 @@ final class CoreAdminController {
 		exit;
 	}
 
+	/** Parent for registered pages that must not show in the WordPress sidebar. */
+	public const HIDDEN_PARENT = 'options.php';
+
+	/** Editor pages highlight their module's list entry in the sidebar. */
+	private const SUBMENU_ALIASES = [
+		'wpessential-cpt'      => 'wpessential-post-types',
+		'wpessential-taxonomy' => 'wpessential-taxonomies',
+	];
+
+	/**
+	 * Drops WordPress's automatic first submenu ("WPEssential" = Dashboard) so the sidebar lists
+	 * modules only. The top-level item still opens the Dashboard.
+	 */
+	public function trimMenu(): void {
+		global $submenu;
+		$parent = PlatformAdminController::PAGE_SLUG;
+		if ( ! function_exists( 'remove_submenu_page' ) || ! is_array( $submenu[ $parent ] ?? null ) || count( $submenu[ $parent ] ) < 2 ) {
+			return;
+		}
+		remove_submenu_page( $parent, $parent );
+	}
+
+	/** Every WPEssential page keeps the WPEssential sidebar item open and highlighted. */
+	public function parentFile( mixed $parentFile ): mixed {
+		return self::currentPage() !== '' ? PlatformAdminController::PAGE_SLUG : $parentFile;
+	}
+
+	public function submenuFile( mixed $submenuFile ): mixed {
+		$page = self::currentPage();
+
+		return self::SUBMENU_ALIASES[ $page ] ?? $submenuFile;
+	}
+
+	private static function currentPage(): string {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( (string) $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- menu highlighting only.
+
+		return str_starts_with( $page, 'wpessential' ) ? $page : '';
+	}
+
 	public function registerMenu(): void {
 		if ( ! function_exists( 'add_menu_page' ) || ! function_exists( 'add_submenu_page' ) ) {
 			return;
@@ -94,14 +136,16 @@ final class CoreAdminController {
 
 		add_menu_page( 'WPEssential', 'WPEssential', $cap, $parent, [ $this, 'renderDashboard' ], self::menuIcon(), 58 );
 		add_submenu_page( $parent, __( 'Dashboard', 'wpessential' ), __( 'Dashboard', 'wpessential' ), $cap, $parent, [ $this, 'renderDashboard' ] );
-		add_submenu_page( $parent, __( 'Modules', 'wpessential' ), __( 'Modules', 'wpessential' ), $cap, Shell::MODULES_SLUG, [ $this, 'renderModules' ] );
+		// Product pages (Modules, Demo Library, Elements, Docs, AI Connect, Account) live in the
+		// WPEssential top navigation only; the WordPress sidebar lists modules.
+		add_submenu_page( self::HIDDEN_PARENT, __( 'Modules', 'wpessential' ), __( 'Modules', 'wpessential' ), $cap, Shell::MODULES_SLUG, [ $this, 'renderModules' ] );
 		foreach ( $this->screens as $screen ) {
-			add_submenu_page( $parent, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
+			add_submenu_page( self::HIDDEN_PARENT, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
 		}
 
 		// Module overview pages stay out of the sidebar; they are reached from the Modules screen.
 		foreach ( ModuleCatalog::all() as $module ) {
-			add_submenu_page( 'options.php', $module['name'], $module['name'], $cap, self::MODULE_PREFIX . $module['id'], [ $this, 'renderModule' ] );
+			add_submenu_page( self::HIDDEN_PARENT, $module['name'], $module['name'], $cap, self::MODULE_PREFIX . $module['id'], [ $this, 'renderModule' ] );
 		}
 	}
 

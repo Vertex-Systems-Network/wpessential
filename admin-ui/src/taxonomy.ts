@@ -106,6 +106,10 @@ type Bootstrap = {
 	routes: { list: Route; validate: Route; save: Route; status: Route };
 	definitions: TaxonomyDefinition[];
 	objectTypes: ObjectTypeOption[];
+	/** Which page this is: the list or the Add/Edit editor. */
+	view: 'list' | 'editor';
+	listUrl: string;
+	editorUrl: string;
 };
 type EditorRequest = {
 	id: string;
@@ -259,7 +263,21 @@ function parseBootstrap( value: unknown ): Bootstrap | null {
 		},
 		definitions: value.definitions,
 		objectTypes: value.objectTypes,
+		view: value.view === 'list' ? 'list' : 'editor',
+		listUrl: typeof value.listUrl === 'string' ? value.listUrl : '',
+		editorUrl: typeof value.editorUrl === 'string' ? value.editorUrl : '',
 	};
+}
+
+/** Keeps the address bar on the taxonomy being edited, so a reload stays on it. */
+function rememberEditedDefinition( id: string ): void {
+	const url = new URL( window.location.href );
+	if ( id === '' ) {
+		url.searchParams.delete( 'definition' );
+	} else {
+		url.searchParams.set( 'definition', id );
+	}
+	window.history.replaceState( null, '', url );
 }
 
 function isIssue( value: unknown ): value is ValidationIssue {
@@ -1246,7 +1264,9 @@ function boot(): void {
 				}
 				definitions = upsertDefinition( definitions, saved );
 				renderRows( definitions );
-				resetForm();
+				// Stay on the saved taxonomy (WordPress-style editor page).
+				editDefinition( saved );
+				rememberEditedDefinition( saved.id );
 				editorSafety?.acceptBaseline();
 				setNotice(
 					editor.id === '' ? 'Taxonomy created.' : 'Taxonomy updated.'
@@ -1267,6 +1287,7 @@ function boot(): void {
 		'click',
 		() => {
 			resetForm();
+			rememberEditedDefinition( '' );
 			editorSafety?.acceptBaseline();
 			setNotice( '' );
 		}
@@ -1287,6 +1308,15 @@ function boot(): void {
 			return;
 		}
 		const editId = target.dataset.wpessentialTaxonomyEdit;
+		if ( editId && bootstrap.view === 'list' ) {
+			const url = new URL(
+				bootstrap.editorUrl || window.location.href,
+				window.location.href
+			);
+			url.searchParams.set( 'definition', editId );
+			window.location.assign( url.toString() );
+			return;
+		}
 		if ( editId ) {
 			const definition = definitions.find(
 				( candidate ) => candidate.id === editId
@@ -1347,6 +1377,29 @@ function boot(): void {
 	}
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
+
+	// Editor page opened for one taxonomy (?definition=<id>): load it, from the list if needed.
+	const requested =
+		bootstrap.view === 'editor'
+			? new URL( window.location.href ).searchParams.get( 'definition' ) ??
+			  ''
+			: '';
+	const openRequested = ( list: TaxonomyDefinition[] ): boolean => {
+		const found = list.find( ( candidate ) => candidate.id === requested );
+		if ( found ) {
+			editDefinition( found );
+			editorSafety?.acceptBaseline();
+		}
+		return found !== undefined;
+	};
+	if ( requested !== '' && ! openRequested( definitions ) ) {
+		void run( async () => {
+			await refresh();
+			if ( ! openRequested( definitions ) ) {
+				setNotice( 'That taxonomy no longer exists.', true );
+			}
+		} );
+	}
 	editorSafety?.acceptBaseline();
 	root.dataset.wpessentialEnhanced = 'ready';
 	window.dispatchEvent(
