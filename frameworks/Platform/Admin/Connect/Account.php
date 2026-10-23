@@ -188,6 +188,19 @@ final class Account {
 	 * @return array<string,mixed>|WP_Error
 	 */
 	public function connectSite(): array|WP_Error {
+		// WPE Server picks and assigns the slot itself (account/connect); older servers do not have it.
+		$connected = $this->request( 'POST', '/account/connect', [ 'site' => home_url() ] );
+		if ( ! $connected instanceof WP_Error && is_string( $connected['key'] ?? null ) && $connected['key'] !== '' ) {
+			if ( $this->license->isActive() && $this->license->data()['key'] !== $connected['key'] ) {
+				$this->license->deactivate();
+			}
+
+			return $this->license->activate( $connected['key'] );
+		}
+		if ( $connected instanceof WP_Error && in_array( $connected->get_error_code(), [ 'wpe_no_slot', 'wpe_signed_out' ], true ) ) {
+			return $connected;
+		}
+
 		$data = $this->request( 'GET', '/account/me' );
 		if ( $data instanceof WP_Error ) {
 			return $data;

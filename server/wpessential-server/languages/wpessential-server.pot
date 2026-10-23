@@ -1,0 +1,753 @@
+# Copyright (C) 2026 WPEssential Team
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WPEssential Server 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpessential-server\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-18T13:06:07+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: wpessential-server\n"
+
+#. Plugin Name of the plugin
+#: wpessential-server.php
+#: src/Admin.php:31
+msgid "WPEssential Server"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: wpessential-server.php
+msgid "https://wpessential.org/"
+msgstr ""
+
+#. Description of the plugin
+#: wpessential-server.php
+msgid "Demo library, licensing and WooCommerce subscriptions (free, monthly, quarterly, yearly, lifetime, enterprise, white label) for WPEssential themes."
+msgstr ""
+
+#. Author of the plugin
+#: wpessential-server.php
+msgid "WPEssential Team"
+msgstr ""
+
+#: src/Accounts.php:48
+#: src/Accounts.php:90
+msgid "Too many attempts. Wait 15 minutes and try again."
+msgstr ""
+
+#: src/Accounts.php:54
+msgid "Enter a valid email address."
+msgstr ""
+
+#: src/Accounts.php:57
+msgid "Use at least 8 characters for your password."
+msgstr ""
+
+#: src/Accounts.php:60
+msgid "An account with this email already exists. Sign in instead."
+msgstr ""
+
+#: src/Accounts.php:94
+msgid "Email or password is not correct."
+msgstr ""
+
+#: src/Admin.php:31
+msgid "WPE Server"
+msgstr ""
+
+#: src/Admin.php:32
+#: src/Admin.php:57
+#: src/MyAccount.php:64
+msgid "Licenses"
+msgstr ""
+
+#: src/Admin.php:33
+msgid "Settings"
+msgstr ""
+
+#: src/Admin.php:58
+msgid "Run renewals now"
+msgstr ""
+
+#: src/Admin.php:60
+msgid "All statuses"
+msgstr ""
+
+#: src/Admin.php:64
+msgid "Key, email or domain"
+msgstr ""
+
+#: src/Admin.php:64
+msgid "Filter"
+msgstr ""
+
+#: src/Admin.php:65
+msgid "Key"
+msgstr ""
+
+#: src/Admin.php:65
+msgid "Customer"
+msgstr ""
+
+#: src/Admin.php:65
+#: src/Demos.php:89
+#: src/Plans.php:212
+msgid "Plan"
+msgstr ""
+
+#: src/Admin.php:65
+#: src/Admin.php:120
+msgid "Status"
+msgstr ""
+
+#: src/Admin.php:65
+#: src/Admin.php:126
+#: src/MyAccount.php:221
+#: src/Plans.php:228
+msgid "Websites"
+msgstr ""
+
+#: src/Admin.php:65
+msgid "Expires"
+msgstr ""
+
+#: src/Admin.php:65
+#: src/Admin.php:127
+#: src/MyAccount.php:222
+msgid "Auto-renew"
+msgstr ""
+
+#: src/Admin.php:67
+msgid "No licenses found."
+msgstr ""
+
+#. translators: %s: major version, e.g. 1.x.
+#: src/Admin.php:85
+#: src/MyAccount.php:212
+msgid "Never"
+msgstr ""
+
+#: src/Admin.php:86
+#: src/Admin.php:127
+#: src/Admin.php:128
+#: src/MyAccount.php:222
+msgid "On"
+msgstr ""
+
+#: src/Admin.php:86
+#: src/MyAccount.php:222
+msgid "Off"
+msgstr ""
+
+#: src/Admin.php:113
+msgid "License not found."
+msgstr ""
+
+#. translators: %d: order.
+#: src/Admin.php:118
+msgid "Order #%d"
+msgstr ""
+
+#: src/Admin.php:125
+msgid "Expires (UTC)"
+msgstr ""
+
+#: src/Admin.php:125
+msgid "Empty = never."
+msgstr ""
+
+#: src/Admin.php:126
+msgid "0 = unlimited."
+msgstr ""
+
+#: src/Admin.php:128
+#: src/Plans.php:245
+msgid "White label"
+msgstr ""
+
+#: src/Admin.php:129
+msgid "Activated websites"
+msgstr ""
+
+#: src/Admin.php:132
+msgid "None yet."
+msgstr ""
+
+#: src/Admin.php:135
+#: src/MyAccount.php:228
+msgid "Remove"
+msgstr ""
+
+#: src/Admin.php:135
+msgid "staging"
+msgstr ""
+
+#. translators: %s: date.
+#: src/Admin.php:135
+msgid "last seen %s"
+msgstr ""
+
+#: src/Admin.php:148
+#: src/Admin.php:201
+#: src/Admin.php:223
+msgid "Not allowed."
+msgstr ""
+
+#: src/Admin.php:175
+msgid "WPEssential Server settings"
+msgstr ""
+
+#: src/Admin.php:178
+msgid "Grace period (days)"
+msgstr ""
+
+#: src/Admin.php:178
+msgid "Licenses keep working this long after the end date while a renewal is paid."
+msgstr ""
+
+#: src/Admin.php:179
+msgid "Renew / remind before (days)"
+msgstr ""
+
+#: src/Admin.php:179
+msgid "Renewal orders are created (or reminders sent) this many days before the end date."
+msgstr ""
+
+#: src/Admin.php:180
+msgid "Dashboard sign-in lasts (days)"
+msgstr ""
+
+#: src/Admin.php:181
+msgid "Download links last (minutes)"
+msgstr ""
+
+#: src/Admin.php:186
+msgid "Free staging sites"
+msgstr ""
+
+#: src/Admin.php:186
+msgid "Do not count localhost, *.local, *.test and staging.* domains against the website limit."
+msgstr ""
+
+#: src/Admin.php:187
+msgid "Live demos"
+msgstr ""
+
+#: src/Admin.php:187
+msgid "Open demos in WordPress Playground (runs in the visitor's browser, no demo sites to host)."
+msgstr ""
+
+#. translators: %s: size.
+#: src/Admin.php:188
+msgid "Theme zip uploaded (%s). Upload a new one after each release:"
+msgstr ""
+
+#. translators: %s: size.
+#: src/Admin.php:188
+msgid "Upload the theme zip to enable live demos:"
+msgstr ""
+
+#. translators: %s: size.
+#: src/Admin.php:189
+msgid "Theme endpoint"
+msgstr ""
+
+#. translators: %s: size.
+#: src/Admin.php:189
+msgid "Use this as the license endpoint and the demos manifest URL below in the theme."
+msgstr ""
+
+#: src/Api.php:85
+msgid "Your session ended. Sign in again."
+msgstr ""
+
+#: src/Api.php:100
+msgid "License activated for this website."
+msgstr ""
+
+#: src/Api.php:112
+msgid "This license key does not exist."
+msgstr ""
+
+#: src/Api.php:119
+msgid "Website removed from the license."
+msgstr ""
+
+#: src/Api.php:137
+msgid "This website was removed from the license in your account. Activate it again to continue."
+msgstr ""
+
+#: src/Api.php:156
+msgid "Activate the license on this website first."
+msgstr ""
+
+#: src/Api.php:163
+msgid "Your plan includes free demos only. Upgrade to unlock this Pro item."
+msgstr ""
+
+#: src/Api.php:274
+msgid "That plan is not for sale right now."
+msgstr ""
+
+#: src/Api.php:282
+#: src/MyAccount.php:91
+msgid "This license is not in your account."
+msgstr ""
+
+#: src/Demos.php:37
+msgid "Demos"
+msgstr ""
+
+#: src/Demos.php:38
+msgid "Demo"
+msgstr ""
+
+#: src/Demos.php:39
+msgid "Add demo"
+msgstr ""
+
+#: src/Demos.php:40
+msgid "Edit demo"
+msgstr ""
+
+#: src/Demos.php:66
+msgid "Demo details"
+msgstr ""
+
+#: src/Demos.php:82
+msgid "Demo ID"
+msgstr ""
+
+#: src/Demos.php:82
+msgid "Lowercase, e.g. maison. Must match the package."
+msgstr ""
+
+#: src/Demos.php:83
+msgid "Tagline"
+msgstr ""
+
+#: src/Demos.php:84
+msgid "Niches"
+msgstr ""
+
+#: src/Demos.php:84
+msgid "Comma separated: business, shop, fashion, events…"
+msgstr ""
+
+#: src/Demos.php:85
+msgid "Pages"
+msgstr ""
+
+#: src/Demos.php:85
+msgid "Comma separated, shown in the preview."
+msgstr ""
+
+#: src/Demos.php:86
+msgid "Highlights"
+msgstr ""
+
+#: src/Demos.php:86
+msgid "Comma separated, e.g. 9 pages, 24 products."
+msgstr ""
+
+#: src/Demos.php:87
+msgid "Live preview URL"
+msgstr ""
+
+#: src/Demos.php:88
+msgid "Minimum theme version"
+msgstr ""
+
+#: src/Demos.php:89
+#: src/Plans.php:31
+msgid "Free"
+msgstr ""
+
+#: src/Demos.php:89
+#: src/Plans.php:51
+msgid "Pro"
+msgstr ""
+
+#. translators: %s: size.
+#: src/Demos.php:97
+msgid "Package uploaded (%s)"
+msgstr ""
+
+#. translators: %s: size.
+#: src/Demos.php:97
+msgid "No package yet — this builder is hidden from the library."
+msgstr ""
+
+#: src/Demos.php:99
+msgid "Plugins (JSON)"
+msgstr ""
+
+#: src/Demos.php:281
+msgid "This download link has expired. Start the import again."
+msgstr ""
+
+#: src/Demos.php:286
+msgid "Package not found."
+msgstr ""
+
+#: src/Licenses.php:258
+msgid "This license key does not exist. Copy it again from your account."
+msgstr ""
+
+#: src/Licenses.php:261
+msgid "This license was revoked after a refund or chargeback."
+msgstr ""
+
+#: src/Licenses.php:264
+msgid "This subscription was cancelled."
+msgstr ""
+
+#. translators: 1: version the license covers, 2: current version.
+#: src/Licenses.php:270
+msgid "Your lifetime license covers version %1$d.x. Version %2$d is out: buy a new plan in your account to keep Pro demos and updates."
+msgstr ""
+
+#: src/Licenses.php:274
+msgid "This license has expired. Renew it in your account to keep Pro demos and updates."
+msgstr ""
+
+#: src/Licenses.php:325
+msgid "The site address is missing."
+msgstr ""
+
+#. translators: %d: site limit.
+#: src/Licenses.php:338
+msgid "This license is already used on %d website. Deactivate it there from your account, or upgrade your plan for more websites."
+msgid_plural "This license is already used on %d websites. Deactivate one from your account, or upgrade your plan for more websites."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/MyAccount.php:96
+msgid "This plan never expires, so it does not renew."
+msgstr ""
+
+#: src/MyAccount.php:121
+msgid "Unknown action."
+msgstr ""
+
+#: src/MyAccount.php:150
+msgid "That plan is not available."
+msgstr ""
+
+#: src/MyAccount.php:159
+msgid "Automatic renewal is on."
+msgstr ""
+
+#: src/MyAccount.php:160
+msgid "Automatic renewal is off. Your license works until its end date."
+msgstr ""
+
+#: src/MyAccount.php:161
+msgid "Subscription cancelled. Your license works until its end date."
+msgstr ""
+
+#: src/MyAccount.php:162
+msgid "Website removed. You can use the license on another website now."
+msgstr ""
+
+#: src/MyAccount.php:163
+msgid "New key created. Update it on your websites."
+msgstr ""
+
+#: src/MyAccount.php:165
+msgid "Saved."
+msgstr ""
+
+#: src/MyAccount.php:199
+msgid "No licenses yet"
+msgstr ""
+
+#: src/MyAccount.php:199
+msgid "Pick a plan to unlock Pro demos, updates and support."
+msgstr ""
+
+#: src/MyAccount.php:205
+msgid "Active"
+msgstr ""
+
+#: src/MyAccount.php:206
+msgid "Expired"
+msgstr ""
+
+#: src/MyAccount.php:207
+msgid "Cancelled"
+msgstr ""
+
+#: src/MyAccount.php:208
+msgid "Revoked"
+msgstr ""
+
+#. translators: %s: major version, e.g. 1.x.
+#: src/MyAccount.php:212
+msgid "When version %s ends"
+msgstr ""
+
+#: src/MyAccount.php:219
+msgid "License key"
+msgstr ""
+
+#: src/MyAccount.php:220
+msgid "Renews on"
+msgstr ""
+
+#: src/MyAccount.php:220
+msgid "Ends on"
+msgstr ""
+
+#: src/MyAccount.php:228
+msgid "staging · free"
+msgstr ""
+
+#: src/MyAccount.php:228
+msgid "Remove this website from the license?"
+msgstr ""
+
+#: src/MyAccount.php:236
+msgid "Renew now"
+msgstr ""
+
+#: src/MyAccount.php:238
+msgid "Turn off auto-renew"
+msgstr ""
+
+#: src/MyAccount.php:238
+msgid "Stop automatic renewal? Your license keeps working until its end date."
+msgstr ""
+
+#: src/MyAccount.php:239
+msgid "Turn on auto-renew"
+msgstr ""
+
+#: src/MyAccount.php:241
+msgid "New key"
+msgstr ""
+
+#: src/MyAccount.php:241
+msgid "Create a new key? The old key stops working and your websites must be activated again."
+msgstr ""
+
+#: src/MyAccount.php:251
+msgid "Upgrade to"
+msgstr ""
+
+#: src/MyAccount.php:255
+msgid "Upgrade"
+msgstr ""
+
+#: src/MyAccount.php:260
+msgid "Plans"
+msgstr ""
+
+#. translators: %d: months.
+#: src/MyAccount.php:265
+msgid "/ %d month"
+msgid_plural "/ %d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: months.
+#: src/MyAccount.php:265
+msgid "once"
+msgstr ""
+
+#: src/MyAccount.php:270
+msgid "Choose"
+msgstr ""
+
+#: src/Orders.php:85
+msgid "Renewal of"
+msgstr ""
+
+#: src/Orders.php:86
+msgid "Upgrade of"
+msgstr ""
+
+#: src/Orders.php:129
+msgid "Credit for your current plan"
+msgstr ""
+
+#. translators: %s: key.
+#: src/Orders.php:200
+msgid "License %s renewed."
+msgstr ""
+
+#. translators: 1: key, 2: plan.
+#: src/Orders.php:217
+msgid "License %1$s upgraded to %2$s."
+msgstr ""
+
+#. translators: %s: key.
+#: src/Orders.php:221
+msgid "License %s created."
+msgstr ""
+
+#: src/Orders.php:274
+msgid "Your license"
+msgstr ""
+
+#: src/Orders.php:278
+msgid "In WordPress go to WPEssential → License, paste the key and press Activate — or sign in from the demo import wizard."
+msgstr ""
+
+#: src/Plans.php:37
+msgid "Free demos"
+msgstr ""
+
+#: src/Plans.php:37
+#: src/Plans.php:48
+msgid "1 website"
+msgstr ""
+
+#: src/Plans.php:37
+msgid "Community support"
+msgstr ""
+
+#: src/Plans.php:43
+msgid "Starter"
+msgstr ""
+
+#: src/Plans.php:48
+msgid "1 theme + its demos"
+msgstr ""
+
+#: src/Plans.php:48
+msgid "Gutenberg & Elementor"
+msgstr ""
+
+#: src/Plans.php:48
+msgid "Updates & support"
+msgstr ""
+
+#: src/Plans.php:56
+msgid "All themes + every demo"
+msgstr ""
+
+#: src/Plans.php:56
+msgid "Early access to new demos"
+msgstr ""
+
+#: src/Plans.php:56
+msgid "5 websites"
+msgstr ""
+
+#: src/Plans.php:56
+msgid "Priority support"
+msgstr ""
+
+#: src/Plans.php:59
+msgid "Agency"
+msgstr ""
+
+#: src/Plans.php:64
+msgid "Everything in Pro"
+msgstr ""
+
+#: src/Plans.php:64
+msgid "Unlimited websites"
+msgstr ""
+
+#: src/Plans.php:64
+msgid "White-label dashboard"
+msgstr ""
+
+#: src/Plans.php:64
+msgid "Dedicated success manager"
+msgstr ""
+
+#. translators: %s: plan name.
+#: src/Plans.php:69
+msgid "%s Monthly"
+msgstr ""
+
+#. translators: %s: plan name.
+#: src/Plans.php:71
+msgid "%s Yearly"
+msgstr ""
+
+#. translators: %s: plan name.
+#: src/Plans.php:73
+msgid "%s Lifetime"
+msgstr ""
+
+#. translators: %s: plan name.
+#: src/Plans.php:115
+msgid "WPEssential %s"
+msgstr ""
+
+#: src/Plans.php:213
+msgid "Not a plan"
+msgstr ""
+
+#: src/Plans.php:219
+msgid "Billing period (months)"
+msgstr ""
+
+#: src/Plans.php:220
+msgid "0 = lifetime, -1 = free."
+msgstr ""
+
+#: src/Plans.php:229
+msgid "0 = unlimited. Staging and local domains are not counted."
+msgstr ""
+
+#: src/Plans.php:236
+msgid "Pro demos"
+msgstr ""
+
+#: src/Plans.php:237
+msgid "Unlocks Pro demos and premium plugins."
+msgstr ""
+
+#: src/Plans.php:246
+msgid "Customer can rename the dashboard and hide WPEssential branding."
+msgstr ""
+
+#: src/Playground.php:101
+msgid "Live preview is not available for this demo."
+msgstr ""
+
+#: src/Playground.php:230
+msgid "Theme package not uploaded."
+msgstr ""
+
+#. translators: %s: key.
+#: src/Renewals.php:145
+msgid "Automatic renewal for license %s."
+msgstr ""
+
+#. translators: %s: key.
+#: src/Renewals.php:194
+msgid "Your WPEssential license %s has expired"
+msgstr ""
+
+#: src/Renewals.php:195
+msgid "Pro demos and updates are paused on your websites. Renew in one click to continue — your sites keep working either way."
+msgstr ""
+
+#. translators: 1: key, 2: date.
+#: src/Renewals.php:198
+msgid "Your WPEssential license %1$s ends on %2$s"
+msgstr ""
+
+#: src/Renewals.php:199
+msgid "Automatic renewal is off for this license. Renew now to keep Pro demos, updates and support."
+msgstr ""
+
+#: src/Renewals.php:202
+msgid "Manage your licenses"
+msgstr ""
+
+#: wpessential-server.php:59
+msgid "WPEssential Server needs WooCommerce to sell plans. Activate WooCommerce."
+msgstr ""
