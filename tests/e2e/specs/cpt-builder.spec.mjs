@@ -14,9 +14,10 @@ if (!pluginDirectory) {
 
 let playground;
 
-async function visitCpts(page) {
+// The editor (Add/Edit) and the list are separate pages.
+async function visitCpts(page, slug = 'wpessential-cpt') {
   const response = await page.goto(
-    `${playground.serverUrl}/wp-admin/admin.php?page=wpessential-cpt`,
+    `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
     { waitUntil: 'domcontentloaded' },
   );
 
@@ -77,11 +78,18 @@ test('packaged CPT Builder renders the bounded editor and progressively enhances
   await expect(page.getByRole('group', { name: 'Editor supports' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save custom post type' })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
-  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
-
+  await expect(page.getByRole('link', { name: '‹ All post types' })).toBeVisible();
   await expect(root).toHaveAttribute('data-wpessential-surface', 'custom-post-types');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
+
+  // The list is its own page, with a way to add a new post type.
+  const listRoot = await visitCpts(page, 'wpessential-post-types');
+  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
+  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
+  await expect(page.getByLabel('Post type key')).toHaveCount(0);
+  await expect(listRoot).toHaveAttribute('data-wpessential-enhanced', 'ready');
+  await page.getByRole('link', { name: 'Add new post type' }).click();
+  await expect(page.getByRole('heading', { name: 'Add custom post type', level: 2 })).toBeVisible();
   expect(pageErrors, `Unexpected CPT Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
@@ -110,7 +118,7 @@ test('bounded CPT editor preserves hidden runtime options and supports in its sa
   let currentDefinition = seeded;
   let capturedSavePayload = null;
 
-  await visitCpts(page);
+  await visitCpts(page, 'wpessential-post-types');
   await page.route('**/wp-admin/admin-ajax.php', async (route) => {
     const request = route.request();
     if (request.method() !== 'POST') {
@@ -174,7 +182,9 @@ test('bounded CPT editor preserves hidden runtime options and supports in its sa
   await expect(row).toBeVisible();
   await expect(row).toContainText('RC Books');
   await expect(row).toContainText('rc_book');
+  // Edit opens the separate editor page for this definition.
   await row.getByRole('button', { name: 'Edit' }).click();
+  await page.waitForURL(/page=wpessential-cpt&definition=/);
 
   await expect(page.getByLabel('Post type key')).toHaveAttribute('readonly', '');
   await expect(page.getByLabel('Plural name')).toHaveValue('RC Books');
@@ -226,4 +236,58 @@ test('packaged CPT Builder has zero axe violations in its initial bounded editor
     results.violations,
     `Axe violations in WPE-owned CPT Builder:\n${JSON.stringify(summary, null, 2)}`,
   ).toEqual([]);
+});
+
+test('CPT list page has WordPress-style views, search and sortable columns', async ({ page }) => {
+  const statuses = ['published', 'draft', 'disabled'];
+  const definitions = Array.from({ length: 25 }, (_, index) => ({
+    id: `22222222-2222-4222-8222-${String(index).padStart(12, '0')}`,
+    status: statuses[index % 3],
+    revision: index + 1,
+    payload: { post_type_key: `list_${index}`, name: `List type ${index}`, singular_name: `List type ${index}` },
+  }));
+  await visitCpts(page, 'wpessential-post-types');
+  await page.route('**/wp-admin/admin-ajax.php', async (route) => {
+    const body = new URLSearchParams(route.request().postData() ?? '');
+    if (body.get('type') !== 'cpt.list') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { definitions } }) });
+  });
+  await page.getByRole('button', { name: 'Refresh' }).click();
+
+  const rows = page.locator('[data-wpessential-cpt-row]:visible');
+  await expect(rows).toHaveCount(20);
+  await expect(page.locator('.wpe-ui-tablenav__count').first()).toHaveText('25 items');
+
+  // Status views with counts, like WordPress list tables.
+  const views = page.getByRole('navigation', { name: 'Filter by status' });
+  await expect(views).toContainText('All25');
+  await views.getByRole('link', { name: /^Draft/ }).click();
+  await expect(rows).toHaveCount(8);
+  await views.getByRole('link', { name: /^All/ }).click();
+
+  // Search runs on the Search button.
+  await page.getByRole('searchbox', { name: 'Search Post Types' }).fill('List type 12');
+  await page.getByRole('button', { name: 'Search Post Types' }).click();
+  await expect(rows).toHaveCount(1);
+  await page.getByRole('searchbox', { name: 'Search Post Types' }).fill('');
+  await page.getByRole('button', { name: 'Search Post Types' }).click();
+  await expect(rows).toHaveCount(20);
+
+  // Paging: 20 per page with « ‹ n of N › » controls.
+  await page.getByRole('button', { name: 'Next page' }).first().click();
+  await expect(rows).toHaveCount(5);
+  await page.getByRole('button', { name: 'First page' }).first().click();
+
+  // Sortable columns.
+  const revision = page.getByRole('columnheader', { name: 'Revision' });
+  await revision.getByRole('button').click();
+  await revision.getByRole('button').click();
+  await expect(revision).toHaveAttribute('aria-sort', 'descending');
+  await expect(rows.first()).toContainText('List type 24');
+
+  const results = await new AxeBuilder({ page }).include('#wpessential-admin-root').analyze();
+  expect(results.violations.map((violation) => violation.id)).toEqual([]);
 });

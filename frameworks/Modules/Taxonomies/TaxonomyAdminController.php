@@ -14,6 +14,7 @@ use WPEssential\Modules\CustomPostTypes\CustomPostTypeAdminController;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Button;
 use WPEssential\Platform\Admin\Ui\Check;
 use WPEssential\Platform\Admin\Ui\Field;
@@ -29,9 +30,11 @@ use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeProviderRegistry
 final class TaxonomyAdminController {
 
 	public const PAGE_SLUG   = 'wpessential-taxonomy';
+	public const LIST_SLUG   = 'wpessential-taxonomies';
 	private const CAPABILITY = 'manage_options';
 
-	private ?string $hookSuffix = null;
+	/** @var list<string> */
+	private array $hookSuffixes = [];
 
 	public function __construct(
 		private readonly AbilityRegistry $abilities,
@@ -59,19 +62,30 @@ final class TaxonomyAdminController {
 		if ( ! function_exists( 'add_submenu_page' ) ) {
 			return;
 		}
-		$hook             = add_submenu_page(
-			PlatformAdminController::PAGE_SLUG,
-			__( 'Taxonomies', 'wpessential' ),
-			__( 'Taxonomies', 'wpessential' ),
-			self::CAPABILITY,
-			self::PAGE_SLUG,
-			[ $this, 'render' ],
-		);
-		$this->hookSuffix = is_string( $hook ) && $hook !== '' ? $hook : null;
+		// The list is the sidebar entry; Add/Edit is its own page, reached from the list.
+		$hooks              = [
+			add_submenu_page(
+				PlatformAdminController::PAGE_SLUG,
+				__( 'Taxonomies', 'wpessential' ),
+				__( 'Taxonomies', 'wpessential' ),
+				self::CAPABILITY,
+				self::LIST_SLUG,
+				[ $this, 'renderList' ],
+			),
+			add_submenu_page(
+				'options.php',
+				__( 'Edit taxonomy', 'wpessential' ),
+				__( 'Edit taxonomy', 'wpessential' ),
+				self::CAPABILITY,
+				self::PAGE_SLUG,
+				[ $this, 'render' ],
+			),
+		];
+		$this->hookSuffixes = array_values( array_filter( $hooks, static fn ( mixed $hook ): bool => is_string( $hook ) && $hook !== '' ) );
 	}
 
 	public function enqueueAssets( string $hookSuffix ): void {
-		if ( $this->hookSuffix === null || $hookSuffix !== $this->hookSuffix ) {
+		if ( ! in_array( $hookSuffix, $this->hookSuffixes, true ) ) {
 			return;
 		}
 		$entry = $this->assets->entry( 'taxonomy', 'taxonomy-admin' );
@@ -94,7 +108,11 @@ final class TaxonomyAdminController {
 		}
 	}
 
-	public function render(): void {
+	public function renderList(): void {
+		$this->render( 'list' );
+	}
+
+	public function render( string $view = 'editor' ): void {
 		if ( ! function_exists( 'current_user_can' ) || ! current_user_can( self::CAPABILITY ) ) {
 			if ( function_exists( 'wp_die' ) ) {
 				wp_die(
@@ -131,6 +149,9 @@ final class TaxonomyAdminController {
 				],
 			],
 			'definitions' => $definitions,
+			'view'        => $view,
+			'listUrl'     => AdminUrl::page( self::LIST_SLUG ),
+			'editorUrl'   => AdminUrl::page( self::PAGE_SLUG ),
 			'objectTypes' => $objectTypes,
 		];
 		$json                      = function_exists( 'wp_json_encode' )
@@ -143,14 +164,21 @@ final class TaxonomyAdminController {
 		echo '<section id="wpessential-taxonomy-root" class="wpe-ui-builder" data-wpessential-surface="taxonomies" aria-labelledby="wpessential-taxonomy-title">';
 		echo '<div class="wpe-ui-page-header"><div><p class="wpe-ui-eyebrow">' . esc_html__( 'Content modeling', 'wpessential' ) . '</p>';
 		echo '<h1 id="wpessential-taxonomy-title">' . esc_html__( 'Taxonomies', 'wpessential' ) . '</h1>';
-		echo '<p class="wpe-ui-page-header__desc">' . esc_html__( 'Create and manage WPEssential taxonomies. Object-type links are saved only through the taxonomy definition, so there is one source of truth.', 'wpessential' ) . '</p></div></div>';
+		echo '<p class="wpe-ui-page-header__desc">' . esc_html__( 'Create and manage WPEssential taxonomies. Object-type links are saved only through the taxonomy definition, so there is one source of truth.', 'wpessential' ) . '</p></div>';
+		$action = $view === 'list'
+			? Button::link( __( 'Add new taxonomy', 'wpessential' ), AdminUrl::page( self::PAGE_SLUG ) )
+			: Button::link( __( '‹ All taxonomies', 'wpessential' ), AdminUrl::page( self::LIST_SLUG ), 'ghost' );
+		echo $action . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html( $readError ) . '</p></div>';
 		}
 		echo '<div id="wpessential-taxonomy-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
-		echo '<div class="wpe-ui-builder__layout">';
-		$this->renderDefinitions( $definitions );
-		$this->renderEditor( $objectTypes );
+		echo '<div class="wpe-ui-builder__layout wpe-ui-builder__layout--' . esc_attr( $view ) . '">';
+		if ( $view === 'list' ) {
+			$this->renderDefinitions( $definitions );
+		} else {
+			$this->renderEditor( $objectTypes );
+		}
 		echo '</div>';
 		echo '<noscript><p class="notice notice-warning inline">' . esc_html__( 'JavaScript is required to create or change Taxonomy definitions. Existing definitions remain readable in the table.', 'wpessential' ) . '</p></noscript>';
 		echo '</section>';

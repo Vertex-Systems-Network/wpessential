@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, reopenTaxonomyFromList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -123,6 +124,7 @@ test('packaged Free Taxonomy final admin UX truthfully degrades role impact and 
     )}`,
   ).toEqual([]);
 
+  const saved = captureTaxonomySave(page);
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
   await expect(root).toHaveAttribute('data-wpessential-taxonomy-dirty', 'false');
@@ -131,8 +133,7 @@ test('packaged Free Taxonomy final admin UX truthfully degrades role impact and 
   expect(cleanBeforeUnload.defaultPrevented).toBe(false);
   expect(cleanBeforeUnload.dispatched).toBe(true);
 
-  const row = page.locator('[data-wpessential-taxonomy-row]');
-  await row.getByRole('button', { name: 'Edit' }).click();
+  await reopenTaxonomyFromList(page, playground.serverUrl, await saved);
   await expect(root).toHaveAttribute('data-wpessential-taxonomy-dirty', 'false');
   await page.getByLabel('Plural name').fill('Changed but unsaved');
   await expect(root).toHaveAttribute('data-wpessential-taxonomy-dirty', 'true');

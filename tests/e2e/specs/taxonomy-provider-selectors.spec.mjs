@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { captureTaxonomySave, reopenTaxonomyFromList } from './support/taxonomy-list.mjs';
 import { runCLI } from '@wp-playground/cli';
 
 const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
@@ -102,19 +103,21 @@ test('packaged Taxonomy Expert UX exposes only registered redacted provider IDs 
     page.locator('[data-wpessential-taxonomy-diagnostic="providers"]'),
   ).toContainText('meta_box: wordpress.disabled');
 
-  await page.getByRole('button', { name: 'Save taxonomy' }).click();
-  await expect(page.locator('[data-wpessential-taxonomy-row]')).toContainText(
-    'provider_genre',
-  );
-  await page.getByRole('button', { name: 'Edit', exact: true }).click();
-  await page.getByRole('button', { name: 'Expert', exact: true }).click();
-  await expect(page.getByLabel('Meta-box provider')).toHaveValue('wordpress.disabled');
-
-  await page.getByLabel('Meta-box provider').selectOption('');
+  // Reset semantics: clearing the selector returns to WordPress defaults.
+  await metaBox.selectOption('');
   await validate(page);
   await expect(
     page.locator('[data-wpessential-taxonomy-diagnostic="providers"]'),
   ).toHaveText('WordPress defaults');
+  await metaBox.selectOption('wordpress.disabled');
+
+  // Saved, then reopened from the separate list page: the provider is hydrated.
+  const saved = captureTaxonomySave(page);
+  await page.getByRole('button', { name: 'Save taxonomy' }).click();
+  await expect(page.getByText(/Taxonomy (created|updated)\./)).toBeVisible();
+  await reopenTaxonomyFromList(page, playground.serverUrl, await saved);
+  await page.getByRole('button', { name: 'Expert', exact: true }).click();
+  await expect(page.getByLabel('Meta-box provider')).toHaveValue('wordpress.disabled');
 
   const accessibility = await new AxeBuilder({ page })
     .include('#wpessential-taxonomy-root')

@@ -120,3 +120,24 @@ test('Module manager has zero axe violations', async ({ page }) => {
   const results = await new AxeBuilder({ page }).include('[data-wpessential-surface="core"]').analyze();
   expect(results.violations.map((violation) => violation.id)).toEqual([]);
 });
+
+test('WordPress sidebar lists modules only; product pages live in the top navigation', async ({ page }) => {
+  await visitCore(page, 'wpessential');
+
+  const submenu = page.locator('#toplevel_page_wpessential .wp-submenu');
+  for (const name of ['Dashboard', 'Modules', 'Demo Library', 'Elements', 'Docs', 'AI Connect', 'Account', 'System Status']) {
+    await expect(submenu.getByRole('link', { name, exact: true }), `${name} must not be in the WordPress sidebar`).toHaveCount(0);
+  }
+  await expect(submenu.getByRole('link', { name: 'Post Types', exact: true })).toHaveCount(1);
+  await expect(submenu.getByRole('link', { name: 'Taxonomies', exact: true })).toHaveCount(1);
+
+  const nav = page.getByRole('navigation', { name: 'WPEssential', exact: true });
+  for (const name of ['Dashboard', 'Modules', 'Demo Library', 'Elements', 'AI Connect', 'Account', 'System Status']) {
+    await expect(nav.getByRole('link', { name })).toBeVisible();
+  }
+  await expect(page.getByRole('link', { name: 'Docs' })).toBeVisible();
+
+  // Product pages still open, with the WPEssential sidebar item kept highlighted.
+  await visitCore(page, 'wpessential-modules');
+  await expect(page.locator('#toplevel_page_wpessential')).toHaveClass(/wp-has-current-submenu|current/);
+});

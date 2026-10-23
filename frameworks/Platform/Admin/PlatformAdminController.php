@@ -37,9 +37,9 @@ final class PlatformAdminController {
 			return;
 		}
 
-		// The WPEssential Core shell owns the top-level menu; runtime diagnostics live under System Status.
+		// System Status is reached from the WPEssential top navigation, not the WordPress sidebar.
 		$hook = add_submenu_page(
-			self::PAGE_SLUG,
+			'options.php',
 			'System Status',
 			'System Status',
 			self::CAPABILITY,

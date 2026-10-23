@@ -36,6 +36,10 @@ async function visitCustomPostTypes(page) {
   return visitAdminPage(page, 'wpessential-cpt');
 }
 
+async function visitCustomPostTypeList(page) {
+  return visitAdminPage(page, 'wpessential-post-types');
+}
+
 test.beforeAll(async () => {
   playground = await runCLI({
     command: 'server',
@@ -108,11 +112,12 @@ test('packaged Custom Post Types Builder renders canonical management controls',
   await expect(page.getByLabel('Singular name')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save custom post type' })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
-  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
-
   await expect(root).toHaveAttribute('data-wpessential-surface', 'custom-post-types');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
+
+  await visitCustomPostTypeList(page);
+  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
+  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
   expect(pageErrors, `Unexpected CPT Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
@@ -128,7 +133,6 @@ test('packaged CPT preflight blocks invalid candidates without persisting and pa
   await expect(validation).toBeVisible();
   await expect(validation).toContainText(/Validation blocked by \d+ issue/);
   await expect(validation).toContainText('reserved by WordPress');
-  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
 
   await page.getByLabel('Post type key').fill('library_book');
   await page.getByLabel('Plural name').fill('Books');
@@ -137,6 +141,9 @@ test('packaged CPT preflight blocks invalid candidates without persisting and pa
 
   await expect(validation).toBeVisible();
   await expect(validation).toContainText('Validation passed. No blocking issues found.');
+
+  // Validation never saves: the list is still empty.
+  await visitCustomPostTypeList(page);
   await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
 });
 

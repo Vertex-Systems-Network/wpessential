@@ -65,9 +65,8 @@ test('CPT UI import preview maps safely and commits only after explicit valid pr
   await expect(
     page.locator('#wpessential-taxonomy-import-preview-bootstrap'),
   ).toHaveCount(1);
-  await expect(page.locator('[data-wpessential-taxonomy-empty]')).toContainText(
-    'No taxonomies have been created yet.',
-  );
+  // Nothing is saved before an explicit import: the editor holds no stored definition.
+  await expect(page.locator('#wpessential-taxonomy-id')).toHaveValue('');
 
   const createImport = page.getByRole('button', { name: 'Import as new draft' });
   const updateImport = page.getByRole('button', { name: 'Update current definition' });
@@ -120,9 +119,8 @@ test('CPT UI import preview maps safely and commits only after explicit valid pr
   await expect(page.getByLabel('Singular name')).toHaveValue('Book Genre');
   await expect(page.getByLabel('REST base')).toHaveValue('genres');
   await expect(page.getByLabel('REST namespace')).toHaveValue('acme/v1');
-  await expect(page.locator('[data-wpessential-taxonomy-empty]')).toContainText(
-    'No taxonomies have been created yet.',
-  );
+  // Nothing is saved before an explicit import: the editor holds no stored definition.
+  await expect(page.locator('#wpessential-taxonomy-id')).toHaveValue('');
 
   await createImport.click();
   await expect(commitStatus).toContainText(
