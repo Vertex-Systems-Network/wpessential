@@ -191,11 +191,17 @@ final class CustomPostTypeAdminController {
 			'comments'        => __( 'Comments', 'wpessential' ),
 			'revisions'       => __( 'Revisions', 'wpessential' ),
 			'page-attributes' => __( 'Page attributes', 'wpessential' ),
+			'author'          => __( 'Author', 'wpessential' ),
+			'trackbacks'      => __( 'Trackbacks', 'wpessential' ),
+			'post-formats'    => __( 'Post formats', 'wpessential' ),
+			'autosave'        => __( 'Autosave', 'wpessential' ),
 		] as $support => $label ) {
 			$checked = in_array( $support, [ 'title', 'editor' ], true );
 			echo Check::render( $label, [ 'data-wpessential-cpt-support' => $support ], $checked ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		}
 		echo '</fieldset>';
+
+		echo $this->renderAdvanced(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 
 		echo '<p class="wpe-ui-field"><label for="wpessential-cpt-status">' . esc_html__( 'Lifecycle status', 'wpessential' ) . '</label>';
 		echo '<select id="wpessential-cpt-status">';
@@ -238,6 +244,220 @@ final class CustomPostTypeAdminController {
 		echo '</div>';
 		echo '</form>';
 		echo '</section>';
+	}
+
+	private const DASHICONS = [ 'admin-post', 'admin-page', 'admin-media', 'admin-links', 'admin-comments', 'admin-users', 'admin-tools', 'admin-generic', 'admin-home', 'admin-site', 'book', 'book-alt', 'portfolio', 'products', 'cart', 'store', 'calendar', 'calendar-alt', 'clock', 'location', 'location-alt', 'building', 'groups', 'businessperson', 'id', 'awards', 'star-filled', 'heart', 'format-gallery', 'format-image', 'format-video', 'format-audio', 'format-quote', 'format-chat', 'media-document', 'clipboard', 'list-view', 'feedback', 'testimonial', 'megaphone', 'tickets-alt', 'welcome-learn-more', 'lightbulb', 'hammer', 'car', 'airplane', 'food', 'pets', 'palmtree', 'tag', 'category', 'archive', 'database', 'shield', 'lock', 'email', 'phone', 'money-alt', 'chart-bar' ];
+
+	private const CAPABILITY_KEYS = [ 'edit_post', 'read_post', 'delete_post', 'edit_posts', 'edit_others_posts', 'delete_posts', 'publish_posts', 'read_private_posts', 'create_posts', 'delete_private_posts', 'delete_published_posts', 'delete_others_posts', 'edit_private_posts', 'edit_published_posts' ];
+
+	/**
+	 * Every remaining CustomPostTypeDefinitionProjector option, grouped like the option contract
+	 * (cpt.json). Each control is read by admin-ui/src/cpt-options.ts through data-wpessential-cpt-opt
+	 * and data-kind; "Default" leaves the key out so the projector default applies.
+	 */
+	private function renderAdvanced(): string {
+		$tri      = static fn ( string $key, string $label, string $help = '' ): string => Field::select(
+			'wpessential-cpt-opt-' . $key,
+			$label,
+			[
+				''      => __( 'Default (WordPress)', 'wpessential' ),
+				'true'  => __( 'Yes', 'wpessential' ),
+				'false' => __( 'No', 'wpessential' ),
+			],
+			'',
+			[
+				'data-wpessential-cpt-opt' => $key,
+				'data-kind'                => 'tri',
+			],
+			$help
+		);
+		$text     = static fn ( string $key, string $label, string $placeholder = '', string $help = '', string $kind = 'text' ): string => Field::input(
+			'wpessential-cpt-opt-' . $key,
+			$label,
+			[
+				'type'                     => $kind === 'int' ? 'number' : 'text',
+				'min'                      => $kind === 'int' ? '0' : null,
+				'max'                      => $kind === 'int' ? '999' : null,
+				'placeholder'              => $placeholder,
+				'data-wpessential-cpt-opt' => $key,
+				'data-kind'                => $kind,
+			],
+			$help
+		);
+		$boolText = static fn ( string $key, string $label, string $customLabel, string $placeholder, string $help = '' ): string => Field::select(
+			'wpessential-cpt-opt-' . $key,
+			$label,
+			[
+				''       => __( 'Default (WordPress)', 'wpessential' ),
+				'true'   => __( 'Yes', 'wpessential' ),
+				'false'  => __( 'No', 'wpessential' ),
+				'custom' => $customLabel,
+			],
+			'',
+			[
+				'data-wpessential-cpt-opt' => $key,
+				'data-kind'                => 'bool-text',
+			],
+			$help
+		) . Field::input(
+			'wpessential-cpt-opt-' . $key . '-custom',
+			$customLabel,
+			[
+				'placeholder'                     => $placeholder,
+				'data-wpessential-cpt-opt-custom' => $key,
+			]
+		);
+		$section  = static fn ( string $title, string $desc, string $body ): string => '<details class="wpe-ui-builder__group"><summary class="wpe-ui-builder__section">' . esc_html( $title ) . '</summary>'
+			. '<p class="wpe-ui-muted">' . esc_html( $desc ) . '</p><div class="wpe-ui-field-grid">' . $body . '</div></details>';
+
+		$icons = [ '' => __( 'Default (Posts icon)', 'wpessential' ) ];
+		foreach ( self::DASHICONS as $icon ) {
+			$icons[ 'dashicons-' . $icon ] = ucwords( str_replace( '-', ' ', $icon ) );
+		}
+		$icons['none'] = __( 'No icon', 'wpessential' );
+
+		$html = Field::input(
+			'wpessential-cpt-archive-slug',
+			__( 'Archive slug', 'wpessential' ),
+			[ 'placeholder' => 'books' ],
+			__( 'Optional. Used when "Has archive" is on; empty uses the post type key.', 'wpessential' )
+		);
+
+		$html .= $section(
+			__( 'Visibility & admin', 'wpessential' ),
+			__( 'Where the post type shows up in the admin, menus and search.', 'wpessential' ),
+			$tri( 'show_ui', __( 'Show admin screens', 'wpessential' ) )
+			. $boolText( 'show_in_menu', __( 'Show in admin menu', 'wpessential' ), __( 'Under another menu', 'wpessential' ), 'tools.php' )
+			. $text( 'menu_position', __( 'Menu position', 'wpessential' ), '25', __( '0–999. 5 is below Posts, 20 below Pages.', 'wpessential' ), 'int' )
+			. Field::select(
+				'wpessential-cpt-opt-menu_icon',
+				__( 'Menu icon', 'wpessential' ),
+				$icons,
+				'',
+				[
+					'data-wpessential-cpt-opt' => 'menu_icon',
+					'data-kind'                => 'text',
+				]
+			)
+			. $tri( 'show_in_nav_menus', __( 'Available in navigation menus', 'wpessential' ) )
+			. $tri( 'show_in_admin_bar', __( 'Show in the admin bar "New" menu', 'wpessential' ) )
+			. $tri( 'exclude_from_search', __( 'Exclude from front-end search', 'wpessential' ) )
+			. $tri( 'publicly_queryable', __( 'Publicly queryable', 'wpessential' ) )
+		);
+
+		$rewrite = Field::select(
+			'wpessential-cpt-opt-rewrite',
+			__( 'Pretty permalinks', 'wpessential' ),
+			[
+				''       => __( 'Default (on, key as slug)', 'wpessential' ),
+				'false'  => __( 'Off', 'wpessential' ),
+				'custom' => __( 'Custom', 'wpessential' ),
+			],
+			'',
+			[
+				'data-wpessential-cpt-opt' => 'rewrite',
+				'data-kind'                => 'rewrite',
+			]
+		)
+			. Field::input(
+				'wpessential-cpt-rewrite-slug',
+				__( 'Permalink slug', 'wpessential' ),
+				[
+					'placeholder'                  => 'library/books',
+					'data-wpessential-cpt-rewrite' => 'slug',
+				]
+			);
+		foreach ( [
+			'with_front' => __( 'Prefix with the permalink front base', 'wpessential' ),
+			'feeds'      => __( 'Feed permalinks', 'wpessential' ),
+			'pages'      => __( 'Paged permalinks', 'wpessential' ),
+		] as $key => $label ) {
+			$rewrite .= Field::select(
+				'wpessential-cpt-rewrite-' . $key,
+				$label,
+				[
+					''      => __( 'Default', 'wpessential' ),
+					'true'  => __( 'Yes', 'wpessential' ),
+					'false' => __( 'No', 'wpessential' ),
+				],
+				'',
+				[ 'data-wpessential-cpt-rewrite' => $key ]
+			);
+		}
+		$html .= $section(
+			__( 'Archives, rewrite & query', 'wpessential' ),
+			__( 'Front-end URLs, query variables and export.', 'wpessential' ),
+			$rewrite
+			. $boolText( 'query_var', __( 'Query variable', 'wpessential' ), __( 'Custom query variable', 'wpessential' ), 'book' )
+			. $tri( 'can_export', __( 'Include in Tools → Export', 'wpessential' ) )
+		);
+
+		$html .= $section(
+			__( 'REST API', 'wpessential' ),
+			__( 'Used when "Show in REST API" is on (required for the block editor).', 'wpessential' ),
+			$text( 'rest_base', __( 'REST base', 'wpessential' ), 'books' )
+			. $text( 'rest_namespace', __( 'REST namespace', 'wpessential' ), 'wp/v2' )
+		);
+
+		$caps = '';
+		foreach ( self::CAPABILITY_KEYS as $cap ) {
+			$caps .= Field::input(
+				'wpessential-cpt-cap-' . $cap,
+				$cap,
+				[
+					'placeholder'              => '',
+					'data-wpessential-cpt-cap' => $cap,
+				]
+			);
+		}
+		$html .= $section(
+			__( 'Capabilities & permissions', 'wpessential' ),
+			__( 'Leave empty to use the standard post capabilities.', 'wpessential' ),
+			Field::input(
+				'wpessential-cpt-opt-capability_type',
+				__( 'Capability type (singular)', 'wpessential' ),
+				[
+					'placeholder'              => 'book',
+					'data-wpessential-cpt-opt' => 'capability_type',
+					'data-kind'                => 'pair',
+				]
+			)
+			. Field::input(
+				'wpessential-cpt-capability-plural',
+				__( 'Capability type (plural)', 'wpessential' ),
+				[ 'placeholder' => 'books' ],
+				__( 'Optional. Empty adds an "s".', 'wpessential' )
+			)
+			. $tri( 'map_meta_cap', __( 'Map meta capabilities', 'wpessential' ) )
+			. $tri( 'delete_with_user', __( 'Delete posts with their author', 'wpessential' ) )
+			. $caps
+		);
+
+		$taxonomies = '';
+		if ( function_exists( 'get_taxonomies' ) ) {
+			foreach ( get_taxonomies( [ 'show_ui' => true ], 'objects' ) as $taxonomy ) {
+				$taxonomies .= Check::render( (string) $taxonomy->label . ' (' . $taxonomy->name . ')', [ 'data-wpessential-cpt-taxonomy' => $taxonomy->name ] );
+			}
+		}
+		$html .= '<details class="wpe-ui-builder__group"><summary class="wpe-ui-builder__section">' . esc_html__( 'Taxonomies', 'wpessential' ) . '</summary>'
+			. '<p class="wpe-ui-muted">' . esc_html__( 'Registered taxonomies attached to this post type.', 'wpessential' ) . '</p>'
+			. '<div class="wpe-ui-checks">' . ( $taxonomies !== '' ? $taxonomies : '<span class="wpe-ui-muted">' . esc_html__( 'No taxonomies found.', 'wpessential' ) . '</span>' ) . '</div></details>';
+
+		$labels = $tri( 'automatic_labels', __( 'Generate missing labels automatically', 'wpessential' ) );
+		foreach ( CustomPostTypeDefinitionProjector::LABEL_KEYS as $key ) {
+			$labels .= Field::input(
+				'wpessential-cpt-label-' . $key,
+				ucfirst( str_replace( '_', ' ', $key ) ),
+				[ 'data-wpessential-cpt-label' => $key ]
+			);
+		}
+		$html .= $section(
+			__( 'Labels', 'wpessential' ),
+			__( 'Empty labels are generated from the plural and singular names.', 'wpessential' ),
+			$labels
+		);
+
+		return $html;
 	}
 
 	/** @param list<array<string,mixed>> $definitions */

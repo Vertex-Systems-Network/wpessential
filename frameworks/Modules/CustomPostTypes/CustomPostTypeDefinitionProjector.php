@@ -20,7 +20,7 @@ final class CustomPostTypeDefinitionProjector {
 	public const OWNER_SURFACE_ID = 1;
 
 	/** @var list<string> */
-	private const TOP_LEVEL_KEYS = [
+	public const TOP_LEVEL_KEYS = [
 		'post_type_key',
 		'name',
 		'singular_name',
@@ -53,7 +53,7 @@ final class CustomPostTypeDefinitionProjector {
 	];
 
 	/** @var list<string> */
-	private const SUPPORT_KEYS = [
+	public const SUPPORT_KEYS = [
 		'title',
 		'editor',
 		'author',
@@ -69,7 +69,7 @@ final class CustomPostTypeDefinitionProjector {
 	];
 
 	/** @var list<string> */
-	private const LABEL_KEYS = [
+	public const LABEL_KEYS = [
 		'add_new',
 		'add_new_item',
 		'edit_item',

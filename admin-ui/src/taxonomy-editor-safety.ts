@@ -35,7 +35,7 @@ export function bindTaxonomyEditorSafety(
 	} );
 
 	const save = document.getElementById( 'wpessential-taxonomy-save' );
-	const commandBar = save?.closest( '.submit' );
+	const commandBar = save?.closest( '.submit, .wpe-ui-builder__actions' );
 	if ( commandBar instanceof HTMLElement ) {
 		commandBar.classList.add( 'wpessential-taxonomy-sticky-actions' );
 		commandBar.dataset.wpessentialTaxonomyStickyActions = '';

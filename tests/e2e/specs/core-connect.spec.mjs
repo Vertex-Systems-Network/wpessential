@@ -113,12 +113,8 @@ test('AI Connect is a Premium module and stays locked without Premium', async ({
 
 test('dark mode is saved per user and every screen passes axe in dark', async ({ page }) => {
   await visitCore(page, 'wpessential');
+  // The headless browser resolves "system" to light, so one switch saves dark in place over AJAX.
   await page.locator('[data-wpe-mode-form] button[type="submit"]').click();
-  await page.waitForLoadState('domcontentloaded');
-  if (!(await page.locator('body.wpe-mode-dark').count())) {
-    await page.locator('[data-wpe-mode-form] button[type="submit"]').click();
-    await page.waitForLoadState('domcontentloaded');
-  }
   await expect(page.locator('body')).toHaveClass(/wpe-mode-dark/);
   await page.reload();
   await expect(page.locator('body'), 'the AJAX mode switch must be saved').toHaveClass(/wpe-mode-dark/);
