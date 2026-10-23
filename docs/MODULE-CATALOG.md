@@ -1050,6 +1050,110 @@ Remote calls require explicit account connection. Diagnostics upload requires pr
 
 ---
 
+## 31. Permalink Builder — extends Surface 44 (Redirect/Routing) and Surfaces 1/2 — ADR-0234
+
+Not a new surface. It follows the Option duplication test (CANONICAL-OPTION-OWNERSHIP-INDEX §4):
+- **Owners:** the URL format of a builder post type or taxonomy belongs to Surface 1/2 (`rewrite`, `permalink`). Per-item custom URLs, patterns for core and WooCommerce types, and every redirect belong to **Surface 44**.
+- **Other modules:** they only store references to those owners.
+
+### Baseline market bar
+- **Custom Permalinks** (wordpress.org/plugins/custom-permalinks): a custom URL per post, page or term.
+- **Custom Permalink Editor** (wordpress.org/plugins/custom-permalink-editor): edit or remove the post type and taxonomy bases.
+- **Permalink Manager Lite/Pro:** a bulk URI editor, tags for taxonomy, date and custom fields, auto-redirects, WooCommerce bases.
+- **Custom Post Type Permalinks:** taxonomy and date tags, CPT date archives.
+- **Remove Taxonomy Base / Remove CPT Base**, and Yoast's "strip category base".
+
+### WPEssential target
+- **Free, Surfaces 1/2 (shipped):**
+  - Post types: URL format Default, Hide the base, or Custom pattern ending in %postname%. Tags: %year%, %monthnum%, %day%, %author% and taxonomy keys.
+  - Taxonomies: Default or Hide the base.
+  - A real page or post always wins over a hidden-base URL.
+  - Rewrite rules are flushed once, when a URL setting changes.
+- **Pro, Surface 44 "URL & Routing → Permalinks" screen:**
+  - A per-item custom URL in the edit screen, and a bulk URI editor.
+  - Patterns for core Posts, Pages, categories and tags, and WooCommerce products and categories, with live preview, a tag picker, character counter and conflict check.
+  - Extra tags: custom fields (%field:key%), the parent path, the term path and the post ID.
+  - Bulk regenerate or reset, with a preview and undo.
+  - Importers from the competitor plugins above.
+  - When a URL changes, the old one is stored as a Surface 44 redirect rule (permalink change monitoring, URL-REDIRECTION-ROUTING §5), never in a second redirect engine.
+
+---
+
+## 32. Redirects, 404 & Error Monitor — Surface 44 + Surface 31 (E01) — ADR-0234
+
+Not a new module. Redirects and the 404 monitor are **Surface 44 Redirect/Routing** (`MODULES/URL-REDIRECTION-ROUTING-EXHAUSTIVE-SPEC.md`). PHP errors belong to **Surface 31 Platform Diagnostics, extension E01** (`MODULES/MARKET-RESEARCH-EXISTING-SURFACE-ENHANCEMENTS.md`). This entry adds the gaps found against the competitors the owner named.
+
+### Competitors checked
+- **Redirection:** regex sources and conditions, a 404 log, permalink monitoring, .htaccess/Nginx import and export. Already the Surface 44 baseline.
+- **EPS 301 Redirects:** a simple table with a post picker and hit counts.
+- **Redirect Redirection:** automatic redirects for 404s and changed slugs, and wildcards.
+- **404 to Homepage:** sends every 404 to the homepage or another page, with a log.
+- **WP 404 Auto Redirect to Similar Post:** finds the closest post by slug, title and taxonomy and redirects with a 301; fallback rules.
+- **Also checked:** the Rank Math and Yoast redirect managers, Safe Redirect Manager (10up), Query Monitor, Error Log Monitor and Debug Log Manager.
+
+### Gaps added
+- **Surface 44, Free core:**
+  - A simple redirect table (301/302/307/410) with a post, page or term picker, hit counts and on/off per rule.
+  - A basic 404 log with "Create redirect".
+  - 404 fallback: off, the homepage, or a chosen page.
+  - Automatic 301 when a builder URL format changes.
+- **Surface 44, Pro:**
+  - Smart 404: automatically redirect to the most similar post when its score is above a threshold. Off by default; below the threshold it stays a suggestion, as the spec's "suggestion only" rule requires.
+  - Importers from EPS, Redirect Redirection, Rank Math, Yoast and Simple 301.
+- **Surface 31 E01, Pro "Error Monitor":**
+  - It captures PHP fatal errors, warnings and notices, uncaught exceptions, failing cron events, REST/AJAX 5xx responses and opt-in JS errors, deduplicated with counts and the first and last time seen.
+  - It shows a debug.log viewer and debug-mode toggles, with secrets redacted.
+  - Alerts go through **Surface 19 Notifications**, with thresholds and quiet hours. There are no own mail or webhook settings: transport is Surface 23.
+- **AI:**
+  - Surface 44 abilities already include 404 inspection and redirect suggestions.
+  - The Error Monitor adds `wpessential/diagnostics/errors/{list,resolve}`; AI can read and propose; writes follow the AI-write switch.
+
+---
+
+## 33. Link Shortener & Link Manager — extends Surface 44 (Redirect/Routing) — ADR-0234
+
+A short link is a redirect rule with its own slug, a library view and click analytics. Following the Option duplication test, it is a **Surface 44 extension**:
+- **Shared owners:** the same rule store, match engine, redirect log and chain/loop checks.
+- **Its own screen:** "URL & Routing → Short Links", for presentation only.
+- **Its own options:** link-level metadata such as category, notes, UTM, expiry, password and a QR style.
+
+### Market research
+- **Pretty Links** (Lite/Pro, the most used):
+  - Short slugs on your own domain; 301/302/307 and cloaked (iframe) or meta-refresh redirects.
+  - Click tracking with referrer, browser, OS and country; groups and categories; nofollow/sponsored attributes.
+  - Keyword auto-linking in content; QR codes; link health checks; product displays; import and export.
+- **ThirstyAffiliates:**
+  - Affiliate links as a CPT with categories, a link picker in the editor and an automatic keyword linker.
+  - Geolocation redirects, uncloaking for specific sources, and stats.
+- **BetterLinks:**
+  - Short links, analytics, a UTM builder, split (A/B) tests, a broken-link checker and an auto-link keyword list.
+  - Password-protected and expiring links, a Chrome extension, a dashboard widget, and import from Pretty Links, ThirstyAffiliates and Simple 301.
+- **URL Shortify, Easy Affiliate Links and Lasso:** a link library, click stats, Gutenberg blocks, Amazon/affiliate product boxes and link-health monitoring.
+- **External services:** Bitly, Rebrandly and TinyURL, with branded domains, an API and bulk shortening.
+
+### WPEssential target
+- **Free:**
+  - Create a short link (`/go/{slug}`, prefix configurable, or no prefix) to any URL or to a post, page or term.
+  - 301/302/307; nofollow and sponsored attributes.
+  - Total click counts; copy and QR code buttons; categories.
+  - A "Shorten" button in the post list and the editor.
+- **Pro:**
+  - **Analytics:** referrer, device, browser, country (from a privacy-safe geo lookup), time series and per-category totals, with privacy-first defaults (aggregate counts and a truncated IP) and CSV export.
+  - **Link rules:** UTM builder; split tests across weighted targets; geo, device and language routing (Surface 44 conditions); expiry date or click limit with a fallback URL; password-protected links; scheduled activation.
+  - **Content:** an auto-link keyword list for posts (owner: Surface 44 link rules + content filter, with a limit per post); a Gutenberg/Elementor link picker; a product/affiliate box block (presentation, Surface 16).
+  - **Health:** broken-target checks through Link Health. Branded domains and bulk shortening through Bitly/Rebrandly connectors (Surface 23 transport, credentials in Vault).
+  - **Import:** from Pretty Links, ThirstyAffiliates, BetterLinks, URL Shortify and Easy Affiliate Links.
+  - **Abilities:** `wpessential/links/{list,create,update,stats}`. AI can create links and suggest slugs and UTM tags; writes follow the AI-write switch.
+
+### Security / integrity
+- Short-link slugs cannot shadow existing pages, posts, terms or reserved WordPress paths; conflicts are checked on save.
+- Target URLs pass the Safe HTTP rules; javascript: and data: URLs are rejected.
+- Cloaked iframe redirects are off by default and warn about the target's X-Frame-Options.
+- Click logging honours Do Not Track and consent categories.
+- Bot clicks are counted separately.
+
+---
+
 # Shared module acceptance checklist
 
 Every user-facing module must answer before implementation:

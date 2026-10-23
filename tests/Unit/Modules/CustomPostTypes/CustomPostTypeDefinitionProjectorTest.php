@@ -11,6 +11,7 @@ use WPEssential\Modules\CustomPostTypes\CustomPostTypeRegistrationProvider;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\WordPress\Registrations\PermalinkRuntime;
 use WPEssential\Platform\WordPress\Registrations\RegistrationKind;
 
 final class CustomPostTypeDefinitionProjectorTest extends TestCase
@@ -42,6 +43,43 @@ final class CustomPostTypeDefinitionProjectorTest extends TestCase
         self::assertArrayNotHasKey('publicly_queryable', $registration->payload);
         self::assertSame('books', $registration->payload['has_archive']);
         self::assertSame('library/books', $registration->payload['rewrite']['slug']);
+    }
+
+    public function testUrlFormatHideBaseAndCustomPattern(): void
+    {
+        $base = ['post_type_key' => 'book', 'name' => 'Books', 'singular_name' => 'Book'];
+        $projector = new CustomPostTypeDefinitionProjector();
+
+        $hidden = $projector->project($this->definition(DefinitionStatus::Published, $base + ['permalink' => ['mode' => 'hide_base']]));
+        self::assertSame(['mode' => 'hide_base', 'tokens' => []], $hidden->payload[PermalinkRuntime::ARG]);
+
+        $custom = $projector->project($this->definition(DefinitionStatus::Published, $base + ['permalink' => ['mode' => 'custom', 'pattern' => '/Books/%book_genre%/%year%/%postname%/']]));
+        self::assertSame('books/%book_genre%/%year%', $custom->payload['rewrite']['slug']);
+        self::assertSame(['book_genre', 'year'], $custom->payload[PermalinkRuntime::ARG]['tokens']);
+
+        $args = $custom->payload;
+        $config = PermalinkRuntime::extract($args);
+        self::assertSame('custom', $config['mode']);
+        self::assertArrayNotHasKey(PermalinkRuntime::ARG, $args);
+
+        foreach ([
+            ['mode' => 'custom', 'pattern' => 'books/%postname%/extra'],
+            ['mode' => 'custom', 'pattern' => '%postname%'],
+            ['mode' => 'custom', 'pattern' => 'bo oks/%postname%'],
+            ['mode' => 'custom', 'pattern' => '%post_id%/%postname%'],
+            ['mode' => 'sideways'],
+            ['mode' => 'hide_base', 'slug' => 'x'],
+        ] as $bad) {
+            try {
+                $projector->project($this->definition(DefinitionStatus::Published, $base + ['permalink' => $bad]));
+                self::fail('Accepted invalid permalink ' . json_encode($bad));
+            } catch (InvalidArgumentException) {
+                self::addToAssertionCount(1);
+            }
+        }
+
+        $this->expectException(InvalidArgumentException::class);
+        $projector->project($this->definition(DefinitionStatus::Published, $base + ['rewrite' => false, 'permalink' => ['mode' => 'hide_base']]));
     }
 
     public function testRejectsReservedCorePostTypeKey(): void

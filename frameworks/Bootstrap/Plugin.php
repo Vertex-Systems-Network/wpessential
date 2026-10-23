@@ -95,6 +95,7 @@ use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationScope;
 use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationStoreInterface;
 use WPEssential\Platform\WordPress\Registrations\InMemoryCompiledRegistrationStore;
 use WPEssential\Platform\WordPress\Registrations\Migrations\CreateCompiledRegistrationTablesMigration;
+use WPEssential\Platform\WordPress\Registrations\PermalinkRuntime;
 use WPEssential\Platform\WordPress\Registrations\PostTypeRuntimeRegistrar;
 use WPEssential\Platform\WordPress\Registrations\RegistrationCompilationStatus;
 use WPEssential\Platform\WordPress\Registrations\RegistrationCompiler;
@@ -137,7 +138,7 @@ final class Plugin {
 
 		$activationPolicy = self::$moduleActivationPolicy ?? new DefaultModuleActivationPolicy();
 		self::$kernel     = new Kernel( moduleActivationPolicy: $activationPolicy );
-		$services     = self::$kernel->services();
+		$services         = self::$kernel->services();
 
 		$nonceAction = defined( 'WPE_NONCE_ACTION' ) ? (string) WPE_NONCE_ACTION : 'wpessential_request';
 		$ajaxAction  = defined( 'WPE_AJAX_ACTION' ) ? (string) WPE_AJAX_ACTION : 'wpessential_dispatch';
@@ -168,8 +169,9 @@ final class Plugin {
 		$registrationCompiler  = new RegistrationCompiler( $registrationStore );
 		$registrationRuntime   = new RegistrationRuntimeLoader( $registrationStore );
 		$registrationStatus    = new RegistrationCompilationStatus();
-		$postTypeRegistrar     = new PostTypeRuntimeRegistrar( $registrationRuntime );
-		$taxonomyRegistrar     = new TaxonomyRuntimeRegistrar( $registrationRuntime );
+		$permalinks            = new PermalinkRuntime();
+		$postTypeRegistrar     = new PostTypeRuntimeRegistrar( $registrationRuntime, $permalinks );
+		$taxonomyRegistrar     = new TaxonomyRuntimeRegistrar( $registrationRuntime, null, $permalinks );
 		$traces                = $debug ? new BoundedInMemoryTraceRecorder() : new NullTraceRecorder();
 
 		$pluginRoot         = dirname( __DIR__, 2 );
@@ -181,12 +183,12 @@ final class Plugin {
 		$moduleToggles      = new ModuleToggleStore();
 		$license            = new LicenseService();
 		$license->schedule();
-		$elements           = new ElementRegistry();
-		$aiConnect          = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
+		$elements  = new ElementRegistry();
+		$aiConnect = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
 		( new CoreAjaxRoutes( $ajaxRoutes, $ajaxDispatcher, $abilities, $abilityContexts, $aiConnect, $ajaxAction ) )->register();
-		$coreAdmin          = new CoreAdminController(
+		$coreAdmin = new CoreAdminController(
 			self::$kernel,
 			$moduleToggles,
 			new OptionContractReader( $pluginRoot ),
@@ -240,7 +242,7 @@ final class Plugin {
 			if ( is_object( $wpdb ) && self::proCustomTablesRuntimeAvailable() ) {
 				$schemaIntrospector = new WordPressCt1SchemaIntrospector( $wpdb );
 				$metadataFacts      = new WordPressMetadataPreconditionFactsProvider( $schemaIntrospector );
-				$confirmations = new WpdbMigrationExecutionConfirmationProvider( $database, $siteId );
+				$confirmations      = new WpdbMigrationExecutionConfirmationProvider( $database, $siteId );
 				$services->set(
 					'custom-tables.runtime-composition.factory',
 					CustomTablesRuntimeCompositionFactory::production(
@@ -316,6 +318,7 @@ final class Plugin {
 		}
 		$postTypeRegistrar->register();
 		$taxonomyRegistrar->register();
+		$permalinks->register();
 
 		return self::$kernel;
 	}

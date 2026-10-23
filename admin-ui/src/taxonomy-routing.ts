@@ -10,6 +10,7 @@ type RecordValue = Record< string, unknown >;
 const ROUTING_POLICY_ID = 'wpessential-taxonomy-routing-policy';
 const REWRITE_MODE_ID = 'wpessential-taxonomy-rewrite-mode';
 const REWRITE_SLUG_ID = 'wpessential-taxonomy-rewrite-slug';
+const PERMALINK_MODE_ID = 'wpessential-taxonomy-permalink-mode';
 const REWRITE_WITH_FRONT_ID = 'wpessential-taxonomy-rewrite-with-front';
 const REWRITE_HIERARCHICAL_ID = 'wpessential-taxonomy-rewrite-hierarchical';
 const REWRITE_EP_MASK_ID = 'wpessential-taxonomy-rewrite-ep-mask';
@@ -208,6 +209,16 @@ function ensureRoutingPolicy(): void {
 			{ value: 'custom', label: 'Custom options' },
 		]
 	);
+	appendSelectField(
+		section,
+		PERMALINK_MODE_ID,
+		'URL format',
+		'Hide the base to use /fiction/ instead of /genre/fiction/. A page or post with the same name always wins.',
+		[
+			{ value: '', label: 'Default: /genre/fiction/' },
+			{ value: 'hide_base', label: 'Hide the base: /fiction/' },
+		]
+	);
 	appendTextField(
 		section,
 		REWRITE_SLUG_ID,
@@ -353,6 +364,10 @@ function setBooleanSelect( id: string, value: unknown ): void {
 }
 
 function setRoutingPolicy( payload: RecordValue ): void {
+	const permalink = selectInput( PERMALINK_MODE_ID );
+	if ( permalink ) {
+		permalink.value = isRecord( payload.permalink ) && payload.permalink.mode === 'hide_base' ? 'hide_base' : '';
+	}
 	const rewriteMode = selectInput( REWRITE_MODE_ID );
 	if ( rewriteMode ) {
 		if ( payload.rewrite === true ) {
@@ -419,6 +434,10 @@ function setRestPolicy( payload: RecordValue ): void {
 }
 
 function resetRoutingPolicy(): void {
+	const permalink = selectInput( PERMALINK_MODE_ID );
+	if ( permalink ) {
+		permalink.value = '';
+	}
 	const rewriteMode = selectInput( REWRITE_MODE_ID );
 	const queryMode = selectInput( QUERY_VAR_MODE_ID );
 	if ( rewriteMode ) {
@@ -484,6 +503,7 @@ function updateRestState(): void {
 export function collectTaxonomyRouting(): RecordValue {
 	return {
 		rewrite: rewriteFromInputs(),
+		permalink: selectInput( PERMALINK_MODE_ID )?.value === 'hide_base' ? { mode: 'hide_base' } : undefined,
 		query_var: queryVarFromInputs(),
 		rest_base: optionalTextValue( REST_BASE_ID ),
 		rest_namespace: optionalTextValue( REST_NAMESPACE_ID ),

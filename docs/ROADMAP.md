@@ -82,6 +82,7 @@ All above decisions and module specifications accepted/documented. No unresolved
 ### 1C. Free modules
 - Custom Post Types Builder
 - Taxonomy Builder
+- URL formats for builder post types and taxonomies: hide the base and custom patterns (Permalink Builder free core, ADR-0234)
 - export/import for their definitions
 - cross-link UI
 - first-run wizard with Continue Free path
@@ -138,6 +139,21 @@ Build a reference application (e.g. directory/real-estate/project database) enti
 - performance
 
 ---
+
+### 2X. Permalink Builder (Pro; Surface 44 + Surfaces 1/2, ADR-0234)
+- per-item custom URLs and a bulk URI editor
+- pattern editor for all post types and taxonomies (core + WooCommerce)
+- old URLs become Surface 44 redirect rules automatically
+- import from Custom Permalinks / Permalink Manager / Custom Post Type Permalinks
+
+### 2Y. Redirects, 404 & Error Monitor (Surface 44 + Surface 31 E01, ADR-0234)
+- Free: redirect table, 404 log and fallback, automatic 301 on URL changes
+- Pro: rules engine (spec), smart 404 to similar posts, importers
+- Pro: Error Monitor (PHP/HTTP/JS errors, debug.log viewer), alerts through Notifications (Surface 19)
+
+### 2Z. Link Shortener & Link Manager (Surface 44 extension, ADR-0234)
+- Free: short links on your own domain, click counts, QR, categories
+- Pro: analytics, UTM/split tests/geo routing, expiry and password, keyword auto-linking, importers, Bitly/Rebrandly
 
 ## Phase 3 — Admin, Identity & Portal Experience
 

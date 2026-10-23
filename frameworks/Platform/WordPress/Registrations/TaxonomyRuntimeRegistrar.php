@@ -28,6 +28,7 @@ final class TaxonomyRuntimeRegistrar {
 	public function __construct(
 		private readonly RegistrationRuntimeLoader $runtime,
 		?TaxonomyRuntimeProviderRegistry $providers = null,
+		private readonly ?PermalinkRuntime $permalinks = null,
 	) {
 		$this->providerRegistry = $providers ?? new TaxonomyRuntimeProviderRegistry();
 	}
@@ -78,6 +79,7 @@ final class TaxonomyRuntimeRegistrar {
 				continue;
 			}
 
+			$permalink = PermalinkRuntime::extract( $args );
 			try {
 				$args = $this->providerRegistry->apply( $args, $providerIds );
 			} catch ( Throwable $exception ) {
@@ -90,6 +92,7 @@ final class TaxonomyRuntimeRegistrar {
 				$this->errors[ $key ] = $result->get_error_message();
 				continue;
 			}
+			$this->permalinks?->addTaxonomy( $key, $permalink['mode'], $args );
 			$this->registered[] = $key;
 		}
 	}

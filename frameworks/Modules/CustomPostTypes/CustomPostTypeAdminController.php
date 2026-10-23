@@ -436,6 +436,27 @@ final class CustomPostTypeAdminController {
 				],
 				__( 'Used when Pretty permalinks is Custom.', 'wpessential' )
 			)
+			. Field::select(
+				'wpessential-cpt-opt-permalink',
+				__( 'URL format', 'wpessential' ),
+				[
+					''          => __( 'Default: /books/my-book/', 'wpessential' ),
+					'hide_base' => __( 'Hide the base: /my-book/', 'wpessential' ),
+					'custom'    => __( 'Custom pattern', 'wpessential' ),
+				],
+				'',
+				[
+					'data-wpessential-cpt-opt' => 'permalink',
+					'data-kind'                => 'permalink',
+				],
+				__( 'Like Settings → Permalinks. With the base hidden, a page or post with the same name always wins.', 'wpessential' )
+			)
+			. Field::input(
+				'wpessential-cpt-permalink-pattern',
+				__( 'URL pattern', 'wpessential' ),
+				[ 'placeholder' => 'books/%book_genre%/%postname%' ],
+				__( 'End with the post name tag. Tags you can use:', 'wpessential' ) . ' %postname% %year% %monthnum% %day% %author% %your_taxonomy_key%'
+			)
 			. $boolText( 'query_var', __( 'Query variable', 'wpessential' ), __( 'Custom query variable', 'wpessential' ), 'book' )
 		);
 
