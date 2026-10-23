@@ -82,7 +82,7 @@ test('packaged Runtime Observatory renders and progressively enhances', async ({
     page.getByRole('table', { name: 'WPEssential runtime diagnostics' }),
   ).toBeVisible();
 
-  await expect(page.getByRole('row', { name: /Platform version 0\.1\.0-dev/ })).toBeVisible();
+  await expect(page.getByRole('row', { name: /Platform version 3\.0\.0/ })).toBeVisible();
   await expect(page.getByRole('row', { name: /WordPress 7\.1/ })).toBeVisible();
   await expect(page.getByRole('row', { name: /PHP 8\.2/ })).toBeVisible();
   await expect(page.getByRole('row', { name: /Kernel booted yes/ })).toBeVisible();
