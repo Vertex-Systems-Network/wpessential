@@ -195,6 +195,18 @@ final class SiteKitAdmin {
 		if ( $type === 'select' && count( (array) $field['choices'] ) <= 3 && max( array_map( 'strlen', array_map( 'strval', (array) $field['choices'] ) ) ) <= 22 ) {
 			$type = 'buttons';
 		}
+		$choices = $field['choices'] ?? null;
+		if ( is_array( $choices ) && isset( $choices['uppercase'] ) ) {
+			// Text-transform choices show line icons instead of sample glyphs.
+			$icons   = [
+				''           => 'minus',
+				'none'       => 'type',
+				'uppercase'  => 'case-upper',
+				'lowercase'  => 'case-lower',
+				'capitalize' => 'case-sensitive',
+			];
+			$choices = array_combine( array_map( 'strval', array_keys( $choices ) ), array_map( static fn ( mixed $label, int|string $k ): array|string => isset( $icons[ (string) $k ] ) ? [ (string) $label, $icons[ (string) $k ] ] : (string) $label, $choices, array_keys( $choices ) ) );
+		}
 		$config     = array_filter(
 			[
 				'type'       => $type,
@@ -203,7 +215,7 @@ final class SiteKitAdmin {
 				'step'       => $field['step'] ?? null,
 				'unit'       => $field['unit'] ?? null,
 				'units'      => $field['units'] ?? null,
-				'choices'    => $field['choices'] ?? null,
+				'choices'    => $choices,
 				'responsive' => ! empty( $field['responsive'] ) ? true : null,
 				'tab'        => $field['tab'] ?? null,
 			],

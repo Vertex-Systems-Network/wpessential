@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WPEssential\Platform\Admin\Ui\Icon;
+
 /**
  * Applies Site Kit on the front end and in the block editor: theme.json user layer, CSS, Google
  * Fonts, the light/dark scheme, the back-to-top button and the Elementor kit sync.
@@ -106,16 +108,16 @@ final class SiteKitFrontend {
 		$values = $this->store->values();
 		$html   = '';
 		if ( $this->schemeEnabled() && ( $values['scheme_toggle'] ?? '' ) !== 'off' ) {
-			$html .= '<button type="button" class="wpe-site-scheme" aria-label="' . esc_attr__( 'Switch light or dark mode', 'wpessential' ) . '" onclick="(function(d){var n=d.getAttribute(\'data-wpe-scheme\')===\'dark\'?\'light\':\'dark\';d.setAttribute(\'data-wpe-scheme\',n);try{localStorage.setItem(\'wpe-scheme\',n);}catch(e){}})(document.documentElement)">◐</button>';
+			$html .= '<button type="button" class="wpe-site-scheme" aria-label="' . esc_attr__( 'Switch light or dark mode', 'wpessential' ) . '" onclick="(function(d){var n=d.getAttribute(\'data-wpe-scheme\')===\'dark\'?\'light\':\'dark\';d.setAttribute(\'data-wpe-scheme\',n);try{localStorage.setItem(\'wpe-scheme\',n);}catch(e){}})(document.documentElement)">' . Icon::render( 'contrast', 20 ) . '</button>';
 		}
 		if ( ( $values['back_to_top'] ?? '' ) === 'show' ) {
-			$html .= '<a class="wpe-site-top" href="#" aria-label="' . esc_attr__( 'Back to top', 'wpessential' ) . '">↑</a>';
+			$html .= '<a class="wpe-site-top" href="#" aria-label="' . esc_attr__( 'Back to top', 'wpessential' ) . '">' . Icon::render( 'arrow-up', 20 ) . '</a>';
 		}
 		if ( $html === '' ) {
 			return;
 		}
 		echo '<div class="wpe-site-floating">' . $html . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts above.
-		echo '<style>.wpe-site-floating{position:fixed;right:20px;bottom:20px;z-index:9990;display:flex;flex-direction:column;gap:8px}.wpe-site-floating>*{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--wp--preset--color--ink,#0b1a3d);color:var(--wp--preset--color--on-ink,#fff);font-size:20px;text-decoration:none;cursor:pointer;box-shadow:0 8px 24px rgb(0 0 0/.2)}</style>';
+		echo '<style>.wpe-site-floating{position:fixed;right:20px;bottom:20px;z-index:9990;display:flex;flex-direction:column;gap:8px}.wpe-site-floating>*{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--wp--preset--color--ink,#0b1a3d);color:var(--wp--preset--color--on-ink,#fff);text-decoration:none;cursor:pointer;box-shadow:0 8px 24px rgb(0 0 0/.2)}</style>';
 	}
 
 	/** After saving: download local fonts, drop the theme.json cache and sync Elementor. */

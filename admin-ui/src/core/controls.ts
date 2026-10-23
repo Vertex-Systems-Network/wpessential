@@ -90,6 +90,26 @@ function svg( body: string, size = 14 ): string {
 	return `<svg viewBox="0 0 24 24" width="${ size }" height="${ size }" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ body }</svg>`;
 }
 
+// Flat line icons (24×24, stroke) used by the controls; never text glyphs.
+const ICONS: Record< string, string > = {
+	'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+	x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+	minus: '<path d="M5 12h14"/>',
+	'case-upper': '<path d="m3 15 4-8 4 8"/><path d="M4 13h6"/><path d="M15 11h4.5a2 2 0 0 1 0 4H15V7h4a2 2 0 0 1 0 4"/>',
+	'case-lower': '<circle cx="7" cy="12" r="3"/><path d="M10 9v6"/><circle cx="17" cy="12" r="3"/><path d="M14 7v8"/>',
+	'case-sensitive': '<path d="m3 15 4-8 4 8"/><path d="M4 13h6"/><circle cx="18" cy="12" r="3"/><path d="M21 9v6"/>',
+	type: '<path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/>',
+	italic: '<path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4 9 20"/>',
+	underline: '<path d="M6 4v6a6 6 0 0 0 12 0V4"/><path d="M4 20h16"/>',
+	strikethrough: '<path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12a4 4 0 0 1 0 8H6"/><path d="M4 12h16"/>',
+	square: '<rect x="4" y="4" width="16" height="16" rx="2"/>',
+	inset: '<rect x="3" y="3" width="18" height="18" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/>',
+};
+
+export function icon( name: string, size = 14 ): string {
+	return svg( ICONS[ name ] ?? ICONS.minus ?? '', size );
+}
+
 export function parse( value: unknown ): Json {
 	if ( value && typeof value === 'object' ) {
 		return value as Json;
@@ -568,8 +588,9 @@ types.buttons = ( ctx ) => {
 	const group = h( 'div', { class: 'wpec-seg', role: 'radiogroup', 'aria-label': ctx.label } );
 	for ( const [ key, choice ] of Object.entries( ctx.opt.choices ?? {} ) ) {
 		const label = Array.isArray( choice ) ? choice[ 0 ] : choice;
-		const icon = Array.isArray( choice ) ? choice[ 1 ] : null;
-		group.append( h( 'button', { type: 'button', role: 'radio', class: 'wpec-seg__btn' + ( icon ? ' is-icon' : '' ), 'data-v': key, title: label, 'aria-label': label, text: icon ?? label, onclick: () => ctx.set( key ) } ) );
+		const iconName = Array.isArray( choice ) ? choice[ 1 ] : null; // An ICONS name.
+		const glyph = iconName && ICONS[ iconName ] ? { html: icon( iconName, 16 ) } : { text: label };
+		group.append( h( 'button', { type: 'button', role: 'radio', class: 'wpec-seg__btn' + ( iconName ? ' is-icon' : '' ), 'data-v': key, title: label, 'aria-label': label, ...glyph, onclick: () => ctx.set( key ) } ) );
 	}
 	return {
 		el: group,
@@ -626,7 +647,7 @@ types.font = ( ctx ) => {
 			button.replaceChildren(
 				h( 'span', { class: 'wpec-font__sample', style: `font-family:${ fontStack( value ) }`, text: 'Aa' } ),
 				h( 'span', { class: 'wpec-font__label' }, [ h( 'strong', { text: fontLabel( value ) } ), h( 'small', { text: source } ) ] ),
-				h( 'span', { class: 'wpec-font__caret', 'aria-hidden': 'true', text: '▾' } )
+				h( 'span', { class: 'wpec-font__caret', 'aria-hidden': 'true', html: icon( 'chevron-down', 16 ) } )
 			);
 		},
 	};
@@ -669,7 +690,7 @@ types.fonts = ( ctx ) => {
 				chips.append(
 					h( 'span', { class: 'wpec-fonts__chip', style: `font-family:"${ family }", system-ui` }, [
 						family,
-						h( 'button', { type: 'button', 'aria-label': `${ t( 'Remove' ) } ${ family }`, text: '×', onclick: () => ctx.set( list().filter( ( f ) => f !== family ).join( '|' ) ) } ),
+						h( 'button', { type: 'button', 'aria-label': `${ t( 'Remove' ) } ${ family }`, html: icon( 'x', 12 ), onclick: () => ctx.set( list().filter( ( f ) => f !== family ).join( '|' ) ) } ),
 					] )
 				);
 			}
@@ -842,9 +863,9 @@ types.typography = ( ctx ) =>
 				part( ctx, 'family', 'font', {}, t( 'Family' ) ),
 				part( ctx, 'size', 'range', { responsive: true, min: 8, max: 120, units: [ 'px', 'em', 'rem', 'vw' ] }, t( 'Size' ) ),
 				part( ctx, 'weight', 'select', { choices: weights() }, t( 'Weight' ) ),
-				part( ctx, 'transform', 'choose', { choices: { '': [ t( 'Default' ), '–' ], uppercase: [ 'UPPERCASE', 'AA' ], lowercase: [ 'lowercase', 'aa' ], capitalize: [ 'Capitalize', 'Aa' ], none: [ t( 'As typed' ), '✕' ] } }, t( 'Transform' ) ),
-				part( ctx, 'style', 'choose', { choices: { '': [ t( 'Default' ), '–' ], normal: [ t( 'Normal' ), 'I' ], italic: [ t( 'Italic' ), '𝐼' ] } }, t( 'Style' ) ),
-				part( ctx, 'decoration', 'choose', { choices: { '': [ t( 'Default' ), '–' ], none: [ t( 'None' ), '✕' ], underline: [ t( 'Underline' ), 'U̲' ], 'line-through': [ t( 'Line through' ), 'S̶' ] } }, t( 'Decoration' ) ),
+				part( ctx, 'transform', 'choose', { choices: { '': [ t( 'Default' ), 'minus' ], uppercase: [ 'UPPERCASE', 'case-upper' ], lowercase: [ 'lowercase', 'case-lower' ], capitalize: [ 'Capitalize', 'case-sensitive' ], none: [ t( 'As typed' ), 'type' ] } }, t( 'Transform' ) ),
+				part( ctx, 'style', 'choose', { choices: { '': [ t( 'Default' ), 'minus' ], normal: [ t( 'Normal' ), 'type' ], italic: [ t( 'Italic' ), 'italic' ] } }, t( 'Style' ) ),
+				part( ctx, 'decoration', 'choose', { choices: { '': [ t( 'Default' ), 'minus' ], none: [ t( 'None' ), 'x' ], underline: [ t( 'Underline' ), 'underline' ], 'line-through': [ t( 'Line through' ), 'strikethrough' ] } }, t( 'Decoration' ) ),
 				part( ctx, 'lineHeight', 'range', { responsive: true, min: 0.8, max: 3, step: 0.05, units: [ '', 'px', 'em' ] }, t( 'Line height' ) ),
 				part( ctx, 'letterSpacing', 'range', { responsive: true, min: -5, max: 10, step: 0.1, units: [ 'px', 'em' ] }, t( 'Letter spacing' ) ),
 			] )
@@ -867,7 +888,7 @@ types.shadow = ( ctx ) =>
 				part( ctx, 'y', 'range', { min: -100, max: 100, unit: 'px' }, t( 'Vertical' ) ),
 				part( ctx, 'blur', 'range', { min: 0, max: 200, unit: 'px' }, t( 'Blur' ) ),
 				part( ctx, 'spread', 'range', { min: -100, max: 100, unit: 'px' }, t( 'Spread' ) ),
-				part( ctx, 'inset', 'choose', { choices: { '': [ t( 'Outline' ), t( 'Outline' ) ], 1: [ t( 'Inset' ), t( 'Inset' ) ] } }, t( 'Position' ) ),
+				part( ctx, 'inset', 'choose', { choices: { '': [ t( 'Outline' ), 'square' ], 1: [ t( 'Inset' ), 'inset' ] } }, t( 'Position' ) ),
 			] )
 	);
 
