@@ -214,6 +214,23 @@ Every option has exactly one owner surface in `docs/MODULES/CANONICAL-OPTION-OWN
 - **New options and modules:** before an option or module is planned, it must pass the Option duplication test (§4 of the index) and get a row in the generated option manifest (§5). A missing owner is a Capability Gap Request (`CAPABILITY-GAP-REQUEST-SYSTEM.md`), not a new local engine.
 - **Market features:** a feature asked for from competitor research is mapped to the existing owner first, and becomes a new surface only when no owner fits. ADR-0234 is the worked example: redirects, 404s and error monitoring mapped to Surfaces 44 and 31 instead of a new module.
 
+## 9B. Global builder capabilities (every builder, and AI uses them the same way)
+
+These were built once (`admin-ui/src/core/*`) and every builder module uses them. They are not re-implemented per module.
+
+| Capability | Shared code | Behaviour | AI rule |
+|---|---|---|---|
+| Auto-fill from names | `core/autofill.ts` | Plural → singular → key → every label, in WordPress wording. A typed value stops following; Reset restores it. | AI fills only names and the values it means to override. Generated labels stay unsaved so WordPress keeps writing them. |
+| Character counters and limits | `core/counter.ts` | "n / max" where WordPress sets a limit (post type key 20, taxonomy key 32); red at the limit. | AI output must respect the same limits. The projector rejects anything longer. |
+| Real defaults shown | `cpt-defaults.ts` (pattern) | "Default: Yes (as Public)", and the key as the placeholder for slug, REST base and query var. | AI explanations describe the effective default, not "Default". |
+| Settings levels | `core/levels.ts` | Essential / Advanced / Expert; saved values outside the level stay. | AI may set any level's option; the UI reveals it on review. |
+| Wizard mode | `core/wizard.ts` | One section per step, with a plain explanation and illustration, and Back / Next. Steps follow the level. | AI "explain this option" prompts reuse the wizard explanations. |
+| Field dependencies | `core/dependencies.ts` | Disabled controls say which field they depend on. | AI must set the controlling field too, e.g. Has archive before Archive slug. |
+| Lifecycle (Trash, Restore, Lock) | `core/lifecycle.ts`, `core/dialog.ts` | WordPress-style Trash and Restore, and a lock that blocks deletion. Destructive actions confirm in our dialog. Bulk actions and table footer. | AI cannot trash, restore, lock or delete. These abilities are not on the AI channel. |
+| URL formats | `PermalinkRuntime` | Hide the base, or a custom pattern ending in %postname%. | AI may propose a pattern; the projector validates it. |
+
+A new builder module wires these in. It does not write its own version (the §9A one-owner rule).
+
 ## 10. Development gate
 
 No module AI UI, Prompt Session storage, AI call, MCP exposure or Ability execution is authorized by this planning document.

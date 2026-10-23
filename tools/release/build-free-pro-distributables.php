@@ -499,6 +499,7 @@ try {
         ...requiredAdminArtifactTriplet($root, 'main'),
         ...requiredAdminArtifactTriplet($root, 'taxonomy'),
         ...requiredAdminArtifactTriplet($root, 'ui'),
+        ...requiredAdminArtifactTriplet($root, 'app'),
         ...requiredAdminArtifact($root, 'assets/admin/option-contracts.json'),
     ];
     $proAssets = [

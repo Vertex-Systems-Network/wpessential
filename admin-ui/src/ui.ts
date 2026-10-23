@@ -124,6 +124,29 @@ function initScreen(): void {
 	}
 }
 
+// Account menu (<details>): closes on Esc, on a click outside it and after choosing an item.
+function initAccountMenu(): void {
+	document.addEventListener( 'click', ( event ) => {
+		for ( const menu of Array.from( document.querySelectorAll< HTMLDetailsElement >( '[data-wpe-account][open]' ) ) ) {
+			const target = event.target instanceof Node ? event.target : null;
+			if ( ! target || ! menu.contains( target ) || ( target instanceof Element && target.closest( 'a' ) ) ) {
+				menu.open = false;
+			}
+		}
+	} );
+	document.addEventListener( 'keydown', ( event ) => {
+		if ( event.key !== 'Escape' ) {
+			return;
+		}
+		const menu = document.querySelector< HTMLDetailsElement >( '[data-wpe-account][open]' );
+		if ( menu ) {
+			menu.open = false;
+			menu.querySelector< HTMLElement >( 'summary' )?.focus();
+		}
+	} );
+}
+
 initAjaxForms();
+initAccountMenu();
 initAjaxNav( initScreen );
 initScreen();

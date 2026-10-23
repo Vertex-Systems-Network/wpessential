@@ -2,7 +2,9 @@
 // AI Connect, Account, System Status, Docs): the next screen is fetched and swapped in without a
 // full page reload, and the address bar and Back button keep working. A screen that needs a
 // script this page has not loaded (or runs inline script) falls back to a normal page load.
-const LINKS = 'a.wpe-ui-nav__item, .wpe-ui-topbar a.wpe-ui-button[href*="page=wpessential"], .wpe-ui-topbar a.wpe-ui-logo';
+import { APP_PAGES } from '../app/routes';
+
+const LINKS = 'a.wpe-ui-nav__item, a.wpe-ui-account__item, .wpe-ui-topbar a.wpe-ui-button[href*="page=wpessential"], .wpe-ui-topbar a.wpe-ui-logo';
 
 function scriptKey( src: string ): string {
 	try {
@@ -73,6 +75,8 @@ async function go( url: URL, push: boolean, reinit: () => void ): Promise< void 
 		}
 		window.scrollTo( 0, 0 );
 		reinit();
+		// Lets the dashboard app mount on a screen that arrived this way.
+		document.dispatchEvent( new Event( 'wpe:screen' ) );
 		// Move focus to the new screen's heading, as a page load would.
 		const heading = document.querySelector< HTMLElement >( '.wrap.wpe-ui h1' );
 		if ( heading ) {
@@ -104,6 +108,11 @@ export function initAjaxNav( reinit: () => void ): void {
 		void go( url, true, reinit );
 	} );
 	window.addEventListener( 'popstate', () => {
+		// Back/forward between dashboard app screens is React Router's.
+		const page = new URL( window.location.href ).searchParams.get( 'page' ) ?? '';
+		if ( document.querySelector( '[data-wpe-app-root]' ) && APP_PAGES.includes( page ) ) {
+			return;
+		}
 		void go( new URL( window.location.href ), false, reinit );
 	} );
 }

@@ -20,6 +20,69 @@ class Plans {
 	const YEARLY_DISCOUNT = 20;
 
 	/**
+	 * The owner's own plan: every feature, unlimited websites, never expires. It is not in
+	 * defaults(), so it is never listed, priced, sold or offered as an upgrade; only a site
+	 * administrator can issue it from WPEssential → Add license.
+	 */
+	const OWNER = 'owner';
+
+	/**
+	 * Owner plan definition.
+	 *
+	 * @return array
+	 */
+	public static function owner() {
+		return array(
+			'name'     => __( 'Owner', 'wpessential-server' ),
+			'price'    => '0',
+			'months'   => -1,
+			'sites'    => 0,
+			'white'    => 1,
+			'pro'      => 1,
+			'features' => array( __( 'Every free and Pro feature', 'wpessential-server' ), __( 'Unlimited websites', 'wpessential-server' ), __( 'Never expires', 'wpessential-server' ) ),
+		);
+	}
+
+	/**
+	 * Product for the owner plan, created on first use. Private, so it cannot be bought.
+	 *
+	 * @return int Product id.
+	 */
+	public static function owner_product() {
+		$id = self::product_id( self::OWNER );
+		if ( $id ) {
+			return $id;
+		}
+		$plan    = self::owner();
+		$product = new \WC_Product_Simple();
+		/* translators: %s: plan name. */
+		$product->set_name( sprintf( __( 'WPEssential %s', 'wpessential-server' ), $plan['name'] ) );
+		$product->set_status( 'private' );
+		$product->set_regular_price( $plan['price'] );
+		$product->set_virtual( true );
+		$product->set_sold_individually( true );
+		$product->set_catalog_visibility( 'hidden' );
+		$product->update_meta_data( '_wpes_plan', self::OWNER );
+		$product->update_meta_data( '_wpes_months', $plan['months'] );
+		$product->update_meta_data( '_wpes_sites', $plan['sites'] );
+		$product->update_meta_data( '_wpes_white_label', $plan['white'] );
+		$product->update_meta_data( '_wpes_pro', $plan['pro'] );
+		$product->save();
+		return $product->get_id();
+	}
+
+	/**
+	 * The owner plan can never be bought, even if the product is published by mistake.
+	 *
+	 * @param bool        $purchasable Purchasable.
+	 * @param \WC_Product $product     Product.
+	 * @return bool
+	 */
+	public static function owner_not_purchasable( $purchasable, $product ) {
+		return self::OWNER === $product->get_meta( '_wpes_plan' ) ? false : $purchasable;
+	}
+
+	/**
 	 * Default plans. Prices and limits can be changed later on each product.
 	 * months: 0 = lifetime (updates for the major version bought, see Licenses::validate()), -1 = free (no expiry, no billing).
 	 *
@@ -100,6 +163,7 @@ class Plans {
 		add_action( 'woocommerce_product_options_general_product_data', array( __CLASS__, 'fields' ) );
 		add_action( 'woocommerce_process_product_meta', array( __CLASS__, 'save' ) );
 		add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'one_plan_in_cart' ), 10, 2 );
+		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'owner_not_purchasable' ), 10, 2 );
 	}
 
 	/**
@@ -158,7 +222,7 @@ class Plans {
 			return null;
 		}
 		$key      = $product->get_meta( '_wpes_plan' );
-		$defaults = self::defaults()[ $key ] ?? array( 'features' => array() );
+		$defaults = self::OWNER === $key ? self::owner() : ( self::defaults()[ $key ] ?? array( 'features' => array() ) );
 		return array(
 			'key'         => $key,
 			'product_id'  => $product->get_id(),
@@ -210,7 +274,7 @@ class Plans {
 			array(
 				'id'      => '_wpes_plan',
 				'label'   => __( 'Plan', 'wpessential-server' ),
-				'options' => array( '' => __( 'Not a plan', 'wpessential-server' ) ) + wp_list_pluck( self::defaults(), 'name' ),
+				'options' => array( '' => __( 'Not a plan', 'wpessential-server' ) ) + wp_list_pluck( self::defaults(), 'name' ) + ( self::OWNER === get_post_meta( $post->ID, '_wpes_plan', true ) ? array( self::OWNER => self::owner()['name'] ) : array() ),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -260,7 +324,7 @@ class Plans {
 		// Nonce checked by WooCommerce before this action.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$plan = isset( $_POST['_wpes_plan'] ) ? sanitize_key( wp_unslash( $_POST['_wpes_plan'] ) ) : '';
-		update_post_meta( $post_id, '_wpes_plan', array_key_exists( $plan, self::defaults() ) ? $plan : '' );
+		update_post_meta( $post_id, '_wpes_plan', array_key_exists( $plan, self::defaults() ) || self::OWNER === $plan ? $plan : '' );
 		update_post_meta( $post_id, '_wpes_months', isset( $_POST['_wpes_months'] ) ? (int) $_POST['_wpes_months'] : 0 );
 		update_post_meta( $post_id, '_wpes_sites', isset( $_POST['_wpes_sites'] ) ? max( 0, (int) $_POST['_wpes_sites'] ) : 1 );
 		update_post_meta( $post_id, '_wpes_pro', empty( $_POST['_wpes_pro'] ) ? 0 : 1 );

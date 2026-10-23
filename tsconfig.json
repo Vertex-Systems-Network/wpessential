@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react"
   },
-  "include": ["admin-ui/src/**/*.ts"]
+  "include": ["admin-ui/src/**/*.ts", "admin-ui/src/**/*.tsx"]
 }

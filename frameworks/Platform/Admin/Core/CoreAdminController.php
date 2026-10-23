@@ -139,7 +139,9 @@ final class CoreAdminController {
 		// WPEssential top navigation only; the WordPress sidebar lists modules.
 		add_submenu_page( self::HIDDEN_PARENT, __( 'Modules', 'wpessential' ), __( 'Modules', 'wpessential' ), $cap, Shell::MODULES_SLUG, [ $this, 'renderModules' ] );
 		foreach ( $this->screens as $screen ) {
-			add_submenu_page( self::HIDDEN_PARENT, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
+			// AI Connect is a module: it sits in the sidebar while the module is on (Modules screen).
+			$inSidebar = $screen->slug() === Shell::AI_SLUG && $this->moduleActive( 'ai-connect' );
+			add_submenu_page( $inSidebar ? $parent : self::HIDDEN_PARENT, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
 		}
 
 		// Module overview pages stay out of the sidebar; they are reached from the Modules screen.
@@ -165,6 +167,16 @@ final class CoreAdminController {
 			wp_enqueue_style( 'wpessential-ui-' . $index, $style, [ 'dashicons' ], $version );
 		}
 		wp_enqueue_script( 'wpessential-ui', $entry['script'], $entry['dependencies'], $version, true );
+
+		// The React dashboard app (Dashboard, Modules, Demo Library, Elements). WordPress 6.9+
+		// provides React; without it the server-rendered screens keep working on their own.
+		$app = in_array( $page, Shell::APP_SLUGS, true ) ? $this->assets->entry( 'app' ) : null;
+		if ( $app !== null ) {
+			foreach ( $app['styles'] as $index => $style ) {
+				wp_enqueue_style( 'wpessential-app-' . $index, $style, [ 'wpessential-ui-0' ], $app['version'] ?? $version );
+			}
+			wp_enqueue_script( 'wpessential-app', $app['script'], array_merge( $app['dependencies'], [ 'wpessential-ui' ] ), $app['version'] ?? $version, true );
+		}
 	}
 
 	public function handleToggle(): void {
@@ -260,7 +272,7 @@ final class CoreAdminController {
 		}
 		$html .= '</ul></section></aside></div>';
 
-		$this->output( Shell::DASHBOARD_SLUG, $html );
+		$this->output( Shell::DASHBOARD_SLUG, $html, $this->dashboardData( $modules, $active, $free, $options ) );
 	}
 
 	public function renderModules(): void {
@@ -309,7 +321,7 @@ final class CoreAdminController {
 		}
 		$html .= '<div class="wpe-ui-empty" data-wpe-no-results hidden><h2>' . esc_html__( 'No modules match your filters', 'wpessential' ) . '</h2><p>' . esc_html__( 'Try another keyword or clear the filters.', 'wpessential' ) . '</p></div>';
 
-		$this->output( Shell::MODULES_SLUG, $html );
+		$this->output( Shell::MODULES_SLUG, $html, $this->modulesData( $modules, $counts ) );
 	}
 
 	public function renderModule(): void {
@@ -460,8 +472,129 @@ final class CoreAdminController {
 			. Button::link( __( 'Get Premium', 'wpessential' ), Shell::UPGRADE_URL, 'primary', false, true ) . '</section>';
 	}
 
-	private function output( string $current, string $content ): void {
-		Screen::render( $current, $content, $this->notice() );
+	/** @param array<string,mixed>|null $appData */
+	private function output( string $current, string $content, ?array $appData = null ): void {
+		Screen::render( $current, $content, $this->notice(), 'core', $appData );
+	}
+
+	/**
+	 * Dashboard view model for the React app. Icons, pills and badges are escaped toolkit HTML.
+	 *
+	 * @param array<string,array{id:string,name:string,edition:string,category:string,contract:string,icon:string,runtime:bool,builder:?string,description:string}> $modules
+	 * @param array<string,array{id:string,name:string,edition:string,category:string,contract:string,icon:string,runtime:bool,builder:?string,description:string}> $active
+	 * @return array<string,mixed>
+	 */
+	private function dashboardData( array $modules, array $active, int $free, int $options ): array {
+		$categories = [];
+		foreach ( ModuleCatalog::categories() as $key => $label ) {
+			$categories[] = [
+				'key'   => $key,
+				'label' => $label,
+				'count' => count( array_filter( $modules, static fn ( array $m ): bool => $m['category'] === $key ) ),
+				'url'   => AdminUrl::page( Shell::MODULES_SLUG, [ 'category' => $key ] ),
+			];
+		}
+		$activeList = [];
+		foreach ( $active as $module ) {
+			$activeList[] = [
+				'id'         => $module['id'],
+				'name'       => $module['name'],
+				'url'        => AdminUrl::page( self::MODULE_PREFIX . $module['id'] ),
+				'iconHtml'   => $this->icon( $module ),
+				'statusHtml' => $this->statusPill( $module ),
+			];
+		}
+
+		return [
+			'screen'     => 'dashboard',
+			'title'      => __( 'Dashboard', 'wpessential' ),
+			'text'       => [
+				'eyebrow'       => __( 'WPEssential Framework', 'wpessential' ),
+				'heading'       => __( 'Everything your WordPress site needs, in one place.', 'wpessential' ),
+				'lead'          => __( 'Switch modules on or off, configure every system and keep your site lean. Free modules are always included; Premium unlocks the full platform.', 'wpessential' ),
+				'manageModules' => __( 'Manage modules', 'wpessential' ),
+				'systemStatus'  => __( 'System status', 'wpessential' ),
+				'activeModules' => __( 'Active modules', 'wpessential' ),
+				'viewAll'       => __( 'View all', 'wpessential' ),
+				'noneActive'    => __( 'No modules are active yet. Turn one on from the Modules screen.', 'wpessential' ),
+				'categories'    => __( 'Categories', 'wpessential' ),
+			],
+			'stats'      => [
+				[ (string) count( $active ), __( 'Active modules', 'wpessential' ) ],
+				[ (string) count( $modules ), __( 'Total modules', 'wpessential' ) ],
+				[ (string) $free, __( 'Free modules', 'wpessential' ) ],
+				[ (string) ( count( $modules ) - $free ), __( 'Premium modules', 'wpessential' ) ],
+				[ number_format( $options ), __( 'Configurable options', 'wpessential' ) ],
+				[ (string) count( ModuleCatalog::categories() ), __( 'Categories', 'wpessential' ) ],
+			],
+			'active'     => $activeList,
+			'categories' => $categories,
+			'statusUrl'  => AdminUrl::page( Shell::STATUS_SLUG ),
+			'upsellHtml' => Shell::premiumAvailable() ? '' : $this->upsell(),
+		];
+	}
+
+	/**
+	 * Modules view model for the React app.
+	 *
+	 * @param array<string,array{id:string,name:string,edition:string,category:string,contract:string,icon:string,runtime:bool,builder:?string,description:string}> $modules
+	 * @return array<string,mixed>
+	 */
+	private function modulesData( array $modules, string $countsHtml ): array {
+		$cards = [];
+		foreach ( $modules as $module ) {
+			$options = (int) ( $this->contracts->read( $module['contract'] )['coverage']['atomic_options'] ?? 0 );
+			$cards[] = [
+				'id'          => $module['id'],
+				'name'        => $module['name'],
+				'description' => $module['description'],
+				'edition'     => $module['edition'],
+				'category'    => $module['category'],
+				'active'      => $this->isActive( $module ),
+				/* translators: %d: option count. */
+				'options'     => sprintf( _n( '%d option', '%d options', $options, 'wpessential' ), $options ),
+				'settingsUrl' => AdminUrl::page( self::MODULE_PREFIX . $module['id'] ),
+				'iconHtml'    => $this->icon( $module ),
+				'badgeHtml'   => Badge::edition( $module['edition'] ),
+				'toggleHtml'  => $this->toggle( $module, Shell::MODULES_SLUG ),
+			];
+		}
+		$categories = [];
+		foreach ( ModuleCatalog::categories() as $key => $label ) {
+			$categories[] = [
+				'key'   => $key,
+				'label' => $label,
+			];
+		}
+
+		return [
+			'screen'     => 'modules',
+			'title'      => __( 'Modules', 'wpessential' ),
+			'text'       => [
+				'eyebrow'       => __( 'Modules', 'wpessential' ),
+				'heading'       => __( 'Free + Premium modules', 'wpessential' ),
+				'lead'          => __( 'Turn modules on or off. Disabled modules load no code on your site.', 'wpessential' ),
+				'search'        => __( 'Search modules', 'wpessential' ),
+				'searchHint'    => __( 'Search modules…', 'wpessential' ),
+				'edition'       => __( 'Filter by edition', 'wpessential' ),
+				'category'      => __( 'Filter by category', 'wpessential' ),
+				'allCategories' => __( 'All categories', 'wpessential' ),
+				'settings'      => __( 'Settings', 'wpessential' ),
+				'noResults'     => __( 'No modules match your filters', 'wpessential' ),
+				'noResultsHint' => __( 'Try another keyword or clear the filters.', 'wpessential' ),
+			],
+			'editions'   => [
+				[ 'all', __( 'All', 'wpessential' ) ],
+				[ 'free', __( 'Free', 'wpessential' ) ],
+				[ 'pro', __( 'Premium', 'wpessential' ) ],
+				[ 'active', __( 'Active', 'wpessential' ) ],
+				[ 'inactive', __( 'Inactive', 'wpessential' ) ],
+			],
+			'countsHtml' => $countsHtml,
+			'upsellHtml' => Shell::premiumAvailable() ? '' : $this->upsell(),
+			'categories' => $categories,
+			'modules'    => $cards,
+		];
 	}
 
 	private function notice(): string {
@@ -487,6 +620,16 @@ final class CoreAdminController {
 	/** @param array{id:string,edition:string} $module */
 	private function isLocked( array $module ): bool {
 		return $module['edition'] === 'pro' && ! Shell::premiumAvailable();
+	}
+
+	private function moduleActive( string $id ): bool {
+		foreach ( ModuleCatalog::all() as $module ) {
+			if ( $module['id'] === $id ) {
+				return $this->isActive( $module );
+			}
+		}
+
+		return false;
 	}
 
 	/** @param array{id:string,edition:string} $module */

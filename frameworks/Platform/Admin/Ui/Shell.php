@@ -23,10 +23,13 @@ final class Shell {
 	public const LICENSE_SLUG   = 'wpessential-license';
 	public const DOCS_SLUG      = 'wpessential-docs';
 	public const STATUS_SLUG    = 'wpessential-status';
-	public const UPGRADE_URL    = 'https://wpessential.org/pricing/';
-	public const MODE_ACTION    = 'wpessential_ui_mode';
-	public const MODE_META      = 'wpessential_ui_mode';
-	public const MODES          = [ 'system', 'light', 'dark' ];
+
+	/** Screens the React dashboard app switches between with React Router. */
+	public const APP_SLUGS   = [ self::DASHBOARD_SLUG, self::MODULES_SLUG, self::DEMOS_SLUG, self::ELEMENTS_SLUG ];
+	public const UPGRADE_URL = 'https://wpessential.org/pricing/';
+	public const MODE_ACTION = 'wpessential_ui_mode';
+	public const MODE_META   = 'wpessential_ui_mode';
+	public const MODES       = [ 'system', 'light', 'dark' ];
 
 	private static bool $premiumAvailable = false;
 
@@ -64,9 +67,6 @@ final class Shell {
 			self::MODULES_SLUG   => [ __( 'Modules', 'wpessential' ), 'layers' ],
 			self::DEMOS_SLUG     => [ __( 'Demo Library', 'wpessential' ), 'grid' ],
 			self::ELEMENTS_SLUG  => [ __( 'Elements', 'wpessential' ), 'brush' ],
-			self::AI_SLUG        => [ __( 'AI Connect', 'wpessential' ), 'spark' ],
-			self::LICENSE_SLUG   => [ __( 'Account', 'wpessential' ), 'user' ],
-			self::STATUS_SLUG    => [ __( 'System Status', 'wpessential' ), 'pulse' ],
 		];
 	}
 
@@ -85,8 +85,9 @@ final class Shell {
 
 	/** $current is a page slug; module screens pass their own slug and highlight "Modules". */
 	public static function topbar( string $current ): string {
-		$tabs  = self::tabs();
-		$known = array_merge( array_keys( $tabs ), [ self::DOCS_SLUG ] );
+		$tabs = self::tabs();
+		// Pages reached from the account menu or the WordPress sidebar (AI Connect) highlight no tab.
+		$known = array_merge( array_keys( $tabs ), [ self::DOCS_SLUG, self::STATUS_SLUG, self::LICENSE_SLUG, self::AI_SLUG ] );
 
 		$html  = '<div class="wpe-ui-topbar">';
 		$html .= '<a class="wpe-ui-logo" href="' . esc_url( AdminUrl::page( self::DASHBOARD_SLUG ) ) . '">';
@@ -100,14 +101,37 @@ final class Shell {
 		}
 		$html .= '</nav><div class="wpe-ui-topbar__end">';
 
-		$docsCurrent = $current === self::DOCS_SLUG;
-		$html       .= '<a class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm' . ( $docsCurrent ? ' is-current' : '' ) . '" href="' . esc_url( AdminUrl::page( self::DOCS_SLUG ) ) . '"' . ( $docsCurrent ? ' aria-current="page"' : '' ) . '>' . Icon::render( 'book', 16 ) . esc_html__( 'Docs', 'wpessential' ) . '</a>';
-		$html       .= self::modeToggle( $current );
-		$html       .= self::$premiumAvailable
+		$html .= self::modeToggle( $current );
+		$html .= self::accountMenu( $current );
+		$html .= self::$premiumAvailable
 			? '<span class="wpe-ui-badge wpe-ui-badge--pro">' . esc_html__( 'Premium active', 'wpessential' ) . '</span>'
 			: Button::link( __( 'Go Premium', 'wpessential' ), self::UPGRADE_URL, 'primary', true, true );
 
 		return $html . '</div></div>' . self::ajaxBootstrap() . '<div class="wpe-ui-toast-region" role="status" aria-live="polite" data-wpe-toasts></div>';
+	}
+
+	/**
+	 * Account icon beside light/dark, with Log in / Register, Docs and System Status. Built on
+	 * <details>, so it opens without JavaScript; the toolkit script closes it on outside click and Esc.
+	 */
+	private static function accountMenu( string $current ): string {
+		$items = [
+			self::LICENSE_SLUG => [ __( 'Log in / Register', 'wpessential' ), 'user' ],
+			self::DOCS_SLUG    => [ __( 'Docs', 'wpessential' ), 'book' ],
+			self::STATUS_SLUG  => [ __( 'System Status', 'wpessential' ), 'pulse' ],
+		];
+		$open  = isset( $items[ $current ] );
+		$html  = '<details class="wpe-ui-account" data-wpe-account>';
+		$html .= '<summary class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm wpe-ui-account__button' . ( $open ? ' is-current' : '' ) . '" title="' . esc_attr__( 'Account', 'wpessential' ) . '">';
+		$html .= Icon::render( 'user', 16 ) . '<span class="screen-reader-text">' . esc_html__( 'Account', 'wpessential' ) . '</span>';
+		$html .= '<span class="wpe-ui-account__chevron" aria-hidden="true">' . Icon::render( 'chevron-down', 14 ) . '</span></summary>';
+		$html .= '<ul class="wpe-ui-account__menu">';
+		foreach ( $items as $slug => [ $label, $icon ] ) {
+			$isCurrent = $current === $slug;
+			$html     .= '<li><a class="wpe-ui-account__item' . ( $isCurrent ? ' is-current' : '' ) . '" href="' . esc_url( AdminUrl::page( $slug ) ) . '"' . ( $isCurrent ? ' aria-current="page"' : '' ) . '>' . Icon::render( $icon, 16 ) . '<span>' . esc_html( $label ) . '</span></a></li>';
+		}
+
+		return $html . '</ul></details>';
 	}
 
 	/**

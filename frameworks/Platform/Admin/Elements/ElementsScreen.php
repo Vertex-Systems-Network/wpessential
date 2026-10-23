@@ -125,6 +125,63 @@ final class ElementsScreen implements AdminScreen {
 			'element-invalid' => [ 'error', __( 'That element is not available.', 'wpessential' ) ],
 		];
 
-		Screen::render( Shell::ELEMENTS_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '' );
+		Screen::render( Shell::ELEMENTS_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '', 'core', $this->appData( $labels ) );
+	}
+
+	/**
+	 * Elements view model for the React app: both builders, so the tabs switch in the browser.
+	 *
+	 * @param array<string,string> $labels
+	 * @return array<string,mixed>
+	 */
+	private function appData( array $labels ): array {
+		$types = [];
+		foreach ( $labels as $key => $label ) {
+			$items = [];
+			foreach ( $this->elements->all( $key ) as $element ) {
+				$items[] = [
+					'id'          => $element['id'],
+					'name'        => $element['name'],
+					'description' => $element['description'],
+					'iconHtml'    => Icon::render( $element['icon'], 20 ),
+					'badgeHtml'   => Badge::edition( $element['edition'] ),
+					'toggleHtml'  => Toggle::form(
+						self::TOGGLE_ACTION,
+						self::TOGGLE_ACTION,
+						$this->elements->isEnabled( $key, $element['id'] ),
+						/* translators: %s: element name. */
+						sprintf( __( 'Turn %s on or off', 'wpessential' ), $element['name'] ),
+						[
+							'type'    => $key,
+							'element' => $element['id'],
+						]
+					),
+				];
+			}
+			$types[] = [
+				'key'        => $key,
+				'label'      => $label,
+				'iconHtml'   => Icon::render( $key, 16 ),
+				'emptyIcon'  => Icon::render( $key, 26 ),
+				'emptyTitle' => $key === 'gutenberg' ? __( 'No Gutenberg blocks yet', 'wpessential' ) : __( 'No Elementor widgets yet', 'wpessential' ),
+				'noticeHtml' => $key === 'elementor' && ! did_action( 'elementor/loaded' ) ? Notice::render( 'warning', __( 'Elementor is not active. Install and activate Elementor to use WPEssential Elementor widgets.', 'wpessential' ), true ) : '',
+				'elements'   => $items,
+			];
+		}
+
+		return [
+			'screen'  => 'elements',
+			'title'   => __( 'Elements', 'wpessential' ),
+			'text'    => [
+				'eyebrow'   => __( 'Elements', 'wpessential' ),
+				'heading'   => __( 'Blocks & widgets', 'wpessential' ),
+				'lead'      => __( 'Turn WPEssential elements on or off for each page builder. Disabled elements load no code.', 'wpessential' ),
+				'builder'   => __( 'Page builder', 'wpessential' ),
+				'emptyText' => __( 'Elements will appear here as WPEssential modules add them. Each one can be switched on or off for the whole site.', 'wpessential' ),
+				'guide'     => __( 'Read the Elements guide', 'wpessential' ),
+			],
+			'docsUrl' => AdminUrl::page( Shell::DOCS_SLUG ),
+			'types'   => $types,
+		];
 	}
 }
