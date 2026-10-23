@@ -171,3 +171,40 @@ test('top navigation opens screens in place without a page reload', async ({ pag
   await expect(page).toHaveURL(/page=wpessential$/);
   expect(await page.evaluate(() => window.__wpeSamePage === true)).toBe(true);
 });
+
+test('Dashboard, Modules, Demo Library and Elements switch with React Router, without a reload', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await visitCore(page, 'wpessential');
+  await expect(page.locator('[data-wpe-app-root]')).toHaveCount(1);
+  // A full page load would drop this marker.
+  await page.evaluate(() => {
+    window.wpeSameDocument = true;
+  });
+
+  const nav = page.getByRole('navigation', { name: 'WPEssential', exact: true });
+  await nav.getByRole('link', { name: 'Modules' }).click();
+  await expect(page).toHaveURL(/page=wpessential-modules/);
+  await expect(page.getByRole('heading', { name: 'Free + Premium modules', level: 1 })).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Modules' })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('[data-wpe-module]').first()).toBeVisible();
+
+  await nav.getByRole('link', { name: 'Elements' }).click();
+  await expect(page.getByRole('heading', { name: 'Blocks & widgets', level: 1 })).toBeVisible();
+  await page.getByRole('link', { name: /Elementor/ }).first().click();
+  await expect(page).toHaveURL(/type=elementor/);
+  await expect(page.getByRole('heading', { name: 'No Elementor widgets yet' })).toBeVisible();
+
+  await nav.getByRole('link', { name: 'Demo Library' }).click();
+  await expect(page.getByRole('heading', { name: 'Start from a ready-made site', level: 1 })).toBeVisible();
+
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'No Elementor widgets yet' })).toBeVisible();
+  await nav.getByRole('link', { name: 'Dashboard' }).click();
+  await expect(page.getByRole('heading', { name: 'Everything your WordPress site needs, in one place.' })).toBeVisible();
+
+  expect(await page.evaluate(() => window.wpeSameDocument)).toBe(true);
+  expect(errors).toEqual([]);
+  const results = await new AxeBuilder({ page }).include('[data-wpessential-surface="core"]').analyze();
+  expect(results.violations.map((violation) => violation.id)).toEqual([]);
+});

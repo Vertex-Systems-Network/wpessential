@@ -27,6 +27,13 @@ const entries = {
   query: path.join(sourceRoot, 'query.ts'),
   'columns-runtime': path.join(sourceRoot, 'columns-runtime.ts'),
   'custom-tables': path.join(sourceRoot, 'custom-tables.ts'),
+  // Dashboard app: Dashboard, Modules, Demo Library and Elements as React Router routes.
+  app: path.join(sourceRoot, 'app/index.tsx'),
+};
+
+/** WordPress script handles each entry needs; the app uses WordPress's own React. */
+const entryDependencies = {
+  app: ['react', 'react-dom'],
 };
 
 const styles = {
@@ -37,11 +44,16 @@ const styles = {
   query: path.join(sourceRoot, 'query.scss'),
   'columns-runtime': path.join(sourceRoot, 'columns.scss'),
   'custom-tables': path.join(sourceRoot, 'custom-tables.scss'),
+  app: path.join(sourceRoot, 'app/app.scss'),
 };
 
 const approvedDevDependencies = {
   '@biomejs/biome': '2.5.15',
+  '@types/react': '18.3.12',
+  '@types/react-dom': '18.3.1',
   esbuild: '0.28.2',
+  // Bundled into the dashboard app; React itself is WordPress's own (wp-element), not bundled.
+  'react-router': '7.9.4',
   sass: '1.105.1',
   typescript: 'npm:@typescript/typescript6@6.0.2',
 };
@@ -182,6 +194,21 @@ function lintCss() {
   }
 }
 
+// "react" and "react-dom" resolve to WordPress's globals (wp_enqueue_script deps react, react-dom).
+const wordpressReactPlugin = {
+  name: 'wpessential-wordpress-react',
+  setup(build) {
+    build.onResolve({ filter: /^react(-dom)?(\/client)?$/ }, (args) => ({
+      path: args.path,
+      namespace: 'wpessential-wp-react',
+    }));
+    build.onLoad({ filter: /.*/, namespace: 'wpessential-wp-react' }, (args) => ({
+      contents: `module.exports = window.${args.path.startsWith('react-dom') ? 'ReactDOM' : 'React'};`,
+      loader: 'js',
+    }));
+  },
+};
+
 const ignoreScssPlugin = {
   name: 'wpessential-ignore-scss-side-effects',
   setup(build) {
@@ -258,7 +285,8 @@ function writeOptionContracts() {
 function writeAssetMetadata() {
   for (const entry of Object.keys(entries)) {
     const version = assetVersion(entry);
-    const php = `<?php return ['dependencies' => [], 'version' => '${version}'];\n`;
+    const deps = (entryDependencies[entry] ?? []).map((handle) => `'${handle}'`).join(', ');
+    const php = `<?php return ['dependencies' => [${deps}], 'version' => '${version}'];\n`;
     writeFileSync(path.join(assetRoot, `${entry}.asset.php`), php, 'utf8');
   }
 }
@@ -277,7 +305,7 @@ function verifyAssets() {
       'utf8',
     );
     if (
-      !/^<\?php return \['dependencies' => \[\], 'version' => '[0-9a-f]{20}'\];\n$/.test(
+      !/^<\?php return \['dependencies' => \[('[a-z-]+'(, '[a-z-]+')*)?\], 'version' => '[0-9a-f]{20}'\];\n$/.test(
         metadata,
       )
     ) {
@@ -304,7 +332,10 @@ async function buildAdmin() {
     sourcemap: false,
     legalComments: 'none',
     charset: 'utf8',
-    plugins: [ignoreScssPlugin],
+    plugins: [wordpressReactPlugin, ignoreScssPlugin],
+    jsx: 'transform',
+    jsxFactory: 'React.createElement',
+    jsxFragment: 'React.Fragment',
     logLevel: 'info',
   });
 

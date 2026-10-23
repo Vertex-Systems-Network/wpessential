@@ -92,7 +92,55 @@ final class DemosScreen implements AdminScreen {
 		}
 
 		$notice = Notice::render( 'info', __( 'One-click demo import is coming in the next update. For now you can preview each demo.', 'wpessential' ) );
-		Screen::render( Shell::DEMOS_SLUG, $html, $notice );
+		Screen::render( Shell::DEMOS_SLUG, $html, $notice, 'core', $this->appData( $data, $refresh ) );
+	}
+
+	/**
+	 * Demo Library view model for the React app (all demos; the niche tabs filter in the browser).
+	 *
+	 * @param array{demos:list<array<string,mixed>>,offline:bool} $data
+	 * @return array<string,mixed>
+	 */
+	private function appData( array $data, string $refreshHtml ): array {
+		$demos = [];
+		foreach ( $data['demos'] as $demo ) {
+			$demos[] = [
+				'id'        => $demo['id'],
+				'title'     => $demo['title'],
+				'tagline'   => $demo['tagline'],
+				'niche'     => $demo['niche'],
+				'badgeHtml' => Badge::edition( $demo['type'] === 'pro' ? 'pro' : 'free' ),
+				'thumbnail' => $demo['thumbnail'],
+				'preview'   => $demo['preview'],
+				'builders'  => array_map(
+					static fn ( string $builder ): array => [
+						'label'    => ucfirst( $builder ),
+						'iconHtml' => Icon::render( $builder, 16 ),
+					],
+					$demo['builders']
+				),
+			];
+		}
+
+		return [
+			'screen'      => 'demos',
+			'title'       => __( 'Demo Library', 'wpessential' ),
+			'text'        => [
+				'eyebrow'    => __( 'Demo Library', 'wpessential' ),
+				'heading'    => __( 'Start from a ready-made site', 'wpessential' ),
+				'lead'       => __( 'Browse complete websites built with WPEssential for Gutenberg and Elementor.', 'wpessential' ),
+				'all'        => __( 'All', 'wpessential' ),
+				'categories' => __( 'Demo categories', 'wpessential' ),
+				'preview'    => __( 'Preview', 'wpessential' ),
+				'emptyTitle' => $data['offline'] ? __( 'The demo library is unreachable', 'wpessential' ) : __( 'No demos yet', 'wpessential' ),
+				'emptyText'  => $data['offline'] ? __( 'WPEssential could not reach wpessential.org. Check the connection and refresh the library.', 'wpessential' ) : __( 'New demos appear here as they are published on wpessential.org.', 'wpessential' ),
+				'newTab'     => __( '(opens in a new tab)', 'wpessential' ),
+			],
+			'refreshHtml' => $refreshHtml,
+			'gridIcon'    => Icon::render( 'grid', 26 ),
+			'imageIcon'   => Icon::render( 'image', 32 ),
+			'demos'       => $demos,
+		];
 	}
 
 	private static function tab( string $key, string $label, int $count, string $current ): string {

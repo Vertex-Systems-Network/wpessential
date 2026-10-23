@@ -23,10 +23,13 @@ final class Shell {
 	public const LICENSE_SLUG   = 'wpessential-license';
 	public const DOCS_SLUG      = 'wpessential-docs';
 	public const STATUS_SLUG    = 'wpessential-status';
-	public const UPGRADE_URL    = 'https://wpessential.org/pricing/';
-	public const MODE_ACTION    = 'wpessential_ui_mode';
-	public const MODE_META      = 'wpessential_ui_mode';
-	public const MODES          = [ 'system', 'light', 'dark' ];
+
+	/** Screens the React dashboard app switches between with React Router. */
+	public const APP_SLUGS   = [ self::DASHBOARD_SLUG, self::MODULES_SLUG, self::DEMOS_SLUG, self::ELEMENTS_SLUG ];
+	public const UPGRADE_URL = 'https://wpessential.org/pricing/';
+	public const MODE_ACTION = 'wpessential_ui_mode';
+	public const MODE_META   = 'wpessential_ui_mode';
+	public const MODES       = [ 'system', 'light', 'dark' ];
 
 	private static bool $premiumAvailable = false;
 

@@ -1,0 +1,8 @@
+// Dashboard app (React). Screens reuse the toolkit classes; only the loading state is new.
+.wpe-ui-app-loading {
+	min-height: 60vh;
+}
+
+.wpe-ui-app-view h1:focus {
+	outline: none;
+}
