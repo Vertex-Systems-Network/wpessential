@@ -1,3 +1,5 @@
+import { TAXONOMY_LABEL_TEMPLATES, bindAutofill } from './core/autofill';
+import { bindCounters } from './core/counter';
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName } from './core/levels';
 import { TAXONOMY_DEPENDENCIES } from './taxonomy-dependencies';
@@ -1033,6 +1035,7 @@ function resetForm(): void {
 		cancel.hidden = true;
 	}
 	clearValidation();
+	document.getElementById( 'wpessential-taxonomy-form' )?.dispatchEvent( new Event( 'change' ) );
 }
 
 function editDefinition( definition: TaxonomyDefinition ): void {
@@ -1090,6 +1093,8 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 	}
 	clearValidation();
 	textInput( 'wpessential-taxonomy-name' )?.focus();
+	// Values filled in by script: re-sync generated labels and counters.
+	document.getElementById( 'wpessential-taxonomy-form' )?.dispatchEvent( new Event( 'change' ) );
 }
 
 function collectEditor( definitions: TaxonomyDefinition[] ): EditorRequest {
@@ -1381,8 +1386,23 @@ function boot(): void {
 		bindKeyFromName( keyField, singularField, 32 );
 	}
 	const taxonomyForm = document.getElementById( 'wpessential-taxonomy-form' );
+	const pluralField = document.getElementById( 'wpessential-taxonomy-name' );
+	if ( taxonomyForm instanceof HTMLFormElement && pluralField instanceof HTMLInputElement && singularField instanceof HTMLInputElement ) {
+		bindAutofill( {
+			form: taxonomyForm,
+			plural: pluralField,
+			singular: singularField,
+			templates: TAXONOMY_LABEL_TEMPLATES,
+			labels: () =>
+				Array.from( taxonomyForm.querySelectorAll< HTMLInputElement >( '[data-wpessential-taxonomy-label-field]' ) ).map( ( input ) => ( {
+					input,
+					key: input.dataset.wpessentialTaxonomyLabelField ?? '',
+				} ) ),
+		} );
+	}
 	if ( taxonomyForm instanceof HTMLFormElement ) {
 		bindDependencies( taxonomyForm, TAXONOMY_DEPENDENCIES, 'taxonomy' );
+		bindCounters( taxonomyForm );
 	}
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );

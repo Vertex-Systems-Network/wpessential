@@ -97,7 +97,7 @@
         "failed unintended rerun 35579621550 exposed historical immutable identity drift",
         "security PR #1107 merged as be640fbf580e2baa8a6736a89f967b3478907b8c"
       ],
-      "note": "Do not rerun automatically. Workflow is archived to manual dispatch by merged security PR #1107; any new formal run needs fresh explicit authorization."
+      "note": "Do not rerun automatically. Workflow archived by security PR #1107 and removed from the repository (unused; see git history)."
     },
     {
       "id": "RB-0002",
@@ -120,7 +120,7 @@
         "failed unintended rerun 35579621670 exposed historical immutable identity drift",
         "security PR #1107 merged as be640fbf580e2baa8a6736a89f967b3478907b8c"
       ],
-      "note": "Do not rerun automatically. Workflow is archived to manual dispatch by merged security PR #1107; any new formal run needs fresh explicit authorization."
+      "note": "Do not rerun automatically. Workflow archived by security PR #1107 and removed from the repository (unused; see git history)."
     },
     {
       "id": "RB-0003",

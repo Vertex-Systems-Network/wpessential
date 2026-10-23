@@ -21,7 +21,10 @@ final class PostTypeRuntimeRegistrar {
 	/** @var array<string, string> */
 	private array $errors = [];
 
-	public function __construct( private readonly RegistrationRuntimeLoader $runtime ) {}
+	public function __construct(
+		private readonly RegistrationRuntimeLoader $runtime,
+		private readonly ?PermalinkRuntime $permalinks = null,
+	) {}
 
 	public function register(): void {
 		if ( function_exists( 'add_action' ) ) {
@@ -51,11 +54,13 @@ final class PostTypeRuntimeRegistrar {
 				continue;
 			}
 
-			$result = register_post_type( $key, $payload );
+			$permalink = PermalinkRuntime::extract( $payload );
+			$result    = register_post_type( $key, $payload );
 			if ( function_exists( 'is_wp_error' ) && is_wp_error( $result ) ) {
 				$this->errors[ $key ] = $result->get_error_message();
 				continue;
 			}
+			$this->permalinks?->addPostType( $key, $permalink, $payload );
 			$this->registered[] = $key;
 		}
 	}

@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use InvalidArgumentException;
+use WPEssential\Platform\WordPress\Registrations\PermalinkRuntime;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinition;
@@ -47,6 +48,8 @@ final class TaxonomyDefinitionProjector {
 		'rest_namespace',
 		'query_var',
 		'rewrite',
+		// URL format: default, or hide the base (/fiction/ instead of /genre/fiction/).
+		'permalink',
 		'sort',
 		'capabilities',
 		'default_term',
@@ -167,6 +170,20 @@ final class TaxonomyDefinitionProjector {
 		}
 		if ( array_key_exists( 'args', $payload ) && $payload['args'] !== null ) {
 			$args['args'] = $this->objectTermArgs( $payload['args'] );
+		}
+
+		if ( array_key_exists( 'permalink', $payload ) && $payload['permalink'] !== null ) {
+			$mode = is_array( $payload['permalink'] ) ? ( $payload['permalink']['mode'] ?? null ) : null;
+			if ( ! in_array( $mode, [ 'default', 'hide_base' ], true ) || array_diff( array_keys( (array) $payload['permalink'] ), [ 'mode' ] ) !== [] ) {
+				throw new InvalidArgumentException( 'permalink must be { "mode": "default" | "hide_base" }.' );
+			}
+			if ( $mode === 'hide_base' && $args['rewrite'] === false ) {
+				throw new InvalidArgumentException( 'Hiding the base needs pretty permalinks (rewrite) turned on.' );
+			}
+			$args[ PermalinkRuntime::ARG ] = [
+				'mode'   => $mode,
+				'tokens' => [],
+			];
 		}
 
 		$registrationPayload = [

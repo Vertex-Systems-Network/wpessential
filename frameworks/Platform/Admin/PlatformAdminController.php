@@ -108,9 +108,9 @@ final class PlatformAdminController {
 		echo '<h2>' . esc_html__( 'Runtime Observatory', 'wpessential' ) . '</h2>';
 		echo '<p>' . esc_html__( 'Read-only bounded diagnostics for the shared WPEssential Platform runtime. No mutation controls are exposed on this surface.', 'wpessential' ) . '</p>';
 		echo '<table class="widefat striped" aria-label="' . esc_html__( 'WPEssential runtime diagnostics', 'wpessential' ) . '"><tbody>';
-		$this->renderDiagnosticRow( 'Platform version', (string) ( $app['version'] ?? 'unknown' ) );
-		$this->renderDiagnosticRow( 'Platform API', (string) ( $app['platform_api'] ?? 'unknown' ) );
-		$this->renderDiagnosticRow( 'Platform schema', (string) ( $app['platform_schema'] ?? 'unknown' ) );
+		$this->renderDiagnosticRow( 'Framework version', (string) ( $app['version'] ?? 'unknown' ) );
+		$this->renderDiagnosticRow( 'Framework API', (string) ( $app['platform_api'] ?? 'unknown' ) );
+		$this->renderDiagnosticRow( 'Framework schema', (string) ( $app['platform_schema'] ?? 'unknown' ) );
 		$this->renderDiagnosticRow( 'WordPress', (string) ( $runtime['wordpress'] ?? 'unknown' ) );
 		$this->renderDiagnosticRow( 'PHP', (string) ( $runtime['php'] ?? PHP_VERSION ) );
 		$this->renderDiagnosticRow( 'Kernel booted', ! empty( $runtime['kernel_booted'] ) ? 'yes' : 'no' );

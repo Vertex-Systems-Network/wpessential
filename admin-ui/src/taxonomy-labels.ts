@@ -99,7 +99,7 @@ export function updateTaxonomyLabelStates(): void {
 			continue;
 		}
 		let state = 'WordPress default';
-		if ( input.value.trim() !== '' ) {
+		if ( input.value.trim() !== '' && input.dataset.wpeAuto !== '1' ) {
 			state = 'Explicit override';
 		} else if ( isGeneratedLabel( input, automatic, hierarchical ) ) {
 			state = 'Generated';
@@ -113,7 +113,8 @@ export function collectTaxonomyLabels(): LabelEditorPayload {
 	for ( const input of labelInputs() ) {
 		const key = labelKey( input );
 		const value = input.value.trim();
-		if ( key !== '' && value !== '' ) {
+		// Text generated from the names is left out: WordPress writes it itself.
+		if ( key !== '' && value !== '' && input.dataset.wpeAuto !== '1' ) {
 			labels[ key ] = value;
 		}
 	}

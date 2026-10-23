@@ -526,3 +526,51 @@ th[aria-sort="descending"] .wpe-ui-sort::after {
 	color: var(--wpe-text-2);
 	font-weight: 600;
 }
+
+// Character counter beside a field's label ("12 / 20" where WordPress sets a limit).
+.wpe-ui-field--counted {
+	position: relative;
+}
+
+.wpe-ui-counter {
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: var(--wpe-text-2);
+	font-size: 11px;
+	font-variant-numeric: tabular-nums;
+
+	&.is-limit {
+		color: var(--wpe-danger);
+		font-weight: 600;
+	}
+}
+
+// "Reset" next to a label the user changed: brings back the text generated from the names.
+.wpe-ui-autofill-reset {
+	margin-top: 4px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--wpe-blue);
+	font: inherit;
+	font-size: 12px;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: underline;
+	}
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+// Selects stay inside their grid cell, however long the option text.
+.wpe-ui-field-grid .wpe-ui-field select {
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	text-overflow: ellipsis;
+}

@@ -206,6 +206,14 @@ AI-generated changes obey the same module editor semantics as human changes:
 
 No private AI-only definition format is allowed.
 
+## 9A. One owner per option (no duplicates across modules)
+
+Every option has exactly one owner surface in `docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md`.
+- **Prompts:** a prompt that touches an option owned by another surface calls that owner's ability, for example a CPT URL change → Surface 1, a redirect → Surface 44, an alert → Surface 19. It never writes a copy into the current module.
+- **Other modules:** they store a **reference** to the owner's definition, and the owner's Policy and ability gates still apply.
+- **New options and modules:** before an option or module is planned, it must pass the Option duplication test (§4 of the index) and get a row in the generated option manifest (§5). A missing owner is a Capability Gap Request (`CAPABILITY-GAP-REQUEST-SYSTEM.md`), not a new local engine.
+- **Market features:** a feature asked for from competitor research is mapped to the existing owner first, and becomes a new surface only when no owner fits. ADR-0234 is the worked example: redirects, 404s and error monitoring mapped to Surfaces 44 and 31 instead of a new module.
+
 ## 10. Development gate
 
 No module AI UI, Prompt Session storage, AI call, MCP exposure or Ability execution is authorized by this planning document.

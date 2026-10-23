@@ -16,6 +16,7 @@ export const ADVANCED_KEYS = [
 	'exclude_from_search',
 	'publicly_queryable',
 	'rewrite',
+	'permalink',
 	'query_var',
 	'can_export',
 	'rest_base',
@@ -119,6 +120,18 @@ export function collectAdvanced(): Payload {
 			case 'rewrite':
 				result = rewriteValue();
 				break;
+			case 'permalink':
+				// URL format: default is left out; a custom pattern travels with its mode.
+				result =
+					value === 'hide_base'
+						? { mode: 'hide_base' }
+						: value === 'custom'
+						? {
+								mode: 'custom',
+								pattern: field< HTMLInputElement >( '#wpessential-cpt-permalink-pattern' )?.value.trim() ?? '',
+						  }
+						: undefined;
+				break;
 		}
 		if ( key !== '' && result !== undefined ) {
 			out[ key ] = result;
@@ -139,7 +152,8 @@ export function collectAdvanced(): Payload {
 	for ( const el of all< HTMLInputElement >(
 		'[data-wpessential-cpt-label]'
 	) ) {
-		if ( el.value.trim() !== '' ) {
+		// Generated labels are left out: WordPress writes the same text itself.
+		if ( el.value.trim() !== '' && el.dataset.wpeAuto !== '1' ) {
 			labels[ el.dataset.wpessentialCptLabel ?? '' ] = el.value.trim();
 		}
 	}
@@ -227,6 +241,15 @@ export function fillAdvanced( payload: Payload ): void {
 				}
 				break;
 			}
+			case 'permalink': {
+				const map = value && typeof value === 'object' ? ( value as Payload ) : {};
+				setValue( el, typeof map.mode === 'string' && map.mode !== 'default' ? map.mode : '' );
+				const pattern = field< HTMLInputElement >( '#wpessential-cpt-permalink-pattern' );
+				if ( pattern ) {
+					pattern.value = typeof map.pattern === 'string' ? map.pattern : '';
+				}
+				break;
+			}
 			case 'rewrite': {
 				const map =
 					value && typeof value === 'object' ? ( value as Payload ) : {};
@@ -305,6 +328,8 @@ export const CPT_DEPENDENCIES: Dependency[] = [
 	{ field: 'wpessential-cpt-rewrite-with_front', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
 	{ field: 'wpessential-cpt-rewrite-feeds', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
 	{ field: 'wpessential-cpt-rewrite-pages', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
+	{ field: 'wpessential-cpt-permalink-pattern', on: 'wpessential-cpt-opt-permalink', when: is( 'custom' ), need: 'is set to “Custom pattern”' },
+	{ field: 'wpessential-cpt-opt-permalink', on: 'wpessential-cpt-opt-rewrite', when: isNot( 'false' ), need: 'is not Off' },
 	{ field: 'wpessential-cpt-opt-show_in_menu-custom', on: 'wpessential-cpt-opt-show_in_menu', when: is( 'custom' ), need: 'is set to “Under another menu”' },
 	{ field: 'wpessential-cpt-opt-query_var-custom', on: 'wpessential-cpt-opt-query_var', when: is( 'custom' ), need: 'is set to “Custom query variable”' },
 	{ field: 'wpessential-cpt-opt-menu_position', on: 'wpessential-cpt-opt-show_in_menu', when: isNot( 'false' ), need: 'is not No' },

@@ -364,3 +364,14 @@ test('CPT list trashes, restores, locks and deletes like WordPress, with our con
   expect(calls[1][1]).toEqual({ id: make(2).id, expected_revision: 1, locked: false });
   await expect(page.locator('tfoot')).toContainText('Revision');
 });
+
+test('CPT editor fills the singular name, key and labels from the plural name, with counters', async ({ page }) => {
+  await visitCpts(page);
+  await page.getByLabel('Plural name').fill('Movies');
+  await expect(page.getByLabel('Singular name')).toHaveValue('Movie');
+  await expect(page.getByLabel('Post type key')).toHaveValue('movie');
+  await expect(page.locator('#wpessential-cpt-key-count')).toHaveText('5 / 20');
+  await expect(page.locator('#wpessential-cpt-label-add_new_item')).toHaveValue('Add New Movie');
+  await expect(page.locator('#wpessential-cpt-label-not_found')).toHaveValue('No movies found.');
+  await expect(page.locator('[data-wpessential-cpt-opt="show_ui"] option[value=""]')).toHaveText('Default: Yes (as Public)');
+});

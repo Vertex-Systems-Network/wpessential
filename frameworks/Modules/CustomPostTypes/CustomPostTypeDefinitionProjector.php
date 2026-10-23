@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use InvalidArgumentException;
+use WPEssential\Platform\WordPress\Registrations\PermalinkRuntime;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinition;
@@ -47,6 +48,8 @@ final class CustomPostTypeDefinitionProjector {
 		'taxonomies',
 		'has_archive',
 		'rewrite',
+		// URL format: default, hide the base (/my-book/) or a custom pattern (books/%genre%/%postname%).
+		'permalink',
 		'query_var',
 		'can_export',
 		'delete_with_user',
@@ -196,6 +199,17 @@ final class CustomPostTypeDefinitionProjector {
 		if ( array_key_exists( 'query_var', $payload ) ) {
 			$args['query_var'] = $this->queryVar( $payload['query_var'] );
 		}
+		if ( array_key_exists( 'permalink', $payload ) && $payload['permalink'] !== null ) {
+			[ $config, $slug ] = $this->permalink( $payload['permalink'] );
+			if ( $config['mode'] !== 'default' && $args['rewrite'] === false ) {
+				throw new InvalidArgumentException( 'A custom URL format needs pretty permalinks (rewrite) turned on.' );
+			}
+			$args[ PermalinkRuntime::ARG ] = $config;
+			if ( $slug !== null ) {
+				$args['rewrite']         = is_array( $args['rewrite'] ) ? $args['rewrite'] : [];
+				$args['rewrite']['slug'] = $slug;
+			}
+		}
 
 		return new RegistrationDefinition(
 			id: $definition->id,
@@ -318,6 +332,59 @@ final class CustomPostTypeDefinitionProjector {
 			return $value;
 		}
 		return $this->routeSegment( $value, 'has_archive' );
+	}
+
+	/**
+	 * @return array{0: array{mode:string, tokens:list<string>}, 1: ?string} The runtime config and,
+	 *         for a custom pattern, the rewrite slug (the pattern before %postname%).
+	 */
+	private function permalink( mixed $value ): array {
+		if ( ! is_array( $value ) || ! is_string( $value['mode'] ?? null ) ) {
+			throw new InvalidArgumentException( 'permalink must be a map with a mode.' );
+		}
+		$unknown = array_diff( array_keys( $value ), [ 'mode', 'pattern' ] );
+		if ( $unknown !== [] ) {
+			throw new InvalidArgumentException( sprintf( 'Unsupported permalink option "%s".', (string) reset( $unknown ) ) );
+		}
+		$mode = $value['mode'];
+		if ( $mode === 'default' || $mode === 'hide_base' ) {
+			return [
+				[
+					'mode'   => $mode,
+					'tokens' => [],
+				],
+				null,
+			];
+		}
+		if ( $mode !== 'custom' ) {
+			throw new InvalidArgumentException( 'permalink.mode must be default, hide_base or custom.' );
+		}
+		$pattern  = is_string( $value['pattern'] ?? null ) ? trim( strtolower( $value['pattern'] ), '/ ' ) : '';
+		$segments = $pattern === '' ? [] : explode( '/', $pattern );
+		if ( count( $segments ) < 2 || count( $segments ) > 8 || array_pop( $segments ) !== '%postname%' ) {
+			throw new InvalidArgumentException( 'The custom URL pattern must end with %postname% and have one to seven parts before it, for example books/%book_genre%/%postname%.' );
+		}
+		$tokens = [];
+		foreach ( $segments as $segment ) {
+			if ( preg_match( '/^%([a-z0-9_]{1,32})%$/', $segment, $match ) === 1 ) {
+				if ( in_array( $match[1], [ 'postname', 'post_id' ], true ) ) {
+					throw new InvalidArgumentException( sprintf( '%%%s%% can only be the last part of the URL pattern.', $match[1] ) );
+				}
+				$tokens[] = $match[1];
+				continue;
+			}
+			if ( preg_match( '/^[a-z0-9_-]+$/', $segment ) !== 1 ) {
+				throw new InvalidArgumentException( sprintf( 'URL pattern part "%s" may only use a-z, 0-9, - and _, or a %%tag%%.', $segment ) );
+			}
+		}
+
+		return [
+			[
+				'mode'   => 'custom',
+				'tokens' => array_values( array_unique( $tokens ) ),
+			],
+			implode( '/', $segments ),
+		];
 	}
 
 	/** @return bool|array<string,bool|int|string> */
