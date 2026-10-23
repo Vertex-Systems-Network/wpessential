@@ -160,6 +160,7 @@ final class AiConnectScreen implements AdminScreen {
 				[
 					'module' => 'ai-connect',
 					'return' => Shell::AI_SLUG,
+					'reload' => '1',
 				]
 			);
 
