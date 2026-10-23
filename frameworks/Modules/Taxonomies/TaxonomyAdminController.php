@@ -147,6 +147,10 @@ final class TaxonomyAdminController {
 					'type'  => 'taxonomy.status',
 					'nonce' => $this->ajax->createNonce( 'taxonomy.status' ),
 				],
+				'delete'   => [
+					'type'  => 'taxonomy.delete',
+					'nonce' => $this->ajax->createNonce( 'taxonomy.delete' ),
+				],
 			],
 			'definitions' => $definitions,
 			'view'        => $view,
@@ -217,6 +221,11 @@ final class TaxonomyAdminController {
 			'show_ui',
 			__( 'Default inherits from the Public setting in WordPress.', 'wpessential' ),
 		);
+		echo '</fieldset>';
+
+		echo '<fieldset class="wpessential-cpt-options wpe-ui-checks"><legend class="wpe-ui-builder__section">' . esc_html__( 'Protection', 'wpessential' ) . '</legend>';
+		echo '<p class="wpe-ui-muted wpe-ui-checks__hint">' . esc_html__( 'A locked entry cannot be deleted until the lock is turned off.', 'wpessential' ) . '</p>';
+		echo Check::render( __( 'Lock this entry', 'wpessential' ), [ 'id' => 'wpessential-taxonomy-locked' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo '</fieldset>';
 
 		$this->renderLabelEditor();

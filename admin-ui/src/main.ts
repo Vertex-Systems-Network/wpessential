@@ -50,6 +50,7 @@ type CptBootstrap = {
 		validate: CptRoute;
 		save: CptRoute;
 		status: CptRoute;
+		delete?: CptRoute;
 	};
 	definitions: CptDefinition[];
 	/** Which page this is: the list or the Add/Edit editor. */
@@ -171,6 +172,9 @@ function parseCptBootstrap( value: unknown ): CptBootstrap | null {
 			validate: value.routes.validate,
 			save: value.routes.save,
 			status: value.routes.status,
+			...( isCptRoute( value.routes.delete )
+				? { delete: value.routes.delete }
+				: {} ),
 		},
 		definitions: value.definitions,
 		view: value.view === 'list' ? 'list' : 'editor',
@@ -453,8 +457,16 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 				? definition.payload.post_type_key
 				: '';
 
+		const locked = definition.payload.locked === true;
+		const nameCell = createCell( name );
+		if ( locked ) {
+			const badge = document.createElement( 'span' );
+			badge.className = 'wpe-ui-lock-badge';
+			badge.textContent = 'Locked';
+			nameCell.append( ' ', badge );
+		}
 		row.append(
-			createCell( name ),
+			nameCell,
 			createCell( key ),
 			statusCell( definition.status ),
 			createCell( String( definition.revision ) )
@@ -490,6 +502,18 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 				} )
 			);
 		}
+		// Delete Permanently, as in WordPress: not while locked or published.
+		const remove = actionButton( 'Delete', {
+			wpessentialCptDelete: definition.id,
+		} );
+		remove.classList.add( 'is-danger' );
+		if ( locked || definition.status === 'published' ) {
+			remove.disabled = true;
+			remove.title = locked
+				? 'Locked: turn off the entry lock to delete it.'
+				: 'Disable or archive it before deleting.';
+		}
+		actions.append( document.createTextNode( ' ' ), remove );
 		row.append( actions );
 		rows.append( row );
 	}
@@ -564,6 +588,7 @@ function editCptDefinition( definition: CptDefinition ): void {
 		typeof archiveValue === 'string' ? true : archiveValue
 	);
 	setSupportValues( definition.payload.supports );
+	setBoolInput( 'wpessential-cpt-locked', definition.payload.locked );
 	fillAdvanced( definition.payload );
 	refreshLevel( 'cpt' );
 	// Values filled in by script: re-check dependencies.
@@ -620,6 +645,7 @@ function collectCptEditorRequest(
 	for ( const key of ADVANCED_KEYS ) {
 		delete base[ key ];
 	}
+	delete base.locked;
 	const taxonomies = collectTaxonomies( existing?.payload.taxonomies );
 
 	return {
@@ -637,6 +663,7 @@ function collectCptEditorRequest(
 			public: boolInput( 'wpessential-cpt-public' ),
 			show_in_rest: boolInput( 'wpessential-cpt-rest' ),
 			hierarchical: boolInput( 'wpessential-cpt-hierarchical' ),
+			...( boolInput( 'wpessential-cpt-locked' ) ? { locked: true } : {} ),
 			has_archive: archiveValue,
 			supports: [ ...preservedSupports, ...selectedSupports ],
 		},
@@ -821,6 +848,35 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 			if ( definition ) {
 				editCptDefinition( definition );
 			}
+			return;
+		}
+
+		const deleteId = target.dataset.wpessentialCptDelete;
+		const deleteRoute = bootstrap.routes.delete;
+		if ( deleteId && deleteRoute ) {
+			const definition = definitions.find(
+				( candidate ) => candidate.id === deleteId
+			);
+			const label =
+				typeof definition?.payload.name === 'string'
+					? definition.payload.name
+					: 'this custom post type';
+			if (
+				! definition ||
+				! window.confirm(
+					`Delete “${ label }” permanently? This cannot be undone.`
+				)
+			) {
+				return;
+			}
+			void run( async () => {
+				await postCptRoute( bootstrap, deleteRoute, {
+					id: definition.id,
+					expected_revision: definition.revision,
+				} );
+				await refresh();
+				setNotice( 'Custom post type deleted.' );
+			} );
 			return;
 		}
 

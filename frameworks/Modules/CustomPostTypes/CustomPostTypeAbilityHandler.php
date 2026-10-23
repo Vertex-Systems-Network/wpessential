@@ -11,7 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use InvalidArgumentException;
 use RuntimeException;
 use WPEssential\Contracts\AbilityHandlerInterface;
+use WPEssential\Contracts\DefinitionDeletableRepositoryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
@@ -22,6 +24,7 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
 	public const GET    = 'get';
 	public const SAVE   = 'save';
 	public const STATUS = 'status';
+	public const DELETE = 'delete';
 
 	public function __construct(
 		private DefinitionRepositoryInterface $definitions,
@@ -29,7 +32,7 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
 		private CustomPostTypeValidationService $validation,
 		private string $action,
 	) {
-		if ( ! in_array( $this->action, [ self::LIST, self::GET, self::SAVE, self::STATUS ], true ) ) {
+		if ( ! in_array( $this->action, [ self::LIST, self::GET, self::SAVE, self::STATUS, self::DELETE ], true ) ) {
 			throw new InvalidArgumentException( 'Unsupported CPT ability action.' );
 		}
 	}
@@ -38,8 +41,9 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
 		return match ( $this->action ) {
 			self::LIST => $this->list(),
 			self::GET => $this->get( $input ),
-			self::SAVE => $this->save( $input ),
+			self::SAVE => $this->save( $input, $context ),
 			self::STATUS => $this->changeStatus( $input ),
+			self::DELETE => $this->delete( $input ),
 			default => throw new RuntimeException( 'Unsupported CPT ability action.' ),
 		};
 	}
@@ -63,7 +67,7 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
 	}
 
 	/** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */
-	private function save( array $input ): array {
+	private function save( array $input, ExecutionContext $context ): array {
 		$payload = $input['payload'] ?? null;
 		if ( ! is_array( $payload ) || array_is_list( $payload ) ) {
 			throw new InvalidArgumentException( 'CPT payload must be an object/map.' );
@@ -91,7 +95,17 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
 		}
 		$key = trim( $key );
 
-		$status    = $this->statusFromInput( $input, $existing?->status ?? DefinitionStatus::Draft );
+		// AI may draft and edit, never publish, disable or archive: new definitions start as
+		// drafts and an existing definition keeps its status (status changes are UI-only).
+		if ( $context->channel === ExecutionChannel::Ai ) {
+			// The entry lock is a human safeguard: AI can neither set nor clear it.
+			unset( $payload['locked'] );
+			if ( ( $existing?->payload['locked'] ?? null ) === true ) {
+				$payload['locked'] = true;
+			}
+		}
+		$current   = $existing?->status ?? DefinitionStatus::Draft;
+		$status    = $context->channel === ExecutionChannel::Ai ? $current : $this->statusFromInput( $input, $current );
 		$candidate = new Definition(
 			id: $existing?->id ?? $this->uuid(),
 			slug: $existing?->slug ?? ( 'cpt-' . str_replace( '_', '-', $key ) ),
@@ -108,6 +122,36 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
 		$this->definitions->save( $candidate );
 
 		return [ 'definition' => $this->serialize( $candidate ) ];
+	}
+
+	/**
+	 * Deletes a definition permanently, like WordPress' "Delete Permanently". Refused while the
+	 * entry is locked, while it is published (disable or archive it first, so the runtime
+	 * registration is withdrawn), or while other definitions depend on it.
+	 *
+	 * @param array<string,mixed> $input
+	 * @return array{deleted:string}
+	 */
+	private function delete( array $input ): array {
+		$existing = $this->owned( $this->requiredUuid( $input, 'id' ) );
+		$this->assertExpectedRevision( $input, $existing );
+		if ( ( $existing->payload['locked'] ?? false ) === true ) {
+			throw new InvalidArgumentException( 'This custom post type is locked. Turn off the entry lock before deleting it.' );
+		}
+		if ( $existing->status === DefinitionStatus::Published ) {
+			throw new InvalidArgumentException( 'Disable or archive this custom post type before deleting it.' );
+		}
+		if ( $this->definitions->dependentsOf( $existing->id ) !== [] ) {
+			throw new InvalidArgumentException( 'Other definitions depend on this custom post type; remove those links first.' );
+		}
+		if ( ! $this->definitions instanceof DefinitionDeletableRepositoryInterface ) {
+			throw new RuntimeException( 'This site cannot delete custom post type definitions.' );
+		}
+		if ( ! $this->definitions->deleteIfCurrentRevision( $existing->id, $existing->revision ) ) {
+			throw new RuntimeException( 'CPT write conflict: the definition changed before it could be deleted.' );
+		}
+
+		return [ 'deleted' => $existing->id ];
 	}
 
 	/** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */

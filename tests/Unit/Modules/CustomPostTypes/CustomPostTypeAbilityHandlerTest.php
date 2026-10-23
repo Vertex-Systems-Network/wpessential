@@ -10,6 +10,7 @@ use RuntimeException;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeAbilityHandler;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeDefinitionProjector;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeValidationService;
+use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
@@ -32,7 +33,88 @@ final class CustomPostTypeAbilityHandlerTest extends TestCase
         self::assertCount(1, $repository->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
     }
 
-    public function testUpdateRequiresExactExpectedRevision(): void
+    public function testDeleteHonoursLockStatusAndRevision(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $locked = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'payload' => array_merge($this->payload(), ['locked' => true]),
+        ], $this->context())['definition'];
+
+        try {
+            $this->handler($repository, CustomPostTypeAbilityHandler::DELETE)->handle(['id' => $locked['id'], 'expected_revision' => 1], $this->context());
+            self::fail('A locked entry must not be deletable.');
+        } catch (InvalidArgumentException $exception) {
+            self::assertStringContainsString('locked', $exception->getMessage());
+        }
+
+        $unlocked = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'id' => $locked['id'],
+            'expected_revision' => 1,
+            'payload' => $this->payload(),
+            'status' => 'published',
+        ], $this->context())['definition'];
+        try {
+            $this->handler($repository, CustomPostTypeAbilityHandler::DELETE)->handle(['id' => $unlocked['id'], 'expected_revision' => 2], $this->context());
+            self::fail('A published entry must be disabled before deleting.');
+        } catch (InvalidArgumentException $exception) {
+            self::assertStringContainsString('Disable or archive', $exception->getMessage());
+        }
+
+        $this->handler($repository, CustomPostTypeAbilityHandler::STATUS)->handle(['id' => $unlocked['id'], 'expected_revision' => 2, 'status' => 'disabled'], $this->context());
+        $result = $this->handler($repository, CustomPostTypeAbilityHandler::DELETE)->handle(['id' => $unlocked['id'], 'expected_revision' => 3], $this->context());
+        self::assertSame($unlocked['id'], $result['deleted']);
+        self::assertNull($repository->get($unlocked['id']));
+    }
+
+    public function testAiCannotSetOrClearTheEntryLock(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $ai = new ExecutionContext(new Principal(1), 1, ExecutionChannel::Ai);
+        $created = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'payload' => array_merge($this->payload(), ['locked' => true]),
+        ], $ai)['definition'];
+        self::assertArrayNotHasKey('locked', $created['payload']);
+
+        $locked = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'id' => $created['id'], 'expected_revision' => 1, 'payload' => array_merge($this->payload(), ['locked' => true]),
+        ], $this->context())['definition'];
+        $edited = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'id' => $created['id'], 'expected_revision' => 2, 'payload' => $this->payload(),
+        ], $ai)['definition'];
+        self::assertTrue($edited['payload']['locked'], 'AI cannot clear the lock.');
+        unset($locked);
+    }
+
+        public function testAiSavesNewDefinitionsAsDraftsAndCannotChangeStatus(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $ai = new ExecutionContext(new Principal(1), 1, ExecutionChannel::Ai);
+
+        $created = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'payload' => $this->payload(),
+            'status' => 'published',
+        ], $ai)['definition'];
+        self::assertSame('draft', $created['status'], 'AI may not publish a new post type.');
+
+        $published = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 1,
+            'payload' => $this->payload(),
+            'status' => 'published',
+        ], $this->context())['definition'];
+        self::assertSame('published', $published['status']);
+
+        $edited = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 2,
+            'payload' => array_merge($this->payload(), ['description' => 'Edited by AI']),
+            'status' => 'archived',
+        ], $ai)['definition'];
+        self::assertSame('published', $edited['status'], 'AI keeps the existing status.');
+        self::assertSame('Edited by AI', $edited['payload']['description']);
+    }
+
+        public function testUpdateRequiresExactExpectedRevision(): void
     {
         $repository = new InMemoryDefinitionRepository();
         $created = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([

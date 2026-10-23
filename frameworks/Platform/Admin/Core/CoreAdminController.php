@@ -49,7 +49,6 @@ final class CoreAdminController {
 		}
 
 		add_action( 'admin_menu', [ $this, 'registerMenu' ], 9 );
-		add_action( 'admin_menu', [ $this, 'trimMenu' ], 999 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAssets' ] );
 		add_action( 'admin_post_' . self::TOGGLE_ACTION, [ $this, 'handleToggle' ] );
 		add_action( 'admin_post_' . Shell::MODE_ACTION, [ $this, 'handleMode' ] );
@@ -96,19 +95,6 @@ final class CoreAdminController {
 		'wpessential-taxonomy' => 'wpessential-taxonomies',
 	];
 
-	/**
-	 * Drops WordPress's automatic first submenu ("WPEssential" = Dashboard) so the sidebar lists
-	 * modules only. The top-level item still opens the Dashboard.
-	 */
-	public function trimMenu(): void {
-		global $submenu;
-		$parent = PlatformAdminController::PAGE_SLUG;
-		if ( ! function_exists( 'remove_submenu_page' ) || ! is_array( $submenu[ $parent ] ?? null ) || count( $submenu[ $parent ] ) < 2 ) {
-			return;
-		}
-		remove_submenu_page( $parent, $parent );
-	}
-
 	/** Every WPEssential page keeps the WPEssential sidebar item open and highlighted. */
 	public function parentFile( mixed $parentFile ): mixed {
 		return self::currentPage() !== '' ? PlatformAdminController::PAGE_SLUG : $parentFile;
@@ -135,6 +121,7 @@ final class CoreAdminController {
 		$cap    = PlatformAdminController::CAPABILITY;
 
 		add_menu_page( 'WPEssential', 'WPEssential', $cap, $parent, [ $this, 'renderDashboard' ], self::menuIcon(), 58 );
+		// The sidebar keeps Dashboard (the way into every product page) followed by the modules.
 		add_submenu_page( $parent, __( 'Dashboard', 'wpessential' ), __( 'Dashboard', 'wpessential' ), $cap, $parent, [ $this, 'renderDashboard' ] );
 		// Product pages (Modules, Demo Library, Elements, Docs, AI Connect, Account) live in the
 		// WPEssential top navigation only; the WordPress sidebar lists modules.

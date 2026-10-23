@@ -15,10 +15,6 @@
 			grid-template-columns: minmax(0, 1fr);
 		}
 
-		&--editor {
-			max-width: 1100px;
-		}
-
 		@media (max-width: 1280px) {
 			grid-template-columns: minmax(0, 1fr);
 		}
@@ -465,4 +461,21 @@ th[aria-sort="ascending"] .wpe-ui-sort::after {
 
 th[aria-sort="descending"] .wpe-ui-sort::after {
 	opacity: 1;
+}
+
+// Entry lock badge in list rows, and the danger row action.
+.wpe-ui-lock-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: var(--wpe-surface-2);
+	color: var(--wpe-text-2);
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.wpe-ui .button.is-danger:not(:disabled) {
+	border-color: var(--wpe-danger);
+	color: var(--wpe-danger);
 }

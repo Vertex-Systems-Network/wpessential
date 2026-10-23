@@ -11,9 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 use JsonException;
 use RuntimeException;
 use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
+use WPEssential\Contracts\DefinitionDeletableRepositoryInterface;
+use WPEssential\Contracts\DefinitionDeletableTableGatewayInterface;
 use WPEssential\Contracts\DefinitionTableGatewayInterface;
 
-final class PersistentDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface {
+final class PersistentDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface, DefinitionDeletableRepositoryInterface {
 
 	public function __construct(
 		private readonly DefinitionTableGatewayInterface $gateway,
@@ -60,6 +62,14 @@ final class PersistentDefinitionRepository implements DefinitionCreateOnlyReposi
 		) ) {
 			throw new RuntimeException( 'Definition write conflict: persisted revision changed concurrently.' );
 		}
+	}
+
+	public function deleteIfCurrentRevision( string $id, int $expectedRevision ): bool {
+		if ( ! $this->gateway instanceof DefinitionDeletableTableGatewayInterface ) {
+			throw new RuntimeException( 'This definition store does not support deleting definitions.' );
+		}
+
+		return $this->gateway->deleteIfCurrentRevision( $id, $expectedRevision );
 	}
 
 	public function get( string $id ): ?Definition {

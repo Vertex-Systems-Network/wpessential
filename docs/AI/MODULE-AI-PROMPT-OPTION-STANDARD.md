@@ -97,8 +97,8 @@ These actions produce structured output; they are not free-form permission bypas
 
 | Surface | Primary AI prompt uses | Never silently allow |
 |---|---|---|
-| 1 CPT Builder | create labels/options from business object; audit registration; migration impact explanation | unregister/rename external/core type without ownership/migration plan |
-| 2 Taxonomy Builder | generate taxonomy model; attach targets; rewrite/label suggestions | destructive slug/object binding changes without impact review |
+| 1 CPT Builder | create labels/options from business object; audit registration; migration impact explanation. Exposed: `wpessential/cpt/{list,get,validate,save}` (save only with AI writes on; AI saves are drafts and never change status) | unregister/rename external/core type without ownership/migration plan; publish/disable/archive (`cpt/status` is not on the AI channel) |
+| 2 Taxonomy Builder | generate taxonomy model; attach targets; rewrite/label suggestions. Exposed: `wpessential/taxonomy/{list,get,validate,key-migration-preview,import-preview,save}` (save as for CPT) | destructive slug/object binding changes without impact review; status changes and import commits (not on the AI channel) |
 | 3 Custom Fields | generate field groups, validation, locations, defaults; map existing schema | expose secrets/security meta or invent unsafe storage |
 | 4 Relations | infer relation graph/cardinality/pivot fields; explain graph | approved cascade/delete bypass |
 | 5 Status Manager | generate states/transitions/guards; explain impossible transition | direct state write bypassing transition policy |

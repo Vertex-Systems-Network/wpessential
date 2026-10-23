@@ -50,6 +50,8 @@ final class CustomPostTypeDefinitionProjector {
 		'query_var',
 		'can_export',
 		'delete_with_user',
+		// Entry lock: an admin safeguard that blocks deleting the definition; not a WordPress arg.
+		'locked',
 	];
 
 	/** @var list<string> */

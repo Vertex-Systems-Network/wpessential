@@ -291,3 +291,41 @@ test('CPT list page has WordPress-style views, search and sortable columns', asy
   const results = await new AxeBuilder({ page }).include('#wpessential-admin-root').analyze();
   expect(results.violations.map((violation) => violation.id)).toEqual([]);
 });
+
+test('CPT list deletes unlocked drafts and blocks locked or published entries', async ({ page }) => {
+  const make = (index, status, locked) => ({
+    id: `33333333-3333-4333-8333-${String(index).padStart(12, '0')}`,
+    status,
+    revision: 1,
+    payload: { post_type_key: `del_${index}`, name: `Delete type ${index}`, singular_name: `Delete type ${index}`, ...(locked ? { locked: true } : {}) },
+  });
+  let definitions = [make(1, 'draft', false), make(2, 'draft', true), make(3, 'published', false)];
+  let deleted = null;
+  await visitCpts(page, 'wpessential-post-types');
+  await page.route('**/wp-admin/admin-ajax.php', async (route) => {
+    const body = new URLSearchParams(route.request().postData() ?? '');
+    if (body.get('type') === 'cpt.list') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { definitions } }) });
+      return;
+    }
+    if (body.get('type') === 'cpt.delete') {
+      deleted = JSON.parse(body.get('payload_json') ?? '{}');
+      definitions = definitions.filter((definition) => definition.id !== deleted.id);
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { deleted: deleted.id } }) });
+      return;
+    }
+    await route.continue();
+  });
+  await page.getByRole('button', { name: 'Refresh' }).click();
+
+  const row = (index) => page.locator(`tr[data-wpessential-cpt-row="${make(index).id}"]`);
+  await expect(row(2)).toContainText('Locked');
+  await expect(row(2).getByRole('button', { name: 'Delete' })).toBeDisabled();
+  await expect(row(3).getByRole('button', { name: 'Delete' })).toBeDisabled();
+
+  page.once('dialog', (dialog) => dialog.accept());
+  await row(1).getByRole('button', { name: 'Delete' }).click();
+  await expect(page.getByText('Custom post type deleted.')).toBeVisible();
+  expect(deleted).toEqual({ id: make(1).id, expected_revision: 1 });
+  await expect(row(1)).toHaveCount(0);
+});

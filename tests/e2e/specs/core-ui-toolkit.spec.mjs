@@ -121,13 +121,14 @@ test('Module manager has zero axe violations', async ({ page }) => {
   expect(results.violations.map((violation) => violation.id)).toEqual([]);
 });
 
-test('WordPress sidebar lists modules only; product pages live in the top navigation', async ({ page }) => {
+test('WordPress sidebar lists Dashboard and modules; product pages live in the top navigation', async ({ page }) => {
   await visitCore(page, 'wpessential');
 
   const submenu = page.locator('#toplevel_page_wpessential .wp-submenu');
-  for (const name of ['Dashboard', 'Modules', 'Demo Library', 'Elements', 'Docs', 'AI Connect', 'Account', 'System Status']) {
+  for (const name of ['Modules', 'Demo Library', 'Elements', 'Docs', 'AI Connect', 'Account', 'System Status']) {
     await expect(submenu.getByRole('link', { name, exact: true }), `${name} must not be in the WordPress sidebar`).toHaveCount(0);
   }
+  await expect(submenu.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(1);
   await expect(submenu.getByRole('link', { name: 'Post Types', exact: true })).toHaveCount(1);
   await expect(submenu.getByRole('link', { name: 'Taxonomies', exact: true })).toHaveCount(1);
 
@@ -140,4 +141,22 @@ test('WordPress sidebar lists modules only; product pages live in the top naviga
   // Product pages still open, with the WPEssential sidebar item kept highlighted.
   await visitCore(page, 'wpessential-modules');
   await expect(page.locator('#toplevel_page_wpessential')).toHaveClass(/wp-has-current-submenu|current/);
+});
+
+test('top navigation opens screens in place without a page reload', async ({ page }) => {
+  await visitCore(page, 'wpessential');
+  await page.evaluate(() => {
+    window.__wpeSamePage = true;
+  });
+
+  const nav = page.getByRole('navigation', { name: 'WPEssential', exact: true });
+  await nav.getByRole('link', { name: 'Modules' }).click();
+  await expect(page).toHaveURL(/page=wpessential-modules/);
+  await expect(page.locator('[data-wpe-module]').first()).toBeVisible();
+  expect(await page.evaluate(() => window.__wpeSamePage === true), 'the screen must load over AJAX').toBe(true);
+  await expect(nav.getByRole('link', { name: 'Modules' })).toHaveAttribute('aria-current', 'page');
+
+  await page.goBack();
+  await expect(page).toHaveURL(/page=wpessential$/);
+  expect(await page.evaluate(() => window.__wpeSamePage === true)).toBe(true);
 });

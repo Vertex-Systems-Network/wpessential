@@ -157,7 +157,9 @@ final class TaxonomyModule implements ModuleInterface {
 		TaxonomyKeyMigrationPreviewService $keyMigrationPreview,
 		TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
 	): void {
-		$channels     = [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ];
+		$channels = [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ];
+		// AI may read, validate and draft; status changes and imports stay human-only.
+		$aiChannels   = [ ...$channels, ExecutionChannel::Ai ];
 		$outputSchema = [ 'type' => 'object' ];
 		$saveHandler  = new TaxonomyAbilityHandler(
 			$definitions,
@@ -176,7 +178,7 @@ final class TaxonomyModule implements ModuleInterface {
 				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [ 'type' => 'object' ],
 				outputSchema: $outputSchema,
 			),
@@ -199,7 +201,7 @@ final class TaxonomyModule implements ModuleInterface {
 				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'id' ],
@@ -226,7 +228,7 @@ final class TaxonomyModule implements ModuleInterface {
 				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'payload' ],
@@ -250,7 +252,7 @@ final class TaxonomyModule implements ModuleInterface {
 				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'id', 'target_key' ],
@@ -274,7 +276,7 @@ final class TaxonomyModule implements ModuleInterface {
 				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: false,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'source' ],
@@ -363,7 +365,7 @@ final class TaxonomyModule implements ModuleInterface {
 				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: true,
-				channels: $channels,
+				channels: $aiChannels,
 				inputSchema: [
 					'type'       => 'object',
 					'required'   => [ 'payload' ],
@@ -424,6 +426,39 @@ final class TaxonomyModule implements ModuleInterface {
 			'Change taxonomy status',
 			'Changes Taxonomy lifecycle status without deleting its canonical persisted definition.',
 		);
+		$this->registerAbility(
+			$abilities,
+			$bridge,
+			new AbilityDescriptor(
+				name: 'wpessential/taxonomy/delete',
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: $channels,
+				inputSchema: [
+					'type'       => 'object',
+					'required'   => [ 'id', 'expected_revision' ],
+					'properties' => [
+						'id'                => [ 'type' => 'string' ],
+						'expected_revision' => [
+							'type'    => 'integer',
+							'minimum' => 1,
+						],
+					],
+				],
+				outputSchema: $outputSchema,
+			),
+			new TaxonomyAbilityHandler(
+				$definitions,
+				$projector,
+				$validation,
+				TaxonomyAbilityHandler::DELETE,
+				$rewriteRefresh,
+				$roleImpact,
+			),
+			'Delete taxonomy',
+			'Permanently deletes an unlocked, unpublished taxonomy definition (never available to AI).',
+		);
 	}
 
 	private function registerAbility(
@@ -458,6 +493,7 @@ final class TaxonomyModule implements ModuleInterface {
 		$this->registerAjaxRoute( $routes, $abilities, $contexts, 'taxonomy.import_commit', 'wpessential/taxonomy/import-commit', NonceOperation::Update );
 		$this->registerAjaxRoute( $routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update );
 		$this->registerAjaxRoute( $routes, $abilities, $contexts, 'taxonomy.status', 'wpessential/taxonomy/status', NonceOperation::Update );
+		$this->registerAjaxRoute( $routes, $abilities, $contexts, 'taxonomy.delete', 'wpessential/taxonomy/delete', NonceOperation::Update );
 	}
 
 	private function registerAjaxRoute(
