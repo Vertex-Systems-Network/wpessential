@@ -1,4 +1,10 @@
 import { statusCell } from './core/status-pill';
+import {
+	ADVANCED_KEYS,
+	collectAdvanced,
+	collectTaxonomies,
+	fillAdvanced,
+} from './cpt-options';
 import './admin.scss';
 
 type BootstrapRecord = Record< string, unknown >;
@@ -478,6 +484,7 @@ function resetCptForm(): void {
 		key.readOnly = false;
 	}
 	setSupportValues( [ 'title', 'editor' ] );
+	fillAdvanced( {} );
 	const status = selectInput( 'wpessential-cpt-status' );
 	if ( status ) {
 		status.value = 'draft';
@@ -523,6 +530,7 @@ function editCptDefinition( definition: CptDefinition ): void {
 		typeof archiveValue === 'string' ? true : archiveValue
 	);
 	setSupportValues( definition.payload.supports );
+	fillAdvanced( definition.payload );
 	const status = selectInput( 'wpessential-cpt-status' );
 	if ( status ) {
 		status.value = definition.status;
@@ -560,17 +568,29 @@ function collectCptEditorRequest(
 	);
 	const archiveEnabled = boolInput( 'wpessential-cpt-archive' );
 	const existingArchive = existing?.payload.has_archive;
+	const archiveSlug = textInput( 'wpessential-cpt-archive-slug' )?.value.trim() ?? '';
 	const archiveValue =
-		archiveEnabled && typeof existingArchive === 'string'
+		archiveEnabled && archiveSlug !== ''
+			? archiveSlug
+			: archiveEnabled && typeof existingArchive === 'string'
 			? existingArchive
 			: archiveEnabled;
+
+	// Advanced keys are rebuilt from the form; anything else stored is kept as it was.
+	const base: CptPayload = { ...( existing?.payload ?? {} ) };
+	for ( const key of ADVANCED_KEYS ) {
+		delete base[ key ];
+	}
+	const taxonomies = collectTaxonomies( existing?.payload.taxonomies );
 
 	return {
 		id,
 		revision,
 		status: selectInput( 'wpessential-cpt-status' )?.value ?? 'draft',
 		payload: {
-			...( existing?.payload ?? {} ),
+			...base,
+			...collectAdvanced(),
+			...( taxonomies ? { taxonomies } : {} ),
 			post_type_key: cptFieldValue( 'post_type_key' ),
 			name: cptFieldValue( 'name' ),
 			singular_name: cptFieldValue( 'singular_name' ),

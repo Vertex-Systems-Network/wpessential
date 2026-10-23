@@ -67,3 +67,16 @@ The owner asked for eight things:
 - The controls library is reusable by any later screen.
 - Switches and saves no longer reload the page.
 - Remaining follow-ups: the WPE Server port (ADR-0233), the Figma UI kit for every form control, and demo import.
+
+## Amendment — no option may leave a screen (2026-10-23)
+
+The owner's rule: no option the plugin supports may be removed from its screen.
+
+An audit found that the CPT and Taxonomies rebuilds removed nothing. The CPT editor, though, had never shown most of the options `CustomPostTypeDefinitionProjector` accepts.
+
+The CPT editor now covers all of them:
+- every top-level key, including visibility and menu, rewrite and query, REST, capabilities, taxonomies and labels
+- all 12 editor supports
+- all 34 labels
+
+The advanced options sit in collapsible groups. "Default" leaves a key out, so WordPress defaults still apply. `CptEditorCoverageTest` fails if any projector key, support or label loses its control, and the Taxonomies editor already covers its projector keys.
