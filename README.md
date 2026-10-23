@@ -14,6 +14,18 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 **Framework Connect checkpoint (outside the 10-milestone completion score):** ADR-0231 sets the pre-launch version to 3.0.0 and adds:
 
+**Site Kit & toolkit polish checkpoint (outside the 10-milestone completion score):** ADR-0232 adds:
+
+- **Site Kit (Premium):** every hi-wpessential site-settings group, snippets, SEO basics, Google Fonts and Elementor sync, for any theme. Its option contract has 157 options.
+- **Controls:** the Customizer controls ported to TypeScript (colour, slider, dimensions, typography, gradient, shadow, background, font picker).
+- **CPT and Taxonomies:** both screens rebuilt on the toolkit.
+- **AJAX:** switches and saves update in place.
+- **Spacing and motion:** a spacing scale, plus a motion layer that turns off under reduced motion.
+- **Account:** login-only licensing that connects the site automatically.
+- **AI Connect:** now a Premium module with its own on/off switch.
+
+Milestone progress bars remain unchanged.
+
 - flat SVG icons on every tab
 - per-user light/dark mode, with the Docs link beside the mode toggle
 - a Demo Library (browse and preview)

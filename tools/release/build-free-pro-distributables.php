@@ -377,6 +377,8 @@ function validateProStage(string $stageRoot, array $proAssets): void
         'frameworks/Modules/Notifications/NotificationsModule.php',
         'frameworks/Modules/Emails/EmailsModule.php',
         'frameworks/Modules/Chat/ChatModule.php',
+        'frameworks/Modules/SiteKit/SiteKitModule.php',
+        'frameworks/Modules/SiteKit/data/google-fonts.json',
         ...$proAssets,
     ] as $relative) {
         $path = $stageRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);

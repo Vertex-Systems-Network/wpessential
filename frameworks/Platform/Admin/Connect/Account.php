@@ -18,7 +18,7 @@ use WP_Error;
  */
 final class Account {
 
-	public const OPTION         = 'wpessential_account';
+	public const OPTION          = 'wpessential_account';
 	public const LICENSE_ACTIONS = [ 'auto_renew_on', 'auto_renew_off', 'cancel', 'deactivate_domain' ];
 
 	public function __construct( private readonly LicenseService $license ) {}

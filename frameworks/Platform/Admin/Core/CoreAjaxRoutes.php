@@ -24,12 +24,22 @@ use WPEssential\Platform\WordPress\Security\NonceOperation;
  */
 final class CoreAjaxRoutes {
 
-	public const ROUTES = [
+	public const ROUTES    = [
 		'core.module.toggle'  => 'wpessential/framework-modules/toggle',
 		'core.element.toggle' => 'wpessential/framework-elements/toggle',
 		'core.ui.mode'        => 'wpessential/framework-settings/update',
 	];
 	public const AI_SWITCH = 'core.ai.switch';
+
+	/** @var list<string> Routes registered by modules whose nonces the toolkit bootstrap should carry. */
+	private static array $exposed = [];
+
+	/** Lets a module's screen use the shared AJAX client for one of its own routes. */
+	public static function expose( string $type ): void {
+		if ( ! in_array( $type, self::$exposed, true ) ) {
+			self::$exposed[] = $type;
+		}
+	}
 
 	public function __construct(
 		private readonly AjaxRouteRegistry $routes,
@@ -51,8 +61,12 @@ final class CoreAjaxRoutes {
 	/** @return array{url:string,action:string,nonces:array<string,string>} Bootstrap for ui.ts; nonces are per user. */
 	public function bootstrap(): array {
 		$nonces = [];
-		foreach ( array_merge( array_keys( self::ROUTES ), [ self::AI_SWITCH ] ) as $type ) {
-			$nonces[ $type ] = $this->dispatcher->createNonce( $type );
+		foreach ( array_merge( array_keys( self::ROUTES ), [ self::AI_SWITCH ], self::$exposed ) as $type ) {
+			try {
+				$nonces[ $type ] = $this->dispatcher->createNonce( $type );
+			} catch ( \InvalidArgumentException ) {
+				continue; // Exposed by a screen whose module did not register the route.
+			}
 		}
 
 		return [

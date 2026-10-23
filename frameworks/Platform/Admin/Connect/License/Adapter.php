@@ -54,7 +54,7 @@ abstract class Adapter {
 	 * @return array<string,mixed>|WP_Error
 	 */
 	protected function request( string $method, string $url, array $args ): array|WP_Error {
-		$params = [
+		$params   = [
 			'timeout' => 15,
 			'headers' => [ 'Accept' => 'application/json' ],
 		];

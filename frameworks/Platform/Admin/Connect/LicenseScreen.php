@@ -154,10 +154,10 @@ final class LicenseScreen implements AdminScreen {
 		if ( $active ) {
 			$limit = (int) $data['sites_limit'];
 			$rows  = [
-				__( 'Plan', 'wpessential' )    => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ),
-				__( 'Renews', 'wpessential' )  => esc_html( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ),
-				__( 'Sites', 'wpessential' )   => esc_html( $limit === 0 ? sprintf( /* translators: %d: sites used. */ __( '%d of unlimited', 'wpessential' ), (int) $data['sites_used'] ) : sprintf( /* translators: 1: sites used, 2: site limit. */ __( '%1$d of %2$d', 'wpessential' ), (int) $data['sites_used'], $limit ) ),
-				__( 'Domain', 'wpessential' )  => esc_html( (string) $data['domain'] ),
+				__( 'Plan', 'wpessential' )   => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ),
+				__( 'Renews', 'wpessential' ) => esc_html( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ),
+				__( 'Sites', 'wpessential' )  => esc_html( $limit === 0 ? sprintf( /* translators: %d: sites used. */ __( '%d of unlimited', 'wpessential' ), (int) $data['sites_used'] ) : sprintf( /* translators: 1: sites used, 2: site limit. */ __( '%1$d of %2$d', 'wpessential' ), (int) $data['sites_used'], $limit ) ),
+				__( 'Domain', 'wpessential' ) => esc_html( (string) $data['domain'] ),
 			];
 			$html .= '<dl class="wpe-ui-facts">';
 			foreach ( $rows as $label => $value ) {
