@@ -12,6 +12,7 @@ on:
       - '.github/workflows/platform-compatibility.yml'
   push:
     branches:
+      - main
       - 'implementation/**'
     paths:
       - 'config/product/**'
@@ -22,6 +23,9 @@ on:
       - 'wpessential.php'
       - '.github/workflows/platform-compatibility.yml'
   workflow_dispatch:
+  # Full matrix weekly; pull requests run only the minimum and reference cells.
+  schedule:
+    - cron: '17 3 * * 1'
 
 permissions:
   contents: read
@@ -38,8 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress: ['6.9', '7.1']
-        php: ['8.2', '8.3', '8.4', '8.5']
+        include: ${{ fromJSON(github.event_name == 'pull_request' && '[{"wordpress":"6.9","php":"8.2"},{"wordpress":"7.1","php":"8.5"}]' || '[{"wordpress":"6.9","php":"8.2"},{"wordpress":"6.9","php":"8.3"},{"wordpress":"6.9","php":"8.4"},{"wordpress":"6.9","php":"8.5"},{"wordpress":"7.1","php":"8.2"},{"wordpress":"7.1","php":"8.3"},{"wordpress":"7.1","php":"8.4"},{"wordpress":"7.1","php":"8.5"}]') }}
     services:
       mysql:
         image: mysql:8.4
@@ -197,7 +200,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress: ['6.9', '7.1']
+        wordpress: ${{ fromJSON(github.event_name == 'pull_request' && '["7.1"]' || '["6.9","7.1"]') }}
     services:
       mariadb:
         image: mariadb:10.11
