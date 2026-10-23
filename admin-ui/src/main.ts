@@ -1,6 +1,9 @@
+import { bindDependencies } from './core/dependencies';
+import { bindKeyFromName, bindLevels, refreshLevel } from './core/levels';
 import { statusCell } from './core/status-pill';
 import {
 	ADVANCED_KEYS,
+	CPT_DEPENDENCIES,
 	collectAdvanced,
 	collectTaxonomies,
 	fillAdvanced,
@@ -485,6 +488,11 @@ function resetCptForm(): void {
 	}
 	setSupportValues( [ 'title', 'editor' ] );
 	fillAdvanced( {} );
+	refreshLevel( 'cpt' );
+	// Values filled in by script: re-check dependencies.
+	document
+		.getElementById( 'wpessential-cpt-form' )
+		?.dispatchEvent( new Event( 'change' ) );
 	const status = selectInput( 'wpessential-cpt-status' );
 	if ( status ) {
 		status.value = 'draft';
@@ -531,6 +539,11 @@ function editCptDefinition( definition: CptDefinition ): void {
 	);
 	setSupportValues( definition.payload.supports );
 	fillAdvanced( definition.payload );
+	refreshLevel( 'cpt' );
+	// Values filled in by script: re-check dependencies.
+	document
+		.getElementById( 'wpessential-cpt-form' )
+		?.dispatchEvent( new Event( 'change' ) );
 	const status = selectInput( 'wpessential-cpt-status' );
 	if ( status ) {
 		status.value = definition.status;
@@ -625,6 +638,16 @@ function saveRequest( editor: CptEditorRequest ): CptPayload {
 }
 
 function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
+	bindLevels( 'cpt' );
+	const keyInput = textInput( 'wpessential-cpt-key' );
+	const singularInput = textInput( 'wpessential-cpt-singular' );
+	if ( keyInput && singularInput ) {
+		bindKeyFromName( keyInput, singularInput, 20 );
+	}
+	const cptForm = document.getElementById( 'wpessential-cpt-form' );
+	if ( cptForm instanceof HTMLFormElement ) {
+		bindDependencies( cptForm, CPT_DEPENDENCIES, 'cpt' );
+	}
 	let definitions = [ ...bootstrap.definitions ];
 	let busy = false;
 

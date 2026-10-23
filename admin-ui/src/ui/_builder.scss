@@ -101,6 +101,45 @@
 			margin: 0;
 		}
 
+		// Switch look for the checkbox (role=switch): a track with a sliding thumb.
+		input[role="switch"] {
+			flex: none;
+			width: 30px;
+			height: 18px;
+			border: 0;
+			border-radius: 999px;
+			background: var(--wpe-line);
+			box-shadow: none;
+			cursor: pointer;
+			appearance: none;
+			transition: background-color var(--wpe-dur-2) var(--wpe-ease);
+
+			&::before {
+				content: "";
+				display: block;
+				width: 14px;
+				height: 14px;
+				margin: 2px;
+				border-radius: 50%;
+				background: #fff;
+				box-shadow: 0 1px 2px rgb(15 23 42 / 25%);
+				transition: transform var(--wpe-dur-2) var(--wpe-ease);
+			}
+
+			&:checked {
+				background: var(--wpe-blue);
+
+				&::before {
+					transform: translateX(12px);
+				}
+			}
+
+			&:focus {
+				box-shadow: none;
+				outline: none;
+			}
+		}
+
 		&:hover {
 			border-color: var(--wpe-blue);
 		}
@@ -152,44 +191,142 @@
 	}
 }
 
-// Collapsible option groups (advanced Custom Post Type options).
+// Option groups shown by level (Essential / Advanced / Expert).
 .wpe-ui-builder__group {
 	border-top: 1px solid var(--wpe-line);
-	padding-block: var(--wpe-space-3);
+	padding-top: var(--wpe-space-4);
 
-	> summary {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+	> h3 {
 		margin: 0;
-		cursor: pointer;
-		list-style: none;
-
-		&::-webkit-details-marker {
-			display: none;
-		}
-
-		&::after {
-			content: "";
-			width: 8px;
-			height: 8px;
-			border-right: 2px solid currentcolor;
-			border-bottom: 2px solid currentcolor;
-			transform: rotate(45deg);
-			transition: transform var(--wpe-dur-2) var(--wpe-ease);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--wpe-blue);
-			outline-offset: 2px;
-		}
-	}
-
-	&[open] > summary::after {
-		transform: rotate(-135deg);
 	}
 
 	> p {
-		margin: var(--wpe-space-2) 0 var(--wpe-space-3);
+		margin: var(--wpe-space-1) 0 var(--wpe-space-3);
+	}
+}
+
+.wpe-ui-checks__more {
+	display: contents;
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.wpe-ui-checks__hint {
+	flex-basis: 100%;
+	margin: 0 0 var(--wpe-space-1);
+}
+
+// Level switch: three cards with a one-line plain explanation each.
+.wpe-ui-levels {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--wpe-space-2);
+	padding: var(--wpe-space-1);
+	border-radius: 12px;
+	background: var(--wpe-surface-2);
+}
+
+.wpe-ui-levels__item {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: var(--wpe-space-2) var(--wpe-space-3);
+	border: 1px solid transparent;
+	border-radius: 9px;
+	transition:
+		background-color var(--wpe-dur-2) var(--wpe-ease),
+		border-color var(--wpe-dur-2) var(--wpe-ease),
+		box-shadow var(--wpe-dur-2) var(--wpe-ease);
+
+	&:hover {
+		background: var(--wpe-card);
+	}
+
+	&:has([aria-pressed="true"]),
+	&.is-active {
+		border-color: var(--wpe-blue);
+		background: var(--wpe-card);
+		box-shadow: 0 1px 3px rgb(15 23 42 / 10%);
+	}
+
+	&:has(:focus-visible) {
+		outline: 2px solid var(--wpe-blue);
+		outline-offset: 2px;
+	}
+}
+
+// The button is the whole card's click target; its name stays the one-word level.
+.wpe-ui-levels__button {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	text-align: left;
+	cursor: pointer;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+	}
+
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.wpe-ui-levels__desc {
+	font-size: 12px;
+	opacity: 0.75;
+}
+
+@media (width <= 782px) {
+	.wpe-ui-levels {
+		grid-template-columns: 1fr;
+	}
+}
+
+// Field dependencies: a field that needs another setting is dimmed until that setting allows it,
+// and every note names where the other setting lives (level › section).
+.wpe-ui-dep-note {
+	display: flex;
+	gap: 6px;
+	align-items: flex-start;
+	margin-top: var(--wpe-space-1);
+	color: var(--wpe-text-2);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.4;
+
+	&::before {
+		content: "";
+		flex: none;
+		width: 6px;
+		height: 6px;
+		margin-top: 5px;
+		border-radius: 50%;
+		background: var(--wpe-blue);
+	}
+
+	&.is-blocked::before {
+		background: var(--wpe-warning);
+	}
+}
+
+.wpe-ui-checks > .wpe-ui-dep-note {
+	flex-basis: 100%;
+	margin-top: 0;
+}
+
+.is-dep-blocked {
+	> label,
+	> input,
+	> select {
+		opacity: 0.55;
 	}
 }

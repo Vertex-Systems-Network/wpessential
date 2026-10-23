@@ -80,3 +80,21 @@ The CPT editor now covers all of them:
 - all 34 labels
 
 The advanced options sit in collapsible groups. "Default" leaves a key out, so WordPress defaults still apply. `CptEditorCoverageTest` fails if any projector key, support or label loses its control, and the Taxonomies editor already covers its projector keys.
+
+## Amendment — Essential / Advanced / Expert levels for builders (2026-10-23)
+
+The owner asked for CPT and Taxonomy options grouped so that non-technical users can use them.
+
+Both builders now share the same three levels, rendered by `Ui\Levels`:
+- **Essential:** what most sites need.
+- **Advanced:** menus, web addresses, labels and visibility.
+- **Expert:** permissions, REST API and developer settings.
+
+Each level button keeps its one-word accessible name. Its plain-language description is linked with `aria-describedby`.
+
+Option tiers follow the option contracts (`cpt.json`, `taxonomy.json`), with one deliberate exception: on the CPT screen the explicit capability map, `map_meta_cap`, rewrite details and the REST namespace sit under **Expert** for readability.
+
+Behaviour:
+- Switching to a simpler level only hides fields. Saved values are kept, and the status line counts the changed settings that sit in a higher level.
+- The level is remembered per browser.
+- Machine keys are filled in from the singular name until the user edits them.

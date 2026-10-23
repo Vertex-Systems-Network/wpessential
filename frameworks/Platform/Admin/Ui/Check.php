@@ -9,7 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Figma: UI/Check chip. A checkbox inside a pill-shaped label.
+ * Figma: UI/Check chip with a UI/Switch. An on/off switch (a checkbox with role=switch) inside a
+ * pill-shaped label.
  */
 final class Check {
 
@@ -17,6 +18,11 @@ final class Check {
 	public static function render( string $label, array $attrs = [], bool $checked = false ): string {
 		$for = isset( $attrs['id'] ) ? ' for="' . esc_attr( (string) $attrs['id'] ) . '"' : '';
 
-		return '<label class="wpe-ui-check"' . $for . '><input' . Attributes::render( [ 'type' => 'checkbox' ] + $attrs + [ 'checked' => $checked ] ) . '> ' . esc_html( $label ) . '</label>';
+		return '<label class="wpe-ui-check"' . $for . '><input' . Attributes::render(
+			[
+				'type' => 'checkbox',
+				'role' => 'switch',
+			] + $attrs + [ 'checked' => $checked ]
+		) . '> ' . esc_html( $label ) . '</label>';
 	}
 }

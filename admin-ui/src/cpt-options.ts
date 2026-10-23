@@ -1,3 +1,5 @@
+import type { Dependency } from './core/dependencies';
+
 // Advanced Custom Post Type options (CustomPostTypeDefinitionProjector keys beyond the basics).
 // Each control declares its payload key and shape; "Default" leaves the key out of the payload
 // so the projector's WordPress default applies.
@@ -282,3 +284,33 @@ export function fillAdvanced( payload: Payload ): void {
 			typeof payload.has_archive === 'string' ? payload.has_archive : '';
 	}
 }
+
+const isOn = ( el: HTMLInputElement | HTMLSelectElement ): boolean =>
+	el instanceof HTMLInputElement && el.checked;
+const is =
+	( value: string ) =>
+	( el: HTMLInputElement | HTMLSelectElement ): boolean =>
+		el.value === value;
+const isNot =
+	( value: string ) =>
+	( el: HTMLInputElement | HTMLSelectElement ): boolean =>
+		el.value !== value;
+const filled = ( el: HTMLInputElement | HTMLSelectElement ): boolean =>
+	el.value.trim() !== '';
+
+/** Which CPT setting needs which other setting (see core/dependencies.ts). */
+export const CPT_DEPENDENCIES: Dependency[] = [
+	{ field: 'wpessential-cpt-archive-slug', on: 'wpessential-cpt-archive', when: isOn, need: 'is on' },
+	{ field: 'wpessential-cpt-rewrite-slug', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
+	{ field: 'wpessential-cpt-rewrite-with_front', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
+	{ field: 'wpessential-cpt-rewrite-feeds', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
+	{ field: 'wpessential-cpt-rewrite-pages', on: 'wpessential-cpt-opt-rewrite', when: is( 'custom' ), need: 'is set to Custom' },
+	{ field: 'wpessential-cpt-opt-show_in_menu-custom', on: 'wpessential-cpt-opt-show_in_menu', when: is( 'custom' ), need: 'is set to “Under another menu”' },
+	{ field: 'wpessential-cpt-opt-query_var-custom', on: 'wpessential-cpt-opt-query_var', when: is( 'custom' ), need: 'is set to “Custom query variable”' },
+	{ field: 'wpessential-cpt-opt-menu_position', on: 'wpessential-cpt-opt-show_in_menu', when: isNot( 'false' ), need: 'is not No' },
+	{ field: 'wpessential-cpt-opt-menu_icon', on: 'wpessential-cpt-opt-show_in_menu', when: isNot( 'false' ), need: 'is not No' },
+	{ field: 'wpessential-cpt-opt-show_in_menu', on: 'wpessential-cpt-opt-show_ui', when: isNot( 'false' ), need: 'is not No' },
+	{ field: 'wpessential-cpt-opt-rest_base', on: 'wpessential-cpt-rest', when: isOn, need: 'is on' },
+	{ field: 'wpessential-cpt-opt-rest_namespace', on: 'wpessential-cpt-rest', when: isOn, need: 'is on' },
+	{ field: 'wpessential-cpt-capability-plural', on: 'wpessential-cpt-opt-capability_type', when: filled, need: 'is filled in' },
+];
