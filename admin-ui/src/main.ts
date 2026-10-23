@@ -1,5 +1,6 @@
 import { bindDependencies } from './core/dependencies';
 import { bindKeyFromName, bindLevels, refreshLevel } from './core/levels';
+import { enhanceTable } from './core/table';
 import { statusCell } from './core/status-pill';
 import {
 	ADVANCED_KEYS,
@@ -854,6 +855,20 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 	} );
 
 	renderCptRows( definitions );
+	const cptTable = document.getElementById( 'wpessential-cpt-table' );
+	if ( bootstrap.view === 'list' && cptTable instanceof HTMLTableElement ) {
+		enhanceTable( cptTable, {
+			rowSelector: '[data-wpessential-cpt-row]',
+			itemsLabel: 'Post Types',
+			viewsColumn: 2,
+			sortable: [
+				{ column: 0 },
+				{ column: 1 },
+				{ column: 2 },
+				{ column: 3, numeric: true },
+			],
+		} );
+	}
 
 	// Editor page opened for one definition (?definition=<id>): load it, from the list if needed.
 	const requested =

@@ -1,4 +1,5 @@
 import { bindKeyFromName } from './core/levels';
+import { enhanceTable } from './core/table';
 import { statusCell } from './core/status-pill';
 import './admin.scss';
 import {
@@ -1377,6 +1378,22 @@ function boot(): void {
 	}
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
+	const taxonomyTable = document.getElementById( 'wpessential-taxonomy-table' );
+	if ( bootstrap.view === 'list' && taxonomyTable instanceof HTMLTableElement ) {
+		enhanceTable( taxonomyTable, {
+			rowSelector: '[data-wpessential-taxonomy-row]',
+			itemsLabel: 'Taxonomies',
+			viewsColumn: 3,
+			filters: [ { column: 5, label: 'Runtime health' } ],
+			sortable: [
+				{ column: 0 },
+				{ column: 1 },
+				{ column: 3 },
+				{ column: 4, numeric: true },
+				{ column: 6, numeric: true },
+			],
+		} );
+	}
 
 	// Editor page opened for one taxonomy (?definition=<id>): load it, from the list if needed.
 	const requested =

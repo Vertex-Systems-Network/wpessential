@@ -340,3 +340,129 @@
 		opacity: 0.55;
 	}
 }
+
+// List tables, laid out like WordPress list tables: status views and search on top, filters
+// and paging in the table nav, sortable headers.
+.wpe-ui-tablenav__head,
+.wpe-ui-tablenav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--wpe-space-2);
+	padding: var(--wpe-space-3) var(--wpe-space-4) 0;
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.wpe-ui-tablenav {
+	padding-bottom: var(--wpe-space-3);
+
+	&--bottom {
+		justify-content: flex-end;
+		padding-top: var(--wpe-space-3);
+	}
+}
+
+.wpe-ui-views .wpe-ui-tab {
+	text-decoration: none;
+
+	&:focus-visible {
+		outline: 2px solid var(--wpe-blue);
+		outline-offset: 2px;
+	}
+}
+
+.wpe-ui-tablesearch,
+.wpe-ui-tablenav__filters,
+.wpe-ui-tablenav__pages,
+.wpe-ui-tablenav__paging {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.wpe-ui-tablesearch .wpe-ui-input {
+	width: 220px;
+}
+
+.wpe-ui-tablenav__filters select {
+	width: auto;
+	min-width: 170px;
+}
+
+.wpe-ui-tablenav__count {
+	margin-right: var(--wpe-space-2);
+	color: var(--wpe-text-2);
+}
+
+.wpe-ui-tablenav__paging[hidden] {
+	display: none;
+}
+
+.wpe-ui-pagebtn {
+	min-width: 30px;
+	height: 30px;
+	border: 1px solid var(--wpe-line);
+	border-radius: 6px;
+	background: var(--wpe-card);
+	color: var(--wpe-text);
+	font: inherit;
+	cursor: pointer;
+
+	&:disabled {
+		opacity: 0.45;
+		cursor: default;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wpe-blue);
+		outline-offset: 2px;
+	}
+}
+
+.wpe-ui-pageinput {
+	width: 48px;
+	height: 30px;
+	text-align: center;
+}
+
+.wpe-ui-sort {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+	cursor: pointer;
+
+	&::after {
+		content: "";
+		width: 0;
+		height: 0;
+		border-right: 4px solid transparent;
+		border-left: 4px solid transparent;
+		border-top: 5px solid currentcolor;
+		opacity: 0.3;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wpe-blue);
+		outline-offset: 2px;
+	}
+}
+
+th[aria-sort="ascending"] .wpe-ui-sort::after {
+	opacity: 1;
+	transform: rotate(180deg);
+}
+
+th[aria-sort="descending"] .wpe-ui-sort::after {
+	opacity: 1;
+}

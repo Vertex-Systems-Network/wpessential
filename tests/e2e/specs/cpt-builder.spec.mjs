@@ -237,3 +237,57 @@ test('packaged CPT Builder has zero axe violations in its initial bounded editor
     `Axe violations in WPE-owned CPT Builder:\n${JSON.stringify(summary, null, 2)}`,
   ).toEqual([]);
 });
+
+test('CPT list page has WordPress-style views, search and sortable columns', async ({ page }) => {
+  const statuses = ['published', 'draft', 'disabled'];
+  const definitions = Array.from({ length: 25 }, (_, index) => ({
+    id: `22222222-2222-4222-8222-${String(index).padStart(12, '0')}`,
+    status: statuses[index % 3],
+    revision: index + 1,
+    payload: { post_type_key: `list_${index}`, name: `List type ${index}`, singular_name: `List type ${index}` },
+  }));
+  await visitCpts(page, 'wpessential-post-types');
+  await page.route('**/wp-admin/admin-ajax.php', async (route) => {
+    const body = new URLSearchParams(route.request().postData() ?? '');
+    if (body.get('type') !== 'cpt.list') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { definitions } }) });
+  });
+  await page.getByRole('button', { name: 'Refresh' }).click();
+
+  const rows = page.locator('[data-wpessential-cpt-row]:visible');
+  await expect(rows).toHaveCount(20);
+  await expect(page.locator('.wpe-ui-tablenav__count').first()).toHaveText('25 items');
+
+  // Status views with counts, like WordPress list tables.
+  const views = page.getByRole('navigation', { name: 'Filter by status' });
+  await expect(views).toContainText('All25');
+  await views.getByRole('link', { name: /^Draft/ }).click();
+  await expect(rows).toHaveCount(8);
+  await views.getByRole('link', { name: /^All/ }).click();
+
+  // Search runs on the Search button.
+  await page.getByRole('searchbox', { name: 'Search Post Types' }).fill('List type 12');
+  await page.getByRole('button', { name: 'Search Post Types' }).click();
+  await expect(rows).toHaveCount(1);
+  await page.getByRole('searchbox', { name: 'Search Post Types' }).fill('');
+  await page.getByRole('button', { name: 'Search Post Types' }).click();
+  await expect(rows).toHaveCount(20);
+
+  // Paging: 20 per page with « ‹ n of N › » controls.
+  await page.getByRole('button', { name: 'Next page' }).first().click();
+  await expect(rows).toHaveCount(5);
+  await page.getByRole('button', { name: 'First page' }).first().click();
+
+  // Sortable columns.
+  const revision = page.getByRole('columnheader', { name: 'Revision' });
+  await revision.getByRole('button').click();
+  await revision.getByRole('button').click();
+  await expect(revision).toHaveAttribute('aria-sort', 'descending');
+  await expect(rows.first()).toContainText('List type 24');
+
+  const results = await new AxeBuilder({ page }).include('#wpessential-admin-root').analyze();
+  expect(results.violations.map((violation) => violation.id)).toEqual([]);
+});
