@@ -8,6 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WPEssential\Platform\Admin\Ui\Icon;
+use WPEssential\Platform\Admin\Ui\Shell;
+use WPEssential\Platform\Admin\Ui\StatusPill;
 use InvalidArgumentException;
 use Throwable;
 use WPEssential\Platform\Abilities\AbilityRegistry;
@@ -132,18 +135,22 @@ final class CustomPostTypeAdminController {
 			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json                      = is_string( $json ) ? $json : '{}';
 
-		echo '<div class="wrap wpessential-admin-wrap">';
-		echo '<section id="wpessential-admin-root" data-wpessential-surface="custom-post-types" aria-labelledby="wpessential-cpt-title">';
+		echo '<div class="wrap wpe-ui wpessential-admin-wrap">';
+		echo Shell::topbar( self::PAGE_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo '<section id="wpessential-admin-root" class="wpe-ui-builder" data-wpessential-surface="custom-post-types" aria-labelledby="wpessential-cpt-title">';
+		echo '<div class="wpe-ui-page-header"><div><p class="wpe-ui-eyebrow">' . esc_html__( 'Content modeling', 'wpessential' ) . '</p>';
 		echo '<h1 id="wpessential-cpt-title">' . esc_html__( 'Custom Post Types', 'wpessential' ) . '</h1>';
-		echo '<p>' . esc_html__( 'Create and manage canonical WPEssential post type definitions. Changes are revision-safe and pass through the shared Policy and Ability layer.', 'wpessential' ) . '</p>';
+		echo '<p class="wpe-ui-page-header__desc">' . esc_html__( 'Create and manage WPEssential post types. Every change is revision-safe and runs through the shared policy and ability layer.', 'wpessential' ) . '</p></div></div>';
 
 		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html( $readError ) . '</p></div>';
 		}
 
 		echo '<div id="wpessential-cpt-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
-		$this->renderEditor();
+		echo '<div class="wpe-ui-builder__layout">';
 		$this->renderDefinitions( $definitions );
+		$this->renderEditor();
+		echo '</div>';
 		echo '<noscript><p class="notice notice-warning inline">' . esc_html__( 'JavaScript is required to create or change Custom Post Type definitions. Existing definitions remain readable in the table.', 'wpessential' ) . '</p></noscript>';
 		echo '</section>';
 		echo '<script id="wpessential-admin-bootstrap" type="application/json">' . $json . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON encoded with JSON_HEX_* flags.
@@ -151,26 +158,27 @@ final class CustomPostTypeAdminController {
 	}
 
 	private function renderEditor(): void {
-		echo '<section class="wpessential-cpt-panel" aria-labelledby="wpessential-cpt-editor-title">';
-		echo '<h2 id="wpessential-cpt-editor-title">' . esc_html__( 'Add custom post type', 'wpessential' ) . '</h2>';
+		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-builder__editor" aria-labelledby="wpessential-cpt-editor-title">';
+		echo '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'file', 20 ) . '</span><h2 id="wpessential-cpt-editor-title">' . esc_html__( 'Add custom post type', 'wpessential' ) . '</h2></div>';
 		echo '<form id="wpessential-cpt-form">';
 		echo '<input type="hidden" id="wpessential-cpt-id" value="">';
 		echo '<input type="hidden" id="wpessential-cpt-revision" value="">';
-		echo '<div class="wpessential-cpt-grid">';
+		echo '<h3 class="wpe-ui-builder__section">' . esc_html__( 'Basics', 'wpessential' ) . '</h3>';
+		echo '<div class="wpessential-cpt-grid wpe-ui-field-grid">';
 		$this->renderTextField( 'wpessential-cpt-key', __( 'Post type key', 'wpessential' ), 'post_type_key', 'book', true, __( 'Lowercase; maximum 20 characters. Existing runtime keys are immutable through this first UI slice.', 'wpessential' ) );
 		$this->renderTextField( 'wpessential-cpt-name', __( 'Plural name', 'wpessential' ), 'name', 'Books', true );
 		$this->renderTextField( 'wpessential-cpt-singular', __( 'Singular name', 'wpessential' ), 'singular_name', 'Book', true );
 		$this->renderTextField( 'wpessential-cpt-description', __( 'Description', 'wpessential' ), 'description', '', false );
 		echo '</div>';
 
-		echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__( 'Behavior', 'wpessential' ) . '</legend>';
+		echo '<fieldset class="wpessential-cpt-options wpe-ui-checks"><legend class="wpe-ui-builder__section">' . esc_html__( 'Behavior', 'wpessential' ) . '</legend>';
 		$this->renderCheckbox( 'wpessential-cpt-public', __( 'Public', 'wpessential' ), true );
 		$this->renderCheckbox( 'wpessential-cpt-rest', __( 'Show in REST API', 'wpessential' ), true );
 		$this->renderCheckbox( 'wpessential-cpt-hierarchical', __( 'Hierarchical', 'wpessential' ), false );
 		$this->renderCheckbox( 'wpessential-cpt-archive', __( 'Has archive', 'wpessential' ), false );
 		echo '</fieldset>';
 
-		echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__( 'Editor supports', 'wpessential' ) . '</legend>';
+		echo '<fieldset class="wpessential-cpt-options wpe-ui-checks"><legend class="wpe-ui-builder__section">' . esc_html__( 'Editor supports', 'wpessential' ) . '</legend>';
 		foreach ( [
 			'title'           => __( 'Title', 'wpessential' ),
 			'editor'          => __( 'Editor', 'wpessential' ),
@@ -182,11 +190,11 @@ final class CustomPostTypeAdminController {
 			'page-attributes' => __( 'Page attributes', 'wpessential' ),
 		] as $support => $label ) {
 			$checked = in_array( $support, [ 'title', 'editor' ], true );
-			echo '<label><input type="checkbox" data-wpessential-cpt-support="' . esc_attr( $support ) . '"' . checked( $checked, true, false ) . '> ' . esc_html( $label ) . '</label>';
+			echo '<label class="wpe-ui-check"><input type="checkbox" data-wpessential-cpt-support="' . esc_attr( $support ) . '"' . checked( $checked, true, false ) . '> ' . esc_html( $label ) . '</label>';
 		}
 		echo '</fieldset>';
 
-		echo '<p><label for="wpessential-cpt-status"><strong>' . esc_html__( 'Lifecycle status', 'wpessential' ) . '</strong></label><br>';
+		echo '<p class="wpe-ui-field"><label for="wpessential-cpt-status">' . esc_html__( 'Lifecycle status', 'wpessential' ) . '</label>';
 		echo '<select id="wpessential-cpt-status">';
 		foreach ( [
 			'draft'     => __( 'Draft', 'wpessential' ),
@@ -204,20 +212,20 @@ final class CustomPostTypeAdminController {
 		echo '<ul data-wpessential-cpt-validation-issues></ul>';
 		echo '</div>';
 
-		echo '<p class="submit">';
-		echo '<button type="button" class="button" id="wpessential-cpt-validate">' . esc_html__( 'Validate', 'wpessential' ) . '</button> ';
-		echo '<button type="submit" class="button button-primary" id="wpessential-cpt-save">' . esc_html__( 'Save custom post type', 'wpessential' ) . '</button> ';
-		echo '<button type="button" class="button" id="wpessential-cpt-cancel" hidden>' . esc_html__( 'Cancel edit', 'wpessential' ) . '</button>';
-		echo '</p>';
+		echo '<div class="wpe-ui-builder__actions">';
+		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost" id="wpessential-cpt-cancel" hidden>' . esc_html__( 'Cancel edit', 'wpessential' ) . '</button>';
+		echo '<button type="button" class="wpe-ui-button wpe-ui-button--secondary" id="wpessential-cpt-validate">' . esc_html__( 'Validate', 'wpessential' ) . '</button>';
+		echo '<button type="submit" class="wpe-ui-button wpe-ui-button--primary" id="wpessential-cpt-save">' . esc_html__( 'Save custom post type', 'wpessential' ) . '</button>';
+		echo '</div>';
 		echo '</form>';
 		echo '</section>';
 	}
 
 	/** @param list<array<string,mixed>> $definitions */
 	private function renderDefinitions( array $definitions ): void {
-		echo '<section class="wpessential-cpt-panel" aria-labelledby="wpessential-cpt-list-title">';
-		echo '<div class="wpessential-cpt-list-heading"><h2 id="wpessential-cpt-list-title">' . esc_html__( 'Saved custom post types', 'wpessential' ) . '</h2>';
-		echo '<button type="button" class="button" id="wpessential-cpt-refresh">' . esc_html__( 'Refresh', 'wpessential' ) . '</button></div>';
+		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-panel--flush wpe-ui-builder__list" aria-labelledby="wpessential-cpt-list-title">';
+		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-cpt-list-title">' . esc_html__( 'Saved custom post types', 'wpessential' ) . '</h2>';
+		echo '<button type="button" class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm" id="wpessential-cpt-refresh">' . Icon::render( 'refresh', 16 ) . esc_html__( 'Refresh', 'wpessential' ) . '</button></div>';
 		echo '<table class="widefat striped" id="wpessential-cpt-table" aria-label="' . esc_attr__( 'Saved custom post types', 'wpessential' ) . '">';
 		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
 		echo '<tbody id="wpessential-cpt-rows">';
@@ -229,6 +237,17 @@ final class CustomPostTypeAdminController {
 		}
 		echo '</tbody></table>';
 		echo '</section>';
+	}
+
+	public static function statusPill( string $status ): string {
+		$tones = [
+			'published' => 'running',
+			'draft'     => 'waiting',
+			'disabled'  => 'off',
+			'archived'  => 'locked',
+		];
+
+		return StatusPill::render( $tones[ $status ] ?? 'off', ucfirst( $status ) );
 	}
 
 	/** @param array<string,mixed> $definition */
@@ -243,7 +262,7 @@ final class CustomPostTypeAdminController {
 		echo '<tr data-wpessential-cpt-row="' . esc_attr( $id ) . '">';
 		echo '<td><strong>' . esc_html( $name ) . '</strong></td>';
 		echo '<td><code>' . esc_html( $key ) . '</code></td>';
-		echo '<td>' . esc_html( ucfirst( $status ) ) . '</td>';
+		echo '<td>' . self::statusPill( $status ) . '</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- StatusPill escapes.
 		echo '<td>' . esc_html( (string) $revision ) . '</td>';
 		echo '<td><button type="button" class="button button-small" data-wpessential-cpt-edit="' . esc_attr( $id ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</button> ';
 		if ( $status === 'published' ) {
@@ -266,16 +285,16 @@ final class CustomPostTypeAdminController {
 		bool $required,
 		string $help = '',
 	): void {
-		echo '<p><label for="' . esc_attr( $id ) . '"><strong>' . esc_html( $label ) . '</strong></label><br>';
+		echo '<p class="wpe-ui-field"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>';
 		echo '<input class="regular-text" type="text" id="' . esc_attr( $id ) . '" data-wpessential-cpt-field="' . esc_attr( $field ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . '>';
 		if ( $help !== '' ) {
-			echo '<span class="description">' . esc_html( $help ) . '</span>';
+			echo '<span class="description wpe-ui-muted">' . esc_html( $help ) . '</span>';
 		}
 		echo '</p>';
 	}
 
 	private function renderCheckbox( string $id, string $label, bool $checkedByDefault ): void {
-		echo '<label for="' . esc_attr( $id ) . '"><input type="checkbox" id="' . esc_attr( $id ) . '"' . checked( $checkedByDefault, true, false ) . '> ' . esc_html( $label ) . '</label>';
+		echo '<label class="wpe-ui-check" for="' . esc_attr( $id ) . '"><input type="checkbox" id="' . esc_attr( $id ) . '"' . checked( $checkedByDefault, true, false ) . '> ' . esc_html( $label ) . '</label>';
 	}
 
 	/** @return array{list<array<string,mixed>>,?string} */
