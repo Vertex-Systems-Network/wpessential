@@ -139,7 +139,9 @@ final class CoreAdminController {
 		// WPEssential top navigation only; the WordPress sidebar lists modules.
 		add_submenu_page( self::HIDDEN_PARENT, __( 'Modules', 'wpessential' ), __( 'Modules', 'wpessential' ), $cap, Shell::MODULES_SLUG, [ $this, 'renderModules' ] );
 		foreach ( $this->screens as $screen ) {
-			add_submenu_page( self::HIDDEN_PARENT, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
+			// AI Connect is a module: it sits in the sidebar while the module is on (Modules screen).
+			$inSidebar = $screen->slug() === Shell::AI_SLUG && $this->moduleActive( 'ai-connect' );
+			add_submenu_page( $inSidebar ? $parent : self::HIDDEN_PARENT, $screen->title(), $screen->title(), $cap, $screen->slug(), [ $this, 'renderScreen' ] );
 		}
 
 		// Module overview pages stay out of the sidebar; they are reached from the Modules screen.
@@ -487,6 +489,16 @@ final class CoreAdminController {
 	/** @param array{id:string,edition:string} $module */
 	private function isLocked( array $module ): bool {
 		return $module['edition'] === 'pro' && ! Shell::premiumAvailable();
+	}
+
+	private function moduleActive( string $id ): bool {
+		foreach ( ModuleCatalog::all() as $module ) {
+			if ( $module['id'] === $id ) {
+				return $this->isActive( $module );
+			}
+		}
+
+		return false;
 	}
 
 	/** @param array{id:string,edition:string} $module */

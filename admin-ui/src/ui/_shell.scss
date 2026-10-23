@@ -169,3 +169,92 @@
 		margin-left: 0;
 	}
 }
+
+// Account menu beside light/dark: an icon with Log in / Register, Docs and System Status.
+.wpe-ui-account {
+	position: relative;
+
+	&__button {
+		min-width: 34px;
+		padding-right: var(--wpe-space-2);
+		padding-left: var(--wpe-space-2);
+		list-style: none;
+		cursor: pointer;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+
+	// Chevron on the button; it turns up while the menu is open.
+	&__chevron {
+		display: inline-flex;
+		margin-left: 2px;
+		transition: transform var(--wpe-dur-2) var(--wpe-ease);
+	}
+
+	&[open] &__chevron {
+		transform: rotate(180deg);
+	}
+
+	&__menu {
+		position: absolute;
+		z-index: 100;
+		top: calc(100% + 6px);
+		right: 0;
+		min-width: 200px;
+		margin: 0;
+		padding: 6px;
+		border: 1px solid var(--wpe-line);
+		border-radius: 12px;
+		background: var(--wpe-card);
+		box-shadow: 0 12px 32px rgb(15 23 42 / 14%);
+		list-style: none;
+
+		// Arrow tip pointing at the account button the menu belongs to.
+		&::before {
+			content: "";
+			position: absolute;
+			top: -6px;
+			right: 14px;
+			width: 10px;
+			height: 10px;
+			border-top: 1px solid var(--wpe-line);
+			border-left: 1px solid var(--wpe-line);
+			background: var(--wpe-card);
+			transform: rotate(45deg);
+		}
+
+		li {
+			margin: 0;
+		}
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		gap: var(--wpe-space-2);
+		padding: 8px 10px;
+		border-radius: 8px;
+		color: var(--wpe-text);
+		font-weight: 500;
+		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			background: var(--wpe-surface);
+			color: var(--wpe-indigo);
+		}
+
+		&.is-current {
+			background: var(--wpe-indigo-tint);
+			color: var(--wpe-indigo);
+		}
+	}
+}
+
+.wpe-ui-topbar .wpe-ui-account__button.is-current {
+	border-color: var(--wpe-indigo);
+	background: var(--wpe-indigo-tint);
+	color: var(--wpe-indigo);
+}

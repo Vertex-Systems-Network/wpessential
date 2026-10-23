@@ -2,7 +2,7 @@
 // AI Connect, Account, System Status, Docs): the next screen is fetched and swapped in without a
 // full page reload, and the address bar and Back button keep working. A screen that needs a
 // script this page has not loaded (or runs inline script) falls back to a normal page load.
-const LINKS = 'a.wpe-ui-nav__item, .wpe-ui-topbar a.wpe-ui-button[href*="page=wpessential"], .wpe-ui-topbar a.wpe-ui-logo';
+const LINKS = 'a.wpe-ui-nav__item, a.wpe-ui-account__item, .wpe-ui-topbar a.wpe-ui-button[href*="page=wpessential"], .wpe-ui-topbar a.wpe-ui-logo';
 
 function scriptKey( src: string ): string {
 	try {

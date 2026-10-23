@@ -133,10 +133,21 @@ test('WordPress sidebar lists Dashboard and modules; product pages live in the t
   await expect(submenu.getByRole('link', { name: 'Taxonomies', exact: true })).toHaveCount(1);
 
   const nav = page.getByRole('navigation', { name: 'WPEssential', exact: true });
-  for (const name of ['Dashboard', 'Modules', 'Demo Library', 'Elements', 'AI Connect', 'Account', 'System Status']) {
+  for (const name of ['Dashboard', 'Modules', 'Demo Library', 'Elements']) {
     await expect(nav.getByRole('link', { name })).toBeVisible();
   }
-  await expect(page.getByRole('link', { name: 'Docs' })).toBeVisible();
+  for (const name of ['AI Connect', 'Account', 'System Status', 'Docs']) {
+    await expect(nav.getByRole('link', { name }), `${name} is not a top navigation tab`).toHaveCount(0);
+  }
+
+  // Account is an icon beside light/dark with Log in / Register, Docs and System Status.
+  const account = page.locator('[data-wpe-account]');
+  await account.locator('summary').click();
+  for (const name of ['Log in / Register', 'Docs', 'System Status']) {
+    await expect(account.getByRole('link', { name })).toBeVisible();
+  }
+  await page.keyboard.press('Escape');
+  await expect(account.getByRole('link', { name: 'Docs' })).toBeHidden();
 
   // Product pages still open, with the WPEssential sidebar item kept highlighted.
   await visitCore(page, 'wpessential-modules');
