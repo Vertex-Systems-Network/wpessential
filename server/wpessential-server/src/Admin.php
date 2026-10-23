@@ -207,6 +207,10 @@ class Admin {
 		foreach ( Plans::all() as $plan ) {
 			$out .= '<option value="' . esc_attr( $plan['key'] ) . '"' . selected( $current, $plan['key'], false ) . '>' . esc_html( $plan['name'] ) . '</option>';
 		}
+		// The owner plan is offered only to site administrators, never to shop managers.
+		if ( current_user_can( 'manage_options' ) ) {
+			$out .= '<option value="' . esc_attr( Plans::OWNER ) . '"' . selected( $current, Plans::OWNER, false ) . '>' . esc_html__( 'Owner (every feature, unlimited websites, never expires)', 'wpessential-server' ) . '</option>';
+		}
 		return $out . '</select>';
 	}
 
@@ -217,6 +221,9 @@ class Admin {
 	 * @return array|null
 	 */
 	private static function plan_by_key( $key ) {
+		if ( Plans::OWNER === $key ) {
+			return current_user_can( 'manage_options' ) ? Plans::from_product( Plans::owner_product() ) : null;
+		}
 		$id = $key ? Plans::product_id( $key ) : 0;
 		return $id ? Plans::from_product( $id ) : null;
 	}
@@ -270,6 +277,16 @@ class Admin {
 		}
 		if ( isset( $_POST['white'] ) && '' !== $_POST['white'] ) {
 			$fields['white_label'] = (int) $_POST['white'] ? 1 : 0;
+		}
+		if ( Plans::OWNER === $plan['key'] ) {
+			// Owner licences always keep the plan's terms, whatever the form says.
+			$fields = array(
+				'sites_limit' => 0,
+				'expires_at'  => null,
+				'auto_renew'  => 0,
+				'white_label' => 1,
+			);
+			Events::log( 'license.owner_issued', 'Owner licence issued.', array( 'user_id' => (int) $user->ID, 'by' => get_current_user_id() ) );
 		}
 		$count = isset( $_POST['count'] ) ? min( 50, max( 1, (int) $_POST['count'] ) ) : 1;
 		$last  = 0;

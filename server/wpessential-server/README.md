@@ -77,3 +77,18 @@ The `/playground`, `/theme` and `/download` responses send `Access-Control-Allow
 so Playground can fetch them.
 
 The demo manifest exposes the links as `playground: { gutenberg: url, elementor: url }`.
+
+## Owner licence
+
+For the site owner's own websites: every free and Pro feature, unlimited websites, never expires.
+
+1. Sign in to wpessential.org as a site administrator. Shop managers do not see this option.
+2. Go to **WPEssential → Add license**, enter your own account email and choose **Owner**.
+3. On your website, open **WPEssential → Account** and sign in. The Owner licence is picked up like any other licence.
+
+Why it stays private:
+- The Owner plan is a private product. It is not listed in the plans API, the shop or upgrades, and it cannot be bought.
+- The plugin has no special code for it: the licence just reports `pro: true`.
+- Every Owner licence issued is logged under the `license.owner_issued` event.
+
+To stop it, revoke the licence on the server.
