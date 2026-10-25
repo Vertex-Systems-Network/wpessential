@@ -3,10 +3,10 @@
 **Status:** UI-only concept assets. No PHP, TypeScript, JavaScript runtime, data structures, CI, or database files changed. These five SVG artboards are editable vector/text design mockups, not registered production elements. Designed 2026-10-25.
 
 ## Source of truth
-- [Elements React view](../../../admin-ui/src/app/screens/Elements.tsx) and [Elements registry](../../../frameworks/Platform/Admin/Elements/ElementRegistry.php): only `gutenberg` and `elementor` types; per-item enable/disable; edition badge; module-contributed registry is allowed to be empty.
-- [Elements screen](../../../frameworks/Platform/Admin/Elements/ElementsScreen.php): Elementor inactive notice; empty state; docs route; current data and switch behavior.
-- [Builder Widgets UX contract](../BUILDER-WIDGETS-UX-CONTRACT-V1.md): canonical owner Surface 16; 18 atomic option IDs; component/controls/rendering/style/adapters split; no arbitrary code callbacks.
-- [Design tokens](../../../admin-ui/src/ui/_tokens.scss): ink navy `#0B1A3D`, orange `#EC7D1A`, app background `#F3F6FC`, muted `#5D6780`, primary line `#DDE4F0`; Bricolage Grotesque headings / Plus Jakarta Sans body in source (SVG uses Plus Jakarta Sans with fallback).
+- [Elements React view](../../../../admin-ui/src/app/screens/Elements.tsx) and [Elements registry](../../../../frameworks/Platform/Admin/Elements/ElementRegistry.php): only `gutenberg` and `elementor` types; per-item enable/disable; edition badge; module-contributed registry is allowed to be empty.
+- [Elements screen](../../../../frameworks/Platform/Admin/Elements/ElementsScreen.php): Elementor inactive notice; empty state; docs route; current data and switch behavior.
+- [Builder Widgets UX contract](../../BUILDER-WIDGETS-UX-CONTRACT-V1.md): canonical owner Surface 16; 18 atomic option IDs; component/controls/rendering/style/adapters split; no arbitrary code callbacks.
+- [Design tokens](../../../../admin-ui/src/ui/_tokens.scss): ink navy `#0B1A3D`, orange `#EC7D1A`, app background `#F3F6FC`, muted `#5D6780`, primary line `#DDE4F0`; Bricolage Grotesque headings / Plus Jakarta Sans body in source (SVG uses Plus Jakarta Sans with fallback).
 
 ## Artboards
 1. [01 — Gutenberg registry, populated concept](01-elements-gutenberg.svg): search/filter, sample registrations, edition badges, on/off, counts. **All item names/sample counts are fictional UI fixtures, never claim these widgets currently ship.** The current registry can be empty.
