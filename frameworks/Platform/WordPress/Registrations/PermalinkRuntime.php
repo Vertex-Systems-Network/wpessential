@@ -89,9 +89,15 @@ final class PermalinkRuntime {
 		}
 		$this->booted = true;
 
+		global $wp_rewrite;
+		$known = isset( $wp_rewrite->rewritecode ) && is_array( $wp_rewrite->rewritecode ) ? $wp_rewrite->rewritecode : [];
 		foreach ( $this->postTypes as $config ) {
 			foreach ( $config['tokens'] as $token ) {
-				if ( ! in_array( $token, self::DATE_TOKENS, true ) && function_exists( 'add_rewrite_tag' ) && function_exists( 'taxonomy_exists' ) && taxonomy_exists( $token ) ) {
+				// Tags WordPress already has (%category%, %year%, %author% …) keep their own query.
+				if ( in_array( '%' . $token . '%', $known, true ) || in_array( $token, self::DATE_TOKENS, true ) ) {
+					continue;
+				}
+				if ( function_exists( 'add_rewrite_tag' ) && function_exists( 'taxonomy_exists' ) && taxonomy_exists( $token ) ) {
 					add_rewrite_tag( '%' . $token . '%', '([^/]+)', $token . '=' );
 				}
 			}

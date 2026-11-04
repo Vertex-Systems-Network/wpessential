@@ -12,6 +12,7 @@ on:
       - 'tests/Unit/Platform/WordPress/Registrations/**'
       - 'tests/Integration/wordpress-cpt-runtime.php'
       - 'tests/Integration/wordpress-cpt-validation.php'
+      - 'tests/Integration/wordpress-permalink-runtime.php'
       - '.github/workflows/cpt-runtime.yml'
   push:
     branches:
@@ -26,6 +27,7 @@ on:
       - 'tests/Unit/Platform/WordPress/Registrations/**'
       - 'tests/Integration/wordpress-cpt-runtime.php'
       - 'tests/Integration/wordpress-cpt-validation.php'
+      - 'tests/Integration/wordpress-permalink-runtime.php'
       - '.github/workflows/cpt-runtime.yml'
   workflow_dispatch:
 
@@ -188,6 +190,19 @@ jobs:
           test -s artifacts/cpt-runtime/evidence.json
           jq -e '.result == "PASS" and .module_state == "booted" and .owner_surface_id == 1 and .disabled_definition_retained == true and .compiled_post_type_count == 0' artifacts/cpt-runtime/evidence.json >/dev/null
           cat artifacts/cpt-runtime/evidence.json
+
+      - name: Run URL format (permalink) runtime evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/cpt-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-permalink-runtime.php'
+          for mode in seed verify; do
+            echo "=== ${mode} ===" | tee -a artifacts/cpt-runtime/permalink.log
+            WPE_PERMALINK_TEST_MODE="${mode}" ${wp} eval "require '${script}';" | tee -a artifacts/cpt-runtime/permalink.log
+          done
+          grep -q 'permalink verify PASS' artifacts/cpt-runtime/permalink.log
 
       - name: Upload CPT runtime evidence
         if: always() && hashFiles('artifacts/cpt-runtime/**') != ''

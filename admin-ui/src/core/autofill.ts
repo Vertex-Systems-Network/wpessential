@@ -43,34 +43,29 @@ export const CPT_LABEL_TEMPLATES: LabelTemplates = {
 	template_name: 'Single item: {S}',
 };
 
+/** Same text as the server (TaxonomyLabelPolicy::generated()); names are used as typed. */
 export const TAXONOMY_LABEL_TEMPLATES: LabelTemplates = {
 	menu_name: '{P}',
+	search_items: 'Search {P}',
 	all_items: 'All {P}',
 	edit_item: 'Edit {S}',
 	view_item: 'View {S}',
 	update_item: 'Update {S}',
 	add_new_item: 'Add New {S}',
 	new_item_name: 'New {S} Name',
-	parent_item: 'Parent {S}',
-	parent_item_colon: 'Parent {S}:',
-	search_items: 'Search {P}',
-	popular_items: 'Popular {P}',
-	separate_items_with_commas: 'Separate {p} with commas',
-	add_or_remove_items: 'Add or remove {p}',
-	choose_from_most_used: 'Choose from the most used {p}',
-	not_found: 'No {p} found.',
-	no_terms: 'No {p}',
-	filter_by_item: 'Filter by {s}',
+	not_found: 'No {P} found',
+	no_terms: 'No {P}',
 	items_list_navigation: '{P} list navigation',
 	items_list: '{P} list',
-	most_used: 'Most Used',
-	back_to_items: '← Go to {P}',
+	back_to_items: 'Go to {P}',
 	item_link: '{S} Link',
-	item_link_description: 'A link to a {s}.',
-	name_field_description: 'The name is how it appears on your site.',
-	slug_field_description: 'The “slug” is the URL-friendly version of the name.',
-	parent_field_description: 'Assign a parent term to create a hierarchy.',
-	desc_field_description: 'The description is not prominent by default; however, some themes may show it.',
+	item_link_description: 'A link to a {S}',
+	parent_item: 'Parent {S}',
+	parent_item_colon: 'Parent {S}:',
+	popular_items: 'Popular {P}',
+	separate_items_with_commas: 'Separate {P} with commas',
+	add_or_remove_items: 'Add or remove {P}',
+	choose_from_most_used: 'Choose from the most used {P}',
 };
 
 /** "Books" → "Book", "Categories" → "Category", "Boxes" → "Box". */
@@ -112,6 +107,17 @@ interface AutofillOptions {
 	/** The label inputs, each with its label key. */
 	labels: () => Array< { input: HTMLInputElement; key: string } >;
 	templates: LabelTemplates;
+	/**
+	 * "value" (default) writes generated labels into the fields; "placeholder" shows them as the
+	 * fields' placeholders instead, for editors whose empty label already means "generated"
+	 * (the Taxonomy label editor and its own Reset).
+	 */
+	mode?: 'value' | 'placeholder';
+	/**
+	 * Placeholder mode: whether this label is generated now (automatic labels on, and the label
+	 * belongs to the current flat / hierarchical family). Defaults to every templated label.
+	 */
+	generates?: ( input: HTMLInputElement, key: string ) => boolean;
 }
 
 /**
@@ -130,6 +136,38 @@ export function bindAutofill( options: AutofillOptions ): void {
 		const [ p, s ] = names();
 		return template && ( p || s ) ? render( template, p, s ) : '';
 	};
+
+	if ( options.mode === 'placeholder' ) {
+		const show = (): void => {
+			for ( const { input, key } of options.labels() ) {
+				input.placeholder = ( options.generates?.( input, key ) ?? true ) ? generated( key ) : '';
+			}
+		};
+		let singularTyped = singular.value !== '';
+		singular.addEventListener( 'input', ( event ) => {
+			if ( event.isTrusted ) {
+				singularTyped = singular.value !== '';
+			}
+			show();
+		} );
+		plural.addEventListener( 'input', () => {
+			if ( ! singularTyped && ! singular.readOnly ) {
+				singular.value = singularOf( plural.value );
+				singular.dispatchEvent( new Event( 'input' ) );
+				return;
+			}
+			show();
+		} );
+		form.addEventListener( 'change', ( event ) => {
+			// A loaded definition keeps its own singular name.
+			if ( event.target === form ) {
+				singularTyped = singular.value !== '' && singular.value !== singularOf( plural.value );
+			}
+			show();
+		} );
+		show();
+		return;
+	}
 
 	const resetButtons = new Map< HTMLInputElement, HTMLButtonElement >();
 	const mark = ( input: HTMLInputElement, auto: boolean ): void => {
@@ -162,7 +200,17 @@ export function bindAutofill( options: AutofillOptions ): void {
 		} );
 		input.after( reset );
 		resetButtons.set( input, reset );
-		input.addEventListener( 'input', () => mark( input, input.value.trim() === '' ) );
+		// Capture on the form: runs before the field's own listeners (e.g. the taxonomy label
+		// state), so they already see whether the value is typed or generated.
+		form.addEventListener(
+			'input',
+			( event ) => {
+				if ( event.target === input ) {
+					mark( input, input.value.trim() === '' );
+				}
+			},
+			true
+		);
 		input.addEventListener( 'blur', () => {
 			if ( isGenerated( input ) ) {
 				input.value = generated( key );
