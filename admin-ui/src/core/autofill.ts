@@ -43,34 +43,29 @@ export const CPT_LABEL_TEMPLATES: LabelTemplates = {
 	template_name: 'Single item: {S}',
 };
 
+/** Same text as the server (TaxonomyLabelPolicy::generated()); names are used as typed. */
 export const TAXONOMY_LABEL_TEMPLATES: LabelTemplates = {
 	menu_name: '{P}',
+	search_items: 'Search {P}',
 	all_items: 'All {P}',
 	edit_item: 'Edit {S}',
 	view_item: 'View {S}',
 	update_item: 'Update {S}',
 	add_new_item: 'Add New {S}',
 	new_item_name: 'New {S} Name',
-	parent_item: 'Parent {S}',
-	parent_item_colon: 'Parent {S}:',
-	search_items: 'Search {P}',
-	popular_items: 'Popular {P}',
-	separate_items_with_commas: 'Separate {p} with commas',
-	add_or_remove_items: 'Add or remove {p}',
-	choose_from_most_used: 'Choose from the most used {p}',
-	not_found: 'No {p} found.',
-	no_terms: 'No {p}',
-	filter_by_item: 'Filter by {s}',
+	not_found: 'No {P} found',
+	no_terms: 'No {P}',
 	items_list_navigation: '{P} list navigation',
 	items_list: '{P} list',
-	most_used: 'Most Used',
-	back_to_items: '← Go to {P}',
+	back_to_items: 'Go to {P}',
 	item_link: '{S} Link',
-	item_link_description: 'A link to a {s}.',
-	name_field_description: 'The name is how it appears on your site.',
-	slug_field_description: 'The “slug” is the URL-friendly version of the name.',
-	parent_field_description: 'Assign a parent term to create a hierarchy.',
-	desc_field_description: 'The description is not prominent by default; however, some themes may show it.',
+	item_link_description: 'A link to a {S}',
+	parent_item: 'Parent {S}',
+	parent_item_colon: 'Parent {S}:',
+	popular_items: 'Popular {P}',
+	separate_items_with_commas: 'Separate {P} with commas',
+	add_or_remove_items: 'Add or remove {P}',
+	choose_from_most_used: 'Choose from the most used {P}',
 };
 
 /** "Books" → "Book", "Categories" → "Category", "Boxes" → "Box". */
@@ -118,8 +113,11 @@ interface AutofillOptions {
 	 * (the Taxonomy label editor and its own Reset).
 	 */
 	mode?: 'value' | 'placeholder';
-	/** Placeholder mode: whether labels are generated at all (e.g. "automatic labels" is on). */
-	enabled?: () => boolean;
+	/**
+	 * Placeholder mode: whether this label is generated now (automatic labels on, and the label
+	 * belongs to the current flat / hierarchical family). Defaults to every templated label.
+	 */
+	generates?: ( input: HTMLInputElement, key: string ) => boolean;
 }
 
 /**
@@ -141,9 +139,8 @@ export function bindAutofill( options: AutofillOptions ): void {
 
 	if ( options.mode === 'placeholder' ) {
 		const show = (): void => {
-			const on = options.enabled?.() ?? true;
 			for ( const { input, key } of options.labels() ) {
-				input.placeholder = on ? generated( key ) : '';
+				input.placeholder = ( options.generates?.( input, key ) ?? true ) ? generated( key ) : '';
 			}
 		};
 		let singularTyped = singular.value !== '';

@@ -30,6 +30,23 @@ function permalinkExpect(bool $condition, string $message): void
     }
 }
 
+/**
+ * Routes a URL path through WordPress's own request parsing (rewrite rules, then the request
+ * filter), as a front-end request would.
+ *
+ * @return array<string,mixed>
+ */
+function permalinkRoute(string $path): array
+{
+    $homePath = (string) wp_parse_url(home_url('/'), PHP_URL_PATH);
+    $_SERVER['REQUEST_URI'] = rtrim($homePath, '/') . $path;
+    unset($_SERVER['PATH_INFO']);
+    $wp = new WP();
+    $wp->parse_request();
+
+    return $wp->query_vars;
+}
+
 /** @param array<string,mixed> $payload */
 function permalinkDefinition(string $id, string $slug, array $payload): Definition
 {
@@ -82,12 +99,12 @@ if ($mode === 'verify') {
 
     $hiddenLink = (string) get_permalink($hidden);
     permalinkExpect($hiddenLink === home_url('/pl-hidden-item/'), "hidden base link must be /pl-hidden-item/, got {$hiddenLink}");
-    $routed = apply_filters('request', ['name' => 'pl-hidden-item']);
-    permalinkExpect(($routed['post_type'] ?? null) === 'pl_hidden', 'a hidden-base URL must route to the builder post type');
+    $routed = permalinkRoute('/pl-hidden-item/');
+    permalinkExpect(($routed['post_type'] ?? null) === 'pl_hidden', 'the URL /pl-hidden-item/ must route to the builder post type, got ' . json_encode($routed));
     $page = wp_insert_post(['post_type' => 'page', 'post_title' => 'About', 'post_name' => 'pl-about', 'post_status' => 'publish']);
     permalinkExpect(is_int($page) && $page > 0, 'fixture page must be created');
-    $pageRequest = apply_filters('request', ['pagename' => 'pl-about']);
-    permalinkExpect(!isset($pageRequest['post_type']), 'a real page must win over a hidden-base URL');
+    $pageRequest = permalinkRoute('/pl-about/');
+    permalinkExpect(!isset($pageRequest['post_type']) && (($pageRequest['pagename'] ?? $pageRequest['name'] ?? '') === 'pl-about'), 'the URL /pl-about/ must stay the real page, got ' . json_encode($pageRequest));
 
     $filmLink = (string) get_permalink($film);
     permalinkExpect($filmLink === home_url('/films/drama/pl-film-one/'), "custom pattern link must be /films/drama/pl-film-one/, got {$filmLink}");

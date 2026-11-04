@@ -1397,7 +1397,14 @@ function boot(): void {
 			// Empty taxonomy labels already mean "generated" (with its own Reset): show the text as
 			// placeholders while automatic labels are on.
 			mode: 'placeholder',
-			enabled: () => ( document.getElementById( 'wpessential-taxonomy-automatic-labels' ) as HTMLInputElement | null )?.checked ?? true,
+			// Exactly the labels the server generates (TaxonomyLabelPolicy): common ones, plus the
+			// hierarchical or the flat family.
+			generates: ( input ) => {
+				const automatic = ( document.getElementById( 'wpessential-taxonomy-automatic-labels' ) as HTMLInputElement | null )?.checked ?? true;
+				const hierarchical = ( document.getElementById( 'wpessential-taxonomy-hierarchical' ) as HTMLInputElement | null )?.checked ?? false;
+				const family = input.dataset.wpessentialTaxonomyLabelGeneration ?? 'wordpress';
+				return automatic && ( family === 'common' || ( family === 'hierarchical' && hierarchical ) || ( family === 'flat' && ! hierarchical ) );
+			},
 			labels: () =>
 				Array.from( taxonomyForm.querySelectorAll< HTMLInputElement >( '[data-wpessential-taxonomy-label-field]' ) ).map( ( input ) => ( {
 					input,
