@@ -53,7 +53,7 @@ const approvedDevDependencies = {
   '@types/react-dom': '18.3.1',
   esbuild: '0.28.2',
   // Bundled into the dashboard app; React itself is WordPress's own (wp-element), not bundled.
-  'react-router': '7.9.4',
+  'react-router': '7.18.4',
   sass: '1.105.1',
   typescript: 'npm:@typescript/typescript6@6.0.2',
 };

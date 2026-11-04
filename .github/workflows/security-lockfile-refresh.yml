@@ -39,7 +39,10 @@ jobs:
           const p = require('./package.json');
           const expected = {
             '@biomejs/biome': '2.5.15',
+            '@types/react': '18.3.12',
+            '@types/react-dom': '18.3.1',
             'esbuild': '0.28.2',
+            'react-router': '7.18.4',
             'sass': '1.105.1',
             'typescript': 'npm:@typescript/typescript6@6.0.2'
           };

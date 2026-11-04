@@ -112,6 +112,14 @@ interface AutofillOptions {
 	/** The label inputs, each with its label key. */
 	labels: () => Array< { input: HTMLInputElement; key: string } >;
 	templates: LabelTemplates;
+	/**
+	 * "value" (default) writes generated labels into the fields; "placeholder" shows them as the
+	 * fields' placeholders instead, for editors whose empty label already means "generated"
+	 * (the Taxonomy label editor and its own Reset).
+	 */
+	mode?: 'value' | 'placeholder';
+	/** Placeholder mode: whether labels are generated at all (e.g. "automatic labels" is on). */
+	enabled?: () => boolean;
 }
 
 /**
@@ -130,6 +138,39 @@ export function bindAutofill( options: AutofillOptions ): void {
 		const [ p, s ] = names();
 		return template && ( p || s ) ? render( template, p, s ) : '';
 	};
+
+	if ( options.mode === 'placeholder' ) {
+		const show = (): void => {
+			const on = options.enabled?.() ?? true;
+			for ( const { input, key } of options.labels() ) {
+				input.placeholder = on ? generated( key ) : '';
+			}
+		};
+		let singularTyped = singular.value !== '';
+		singular.addEventListener( 'input', ( event ) => {
+			if ( event.isTrusted ) {
+				singularTyped = singular.value !== '';
+			}
+			show();
+		} );
+		plural.addEventListener( 'input', () => {
+			if ( ! singularTyped && ! singular.readOnly ) {
+				singular.value = singularOf( plural.value );
+				singular.dispatchEvent( new Event( 'input' ) );
+				return;
+			}
+			show();
+		} );
+		form.addEventListener( 'change', ( event ) => {
+			// A loaded definition keeps its own singular name.
+			if ( event.target === form ) {
+				singularTyped = singular.value !== '' && singular.value !== singularOf( plural.value );
+			}
+			show();
+		} );
+		show();
+		return;
+	}
 
 	const resetButtons = new Map< HTMLInputElement, HTMLButtonElement >();
 	const mark = ( input: HTMLInputElement, auto: boolean ): void => {
@@ -162,7 +203,17 @@ export function bindAutofill( options: AutofillOptions ): void {
 		} );
 		input.after( reset );
 		resetButtons.set( input, reset );
-		input.addEventListener( 'input', () => mark( input, input.value.trim() === '' ) );
+		// Capture on the form: runs before the field's own listeners (e.g. the taxonomy label
+		// state), so they already see whether the value is typed or generated.
+		form.addEventListener(
+			'input',
+			( event ) => {
+				if ( event.target === input ) {
+					mark( input, input.value.trim() === '' );
+				}
+			},
+			true
+		);
 		input.addEventListener( 'blur', () => {
 			if ( isGenerated( input ) ) {
 				input.value = generated( key );

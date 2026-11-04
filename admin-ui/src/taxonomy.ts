@@ -1394,6 +1394,10 @@ function boot(): void {
 			plural: pluralField,
 			singular: singularField,
 			templates: TAXONOMY_LABEL_TEMPLATES,
+			// Empty taxonomy labels already mean "generated" (with its own Reset): show the text as
+			// placeholders while automatic labels are on.
+			mode: 'placeholder',
+			enabled: () => ( document.getElementById( 'wpessential-taxonomy-automatic-labels' ) as HTMLInputElement | null )?.checked ?? true,
 			labels: () =>
 				Array.from( taxonomyForm.querySelectorAll< HTMLInputElement >( '[data-wpessential-taxonomy-label-field]' ) ).map( ( input ) => ( {
 					input,
