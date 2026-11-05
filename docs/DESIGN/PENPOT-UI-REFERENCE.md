@@ -6,8 +6,8 @@ Status: in progress. Reference only: nothing here is a runtime or shipped-parity
 
 ## Source
 
-- Tool: Penpot (design.penpot.app)
-- File: `WPEssential` (file id `08b470c5-dda4-812a-8008-e56238f344de`)
+- Tool: Penpot, self-hosted at http://localhost:9001 (moved from design.penpot.app)
+- File: `WPEssential` (file id `29deb493-29da-8167-8008-e62ae56b3f29`; the old cloud copy was `08b470c5-dda4-812a-8008-e56238f344de`)
 - Built through the Penpot MCP server from the option contracts in `config/product/option-contracts/`.
 
 ## Design system
@@ -58,22 +58,26 @@ Every group in a contract is designed open. No option is left collapsed or impli
 | 05 Relations | 05 Module, Relations | 18 options, 6 groups (`relations.json`) |
 | 06 Custom Fields | F1 Field groups list, F2 Field group editor, F3 Field type picker (82 types) | group-level options |
 | 07 Fields, Field editor | F4 Field editor | 92 common field options |
-| 08 Fields, Type settings | F5 Type settings, F5b Specialized types | 141 type-specific options |
+| 08 Fields, Type settings | F5a Text to Static content, F5b Markdown to Media UX, F5c Media storage to Color, F5d Typography to Font size, F5 Specialized types | 141 type-specific options |
 | 09 Fields, Layout fields | F6a Group, F6b Repeater, F6c Flexible Content, F6d Clone | 43 options |
 | 10 Fields, Relational fields | F7a Relational, F7b Relational UX and objects | 36 options |
 | 11 Fields, Integrations | F8a Block bindings, F8b REST and GraphQL, F8c Custom table storage, F8d AI, schema, network, settings | 71 options |
 | 12 Fields, Tools | F9a Import adapters, F9b Migration and sync, F9c Diagnostics, F9d Governance and performance, F9e Developer and control registry | 105 options |
 
-Custom Fields (`fields.json`, 612 options) is fully covered across F1 to F9.
+| 13 Admin Columns | 13a View and columns, 13b Sources and formatting, 13c Sorting, filters and editing, 13d Conditions, export and performance, 13e Safety guarantees | 41 options (214 sub-settings) |
+
+Custom Fields (`fields.json`, 612 options) is fully covered across F1 to F9. Admin Columns (`columns.json`, 41 options) is fully covered across 13a to 13e; its row content is in `designs/admin-columns.mjs` in the penpot-plugin repo.
 
 ## Known open items
 
 - 00 Foundations: the components and typography sections were being rebuilt to the rules above when work stopped; check them in Penpot before use.
-- 08 Type settings: the F5 board is very tall (about 12,000px) and should be split into smaller boards; separator polish is not yet applied there.
-- 09 Layout fields page has a stray `preview` board to delete.
-- Not yet designed: Admin Columns and every surface after it, dark mode (`_dark.scss`), and loading, empty and error states for each screen.
+- Admin Columns has the view editor only; the views list screen (which views exist per list table) is not designed yet.
+- Not yet designed: every surface after Admin Columns, dark mode (`_dark.scss`), and loading, empty and error states for each screen.
 
 ## Working notes
+
+- A reusable kit (screen shell, group card and one row per control type) is saved in the file's plugin data as `wpekit`; it is how boards are copied across pages, since the plugin API cannot move shapes between pages.
+- The file now lives in a self-hosted Penpot (http://localhost:9001, file id `29deb493-29da-8167-8008-e62ae56b3f29`); design.penpot.app blocks API tokens behind Cloudflare. Claude reaches it through the Penpot MCP plugin, proxied by the Claude desktop app as the local MCP server `penpot-local`.
 
 - The Penpot plugin runs inside the browser tab; the tab must stay open and visible. Large boards (over about 30 groups) freeze the tab when edited, so keep boards to 8 to 10 groups.
 - Helper libraries used to build the screens are stored in the Penpot file's plugin data (`wpelib`, `wpelib2`).
