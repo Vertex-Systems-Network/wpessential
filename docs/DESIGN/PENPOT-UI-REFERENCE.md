@@ -6,8 +6,8 @@ Status: in progress. Reference only: nothing here is a runtime or shipped-parity
 
 ## Source
 
-- Tool: Penpot (design.penpot.app)
-- File: `WPEssential` (file id `08b470c5-dda4-812a-8008-e56238f344de`)
+- Tool: Penpot, self-hosted at http://localhost:9001 (moved from design.penpot.app)
+- File: `WPEssential` (file id `29deb493-29da-8167-8008-e62ae56b3f29`; the old cloud copy was `08b470c5-dda4-812a-8008-e56238f344de`)
 - Built through the Penpot MCP server from the option contracts in `config/product/option-contracts/`.
 
 ## Design system
