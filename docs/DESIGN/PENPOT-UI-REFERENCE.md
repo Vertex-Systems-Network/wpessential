@@ -65,6 +65,11 @@ Every group in a contract is designed open. No option is left collapsed or impli
 | 12 Fields, Tools | F9a Import adapters, F9b Migration and sync, F9c Diagnostics, F9d Governance and performance, F9e Developer and control registry | 105 options |
 
 | 13 Admin Columns | 13a View and columns, 13b Sources and formatting, 13c Sorting, filters and editing, 13d Conditions, export and performance, 13e Safety guarantees | 41 options (214 sub-settings) |
+| 14 System Status | Runtime, Free / Pro compatibility, module inventory table (`PlatformAdminController::render`) | read-only |
+| 15 License | 15a Signed out (sign in, create account), 15b Signed in (site, subscriptions, plans, account) (`LicenseScreen`) | |
+| 16 AI Connect | 16a On (switches, connect a client, connected clients), 16b Unavailable states (`AiConnectScreen`) | |
+| 17 Demo Library | 17a Grid with categories, 17b Unreachable and empty states (`DemosScreen`) | |
+| 18 Elements | 18a Gutenberg and Elementor lists with toggles, 18b Elementor missing and empty states (`ElementsScreen`) | |
 
 Custom Fields (`fields.json`, 612 options) is fully covered across F1 to F9. Admin Columns (`columns.json`, 41 options) is fully covered across 13a to 13e; its row content is in `designs/admin-columns.mjs` in the penpot-plugin repo.
 
@@ -72,7 +77,8 @@ Custom Fields (`fields.json`, 612 options) is fully covered across F1 to F9. Adm
 
 - 00 Foundations: the components and typography sections were being rebuilt to the rules above when work stopped; check them in Penpot before use.
 - Admin Columns has the view editor only; the views list screen (which views exist per list table) is not designed yet.
-- Not yet designed: every surface after Admin Columns, dark mode (`_dark.scss`), and loading, empty and error states for each screen.
+- Sample values on 14 to 18 (versions, dates, emails, demo and element names) are placeholders; real lists come from the server and modules.
+- Not yet designed: Docs, the shared module overview page, Query, Custom Tables, Site Kit, and every module surface after Admin Columns, dark mode (`_dark.scss`), and loading, empty and error states for each screen.
 
 ## Working notes
 
