@@ -111,6 +111,8 @@ final class FieldGroupAbilityIdentityTest extends TestCase
                 'min_clones' => 1,
                 'max_clones' => 8,
             ]],
+            'locations' => [[['source' => 'post_type', 'operator' => 'equals', 'value' => 'event']]],
+            'storage' => ['mode' => 'native_post_meta'],
         ];
     }
 }

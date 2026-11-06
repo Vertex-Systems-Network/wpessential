@@ -61,6 +61,15 @@ final readonly class FieldGroupValidationService {
 		if ( $groupKey !== null && $groupKey !== '' ) {
 			$this->validateUniqueKey( $groupKey, $current?->id, $issues );
 		}
+		if ( $publishing && is_array( $normalized ) ) {
+			// Publishing is only allowed when the runtime can place and store the group.
+			try {
+				( new FieldGroupRuntimeStorageProjection() )->projectGroup( $normalized );
+				( new FieldGroupPostTypeTargetCompiler() )->compile( $normalized );
+			} catch ( InvalidArgumentException $exception ) {
+				$issues[] = $this->issue( 'runtime_binding_unsupported', 'blocked', 'locations', $exception->getMessage() );
+			}
+		}
 
 		return $this->report( $groupKey, $fieldCount, $issues );
 	}

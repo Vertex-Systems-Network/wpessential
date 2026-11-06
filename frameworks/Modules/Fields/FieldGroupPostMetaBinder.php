@@ -46,6 +46,40 @@ final readonly class FieldGroupPostMetaBinder {
 	}
 
 	/**
+	 * Binds every group that can be planned and skips the rest, so one group with no placement or an
+	 * unbound storage mode cannot stop every other Field Group from registering. Cross-group conflicts
+	 * (such as a shared meta key) still fail the whole batch before any registration.
+	 *
+	 * @param list<Definition> $definitions
+	 * @return array<string,string> skipped definition id => reason
+	 */
+	public function bindPublished( array $definitions ): array {
+		if ( ! array_is_list( $definitions ) ) {
+			throw new InvalidArgumentException( 'Field Group runtime binding definitions must be a list.' );
+		}
+
+		$registrations = [];
+		$skipped       = [];
+		foreach ( $definitions as $definition ) {
+			if ( ! $definition instanceof Definition ) {
+				throw new InvalidArgumentException( 'Field Group runtime binding definitions must contain Definition objects.' );
+			}
+			try {
+				$plan = $this->plan( $definition );
+			} catch ( InvalidArgumentException $error ) {
+				$skipped[ $definition->id ] = $error->getMessage();
+				continue;
+			}
+			foreach ( $plan as $registration ) {
+				$registrations[] = $registration;
+			}
+		}
+
+		$this->registrar->registerBatch( $registrations );
+		return $skipped;
+	}
+
+	/**
 	 * @return list<array{
 	 *     post_type:string,
 	 *     field_uuid:string,
