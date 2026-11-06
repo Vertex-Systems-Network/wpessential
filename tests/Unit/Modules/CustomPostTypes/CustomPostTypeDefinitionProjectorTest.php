@@ -87,12 +87,20 @@ final class CustomPostTypeDefinitionProjectorTest extends TestCase
         $base = ['post_type_key' => 'library_book', 'name' => 'Books', 'singular_name' => 'Book'];
         $projector = new CustomPostTypeDefinitionProjector();
 
-        $registration = $projector->project($this->definition(DefinitionStatus::Published, $base + ['template_lock' => 'contentOnly']));
+        $locked = $base + ['template' => ['core/heading', 'core/paragraph']];
+        $registration = $projector->project($this->definition(DefinitionStatus::Published, $locked + ['template_lock' => 'contentOnly']));
         self::assertSame('contentOnly', $registration->payload['template_lock']);
+        self::assertSame([['core/heading'], ['core/paragraph']], $registration->payload['template']);
         self::assertArrayNotHasKey('template_lock', $projector->project($this->definition(DefinitionStatus::Published, $base))->payload);
 
-        $this->expectException(InvalidArgumentException::class);
-        $projector->project($this->definition(DefinitionStatus::Published, $base + ['template_lock' => 'everything']));
+        foreach ([$locked + ['template_lock' => 'everything'], $base + ['template_lock' => 'all'], $base + ['template' => ['Not a block']]] as $invalid) {
+            try {
+                $projector->project($this->definition(DefinitionStatus::Published, $invalid));
+                self::fail('Expected the template settings to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::addToAssertionCount(1);
+            }
+        }
     }
 
     public function testRejectsReservedCorePostTypeKey(): void

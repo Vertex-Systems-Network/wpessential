@@ -513,6 +513,16 @@ final class CustomPostTypeAdminController {
 
 		// Expert: developer settings.
 		$developer  = $text( 'rest_namespace', __( 'REST namespace', 'wpessential' ), 'wp/v2' );
+		$developer .= Field::input(
+			'wpessential-cpt-opt-template',
+			__( 'Block template', 'wpessential' ),
+			[
+				'placeholder'              => 'core/heading, core/paragraph',
+				'data-wpessential-cpt-opt' => 'template',
+				'data-kind'                => 'list',
+			],
+			__( 'Blocks every new post starts with, separated by commas. Needed before you lock the template.', 'wpessential' )
+		);
 		$developer .= Field::select(
 			'wpessential-cpt-opt-template_lock',
 			__( 'Block template lock', 'wpessential' ),

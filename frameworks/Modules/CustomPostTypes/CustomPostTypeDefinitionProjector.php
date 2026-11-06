@@ -53,7 +53,8 @@ final class CustomPostTypeDefinitionProjector {
 		'query_var',
 		'can_export',
 		'delete_with_user',
-		// Block editor template lock: all, insert or contentOnly.
+		// Block editor template (block names) and its lock: all, insert or contentOnly.
+		'template',
 		'template_lock',
 		// Entry lock: an admin safeguard that blocks deleting the definition; not a WordPress arg.
 		'locked',
@@ -201,9 +202,16 @@ final class CustomPostTypeDefinitionProjector {
 		if ( array_key_exists( 'query_var', $payload ) ) {
 			$args['query_var'] = $this->queryVar( $payload['query_var'] );
 		}
+		if ( array_key_exists( 'template', $payload ) && $payload['template'] !== null ) {
+			$args['template'] = $this->blockTemplate( $payload['template'] );
+		}
 		if ( array_key_exists( 'template_lock', $payload ) && $payload['template_lock'] !== null ) {
 			if ( ! in_array( $payload['template_lock'], [ 'all', 'insert', 'contentOnly' ], true ) ) {
 				throw new InvalidArgumentException( 'template_lock must be all, insert or contentOnly.' );
+			}
+			// A lock without a template leaves new posts empty with the inserter disabled.
+			if ( ( $args['template'] ?? [] ) === [] ) {
+				throw new InvalidArgumentException( 'template_lock needs a block template; add the blocks new posts start with.' );
 			}
 			$args['template_lock'] = $payload['template_lock'];
 		}
@@ -326,6 +334,21 @@ final class CustomPostTypeDefinitionProjector {
 			}
 		}
 		return $supports;
+	}
+
+	/** @return list<array{0:string}> block names as register_post_type() template entries */
+	private function blockTemplate( mixed $value ): array {
+		if ( ! is_array( $value ) || ! array_is_list( $value ) || count( $value ) > 50 ) {
+			throw new InvalidArgumentException( 'template must be a list of up to 50 block names.' );
+		}
+		$template = [];
+		foreach ( $value as $block ) {
+			if ( ! is_string( $block ) || preg_match( '/^[a-z0-9-]+\/[a-z0-9-]+$/', $block ) !== 1 ) {
+				throw new InvalidArgumentException( 'template entries must be block names such as core/paragraph.' );
+			}
+			$template[] = [ $block ];
+		}
+		return $template;
 	}
 
 	private function menuIcon( mixed $value ): string {
