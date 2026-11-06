@@ -10,7 +10,8 @@ declare(strict_types=1);
  *   php tools/release/readme-to-txt.php --out=X   write the result to X (used by the release build)
  *
  * Mapping: "# Name" -> "=== Name ===", "## Section" -> "== Section ==", "### Title" -> "= Title =",
- * "**Header:** value" lines -> "Header: value", "- item" -> "* item". Everything else is copied.
+ * "**Header:** value" lines (ending in a "\\" Markdown line break) -> "Header: value", "- item" -> "* item".
+ * Everything else is copied.
  */
 
 /** Converts the WordPress.org readme Markdown source to readme.txt format. */
@@ -34,7 +35,7 @@ function wpeReadmeMarkdownToTxt(string $markdown): string
             $out[] = '== ' . $match[1] . ' ==';
         } elseif (preg_match('/^### (.+)$/', $line, $match) === 1) {
             $out[] = '= ' . $match[1] . ' =';
-        } elseif (preg_match('/^\*\*([A-Za-z ]+):\*\* (.+)$/', $line, $match) === 1) {
+        } elseif (preg_match('/^\*\*([A-Za-z ]+):\*\* (.+?)\\\\?$/', $line, $match) === 1) {
             $out[] = $match[1] . ': ' . $match[2];
         } elseif (preg_match('/^- (.+)$/', $line, $match) === 1) {
             $out[] = '* ' . $match[1];
@@ -76,9 +77,11 @@ function wpeAssertReadmeTxtRules(string $txt, string $pluginVersion): void
         throw new RuntimeException('WordPress.org shows at most 5 tags.');
     }
 
-    // The short description is the first paragraph after the header block.
-    if (preg_match('/\n\n([^=\n][^\n]*)\n/', $txt, $match) !== 1 || strlen($match[1]) > 150) {
-        throw new RuntimeException('The short description must exist and be at most 150 characters.');
+    // The short description is the paragraph directly after the header block, before any section.
+    $blocks = explode("\n\n", $txt, 3);
+    $summary = trim($blocks[1] ?? '');
+    if ($summary === '' || str_starts_with($summary, '=') || str_contains($summary, "\n") || mb_strlen($summary, 'UTF-8') > 150) {
+        throw new RuntimeException('The short description must follow the header and be one line of at most 150 characters.');
     }
     foreach (['== Description ==', '== Installation ==', '== Changelog ==', '== External services =='] as $section) {
         if (!str_contains($txt, $section)) {

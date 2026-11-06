@@ -1,12 +1,12 @@
 # WPEssential
 
-**Contributors:** wpessential  
-**Tags:** custom post types, custom taxonomy, cpt, post types, taxonomy  
-**Requires at least:** 6.9  
-**Tested up to:** 7.1  
-**Requires PHP:** 8.2  
-**Stable tag:** 3.0.0  
-**License:** GPLv3 or later  
+**Contributors:** wpessential\
+**Tags:** custom post types, custom taxonomy, cpt, post types, taxonomy\
+**Requires at least:** 6.9\
+**Tested up to:** 7.1\
+**Requires PHP:** 8.2\
+**Stable tag:** 3.0.0\
+**License:** GPLv3 or later\
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
 
 Create custom post types and taxonomies without code. Visual builder for labels, permalinks, REST API, archives, block templates and more.
@@ -15,7 +15,7 @@ Create custom post types and taxonomies without code. Visual builder for labels,
 
 **WPEssential** is the easiest way to create **custom post types** and **custom taxonomies** in WordPress without writing code. Build a portfolio, a product catalogue, events, team members, recipes or any other content type from one clear admin screen, then organise it with your own categories and tags.
 
-Every setting WordPress offers for `register_post_type()` and `register_taxonomy()` is in the builder, explained in plain words, with safe defaults. WPEssential validates each change before you save it and shows you the exact arguments WordPress will receive.
+The settings you need for `register_post_type()` and `register_taxonomy()` are in the builder, explained in plain words, with safe defaults. WPEssential validates each change before you save it and shows you the exact arguments WordPress will receive.
 
 The builders and core screens work locally and need no account or licence. Only the Demo Library, and the account and licence features you choose to use, connect to wpessential.org (see External services).
 

@@ -14,7 +14,7 @@ Create custom post types and taxonomies without code. Visual builder for labels,
 
 **WPEssential** is the easiest way to create **custom post types** and **custom taxonomies** in WordPress without writing code. Build a portfolio, a product catalogue, events, team members, recipes or any other content type from one clear admin screen, then organise it with your own categories and tags.
 
-Every setting WordPress offers for `register_post_type()` and `register_taxonomy()` is in the builder, explained in plain words, with safe defaults. WPEssential validates each change before you save it and shows you the exact arguments WordPress will receive.
+The settings you need for `register_post_type()` and `register_taxonomy()` are in the builder, explained in plain words, with safe defaults. WPEssential validates each change before you save it and shows you the exact arguments WordPress will receive.
 
 The builders and core screens work locally and need no account or licence. Only the Demo Library, and the account and licence features you choose to use, connect to wpessential.org (see External services).
 
