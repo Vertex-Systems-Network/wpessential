@@ -1,5 +1,9 @@
 import {
 	mountAdminColumnsScaffold,
+	mountViewSettings,
+	readColumnLayout,
+	syncViewSettings,
+	writeColumnLayout,
 	parseAdminColumnsBootstrap,
 } from './columns';
 
@@ -947,6 +951,7 @@ function hydrateDefinition(
 		formatSelect.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 		enabled.checked = column.enabled;
 		enabled.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+		writeColumnLayout( card, column.layout );
 		identities.set( draftId, {
 			uuid: column.uuid,
 			key: column.key,
@@ -965,6 +970,7 @@ function hydrateDefinition(
 	session.layout = definition.loadedPayload.layout;
 	session.visibility = definition.loadedPayload.visibility;
 	session.columnIdentities = identities;
+	syncViewSettings( session );
 	root.dispatchEvent(
 		new CustomEvent( 'wpessential:columns-session-changed' )
 	);
@@ -1069,8 +1075,9 @@ function wireSave(
 				format: formatSelect.value,
 				primary: identity.primary,
 			};
-			if ( identity.layout ) {
-				column.layout = identity.layout;
+			const layout = readColumnLayout( card );
+			if ( layout ) {
+				column.layout = layout;
 			}
 			columns.push( column );
 		}
@@ -2351,6 +2358,7 @@ function boot(): void {
 			visibility: undefined,
 			columnIdentities: new Map(),
 		};
+		mountViewSettings( root, session );
 
 		const markAuthoredDirty = (): void => {
 			if ( ! session.authoredDirty ) {
@@ -2365,7 +2373,8 @@ function boot(): void {
 			if (
 				target instanceof HTMLElement &&
 				( target.id === 'wpessential-columns-view-name' ||
-					target.closest( '.wpessential-columns__column' ) !== null )
+					target.closest( '.wpessential-columns__column' ) !== null ||
+					target.closest( '.wpessential-columns__view-settings' ) !== null )
 			) {
 				markAuthoredDirty();
 			}
@@ -2375,7 +2384,8 @@ function boot(): void {
 			if (
 				target instanceof HTMLElement &&
 				( target.id === 'wpessential-columns-target' ||
-					target.closest( '.wpessential-columns__column' ) !== null )
+					target.closest( '.wpessential-columns__column' ) !== null ||
+					target.closest( '.wpessential-columns__view-settings' ) !== null )
 			) {
 				markAuthoredDirty();
 			}
