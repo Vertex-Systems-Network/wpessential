@@ -94,6 +94,39 @@ final class FieldGroupRuntimeRegistrarTest extends TestCase
         ], $nativeCalls);
     }
 
+    public function testUnbindableGroupIsSkippedWhileOtherGroupsStillBind(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $repository->save($this->definition(
+            '11111111-1111-4111-8111-111111111111',
+            'field-group-alpha',
+            'alpha',
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            'alpha_value',
+        ));
+        $repository->save($this->definition(
+            '22222222-2222-4222-8222-222222222222',
+            'field-group-unplaced',
+            'unplaced',
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+            'unplaced_value',
+            locations: [],
+        ));
+
+        $nativeCalls = [];
+        $binder = $this->binder(static function (string $postType, string $metaKey, array $args) use (&$nativeCalls): bool {
+            $nativeCalls[] = [$postType, $metaKey];
+            return true;
+        });
+        $runtime = new FieldGroupRuntimeRegistrar($repository, $binder, static fn (): null => null);
+        $runtime->registerActive();
+
+        self::assertSame(['11111111-1111-4111-8111-111111111111'], $runtime->bound());
+        self::assertSame([['book', 'alpha_value']], $nativeCalls);
+        self::assertArrayHasKey('group:22222222-2222-4222-8222-222222222222', $runtime->errors());
+        self::assertArrayNotHasKey('runtime', $runtime->errors());
+    }
+
     public function testCrossGroupStorageKeyCollisionFailsCombinedPlanBeforeFirstNativeMutation(): void
     {
         $repository = new InMemoryDefinitionRepository();
@@ -154,6 +187,7 @@ final class FieldGroupRuntimeRegistrarTest extends TestCase
         string $fieldKey,
         DefinitionStatus $status = DefinitionStatus::Published,
         int $ownerSurfaceId = FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+        ?array $locations = null,
     ): Definition {
         $payload = (new FieldGroupDefinitionNormalizer())->normalize([
             'group_key' => $groupKey,
@@ -164,7 +198,7 @@ final class FieldGroupRuntimeRegistrarTest extends TestCase
                 'label' => ucfirst(str_replace('_', ' ', $fieldKey)),
                 'type' => 'text',
             ]],
-            'locations' => [[
+            'locations' => $locations ?? [[
                 ['source' => 'post_type', 'operator' => 'equals', 'value' => 'book'],
             ]],
             'storage' => ['mode' => 'native_post_meta'],

@@ -73,13 +73,39 @@ final class FieldGroupValidationServiceTest extends TestCase
                 'title' => 'Article Meta',
                 'fields' => [
                     ['key' => 'subtitle', 'label' => 'Subtitle', 'type' => 'text'],
-                    ['key' => 'topics', 'label' => 'Topics', 'type' => 'multi_select'],
+                    ['key' => 'topics', 'label' => 'Topics', 'type' => 'textarea'],
                 ],
+                'locations' => [[['source' => 'post_type', 'operator' => 'equals', 'value' => 'post']]],
+                'storage' => ['mode' => 'native_post_meta'],
             ],
         ]);
 
         self::assertTrue($report['valid']);
         self::assertSame(2, $report['candidate']['field_count']);
+    }
+
+    public function testPublishIsBlockedWhenRuntimeCannotPlaceTheGroup(): void
+    {
+        $service = new FieldGroupValidationService(new InMemoryDefinitionRepository(), new FieldGroupDefinitionNormalizer());
+        $fields = [['key' => 'subtitle', 'label' => 'Subtitle', 'type' => 'text']];
+
+        $unplaced = $service->validate(['status' => 'published', 'payload' => ['group_key' => 'a', 'title' => 'A', 'fields' => $fields]]);
+        self::assertFalse($unplaced['valid']);
+        self::assertContains('runtime_binding_unsupported', array_column($unplaced['issues'], 'id'));
+
+        $draft = $service->validate(['status' => 'draft', 'payload' => ['group_key' => 'a', 'title' => 'A', 'fields' => $fields]]);
+        self::assertTrue($draft['valid']);
+
+        // A placed group whose field type has no post-meta storage shape would be skipped at runtime.
+        $choice = $service->validate(['status' => 'published', 'payload' => [
+            'group_key' => 'b',
+            'title' => 'B',
+            'fields' => [['key' => 'color', 'label' => 'Color', 'type' => 'select']],
+            'locations' => [[['source' => 'post_type', 'operator' => 'equals', 'value' => 'post']]],
+            'storage' => ['mode' => 'native_post_meta'],
+        ]]);
+        self::assertFalse($choice['valid']);
+        self::assertContains('runtime_binding_unsupported', array_column($choice['issues'], 'id'));
     }
 
     /** @param array<string,mixed> $payload */
