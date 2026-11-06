@@ -134,13 +134,13 @@ final class PlatformAdminController {
 			$row( __( 'Certification', 'wpessential' ), __( 'This runtime check is not a certified version pair.', 'wpessential' ), (string) ( $proCompatibility['certification'] ?? 'adr_0010_not_certified' ) ),
 		];
 		$moduleRows  = [
-			$row( __( 'About this list', 'wpessential' ), __( 'State of every module the kernel knows.', 'wpessential' ), __( 'Licence is checked separately from compatibility. Certified Free / Pro pairs are not claimed here.', 'wpessential' ) ),
+			$row( __( 'About this list', 'wpessential' ), __( 'Read-only commercial and runtime inventory for modules known to the current kernel.', 'wpessential' ), __( 'Pro compatibility consumes the canonical local preflight result; entitlement remains a separate truth. ADR-0010 certified Free/Pro version pairs are not claimed here.', 'wpessential' ) ),
 			$this->moduleInventory( $moduleInventory ),
 		];
 
 		$groups = OptionGroup::render( 'wpe-status-runtime', __( 'Runtime', 'wpessential' ), 'System', 'status.runtime', $runtimeRows )
 			. OptionGroup::render( 'wpe-status-pro', __( 'Free / Pro compatibility', 'wpessential' ), 'System', 'status.pro_compatibility', $proRows )
-			. OptionGroup::render( 'wpe-status-modules', __( 'Modules', 'wpessential' ), 'System', 'status.modules', $moduleRows );
+			. OptionGroup::render( 'wpe-status-modules', __( 'Modules', 'wpessential' ), 'System', 'status.modules', $moduleRows, true, count( $moduleInventory ) );
 
 		echo '<section id="wpessential-admin-root" aria-labelledby="wpessential-admin-title" data-wpessential-surface="runtime-observatory">';
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.

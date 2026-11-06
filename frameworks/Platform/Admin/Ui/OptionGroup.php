@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class OptionGroup {
 
 	/**
-	 * $rows must already be escaped HTML built with row().
+	 * $rows must already be escaped HTML built with row(). $count overrides the badge when a row holds a list (e.g. a table).
 	 *
 	 * @param list<string> $rows
 	 */
-	public static function render( string $id, string $title, string $tier, string $key, array $rows, bool $open = true ): string {
+	public static function render( string $id, string $title, string $tier, string $key, array $rows, bool $open = true, ?int $count = null ): string {
 		$html  = '<details class="wpe-ui-group" id="' . esc_attr( $id ) . '"' . ( $open ? ' open' : '' ) . '><summary>';
-		$html .= '<span class="wpe-ui-group__title">' . esc_html( $title ) . '</span>' . Badge::count( count( $rows ) );
+		$html .= '<span class="wpe-ui-group__title">' . esc_html( $title ) . '</span>' . Badge::count( $count ?? count( $rows ) );
 		$html .= $tier !== '' ? '<span class="wpe-ui-chip wpe-ui-chip--' . esc_attr( strtolower( $tier ) ) . '">' . esc_html( $tier ) . '</span>' : '';
 		$html .= $key !== '' ? '<code class="wpe-ui-code">' . esc_html( $key ) . '</code>' : '';
 
