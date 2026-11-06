@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are internal and never echoed raw: they reach admins as JSON validation issues (shown with textContent) or through escaped notices.
+
 namespace WPEssential\Platform\Database;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,7 +50,7 @@ final class NativeWpdbAdapter implements DatabaseAdapterInterface {
 	}
 
 	public function getRow( string $query ): ?array {
-		$row = $this->wpdb->get_row( $query, 'ARRAY_A' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- adapter boundary; callers pass prepare()d SQL.
+		$row = $this->wpdb->get_row( $query, 'ARRAY_A' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- adapter boundary; callers pass prepare()d SQL.
 		$this->assertNoError( 'read row' );
 		if ( $row === null ) {
 			return null;
@@ -63,7 +65,7 @@ final class NativeWpdbAdapter implements DatabaseAdapterInterface {
 	}
 
 	public function getResults( string $query ): array {
-		$rows = $this->wpdb->get_results( $query, 'ARRAY_A' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- adapter boundary; callers pass prepare()d SQL.
+		$rows = $this->wpdb->get_results( $query, 'ARRAY_A' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- adapter boundary; callers pass prepare()d SQL.
 		$this->assertNoError( 'read rows' );
 		if ( ! is_array( $rows ) ) {
 			throw new RuntimeException( 'wpdb returned an invalid result-set shape.' );
@@ -83,13 +85,13 @@ final class NativeWpdbAdapter implements DatabaseAdapterInterface {
 	}
 
 	public function getVar( string $query ): mixed {
-		$value = $this->wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- adapter boundary; callers pass prepare()d SQL.
+		$value = $this->wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- adapter boundary; callers pass prepare()d SQL.
 		$this->assertNoError( 'read scalar' );
 		return $value;
 	}
 
 	public function query( string $query ): int|bool {
-		$result = $this->wpdb->query( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- adapter boundary; callers pass prepare()d SQL.
+		$result = $this->wpdb->query( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- adapter boundary; callers pass prepare()d SQL.
 		if ( $result === false ) {
 			throw new RuntimeException( 'wpdb query failed: ' . $this->lastError() );
 		}
