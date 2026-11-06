@@ -276,6 +276,7 @@ final class CustomPostTypeAdminController {
 		echo '<h3 id="wpessential-cpt-validation-title">' . esc_html__( 'Validation report', 'wpessential' ) . '</h3>';
 		echo '<p data-wpessential-cpt-validation-summary></p>';
 		echo '<ul data-wpessential-cpt-validation-issues></ul>';
+		echo '<details data-wpessential-cpt-effective-args-wrap hidden><summary>' . esc_html__( 'Effective register_post_type() arguments', 'wpessential' ) . '</summary><pre data-wpessential-cpt-effective-args></pre></details>';
 		echo '</div>';
 
 		echo '<div class="wpe-ui-builder__actions">';
@@ -511,7 +512,23 @@ final class CustomPostTypeAdminController {
 		);
 
 		// Expert: developer settings.
-		$developer = $text( 'rest_namespace', __( 'REST namespace', 'wpessential' ), 'wp/v2' );
+		$developer  = $text( 'rest_namespace', __( 'REST namespace', 'wpessential' ), 'wp/v2' );
+		$developer .= Field::select(
+			'wpessential-cpt-opt-template_lock',
+			__( 'Block template lock', 'wpessential' ),
+			[
+				''            => __( 'Default (not locked)', 'wpessential' ),
+				'all'         => __( 'All: blocks cannot be moved, added or removed', 'wpessential' ),
+				'insert'      => __( 'Insert: blocks can be moved but not added or removed', 'wpessential' ),
+				'contentOnly' => __( 'Content only: only the text and media can change', 'wpessential' ),
+			],
+			'',
+			[
+				'data-wpessential-cpt-opt' => 'template_lock',
+				'data-kind'                => 'text',
+			],
+			__( 'How much editors can change the block layout of new posts.', 'wpessential' )
+		);
 		foreach ( [
 			'with_front' => __( 'Prefix with the permalink front base', 'wpessential' ),
 			'feeds'      => __( 'Feed permalinks', 'wpessential' ),

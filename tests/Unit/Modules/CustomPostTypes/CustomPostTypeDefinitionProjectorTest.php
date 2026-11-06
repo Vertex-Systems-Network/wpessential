@@ -82,6 +82,19 @@ final class CustomPostTypeDefinitionProjectorTest extends TestCase
         $projector->project($this->definition(DefinitionStatus::Published, $base + ['rewrite' => false, 'permalink' => ['mode' => 'hide_base']]));
     }
 
+    public function testTemplateLockIsAllowlisted(): void
+    {
+        $base = ['post_type_key' => 'library_book', 'name' => 'Books', 'singular_name' => 'Book'];
+        $projector = new CustomPostTypeDefinitionProjector();
+
+        $registration = $projector->project($this->definition(DefinitionStatus::Published, $base + ['template_lock' => 'contentOnly']));
+        self::assertSame('contentOnly', $registration->payload['template_lock']);
+        self::assertArrayNotHasKey('template_lock', $projector->project($this->definition(DefinitionStatus::Published, $base))->payload);
+
+        $this->expectException(InvalidArgumentException::class);
+        $projector->project($this->definition(DefinitionStatus::Published, $base + ['template_lock' => 'everything']));
+    }
+
     public function testRejectsReservedCorePostTypeKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
