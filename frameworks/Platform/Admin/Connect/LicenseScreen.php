@@ -11,13 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 use WPEssential\Platform\Admin\Core\AdminScreen;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\Ui\AdminUrl;
+use WPEssential\Platform\Admin\Ui\Attributes;
 use WPEssential\Platform\Admin\Ui\Badge;
 use WPEssential\Platform\Admin\Ui\Button;
-use WPEssential\Platform\Admin\Ui\Field;
-use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
+use WPEssential\Platform\Admin\Ui\OptionGroup;
 use WPEssential\Platform\Admin\Ui\PageHeader;
 use WPEssential\Platform\Admin\Ui\Screen;
+use WPEssential\Platform\Admin\Ui\SectionNav;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\Ui\StatusPill;
 use WP_Error;
@@ -128,93 +129,116 @@ final class LicenseScreen implements AdminScreen {
 		return Button::button( $label, $variant, [ 'type' => 'submit' ], $small );
 	}
 
-	private static function input( string $name, string $label, string $type = 'text', string $autocomplete = '' ): string {
-		$id = 'wpe-license-' . $name;
+	/** Input for an option row: the row shows the visible label, so this one is for screen readers. */
+	private static function input( string $form, string $name, string $label, string $type = 'text', string $autocomplete = '' ): string {
+		$id = 'wpe-license-' . $form . '-' . $name;
 
-		return Field::input(
-			$id,
-			$label,
-			[
-				'name'         => $name,
-				'type'         => $type,
-				'required'     => true,
-				'autocomplete' => $autocomplete !== '' ? $autocomplete : null,
-			]
-		);
+		return '<label class="screen-reader-text" for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label>'
+			. '<input' . Attributes::render(
+				[
+					'type'         => $type,
+					'id'           => $id,
+					'name'         => $name,
+					'required'     => true,
+					'autocomplete' => $autocomplete !== '' ? $autocomplete : null,
+				]
+			) . '>';
 	}
 
 	public function render(): void {
 		$html  = PageHeader::render( __( 'Account', 'wpessential' ), __( 'Account & subscription', 'wpessential' ), __( 'Sign in with your wpessential.org account. This site is connected to your subscription automatically.', 'wpessential' ) );
-		$html .= '<div class="wpe-ui-card-grid wpe-ui-card-grid--two">' . $this->licenseCard() . $this->accountCard() . '</div>';
+		$site  = $this->siteRows();
+		$nav   = [ [ 'wpe-license-site', __( 'This site', 'wpessential' ), count( $site ) ] ];
+		$body  = OptionGroup::render( 'wpe-license-site', __( 'This site', 'wpessential' ), 'Essential', 'license.site', $site );
+		foreach ( $this->accountGroups() as [ $id, $title, $key, $rows ] ) {
+			$body .= OptionGroup::render( $id, $title, 'Essential', $key, $rows );
+			$nav[] = [ $id, $title, count( $rows ) ];
+		}
+		$html .= SectionNav::layout( __( 'Account', 'wpessential' ), [ __( 'Account', 'wpessential' ) => $nav ], $body );
 		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Your account token and subscription credentials are stored in this site\'s database without encryption and are never sent to the browser.', 'wpessential' ) . '</p>';
 
 		Screen::render( Shell::LICENSE_SLUG, $html, $this->takeFlash() );
 	}
 
-	private function licenseCard(): string {
-		$data     = $this->license->publicData();
-		$active   = $data['status'] === 'active';
-		$signedIn = $this->account->signedIn();
-		$html     = '<section class="wpe-ui-panel" aria-labelledby="wpe-license-title"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'monitor', 20 ) . '</span>';
-		$html    .= '<h2 id="wpe-license-title">' . esc_html__( 'This site', 'wpessential' ) . '</h2>';
-		$html    .= StatusPill::render( $active ? 'running' : ( $data['status'] === 'expired' ? 'waiting' : 'off' ), $active ? __( 'Connected', 'wpessential' ) : ( $data['status'] === 'expired' ? __( 'Expired', 'wpessential' ) : __( 'Not connected', 'wpessential' ) ) ) . '</div>';
+	/** @return list<string> */
+	private function siteRows(): array {
+		$data   = $this->license->publicData();
+		$active = $data['status'] === 'active';
+		$rows   = [
+			OptionGroup::row(
+				__( 'Status', 'wpessential' ),
+				__( 'Whether this site is linked to a subscription.', 'wpessential' ),
+				StatusPill::render( $active ? 'running' : ( $data['status'] === 'expired' ? 'waiting' : 'off' ), $active ? __( 'Connected', 'wpessential' ) : ( $data['status'] === 'expired' ? __( 'Expired', 'wpessential' ) : __( 'Not connected', 'wpessential' ) ) )
+			),
+		];
 
 		if ( $active ) {
 			$limit = (int) $data['sites_limit'];
-			$rows  = [
-				__( 'Plan', 'wpessential' )   => esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ),
-				__( 'Renews', 'wpessential' ) => esc_html( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ),
-				__( 'Sites', 'wpessential' )  => esc_html( $limit === 0 ? sprintf( /* translators: %d: sites used. */ __( '%d of unlimited', 'wpessential' ), (int) $data['sites_used'] ) : sprintf( /* translators: 1: sites used, 2: site limit. */ __( '%1$d of %2$d', 'wpessential' ), (int) $data['sites_used'], $limit ) ),
-				__( 'Domain', 'wpessential' ) => esc_html( (string) $data['domain'] ),
-			];
-			$html .= '<dl class="wpe-ui-facts">';
-			foreach ( $rows as $label => $value ) {
-				$html .= '<dt>' . esc_html( $label ) . '</dt><dd>' . $value . '</dd>';
-			}
-			$html .= '</dl><div class="wpe-ui-actions">' . self::form( 'refresh', self::submit( __( 'Check now', 'wpessential' ), 'ghost', true ) ) . self::form( 'deactivate', self::submit( __( 'Disconnect this site', 'wpessential' ), 'secondary', true ) ) . '</div>';
+			$sites = $limit === 0 ? sprintf( /* translators: %d: sites used. */ __( '%d of unlimited', 'wpessential' ), (int) $data['sites_used'] ) : sprintf( /* translators: 1: sites used, 2: site limit. */ __( '%1$d of %2$d', 'wpessential' ), (int) $data['sites_used'], $limit );
 
-			return $html . '</section>';
+			return array_merge(
+				$rows,
+				[
+					OptionGroup::row( __( 'Plan', 'wpessential' ), __( 'Edition unlocked on this site.', 'wpessential' ), esc_html( (string) $data['plan'] ) . ' ' . Badge::edition( $this->license->hasPro() ? 'pro' : 'free' ) ),
+					OptionGroup::row( __( 'Renews', 'wpessential' ), __( 'Next renewal date.', 'wpessential' ), OptionGroup::readonly( $data['expires'] !== '' ? (string) $data['expires'] : __( 'Never', 'wpessential' ) ) ),
+					OptionGroup::row( __( 'Sites', 'wpessential' ), __( 'Slots used on this subscription.', 'wpessential' ), OptionGroup::readonly( $sites ) ),
+					OptionGroup::row( __( 'Domain', 'wpessential' ), __( 'The domain this slot is tied to.', 'wpessential' ), OptionGroup::readonly( (string) $data['domain'] ) ),
+					OptionGroup::row( __( 'Manage', 'wpessential' ), __( 'Refresh the status, or free this slot for another site.', 'wpessential' ), self::form( 'refresh', self::submit( __( 'Check now', 'wpessential' ), 'ghost', true ), [], 'wpe-ui-inline' ) . self::form( 'deactivate', self::submit( __( 'Disconnect this site', 'wpessential' ), 'secondary', true ), [], 'wpe-ui-inline' ) ),
+				]
+			);
 		}
 
 		if ( $data['message'] !== '' ) {
-			$html .= Notice::render( 'warning', (string) $data['message'] );
+			$rows[] = OptionGroup::row( __( 'Message', 'wpessential' ), '', Notice::render( 'warning', (string) $data['message'] ) );
 		}
-		$html .= $signedIn
-			? '<p>' . esc_html__( 'Connect this site to one of your subscriptions. WPEssential keeps the one already on this domain, or uses a free site slot.', 'wpessential' ) . '</p>' . self::form( 'connect', self::submit( __( 'Connect this site', 'wpessential' ) ) )
-			: '<p>' . esc_html__( 'Sign in with your WPEssential account. This site is connected to your subscription automatically, no key needed.', 'wpessential' ) . '</p>';
+		$rows[] = $this->account->signedIn()
+			? OptionGroup::row( __( 'Connect this site', 'wpessential' ), __( 'Connect this site to one of your subscriptions. WPEssential keeps the one already on this domain, or uses a free site slot.', 'wpessential' ), self::form( 'connect', self::submit( __( 'Connect this site', 'wpessential' ) ), [], 'wpe-ui-inline' ) )
+			: OptionGroup::row( __( 'How it works', 'wpessential' ), __( 'No licence key needed.', 'wpessential' ), OptionGroup::readonly( __( 'Sign in with your WPEssential account. This site is connected to your subscription automatically, no key needed.', 'wpessential' ) ) );
+		$rows[] = OptionGroup::row( __( 'Free modules', 'wpessential' ), __( 'What works without an account.', 'wpessential' ), OptionGroup::readonly( __( 'Free modules work without an account. A Premium subscription unlocks every Premium module.', 'wpessential' ) ) );
 
-		return $html . '<p class="wpe-ui-muted">' . esc_html__( 'Free modules work without an account. A Premium subscription unlocks every Premium module.', 'wpessential' ) . '</p></section>';
+		return $rows;
 	}
 
-	private function accountCard(): string {
-		$html  = '<section class="wpe-ui-panel" aria-labelledby="wpe-account-title"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'user', 20 ) . '</span>';
-		$html .= '<h2 id="wpe-account-title">' . esc_html__( 'WPEssential account', 'wpessential' ) . '</h2></div>';
-
-		$me = $this->account->signedIn() ? $this->account->me() : [ 'signed_in' => false ];
+	/** @return list<array{0:string,1:string,2:string,3:list<string>}> [ id, title, contract key, rows ] */
+	private function accountGroups(): array {
+		$logout = self::form( 'logout', self::submit( __( 'Sign out', 'wpessential' ), 'ghost', true ), [], 'wpe-ui-inline' );
+		$me     = $this->account->signedIn() ? $this->account->me() : [ 'signed_in' => false ];
 		if ( $me instanceof WP_Error ) {
-			return $html . Notice::render( 'error', $me->get_error_message() ) . self::form( 'logout', self::submit( __( 'Sign out', 'wpessential' ), 'ghost', true ) ) . '</section>';
+			return [ [ 'wpe-license-account', __( 'WPEssential account', 'wpessential' ), 'license.account', [ OptionGroup::row( __( 'Account', 'wpessential' ), '', Notice::render( 'error', $me->get_error_message() ) ), OptionGroup::row( __( 'Sign out', 'wpessential' ), '', $logout ) ] ] ];
 		}
 
 		if ( empty( $me['signed_in'] ) ) {
-			$html .= '<div class="wpe-ui-card-grid wpe-ui-card-grid--two">';
-			$html .= self::form( 'login', '<h3>' . esc_html__( 'Sign in', 'wpessential' ) . '</h3>' . self::input( 'login', __( 'Email or username', 'wpessential' ), 'text', 'username' ) . self::input( 'password', __( 'Password', 'wpessential' ), 'password', 'current-password' ) . self::submit( __( 'Sign in', 'wpessential' ) ) );
-			$html .= self::form( 'register', '<h3>' . esc_html__( 'Create account', 'wpessential' ) . '</h3>' . self::input( 'name', __( 'Name', 'wpessential' ), 'text', 'name' ) . self::input( 'email', __( 'Email', 'wpessential' ), 'email', 'email' ) . self::input( 'password', __( 'Password', 'wpessential' ), 'password', 'new-password' ) . self::submit( __( 'Create free account', 'wpessential' ), 'secondary' ) );
+			$login    = self::form(
+				'login',
+				OptionGroup::row( __( 'Email or username', 'wpessential' ), __( 'Your wpessential.org account.', 'wpessential' ), self::input( 'login', 'login', __( 'Email or username', 'wpessential' ), 'text', 'username' ) )
+				. OptionGroup::row( __( 'Password', 'wpessential' ), __( 'Stored only as a token on this site after sign-in.', 'wpessential' ), self::input( 'login', 'password', __( 'Password', 'wpessential' ), 'password', 'current-password' ) )
+				. OptionGroup::row( __( 'Sign in', 'wpessential' ), __( 'Connects this site when a slot is free.', 'wpessential' ), self::submit( __( 'Sign in', 'wpessential' ) ) )
+			);
+			$register = self::form(
+				'register',
+				OptionGroup::row( __( 'Name', 'wpessential' ), __( 'Shown on your account and invoices.', 'wpessential' ), self::input( 'register', 'name', __( 'Name', 'wpessential' ), 'text', 'name' ) )
+				. OptionGroup::row( __( 'Email', 'wpessential' ), __( 'Used to sign in and for receipts.', 'wpessential' ), self::input( 'register', 'email', __( 'Email', 'wpessential' ), 'email', 'email' ) )
+				. OptionGroup::row( __( 'Password', 'wpessential' ), __( 'For your new account.', 'wpessential' ), self::input( 'register', 'password', __( 'Password', 'wpessential' ), 'password', 'new-password' ) )
+				. OptionGroup::row( __( 'Create free account', 'wpessential' ), __( 'Creates the account and connects this site.', 'wpessential' ), self::submit( __( 'Create free account', 'wpessential' ) ) )
+			);
 
-			return $html . '</div></section>';
+			return [
+				[ 'wpe-license-sign-in', __( 'Sign in', 'wpessential' ), 'license.account.sign_in', [ $login ] ],
+				[ 'wpe-license-create', __( 'Create account', 'wpessential' ), 'license.account.create', [ $register ] ],
+			];
 		}
 
-		$user  = is_array( $me['user'] ?? null ) ? $me['user'] : [];
-		$html .= '<p>' . esc_html( (string) ( $user['email'] ?? $user['name'] ?? '' ) ) . '</p>';
-
+		$groups   = [];
 		$licenses = is_array( $me['licenses'] ?? null ) ? $me['licenses'] : [];
 		if ( $licenses !== [] ) {
-			$html .= '<ul class="wpe-ui-list">';
+			$rows = [];
 			foreach ( $licenses as $item ) {
-				$id    = (string) (int) ( $item['id'] ?? 0 );
-				$renew = ! empty( $item['auto_renew'] );
-				$html .= '<li><code>' . esc_html( (string) ( $item['mask'] ?? '' ) ) . '</code> ' . esc_html( (string) ( $item['plan'] ?? '' ) ) . ' ';
-				$html .= ! empty( $item['here'] ) ? StatusPill::render( 'success', __( 'This site', 'wpessential' ) ) : self::form( 'use', self::submit( __( 'Use here', 'wpessential' ), 'secondary', true ), [ 'license' => $id ], 'wpe-ui-inline' );
-				$html .= self::form(
+				$id     = (string) (int) ( $item['id'] ?? 0 );
+				$renew  = ! empty( $item['auto_renew'] );
+				$here   = ! empty( $item['here'] )
+					? StatusPill::render( 'running', __( 'This site', 'wpessential' ) )
+					: self::form( 'use', self::submit( __( 'Use here', 'wpessential' ), 'secondary', true ), [ 'license' => $id ], 'wpe-ui-inline' );
+				$manage = self::form(
 					'manage',
 					self::submit( $renew ? __( 'Turn off auto-renew', 'wpessential' ) : __( 'Turn on auto-renew', 'wpessential' ), 'ghost', true ),
 					[
@@ -223,7 +247,7 @@ final class LicenseScreen implements AdminScreen {
 					],
 					'wpe-ui-inline'
 				);
-				$html .= self::form(
+				$checkout = self::form(
 					'checkout',
 					self::submit( __( 'Renew', 'wpessential' ), 'ghost', true ),
 					[
@@ -232,21 +256,32 @@ final class LicenseScreen implements AdminScreen {
 						'mode'    => 'renew',
 					],
 					'wpe-ui-inline'
-				) . '</li>';
+				);
+				$rows[]   = OptionGroup::row( (string) ( $item['plan'] ?? '' ), (string) ( $item['mask'] ?? '' ), $here . $manage . $checkout );
 			}
-			$html .= '</ul>';
+			$groups[] = [ 'wpe-license-subscriptions', __( 'Subscriptions', 'wpessential' ), 'license.account.subscriptions', $rows ];
 		}
 
 		$plans = is_array( $me['plans'] ?? null ) ? $me['plans'] : [];
 		if ( $plans !== [] ) {
-			$html .= '<h3>' . esc_html__( 'Plans', 'wpessential' ) . '</h3><div class="wpe-ui-actions">';
+			$rows = [];
 			foreach ( $plans as $plan ) {
-				$label = trim( (string) ( $plan['name'] ?? $plan['key'] ?? '' ) . ' ' . (string) ( $plan['price'] ?? '' ) );
-				$html .= self::form( 'checkout', self::submit( $label, 'primary', true ), [ 'plan' => (string) ( $plan['key'] ?? '' ) ], 'wpe-ui-inline' );
+				$rows[] = OptionGroup::row( (string) ( $plan['name'] ?? $plan['key'] ?? '' ), (string) ( $plan['price'] ?? '' ), self::form( 'checkout', self::submit( __( 'Choose', 'wpessential' ), 'primary', true ), [ 'plan' => (string) ( $plan['key'] ?? '' ) ], 'wpe-ui-inline' ) );
 			}
-			$html .= '</div>';
+			$groups[] = [ 'wpe-license-plans', __( 'Plans', 'wpessential' ), 'license.account.plans', $rows ];
 		}
 
-		return $html . self::form( 'logout', self::submit( __( 'Sign out', 'wpessential' ), 'ghost', true ) ) . '</section>';
+		$user     = is_array( $me['user'] ?? null ) ? $me['user'] : [];
+		$groups[] = [
+			'wpe-license-account',
+			__( 'WPEssential account', 'wpessential' ),
+			'license.account',
+			[
+				OptionGroup::row( __( 'Signed in as', 'wpessential' ), __( 'Your wpessential.org account.', 'wpessential' ), OptionGroup::readonly( (string) ( $user['email'] ?? $user['name'] ?? '' ) ) ),
+				OptionGroup::row( __( 'Sign out', 'wpessential' ), __( 'Removes the token from this site; connected sites stay connected.', 'wpessential' ), $logout ),
+			],
+		];
+
+		return $groups;
 	}
 }

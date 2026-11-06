@@ -74,6 +74,15 @@ export function Demos( { data }: { data: ScreenData } ) {
 									<h2>{ demo.title }</h2>
 									<Raw html={ demo.badgeHtml } />
 								</div>
+								{ demo.niche.length > 0 ? (
+									<span className="wpe-ui-demo__niches">
+										{ demo.niche.map( ( item ) => (
+											<span className="wpe-ui-chip" key={ item }>
+												{ item.charAt( 0 ).toUpperCase() + item.slice( 1 ) }
+											</span>
+										) ) }
+									</span>
+								) : null }
 								<p className="wpe-ui-muted">{ demo.tagline }</p>
 								<div className="wpe-ui-demo__foot">
 									<span className="wpe-ui-demo__builders">
