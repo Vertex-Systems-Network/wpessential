@@ -31,6 +31,15 @@ type AdminColumnsBootstrap = {
 	sources: ColumnSource[];
 };
 
+type ColumnLayoutDraft = {
+	width: string;
+	min_width: string;
+	max_width: string;
+	alignment: string;
+	responsive_priority: string;
+	sticky: boolean;
+};
+
 type DraftColumn = {
 	id: number;
 	key: string;
@@ -38,7 +47,28 @@ type DraftColumn = {
 	sourceReference: string;
 	format: string;
 	enabled: boolean;
+	layout: ColumnLayoutDraft;
 };
+
+type JsonValue = Record< string, unknown >;
+
+/** View-level authored state the settings panel edits (matches the runtime editor session). */
+type ViewSettingsState = {
+	assignment: JsonValue | undefined;
+	layout: JsonValue | undefined;
+	visibility: JsonValue | undefined;
+};
+
+function defaultColumnLayout(): ColumnLayoutDraft {
+	return {
+		width: '',
+		min_width: '',
+		max_width: '',
+		alignment: 'left',
+		responsive_priority: '50',
+		sticky: false,
+	};
+}
 
 type DraftView = {
 	name: string;
@@ -252,6 +282,7 @@ function initialView( bootstrap: AdminColumnsBootstrap ): DraftView {
 						sourceReference: firstSource.reference,
 						format: firstSource.formats[ 0 ] ?? 'text',
 						enabled: true,
+						layout: defaultColumnLayout(),
 					},
 			  ]
 			: [],
@@ -605,6 +636,7 @@ export function mountAdminColumnsScaffold(
 				capabilityNote,
 				enabledLabel,
 				authNote,
+				columnLayoutControls( column ),
 				actions
 			);
 			columnsList.append( card );
@@ -636,6 +668,7 @@ export function mountAdminColumnsScaffold(
 			sourceReference: source.reference,
 			format: source.formats[ 0 ] ?? 'text',
 			enabled: true,
+			layout: defaultColumnLayout(),
 		} );
 		renderColumns();
 		status.textContent = 'Column added to the local authored draft only.';
@@ -646,4 +679,251 @@ export function mountAdminColumnsScaffold(
 	renderColumns();
 	status.textContent =
 		'Non-runtime scaffold ready. No data has been saved or executed.';
+}
+
+function numberControl(
+	id: string,
+	text: string,
+	value: string,
+	min: number,
+	max: number
+): HTMLDivElement {
+	const input = element( 'input' );
+	input.id = id;
+	input.type = 'number';
+	input.min = String( min );
+	input.max = String( max );
+	input.value = value;
+	const field = element( 'div', 'wpessential-columns__field' );
+	field.append( controlLabel( input, text ), input );
+	return field;
+}
+
+function selectControl(
+	id: string,
+	text: string,
+	value: string,
+	choices: [ string, string ][]
+): HTMLDivElement {
+	const select = element( 'select' );
+	select.id = id;
+	for ( const [ choice, choiceText ] of choices ) {
+		select.append( option( choice, choiceText ) );
+	}
+	select.value = value;
+	const field = element( 'div', 'wpessential-columns__field' );
+	field.append( controlLabel( select, text ), select );
+	return field;
+}
+
+function checkControl(
+	id: string,
+	text: string,
+	checked: boolean
+): HTMLLabelElement {
+	const input = element( 'input' );
+	input.type = 'checkbox';
+	input.id = id;
+	input.checked = checked;
+	const label = element( 'label', 'wpessential-columns__check', ` ${ text }` );
+	label.htmlFor = id;
+	label.prepend( input );
+	return label;
+}
+
+/** Width, alignment, responsive priority and sticky for one column (Penpot 13b · Column layout). */
+function columnLayoutControls( column: DraftColumn ): HTMLDetailsElement {
+	const box = element( 'details', 'wpessential-columns__layout' );
+	box.append( element( 'summary', undefined, 'Width & alignment' ) );
+	const id = ( key: string ): string =>
+		`wpessential-columns-layout-${ key }-${ column.id }`;
+	box.append(
+		numberControl( id( 'width' ), 'Width (px)', column.layout.width, 40, 2000 ),
+		numberControl( id( 'min_width' ), 'Minimum width (px)', column.layout.min_width, 40, 2000 ),
+		numberControl( id( 'max_width' ), 'Maximum width (px)', column.layout.max_width, 40, 2000 ),
+		selectControl( id( 'alignment' ), 'Alignment', column.layout.alignment, [
+			[ 'left', 'Left' ],
+			[ 'center', 'Center' ],
+			[ 'right', 'Right' ],
+		] ),
+		numberControl(
+			id( 'responsive_priority' ),
+			'Responsive priority (0–100, higher stays visible longer)',
+			column.layout.responsive_priority,
+			0,
+			100
+		),
+		checkControl( id( 'sticky' ), 'Keep this column visible while scrolling sideways', column.layout.sticky )
+	);
+	for ( const control of box.querySelectorAll< HTMLInputElement | HTMLSelectElement >( 'input, select' ) ) {
+		const key = control.id.replace( 'wpessential-columns-layout-', '' ).replace( `-${ column.id }`, '' ) as keyof ColumnLayoutDraft;
+		control.dataset.wpessentialColumnsLayout = key;
+		control.addEventListener( 'input', () => {
+			if ( key === 'sticky' ) {
+				column.layout.sticky = ( control as HTMLInputElement ).checked;
+			} else {
+				column.layout[ key ] = control.value;
+			}
+		} );
+		control.addEventListener( 'change', () => control.dispatchEvent( new Event( 'input' ) ) );
+	}
+	return box;
+}
+
+function layoutControl( card: HTMLElement, key: string ): HTMLInputElement | HTMLSelectElement | null {
+	return card.querySelector< HTMLInputElement | HTMLSelectElement >(
+		`[data-wpessential-columns-layout="${ key }"]`
+	);
+}
+
+/** The column layout map for the save payload, or undefined when every value is the default. */
+export function readColumnLayout( card: HTMLElement ): JsonValue | undefined {
+	const width = ( key: string ): number | null => {
+		const raw = layoutControl( card, key )?.value ?? '';
+		return raw === '' ? null : Number.parseInt( raw, 10 );
+	};
+	const priorityRaw = layoutControl( card, 'responsive_priority' )?.value ?? '';
+	const layout = {
+		width: width( 'width' ),
+		min_width: width( 'min_width' ),
+		max_width: width( 'max_width' ),
+		alignment: layoutControl( card, 'alignment' )?.value || 'left',
+		responsive_priority: priorityRaw === '' ? 50 : Number.parseInt( priorityRaw, 10 ),
+		sticky: ( layoutControl( card, 'sticky' ) as HTMLInputElement | null )?.checked ?? false,
+	};
+	const isDefault =
+		layout.width === null &&
+		layout.min_width === null &&
+		layout.max_width === null &&
+		layout.alignment === 'left' &&
+		layout.responsive_priority === 50 &&
+		! layout.sticky;
+	return isDefault ? undefined : layout;
+}
+
+/** Puts a saved column layout into the card controls (and its draft, through the input events). */
+export function writeColumnLayout( card: HTMLElement, layout: JsonValue | undefined ): void {
+	const values = layout ?? {};
+	for ( const key of [ 'width', 'min_width', 'max_width', 'alignment', 'responsive_priority' ] ) {
+		const control = layoutControl( card, key );
+		const value = values[ key ];
+		if ( control ) {
+			control.value =
+				typeof value === 'number' || typeof value === 'string'
+					? String( value )
+					: key === 'alignment'
+					? 'left'
+					: key === 'responsive_priority'
+					? '50'
+					: '';
+			control.dispatchEvent( new Event( 'input' ) );
+		}
+	}
+	const sticky = layoutControl( card, 'sticky' );
+	if ( sticky instanceof HTMLInputElement ) {
+		sticky.checked = values.sticky === true;
+		sticky.dispatchEvent( new Event( 'input' ) );
+	}
+}
+
+function idList( raw: string, numeric: boolean ): ( string | number )[] {
+	const parts = raw
+		.split( ',' )
+		.map( ( part ) => part.trim() )
+		.filter( ( part ) => part !== '' );
+	return numeric
+		? parts.map( ( part ) => Number.parseInt( part, 10 ) ).filter( ( n ) => Number.isInteger( n ) && n > 0 )
+		: parts;
+}
+
+/**
+ * Table layout, who the Column Set is assigned to and its visibility (Penpot 13a · View settings).
+ * Values are written to state only after the user changes a control, so untouched views keep the server defaults.
+ */
+export function mountViewSettings( root: HTMLElement, state: ViewSettingsState ): void {
+	const general = root.querySelector( '.wpessential-columns__section' );
+	if ( ! general || document.getElementById( 'wpessential-columns-view-settings' ) ) {
+		return;
+	}
+	const section = element( 'fieldset', 'wpessential-columns__section wpessential-columns__view-settings' );
+	section.id = 'wpessential-columns-view-settings';
+	section.append( element( 'legend', undefined, 'Table layout & assignment' ) );
+	section.append(
+		selectControl( 'wpessential-columns-density', 'Row density', 'comfortable', [
+			[ 'comfortable', 'Comfortable' ],
+			[ 'compact', 'Compact' ],
+		] ),
+		checkControl( 'wpessential-columns-sticky-header', 'Keep the header visible while scrolling', false ),
+		checkControl( 'wpessential-columns-horizontal-scroll', 'Scroll sideways when the columns do not fit', true ),
+		textField( 'wpessential-columns-assign-roles', 'Assigned roles', 'Comma-separated role keys, for example editor, author. Empty means everyone.' ),
+		textField( 'wpessential-columns-assign-users', 'Assigned user IDs', 'Comma-separated user IDs. Empty means no single-user assignment.' ),
+		selectControl( 'wpessential-columns-visibility-mode', 'Column Set visibility', 'visible', [
+			[ 'visible', 'Visible' ],
+			[ 'hidden', 'Hidden' ],
+		] ),
+		textField( 'wpessential-columns-visibility-reason', 'Reason when hidden', 'Shown to admins so they know why this Column Set is hidden.' ),
+		element( 'p', 'description', 'Assignment and visibility change who sees this presentation. They never grant or remove permission to the content.' )
+	);
+	general.after( section );
+
+	const value = ( id: string ): string =>
+		( document.getElementById( id ) as HTMLInputElement | HTMLSelectElement | null )?.value ?? '';
+	const checked = ( id: string ): boolean =>
+		( document.getElementById( id ) as HTMLInputElement | null )?.checked ?? false;
+	const update = (): void => {
+		state.layout = {
+			density: value( 'wpessential-columns-density' ) || 'comfortable',
+			sticky_header: checked( 'wpessential-columns-sticky-header' ),
+			horizontal_scroll: checked( 'wpessential-columns-horizontal-scroll' ),
+		};
+		const capabilities = Array.isArray( state.assignment?.capabilities ) ? state.assignment.capabilities : [];
+		state.assignment = {
+			roles: idList( value( 'wpessential-columns-assign-roles' ), false ),
+			users: idList( value( 'wpessential-columns-assign-users' ), true ),
+			capabilities,
+		};
+		const reason = value( 'wpessential-columns-visibility-reason' ).trim();
+		state.visibility = {
+			mode: value( 'wpessential-columns-visibility-mode' ) || 'visible',
+			reason: reason === '' ? null : reason,
+		};
+	};
+	section.addEventListener( 'input', update );
+	section.addEventListener( 'change', update );
+}
+
+function textField( id: string, text: string, help: string ): HTMLDivElement {
+	const input = element( 'input' );
+	input.id = id;
+	input.type = 'text';
+	input.autocomplete = 'off';
+	const field = element( 'div', 'wpessential-columns__field' );
+	field.append( controlLabel( input, text ), input, element( 'p', 'description', help ) );
+	return field;
+}
+
+/** Shows a loaded view's layout, assignment and visibility in the settings panel without marking it changed. */
+export function syncViewSettings( state: ViewSettingsState ): void {
+	const set = ( id: string, raw: string ): void => {
+		const control = document.getElementById( id ) as HTMLInputElement | HTMLSelectElement | null;
+		if ( control ) {
+			control.value = raw;
+		}
+	};
+	const tick = ( id: string, on: boolean ): void => {
+		const control = document.getElementById( id ) as HTMLInputElement | null;
+		if ( control ) {
+			control.checked = on;
+		}
+	};
+	const layout = state.layout ?? {};
+	set( 'wpessential-columns-density', typeof layout.density === 'string' ? layout.density : 'comfortable' );
+	tick( 'wpessential-columns-sticky-header', layout.sticky_header === true );
+	tick( 'wpessential-columns-horizontal-scroll', layout.horizontal_scroll !== false );
+	const assignment = state.assignment ?? {};
+	set( 'wpessential-columns-assign-roles', Array.isArray( assignment.roles ) ? assignment.roles.join( ', ' ) : '' );
+	set( 'wpessential-columns-assign-users', Array.isArray( assignment.users ) ? assignment.users.join( ', ' ) : '' );
+	const visibility = state.visibility ?? {};
+	set( 'wpessential-columns-visibility-mode', typeof visibility.mode === 'string' ? visibility.mode : 'visible' );
+	set( 'wpessential-columns-visibility-reason', typeof visibility.reason === 'string' ? visibility.reason : '' );
 }
