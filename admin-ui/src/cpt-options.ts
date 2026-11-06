@@ -25,6 +25,7 @@ export const ADVANCED_KEYS = [
 	'capabilities',
 	'map_meta_cap',
 	'delete_with_user',
+	'template_lock',
 	'taxonomies',
 	'automatic_labels',
 	'labels',

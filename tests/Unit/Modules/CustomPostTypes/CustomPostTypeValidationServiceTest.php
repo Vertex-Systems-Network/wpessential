@@ -22,6 +22,8 @@ final class CustomPostTypeValidationServiceTest extends TestCase
         self::assertTrue($report['valid']);
         self::assertSame([], $report['issues']);
         self::assertSame('library_book', $report['candidate']['post_type_key']);
+        self::assertIsArray($report['effective_args']);
+        self::assertArrayHasKey('labels', $report['effective_args']);
         self::assertSame([], $repository->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
     }
 
