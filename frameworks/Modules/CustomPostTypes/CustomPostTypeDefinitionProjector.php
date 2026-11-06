@@ -209,11 +209,11 @@ final class CustomPostTypeDefinitionProjector {
 			if ( ! in_array( $payload['template_lock'], [ 'all', 'insert', 'contentOnly' ], true ) ) {
 				throw new InvalidArgumentException( 'template_lock must be all, insert or contentOnly.' );
 			}
-			// A lock without a template leaves new posts empty with the inserter disabled.
-			if ( ( $args['template'] ?? [] ) === [] ) {
-				throw new InvalidArgumentException( 'template_lock needs a block template; add the blocks new posts start with.' );
+			// A lock without a template would leave new posts empty with the inserter disabled. Runtime
+			// drops it (so older definitions keep compiling); CustomPostTypeValidationService blocks saving one.
+			if ( ( $args['template'] ?? [] ) !== [] ) {
+				$args['template_lock'] = $payload['template_lock'];
 			}
-			$args['template_lock'] = $payload['template_lock'];
 		}
 		if ( array_key_exists( 'permalink', $payload ) && $payload['permalink'] !== null ) {
 			[ $config, $slug ] = $this->permalink( $payload['permalink'] );

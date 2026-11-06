@@ -27,6 +27,14 @@ final class CustomPostTypeValidationServiceTest extends TestCase
         self::assertSame([], $repository->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
     }
 
+    public function testTemplateLockWithoutTemplateIsBlocked(): void
+    {
+        $report = $this->validation(new InMemoryDefinitionRepository())->validate(['payload' => $this->payload() + ['template_lock' => 'all']]);
+
+        self::assertFalse($report['valid']);
+        self::assertContains('template_lock_without_template', array_column($report['issues'], 'id'));
+    }
+
     public function testReservedKeyIsReportedAsBlockedWithoutSaving(): void
     {
         $repository = new InMemoryDefinitionRepository();
