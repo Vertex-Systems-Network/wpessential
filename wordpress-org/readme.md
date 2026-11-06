@@ -121,13 +121,22 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 ### 3.0.0
 
+- Rewritten as a modular platform. The 2.x Elementor widgets and shortcodes are removed.
 - New: Custom Post Type builder with block template, template lock and a compiled arguments preview.
 - New: Custom Taxonomy builder with permalinks, term counting and sorting, and Custom Post Type UI import.
 - New: Dashboard, Modules, System Status, Demo Library and Docs screens.
 - New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
+### 2.0
+
+- PHP 8 compatibility and a new file structure.
+
+### 1.0.0
+
+- First release: theme framework with Elementor widgets for forms, sliders and WooCommerce.
+
 ## Upgrade Notice
 
 ### 3.0.0
 
-First release of WPEssential with the Custom Post Type and Taxonomy builders.
+Major rewrite. The 2.x Elementor widgets and shortcodes (forms, sliders, WooCommerce) are removed. If your site uses them, stay on 2.0 or test 3.0.0 on a staging site first. Requires PHP 8.2 and WordPress 6.9.

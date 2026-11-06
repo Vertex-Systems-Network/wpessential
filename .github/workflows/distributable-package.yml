@@ -367,6 +367,9 @@ jobs:
         with:
           build-dir: ${{ runner.temp }}/wporg-plugin-check/wpessential
           slug: wpessential
+          # "wpessential" is an existing WordPress.org listing (since 2020); the "wp" trademark rule
+          # applies only to new plugin submissions, not to updates of an approved slug.
+          ignore-codes: trademarked_term
 
       - name: Verify tracked source remains clean
         shell: bash
