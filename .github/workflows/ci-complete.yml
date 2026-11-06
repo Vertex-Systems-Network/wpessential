@@ -27,6 +27,7 @@ jobs:
           set -euo pipefail
           # Give path-filtered workflows time to queue their check runs before the first look.
           sleep 90
+          previous='(first poll)'
           while true; do
             runs="$(gh api --paginate "repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100" \
               --jq '.check_runs[] | select(.name != "ci-complete") | [.name, .status, (.conclusion // "")] | @tsv')"
@@ -37,11 +38,15 @@ jobs:
               printf '%s\n' "${failed}"
               exit 1
             fi
-            if [ "${pending}" -eq 0 ]; then
+            names="$(printf '%s\n' "${runs}" | cut -f1 | sort)"
+            # Pass only when nothing is pending and no new check appeared since the last poll,
+            # so a workflow that registers late is still waited for.
+            if [ "${pending}" -eq 0 ] && [ "${names}" = "${previous}" ]; then
               echo "All checks on ${HEAD_SHA} passed:"
               printf '%s\n' "${runs}"
               exit 0
             fi
+            previous="${names}"
             echo "Waiting for ${pending} check(s)..."
             sleep 30
           done
