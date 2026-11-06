@@ -354,6 +354,12 @@
 	}
 }
 
+// Wide tables inside an option group scroll instead of being clipped by the group.
+.wpe-ui-table-wrap {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
 // Section list beside option groups (System Status, editors). Stacks below 960px.
 .wpe-ui-sections {
 	display: grid;
@@ -363,6 +369,10 @@
 
 	@media (max-width: 960px) {
 		grid-template-columns: minmax(0, 1fr);
+
+		.wpe-ui-sections__nav {
+			position: static;
+		}
 	}
 
 	&__nav {
