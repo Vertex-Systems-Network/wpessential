@@ -778,17 +778,26 @@ function layoutControl( card: HTMLElement, key: string ): HTMLInputElement | HTM
 
 /** The column layout map for the save payload, or undefined when every value is the default. */
 export function readColumnLayout( card: HTMLElement ): JsonValue | undefined {
-	const width = ( key: string ): number | null => {
-		const raw = layoutControl( card, key )?.value ?? '';
-		return raw === '' ? null : Number.parseInt( raw, 10 );
+	// Whole numbers only: a typed 120.5 or 12px must stop the save, never round silently.
+	const whole = ( key: string, label: string ): number | null => {
+		const raw = ( layoutControl( card, key )?.value ?? '' ).trim();
+		if ( raw === '' ) {
+			return null;
+		}
+		if ( ! /^\d+$/.test( raw ) ) {
+			throw new Error( `${ label } must be a whole number.` );
+		}
+		return Number.parseInt( raw, 10 );
 	};
-	const priorityRaw = layoutControl( card, 'responsive_priority' )?.value ?? '';
+	const width = ( key: string ): number | null =>
+		whole( key, key.replace( '_', ' ' ).replace( /^./, ( c ) => c.toUpperCase() ) );
+	const priority = whole( 'responsive_priority', 'Responsive priority' );
 	const layout = {
 		width: width( 'width' ),
 		min_width: width( 'min_width' ),
 		max_width: width( 'max_width' ),
 		alignment: layoutControl( card, 'alignment' )?.value || 'left',
-		responsive_priority: priorityRaw === '' ? 50 : Number.parseInt( priorityRaw, 10 ),
+		responsive_priority: priority ?? 50,
 		sticky: ( layoutControl( card, 'sticky' ) as HTMLInputElement | null )?.checked ?? false,
 	};
 	const isDefault =
@@ -826,14 +835,29 @@ export function writeColumnLayout( card: HTMLElement, layout: JsonValue | undefi
 	}
 }
 
-function idList( raw: string, numeric: boolean ): ( string | number )[] {
-	const parts = raw
+function listParts( raw: string ): string[] {
+	return raw
 		.split( ',' )
 		.map( ( part ) => part.trim() )
 		.filter( ( part ) => part !== '' );
+}
+
+function idList( raw: string, numeric: boolean ): ( string | number )[] {
+	const parts = listParts( raw );
+	// Invalid user IDs are kept out here and reported by assertViewSettings() before saving.
 	return numeric
-		? parts.map( ( part ) => Number.parseInt( part, 10 ) ).filter( ( n ) => Number.isInteger( n ) && n > 0 )
+		? parts.filter( ( part ) => /^[1-9]\d*$/.test( part ) ).map( ( part ) => Number.parseInt( part, 10 ) )
 		: parts;
+}
+
+/** Stops a save when the assigned user IDs contain anything but whole positive numbers. */
+export function assertViewSettings(): void {
+	const users = document.getElementById( 'wpessential-columns-assign-users' );
+	const raw = users instanceof HTMLInputElement ? users.value : '';
+	const invalid = listParts( raw ).filter( ( part ) => ! /^[1-9]\d*$/.test( part ) );
+	if ( invalid.length > 0 ) {
+		throw new Error( `Assigned user IDs must be whole numbers: ${ invalid.join( ', ' ) }.` );
+	}
 }
 
 /**

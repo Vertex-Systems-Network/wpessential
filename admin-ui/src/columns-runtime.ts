@@ -1,4 +1,5 @@
 import {
+	assertViewSettings,
 	mountAdminColumnsScaffold,
 	mountViewSettings,
 	readColumnLayout,
@@ -1084,6 +1085,7 @@ function wireSave(
 		if ( columns.length === 0 ) {
 			throw new Error( 'At least one Column is required.' );
 		}
+		assertViewSettings();
 		session.viewKey ??= newViewKey();
 		const view: JsonObject = {
 			view_key: session.viewKey,
@@ -1113,6 +1115,8 @@ function wireSave(
 		if ( inFlight ) {
 			return;
 		}
+		// Errors thrown while building the payload are the editor's own checks, so show their message.
+		let building = true;
 		try {
 			const previousRevision = session.revision;
 			const request: JsonObject = {
@@ -1124,6 +1128,7 @@ function wireSave(
 				request.expected_revision = session.revision;
 			}
 
+			building = false;
 			inFlight = true;
 			save.disabled = true;
 			save.textContent = 'Saving…';
@@ -1161,9 +1166,11 @@ function wireSave(
 				new CustomEvent( 'wpessential:columns-session-changed' )
 			);
 			status.textContent = `Column Set saved as revision ${ session.revision }.`;
-		} catch {
+		} catch ( error ) {
 			status.textContent =
-				'Column Set could not be saved. Review the authored values, refresh server state if needed, and retry.';
+				building && error instanceof Error
+					? error.message
+					: 'Column Set could not be saved. Review the authored values, refresh server state if needed, and retry.';
 		} finally {
 			inFlight = false;
 			save.disabled = false;
