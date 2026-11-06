@@ -150,9 +150,11 @@ final class LicenseScreen implements AdminScreen {
 		$site  = $this->siteRows();
 		$nav   = [ [ 'wpe-license-site', __( 'This site', 'wpessential' ), count( $site ) ] ];
 		$body  = OptionGroup::render( 'wpe-license-site', __( 'This site', 'wpessential' ), 'Essential', 'license.site', $site );
-		foreach ( $this->accountGroups() as [ $id, $title, $key, $rows ] ) {
-			$body .= OptionGroup::render( $id, $title, 'Essential', $key, $rows );
-			$nav[] = [ $id, $title, count( $rows ) ];
+		foreach ( $this->accountGroups() as $group ) {
+			[ $id, $title, $key, $rows ] = $group;
+			$count = $group[4] ?? count( $rows );
+			$body .= OptionGroup::render( $id, $title, 'Essential', $key, $rows, true, $count );
+			$nav[] = [ $id, $title, $count ];
 		}
 		$html .= SectionNav::layout( __( 'Account', 'wpessential' ), [ __( 'Account', 'wpessential' ) => $nav ], $body );
 		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Your account token and subscription credentials are stored in this site\'s database without encryption and are never sent to the browser.', 'wpessential' ) . '</p>';
@@ -199,7 +201,7 @@ final class LicenseScreen implements AdminScreen {
 		return $rows;
 	}
 
-	/** @return list<array{0:string,1:string,2:string,3:list<string>}> [ id, title, contract key, rows ] */
+	/** @return list<array{0:string,1:string,2:string,3:list<string>,4?:int}> [ id, title, contract key, rows, visible row count when a form wraps them ] */
 	private function accountGroups(): array {
 		$logout = self::form( 'logout', self::submit( __( 'Sign out', 'wpessential' ), 'ghost', true ), [], 'wpe-ui-inline' );
 		$me     = $this->account->signedIn() ? $this->account->me() : [ 'signed_in' => false ];
@@ -223,8 +225,8 @@ final class LicenseScreen implements AdminScreen {
 			);
 
 			return [
-				[ 'wpe-license-sign-in', __( 'Sign in', 'wpessential' ), 'license.account.sign_in', [ $login ] ],
-				[ 'wpe-license-create', __( 'Create account', 'wpessential' ), 'license.account.create', [ $register ] ],
+				[ 'wpe-license-sign-in', __( 'Sign in', 'wpessential' ), 'license.account.sign_in', [ $login ], 3 ],
+				[ 'wpe-license-create', __( 'Create account', 'wpessential' ), 'license.account.create', [ $register ], 4 ],
 			];
 		}
 
