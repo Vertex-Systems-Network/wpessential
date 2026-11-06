@@ -157,6 +157,13 @@ final class DemosScreen implements AdminScreen {
 			? '<img class="wpe-ui-demo__shot" src="' . esc_url( $demo['thumbnail'] ) . '" alt="" loading="lazy">'
 			: '<div class="wpe-ui-demo__shot" aria-hidden="true">' . Icon::render( 'image', 32 ) . '</div>';
 		$html .= '<div class="wpe-ui-demo__body"><div class="wpe-ui-demo__head"><h2>' . esc_html( $demo['title'] ) . '</h2>' . Badge::edition( $demo['type'] === 'pro' ? 'pro' : 'free' ) . '</div>';
+		if ( $demo['niche'] !== [] ) {
+			$html .= '<span class="wpe-ui-demo__niches">';
+			foreach ( $demo['niche'] as $item ) {
+				$html .= '<span class="wpe-ui-chip">' . esc_html( ucfirst( $item ) ) . '</span>';
+			}
+			$html .= '</span>';
+		}
 		$html .= '<p class="wpe-ui-muted">' . esc_html( $demo['tagline'] ) . '</p><div class="wpe-ui-demo__foot"><span class="wpe-ui-demo__builders">';
 		foreach ( $demo['builders'] as $builder ) {
 			$html .= '<span title="' . esc_attr( ucfirst( $builder ) ) . '">' . Icon::render( $builder, 16 ) . '<span class="screen-reader-text">' . esc_html( ucfirst( $builder ) ) . '</span></span>';

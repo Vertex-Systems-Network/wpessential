@@ -644,6 +644,12 @@
 		}
 	}
 
+	&__niches {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
 	&__foot {
 		display: flex;
 		align-items: center;

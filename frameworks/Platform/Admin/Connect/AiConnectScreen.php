@@ -16,8 +16,10 @@ use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Button;
 use WPEssential\Platform\Admin\Ui\Icon;
 use WPEssential\Platform\Admin\Ui\Notice;
+use WPEssential\Platform\Admin\Ui\OptionGroup;
 use WPEssential\Platform\Admin\Ui\PageHeader;
 use WPEssential\Platform\Admin\Ui\Screen;
+use WPEssential\Platform\Admin\Ui\SectionNav;
 use WPEssential\Platform\Admin\Ui\Shell;
 use WPEssential\Platform\Admin\Ui\StatusPill;
 use WPEssential\Platform\Admin\Ui\Toggle;
@@ -92,8 +94,8 @@ final class AiConnectScreen implements AdminScreen {
 	}
 
 	/** @param array<string,string> $fields */
-	private static function form( string $op, string $inner, array $fields = [] ): string {
-		$html  = '<form method="post" class="wpe-ui-form wpe-ui-inline" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+	private static function form( string $op, string $inner, array $fields = [], string $class = 'wpe-ui-form wpe-ui-inline' ): string {
+		$html  = '<form method="post" class="' . esc_attr( $class ) . '" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 		$html .= wp_nonce_field( self::ACTION, '_wpnonce', true, false );
 		$html .= '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '"><input type="hidden" name="op" value="' . esc_attr( $op ) . '">';
 		foreach ( $fields as $name => $value ) {
@@ -119,17 +121,25 @@ final class AiConnectScreen implements AdminScreen {
 			'enabled'      => $this->connect->enabled(),
 			'allow_writes' => $this->connect->allowWrites(),
 		];
-		$html    .= '<section class="wpe-ui-panel wpe-ui-panel--flush" aria-label="' . esc_attr__( 'AI Connect switches', 'wpessential' ) . '">';
-		$html    .= self::row( 'spark', __( 'AI Connect', 'wpessential' ), __( 'Turns on the WPEssential MCP server. Turning it off disconnects every client.', 'wpessential' ), Toggle::form( self::ACTION, self::ACTION, $settings['enabled'], __( 'Turn AI Connect on or off', 'wpessential' ), [ 'op' => 'power' ] ) );
-		$writes   = $settings['enabled']
+		$writes = $settings['enabled']
 			? Toggle::form( self::ACTION, self::ACTION, $settings['allow_writes'], __( 'Allow AI to change settings', 'wpessential' ), [ 'op' => 'writes' ] )
 			: StatusPill::render( 'off', __( 'Off', 'wpessential' ) );
-		$html    .= self::row( 'cog', __( 'Allow AI to change settings', 'wpessential' ), __( 'Off: AI can only read. On: AI can switch modules and elements on or off and change your settings. Every call is audited.', 'wpessential' ), $writes );
-		$html    .= '</section>';
+		$switches = [
+			OptionGroup::row( __( 'AI Connect', 'wpessential' ), __( 'Turns on the WPEssential MCP server. Turning it off disconnects every client.', 'wpessential' ), Toggle::form( self::ACTION, self::ACTION, $settings['enabled'], __( 'Turn AI Connect on or off', 'wpessential' ), [ 'op' => 'power' ] ) ),
+			OptionGroup::row( __( 'Allow AI to change settings', 'wpessential' ), __( 'Off: AI can only read. On: AI can switch modules and elements on or off and change your settings. Every call is audited.', 'wpessential' ), $writes ),
+		];
+		$groups   = OptionGroup::render( 'wpe-ai-switches', __( 'Switches', 'wpessential' ), 'Essential', 'ai.switches', $switches );
+		$nav      = [ [ 'wpe-ai-switches', __( 'Switches', 'wpessential' ), count( $switches ) ] ];
 
 		if ( $settings['enabled'] ) {
-			$html .= $this->oneTime( $user ) . $this->connectPanel() . $this->sessionsPanel( $user );
+			$connect  = $this->connectRows( $user );
+			$sessions = $this->sessionRows( $user );
+			$groups  .= OptionGroup::render( 'wpe-ai-connect', __( 'Connect a client', 'wpessential' ), 'Essential', 'ai.connect', $connect )
+				. OptionGroup::render( 'wpe-ai-sessions', __( 'Connected clients', 'wpessential' ), 'Essential', 'ai.sessions', $sessions );
+			$nav[]    = [ 'wpe-ai-connect', __( 'Connect a client', 'wpessential' ), count( $connect ) ];
+			$nav[]    = [ 'wpe-ai-sessions', __( 'Connected clients', 'wpessential' ), count( $sessions ) ];
 		}
+		$html .= SectionNav::layout( __( 'AI Connect', 'wpessential' ), [ __( 'AI Connect', 'wpessential' ) => $nav ], $groups );
 
 		$messages = [
 			'on'        => [ 'success', __( 'AI Connect is on. Connect a client below.', 'wpessential' ) ],
@@ -167,56 +177,59 @@ final class AiConnectScreen implements AdminScreen {
 		return $html . '</div>';
 	}
 
-	private static function row( string $icon, string $label, string $help, string $control ): string {
-		return '<div class="wpe-ui-option"><div class="wpe-ui-option__copy wpe-ui-option__copy--row"><span class="wpe-ui-icon">' . Icon::render( $icon, 20 ) . '</span>'
-			. '<span><span class="wpe-ui-option__label">' . esc_html( $label ) . '</span><br><span class="wpe-ui-muted">' . esc_html( $help ) . '</span></span></div>'
-			. '<div class="wpe-ui-option__meta">' . $control . '</div></div>';
-	}
-
-	private function oneTime( int $user ): string {
+	/** One-time connection details (shown once after "Create connection"), then the client form. @return list<string> */
+	private function connectRows( int $user ): array {
+		$rows = [];
 		$once = get_transient( self::ONCE . $user );
 		delete_transient( self::ONCE . $user );
-		if ( ! is_array( $once ) || count( $once ) !== 2 ) {
-			return '';
+		if ( is_array( $once ) && count( $once ) === 2 ) {
+			$login  = function_exists( 'wp_get_current_user' ) ? (string) wp_get_current_user()->user_login : '';
+			$code   = AiConnect::snippet( (string) $once[0], $login, (string) $once[1] );
+			$rows[] = OptionGroup::row(
+				AiConnect::CLIENTS[ (string) $once[0] ] ?? __( 'Connection details', 'wpessential' ),
+				__( 'This contains a password for your account. Paste it into your client and do not share it.', 'wpessential' ),
+				StatusPill::render( 'waiting', __( 'Shown once', 'wpessential' ) ) . '<pre class="wpe-ui-code" tabindex="0"><code>' . esc_html( $code ) . '</code></pre>'
+			);
 		}
-		$login = function_exists( 'wp_get_current_user' ) ? (string) wp_get_current_user()->user_login : '';
-		$code  = AiConnect::snippet( (string) $once[0], $login, (string) $once[1] );
 
-		return '<section class="wpe-ui-panel" aria-labelledby="wpe-ai-once"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'code', 20 ) . '</span>'
-			. '<h2 id="wpe-ai-once">' . esc_html( AiConnect::CLIENTS[ (string) $once[0] ] ?? '' ) . '</h2>' . StatusPill::render( 'warning', __( 'Shown once', 'wpessential' ) ) . '</div>'
-			. '<pre class="wpe-ui-code" tabindex="0"><code>' . esc_html( $code ) . '</code></pre>'
-			. '<p class="wpe-ui-muted">' . esc_html__( 'This contains a password for your account. Paste it into your client and do not share it.', 'wpessential' ) . '</p></section>';
-	}
+		$rows[] = OptionGroup::row( __( 'Server URL', 'wpessential' ), __( 'Paste this into your client.', 'wpessential' ), OptionGroup::readonly( AiConnect::endpoint() ) );
+		if ( ! AiConnect::secure() ) {
+			$rows[] = OptionGroup::row( __( 'HTTPS and app passwords', 'wpessential' ), '', Notice::render( 'warning', __( 'AI Connect needs HTTPS and WordPress Application Passwords on this site.', 'wpessential' ) ) );
+			return $rows;
+		}
 
-	private function connectPanel(): string {
 		$options = '';
 		foreach ( AiConnect::CLIENTS as $key => $label ) {
 			$options .= '<option value="' . esc_attr( $key ) . '">' . esc_html( $label ) . '</option>';
 		}
-		$inner = '<p class="wpe-ui-field"><label for="wpe-ai-client">' . esc_html__( 'Client', 'wpessential' ) . '</label><select id="wpe-ai-client" name="client">' . $options . '</select></p>'
-			. '<button type="submit" class="' . esc_attr( Button::classes( 'primary' ) ) . '">' . esc_html__( 'Create connection', 'wpessential' ) . '</button>';
+		$rows[] = self::form(
+			'connect',
+			OptionGroup::row( __( 'Client', 'wpessential' ), __( 'The app you are connecting.', 'wpessential' ), '<label class="screen-reader-text" for="wpe-ai-client">' . esc_html__( 'Client', 'wpessential' ) . '</label><select id="wpe-ai-client" name="client">' . $options . '</select>' )
+			. OptionGroup::row( __( 'Create connection', 'wpessential' ), __( 'Makes an application password for this client.', 'wpessential' ), '<button type="submit" class="' . esc_attr( Button::classes( 'primary' ) ) . '">' . esc_html__( 'Create connection', 'wpessential' ) . '</button>' ),
+			[],
+			'wpe-ui-form'
+		);
 
-		return '<section class="wpe-ui-panel" aria-labelledby="wpe-ai-connect"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'plug', 20 ) . '</span>'
-			. '<h2 id="wpe-ai-connect">' . esc_html__( 'Connect a client', 'wpessential' ) . '</h2></div>'
-			. '<p>' . esc_html__( 'Server URL', 'wpessential' ) . ': <code>' . esc_html( AiConnect::endpoint() ) . '</code></p>'
-			. ( AiConnect::secure() ? self::form( 'connect', $inner ) : Notice::render( 'warning', __( 'AI Connect needs HTTPS and WordPress Application Passwords on this site.', 'wpessential' ) ) )
-			. '</section>';
+		return $rows;
 	}
 
-	private function sessionsPanel( int $user ): string {
+	/** @return list<string> */
+	private function sessionRows( int $user ): array {
 		$sessions = $this->connect->sessions( $user );
-		$html     = '<section class="wpe-ui-panel" aria-labelledby="wpe-ai-sessions"><div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'users', 20 ) . '</span>'
-			. '<h2 id="wpe-ai-sessions">' . esc_html__( 'Connected clients', 'wpessential' ) . '</h2></div>';
 		if ( $sessions === [] ) {
-			return $html . '<p class="wpe-ui-muted">' . esc_html__( 'No clients are connected.', 'wpessential' ) . '</p></section>';
+			return [ OptionGroup::row( __( 'No clients are connected.', 'wpessential' ), __( 'Create a connection above to add one.', 'wpessential' ), '' ) ];
 		}
-		$html .= '<ul class="wpe-ui-list">';
+		$rows = [];
 		foreach ( $sessions as $session ) {
-			$used  = $session['last_used'] > 0 ? wp_date( (string) get_option( 'date_format' ), $session['last_used'] ) : __( 'Never used', 'wpessential' );
-			$html .= '<li><span><strong>' . esc_html( $session['client'] ) . '</strong> <span class="wpe-ui-muted">' . esc_html( (string) $used ) . '</span></span>'
-				. self::form( 'revoke', '<button type="submit" class="' . esc_attr( Button::classes( 'ghost', true ) ) . '">' . esc_html__( 'Disconnect', 'wpessential' ) . '</button>', [ 'session' => $session['uuid'] ] ) . '</li>';
+			$used   = $session['last_used'] > 0 ? wp_date( (string) get_option( 'date_format' ), $session['last_used'] ) : __( 'Never used', 'wpessential' );
+			$rows[] = OptionGroup::row(
+				$session['client'],
+				(string) $used,
+				StatusPill::render( $session['last_used'] > 0 ? 'running' : 'off', $session['last_used'] > 0 ? __( 'Connected', 'wpessential' ) : __( 'Never used', 'wpessential' ) )
+				. self::form( 'revoke', '<button type="submit" class="' . esc_attr( Button::classes( 'ghost', true ) ) . '">' . esc_html__( 'Disconnect', 'wpessential' ) . '</button>', [ 'session' => $session['uuid'] ] )
+			);
 		}
 
-		return $html . '</ul></section>';
+		return $rows;
 	}
 }

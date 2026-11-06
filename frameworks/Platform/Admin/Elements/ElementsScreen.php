@@ -99,7 +99,8 @@ final class ElementsScreen implements AdminScreen {
 			$html .= '<p>' . esc_html__( 'Elements will appear here as WPEssential modules add them. Each one can be switched on or off for the whole site.', 'wpessential' ) . '</p>';
 			$html .= Button::link( __( 'Read the Elements guide', 'wpessential' ), AdminUrl::page( Shell::DOCS_SLUG ), 'ghost' ) . '</div>';
 		} else {
-			$html .= '<section class="wpe-ui-panel wpe-ui-panel--flush" aria-label="' . esc_attr( $labels[ $type ] ) . '">';
+			$html .= '<details class="wpe-ui-group" id="wpe-elements-' . esc_attr( $type ) . '" open><summary><span class="wpe-ui-group__title">' . esc_html( $labels[ $type ] ) . '</span>' . Badge::count( count( $elements ) )
+				. '<span class="wpe-ui-chip wpe-ui-chip--essential">Essential</span><code class="wpe-ui-code">elements.' . esc_html( $type ) . '</code></summary>';
 			foreach ( $elements as $element ) {
 				$html .= '<div class="wpe-ui-option"><div class="wpe-ui-option__copy wpe-ui-option__copy--row"><span class="wpe-ui-icon">' . Icon::render( $element['icon'], 20 ) . '</span>';
 				$html .= '<span><span class="wpe-ui-option__label">' . esc_html( $element['name'] ) . '</span><br><span class="wpe-ui-muted">' . esc_html( $element['description'] ) . '</span></span></div>';
@@ -116,7 +117,7 @@ final class ElementsScreen implements AdminScreen {
 					]
 				) . '</div></div>';
 			}
-			$html .= '</section>';
+			$html .= '</details>';
 		}
 
 		$messages = [

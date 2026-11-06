@@ -55,7 +55,13 @@ export function Elements( { data }: { data: ScreenData } ) {
 					</a>
 				</div>
 			) : (
-				<section className="wpe-ui-panel wpe-ui-panel--flush" aria-label={ current.label }>
+				<details className="wpe-ui-group" id={ `wpe-elements-${ current.key }` } open>
+					<summary>
+						<span className="wpe-ui-group__title">{ current.label }</span>
+						<Count n={ current.elements.length } />
+						<span className="wpe-ui-chip wpe-ui-chip--essential">Essential</span>
+						<code className="wpe-ui-code">{ `elements.${ current.key }` }</code>
+					</summary>
 					{ current.elements.map( ( element ) => (
 						<div className="wpe-ui-option" key={ element.id }>
 							<div className="wpe-ui-option__copy wpe-ui-option__copy--row">
@@ -72,7 +78,7 @@ export function Elements( { data }: { data: ScreenData } ) {
 							</div>
 						</div>
 					) ) }
-				</section>
+				</details>
 			) }
 		</>
 	);
