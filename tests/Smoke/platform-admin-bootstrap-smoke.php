@@ -119,4 +119,23 @@ expect_admin_bootstrap(str_contains($rendered, 'Kernel booted'), 'Platform admin
 expect_admin_bootstrap(str_contains($rendered, 'wpessential-admin-bootstrap'), 'Platform admin shell must preserve the JSON bootstrap payload for progressive enhancement');
 expect_admin_bootstrap(!str_contains($rendered, 'Loading the Platform diagnostics shell'), 'Platform admin shell must not stall on an asset-dependent loading placeholder');
 
+expect_admin_bootstrap(substr_count($rendered, '<details class="wpe-ui-group"') === 3, 'System status must render its Runtime, Free / Pro and Modules groups');
+expect_admin_bootstrap(str_contains($rendered, 'href="#wpe-status-runtime"'), 'System status section nav must link to its groups');
+
+// Shared option group helpers escape what they print and count their rows.
+$group = \WPEssential\Platform\Admin\Ui\OptionGroup::render(
+    'g<1>',
+    'Title <b>',
+    'System',
+    'key.<x>',
+    [
+        \WPEssential\Platform\Admin\Ui\OptionGroup::row('Label <i>', 'Help <u>', \WPEssential\Platform\Admin\Ui\OptionGroup::readonly('v<1>')),
+        \WPEssential\Platform\Admin\Ui\OptionGroup::row('Second', '', ''),
+    ]
+);
+expect_admin_bootstrap(!str_contains($group, '<b>') && !str_contains($group, '<i>') && !str_contains($group, '<u>') && !str_contains($group, 'v<1>'), 'OptionGroup must escape titles, labels, help and read-only values');
+expect_admin_bootstrap(substr_count($group, 'class="wpe-ui-option"') === 2 && str_contains($group, 'wpe-ui-chip--system'), 'OptionGroup must render one row per entry and the tier chip');
+$nav = \WPEssential\Platform\Admin\Ui\SectionNav::layout('Nav', ['Head <h>' => [['a"b', 'Link', 3]]], '<p>body</p>');
+expect_admin_bootstrap(str_contains($nav, '<p>body</p>') && !str_contains($nav, 'Head <h>') && !str_contains($nav, 'href="#a"b"'), 'SectionNav must escape headings and anchors and keep the prepared body');
+
 fwrite(STDOUT, "WPEssential Platform admin bootstrap smoke PASS\n");
