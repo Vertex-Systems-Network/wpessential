@@ -68,10 +68,15 @@ final class FieldGroupRuntimeRegistrar {
 					[ $left->slug, $left->id ] <=> [ $right->slug, $right->id ],
 			);
 
-			$this->binder->bindAll( $definitions );
-			$this->bound = array_map(
-				static fn ( Definition $definition ): string => $definition->id,
-				$definitions,
+			$skipped = $this->binder->bindPublished( $definitions );
+			foreach ( $skipped as $id => $reason ) {
+				$this->errors[ 'group:' . $id ] = $reason;
+			}
+			$this->bound = array_values(
+				array_map(
+					static fn ( Definition $definition ): string => $definition->id,
+					array_filter( $definitions, static fn ( Definition $definition ): bool => ! isset( $skipped[ $definition->id ] ) ),
+				)
 			);
 		} catch ( Throwable $error ) {
 			$this->errors['runtime'] = $error->getMessage();

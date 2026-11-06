@@ -335,11 +335,13 @@ final readonly class FieldGroupPortabilityService {
 
 	private function assertCanCreate( Definition $candidate ): void {
 		$payload = $this->identities->assign( $candidate->payload, null, $candidate->id );
-		$report  = $this->validation->validate(
+		// Imports keep the exported status; an unbindable published group is skipped and reported by the runtime registrar.
+		$report = $this->validation->validate(
 			[
 				'payload' => $payload,
 				'status'  => $candidate->status->value,
-			]
+			],
+			false
 		);
 		if ( ! $report['valid'] ) {
 			foreach ( $report['issues'] as $issue ) {
