@@ -2,20 +2,11 @@
 // Only keys that FieldGroupDefinitionNormalizer, FieldDefinitionNormalizer or FieldValueNormalizer read are offered.
 type JsonObject = Record< string, unknown >;
 
+// Runtime post-meta binding V1 (FieldGroupPostTypeTargetCompiler) resolves only these sources.
 const LOCATION_SOURCES: [ string, string ][] = [
 	[ 'post_type', 'Post type' ],
 	[ 'post_status', 'Post status' ],
-	[ 'page_template', 'Page template' ],
 	[ 'entity_id', 'Specific post ID' ],
-	[ 'taxonomy', 'Taxonomy' ],
-	[ 'term', 'Term' ],
-	[ 'user_role', 'User role' ],
-	[ 'user', 'User ID' ],
-	[ 'media_mime', 'Media type' ],
-	[ 'comment_context', 'Comment context' ],
-	[ 'settings_page', 'Settings page' ],
-	[ 'custom_table', 'Custom table' ],
-	[ 'frontend_context', 'Front-end context' ],
 ];
 const LOCATION_OPERATORS: [ string, string ][] = [
 	[ 'equals', 'is' ],
@@ -23,17 +14,11 @@ const LOCATION_OPERATORS: [ string, string ][] = [
 	[ 'in', 'is one of' ],
 	[ 'not_in', 'is none of' ],
 ];
-const STORAGE_MODES: [ string, string ][] = [
-	[ 'unconfigured', 'Not set yet' ],
-	[ 'native_post_meta', 'Post meta' ],
-	[ 'native_term_meta', 'Term meta' ],
-	[ 'native_user_meta', 'User meta' ],
-	[ 'native_comment_meta', 'Comment meta' ],
-	[ 'native_options', 'Options' ],
-	[ 'custom_table', 'Custom table' ],
-	[ 'registered_provider', 'Registered provider' ],
-];
+// FieldGroupRuntimeStorageProjection binds native post meta only; other stored modes are shown but flagged.
+const STORAGE_MODES: [ string, string ][] = [ [ 'native_post_meta', 'Post meta' ] ];
 const STRING_TYPES = [ 'text', 'textarea' ];
+// FieldValueNormalizer trims these by default; other string types keep spaces unless trim is set.
+const TRIM_BY_DEFAULT = [ 'text', 'email', 'url' ];
 
 function el< K extends keyof HTMLElementTagNameMap >(
 	tag: K,
@@ -177,6 +162,19 @@ function ruleValue( operator: string, raw: string ): unknown {
 	return parts[ 0 ] ?? '';
 }
 
+/** True when the rule selects post types (is / is one of, or a negated is not / is none of). */
+function isPostTypeAnchor( rule: JsonObject ): boolean {
+	if ( rule.source !== 'post_type' ) {
+		return false;
+	}
+	const positive = rule.operator === 'equals' || rule.operator === 'in';
+	return rule.negate === true ? ! positive : positive;
+}
+
+function isEmptyValue( raw: unknown ): boolean {
+	return Array.isArray( raw ) ? raw.length === 0 : raw === '';
+}
+
 function collectLocations( host: HTMLElement ): JsonObject[][] {
 	const groups: JsonObject[][] = [];
 	for ( const group of host.querySelectorAll< HTMLElement >( '.wpessential-fields-location-group' ) ) {
@@ -193,6 +191,15 @@ function collectLocations( host: HTMLElement ): JsonObject[][] {
 			} );
 		}
 		if ( rules.length > 0 ) {
+			// Checked here because the server accepts these but runtime binding rejects them.
+			if ( rules.some( ( rule ) => isEmptyValue( rule.value ) ) ) {
+				throw new Error( 'Every location rule needs a value. Fill it in or remove the rule.' );
+			}
+			if ( ! rules.some( isPostTypeAnchor ) ) {
+				throw new Error(
+					'Each rule group needs a "Post type is" or "Post type is one of" rule so the fields know where to appear.'
+				);
+			}
 			groups.push( rules );
 		}
 	}
@@ -235,8 +242,8 @@ export function mountGroupSettings( form: HTMLElement ): void {
 		),
 		labelled(
 			'Storage',
-			selectBox( 'wpessential-fields-storage-mode', STORAGE_MODES, 'unconfigured' ),
-			'Where values are saved. Validation reports modes that are not certified on this site yet.'
+			selectBox( 'wpessential-fields-storage-mode', STORAGE_MODES, 'native_post_meta' ),
+			'Where values are saved. Post meta is the storage the runtime binds today.'
 		),
 		tickBox( 'wpessential-fields-collapsible', 'Editors can collapse this group', false ),
 		tickBox( 'wpessential-fields-collapsed', 'Start collapsed', false ),
@@ -308,7 +315,19 @@ export function setGroupSettings( payload: JsonObject ): void {
 		collapsed.disabled = presentation.collapsible !== true;
 	}
 	const storage = isObject( payload.storage ) ? payload.storage : {};
-	setValue( 'wpessential-fields-storage-mode', text( storage, 'mode', 'unconfigured' ) );
+	const mode = text( storage, 'mode', 'native_post_meta' );
+	const storageBox = document.getElementById( 'wpessential-fields-storage-mode' );
+	if ( storageBox instanceof HTMLSelectElement ) {
+		storageBox.querySelector( '[data-wpessential-fields-stored-mode]' )?.remove();
+		// Keep a stored mode visible so editing never changes it silently.
+		if ( ! STORAGE_MODES.some( ( [ choice ] ) => choice === mode ) ) {
+			const stored = el( 'option', undefined, `${ mode } (not bound at runtime yet)` );
+			stored.value = mode;
+			stored.dataset.wpessentialFieldsStoredMode = '';
+			storageBox.append( stored );
+		}
+		storageBox.value = mode;
+	}
 	setTicked( 'wpessential-fields-revisions', payload.revision_policy === 'enabled' );
 	const host = document.getElementById( 'wpessential-fields-locations' );
 	if ( host ) {
@@ -316,9 +335,17 @@ export function setGroupSettings( payload: JsonObject ): void {
 	}
 }
 
-/** The group settings as payload keys. */
+/** The group settings as payload keys. Throws with a message the editor shows when a value cannot work. */
 export function collectGroupSettings(): JsonObject {
 	const host = document.getElementById( 'wpessential-fields-locations' );
+	const invalid = document.querySelector( '.wpessential-fields-row-settings [aria-invalid="true"]' );
+	if ( invalid instanceof HTMLInputElement ) {
+		throw new Error( `${ invalid.dataset.wpessentialFieldsLabel ?? 'A field setting' } must be a whole number.` );
+	}
+	const locations = host ? collectLocations( host ) : [];
+	if ( locations.length === 0 && value( 'wpessential-fields-status' ) === 'published' ) {
+		throw new Error( 'Add at least one location rule before publishing, so the fields have somewhere to appear.' );
+	}
 	return {
 		presentation: {
 			panel_style: value( 'wpessential-fields-panel-style' ) || 'standard',
@@ -329,7 +356,7 @@ export function collectGroupSettings(): JsonObject {
 		},
 		storage: { mode: value( 'wpessential-fields-storage-mode' ) || 'unconfigured' },
 		revision_policy: ticked( 'wpessential-fields-revisions' ) ? 'enabled' : 'disabled',
-		locations: host ? collectLocations( host ) : [],
+		locations,
 	};
 }
 
@@ -340,12 +367,16 @@ function settingsOf( field: JsonObject ): JsonObject {
 	return field.settings as JsonObject;
 }
 
-function optionalNumber( raw: string, integer: boolean ): number | undefined {
-	if ( raw.trim() === '' ) {
+/** Parses a number input; null means the text is not a valid number of that kind. */
+function optionalNumber( raw: string, integer: boolean ): number | undefined | null {
+	const trimmed = raw.trim();
+	if ( trimmed === '' ) {
 		return undefined;
 	}
-	const parsed = integer ? Number.parseInt( raw, 10 ) : Number( raw );
-	return Number.isFinite( parsed ) ? parsed : undefined;
+	if ( integer ? ! /^\d+$/.test( trimmed ) : ! Number.isFinite( Number( trimmed ) ) ) {
+		return null;
+	}
+	return integer ? Number.parseInt( trimmed, 10 ) : Number( trimmed );
 }
 
 /**
@@ -381,7 +412,15 @@ export function fieldSettingsPanel( field: JsonObject, index: number ): HTMLDeta
 		input.id = id( key );
 		input.step = integer ? '1' : 'any';
 		input.value = typeof current === 'number' ? String( current ) : '';
-		input.addEventListener( 'input', () => write( optionalNumber( input.value, integer ) ) );
+		input.dataset.wpessentialFieldsLabel = label;
+		input.addEventListener( 'input', () => {
+			const parsed = optionalNumber( input.value, integer );
+			// A bad value is flagged and blocks the save; the last good value is never replaced by a guess.
+			input.setAttribute( 'aria-invalid', parsed === null ? 'true' : 'false' );
+			if ( parsed !== null ) {
+				write( parsed );
+			}
+		} );
 		grid.append( labelled( label, input ) );
 	};
 	const setting = ( key: string ) => ( next: unknown ): void => {
@@ -398,7 +437,8 @@ export function fieldSettingsPanel( field: JsonObject, index: number ): HTMLDeta
 	} );
 
 	if ( STRING_TYPES.includes( type ) ) {
-		bindTick( 'trim', 'Trim spaces from the value', settings.trim !== false, ( on ) => {
+		const trimDefault = TRIM_BY_DEFAULT.includes( type );
+		bindTick( 'trim', 'Trim spaces from the value', typeof settings.trim === 'boolean' ? settings.trim : trimDefault, ( on ) => {
 			settings.trim = on;
 		} );
 		bindNumber( 'min_length', 'Minimum length', settings.min_length, true, setting( 'min_length' ) );
@@ -427,15 +467,28 @@ export function fieldSettingsPanel( field: JsonObject, index: number ): HTMLDeta
 
 	// Cloning: the normalizer reads these top-level keys and folds them into `repeatability`.
 	const clone = ( key: string, fallback: unknown ): unknown => ( key in field ? field[ key ] : fallback );
-	bindTick( 'cloneable', 'Allow several values (clone)', clone( 'cloneable', repeat.enabled ) === true, ( on ) => {
+	const cloning = clone( 'cloneable', repeat.enabled ) === true;
+	// Reordering needs cloning, so the sortable box follows the cloneable box.
+	const syncSortable = ( on: boolean ): void => {
+		const sortable = grid.querySelector< HTMLInputElement >( `#${ id( 'sortable' ) }` );
+		if ( sortable ) {
+			sortable.disabled = ! on;
+			if ( ! on ) {
+				sortable.checked = false;
+			}
+		}
+	};
+	bindTick( 'cloneable', 'Allow several values (clone)', cloning, ( on ) => {
 		field.cloneable = on;
 		if ( ! on ) {
 			field.sortable = false;
 		}
+		syncSortable( on );
 	} );
-	bindTick( 'sortable', 'Editors can reorder clones', clone( 'sortable', repeat.sortable ) === true, ( on ) => {
+	bindTick( 'sortable', 'Editors can reorder clones', cloning && clone( 'sortable', repeat.sortable ) === true, ( on ) => {
 		field.sortable = on;
 	} );
+	syncSortable( cloning );
 	bindNumber( 'min_clones', 'Minimum clones', clone( 'min_clones', repeat.min ), true, ( next ) => {
 		field.min_clones = next ?? 0;
 	} );
