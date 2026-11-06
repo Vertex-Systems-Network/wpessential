@@ -53,6 +53,8 @@ final class CustomPostTypeDefinitionProjector {
 		'query_var',
 		'can_export',
 		'delete_with_user',
+		// Block editor template lock: all, insert or contentOnly.
+		'template_lock',
 		// Entry lock: an admin safeguard that blocks deleting the definition; not a WordPress arg.
 		'locked',
 		// Trash flag (WordPress-style trash); a trashed definition is never published.
@@ -198,6 +200,12 @@ final class CustomPostTypeDefinitionProjector {
 		}
 		if ( array_key_exists( 'query_var', $payload ) ) {
 			$args['query_var'] = $this->queryVar( $payload['query_var'] );
+		}
+		if ( array_key_exists( 'template_lock', $payload ) && $payload['template_lock'] !== null ) {
+			if ( ! in_array( $payload['template_lock'], [ 'all', 'insert', 'contentOnly' ], true ) ) {
+				throw new InvalidArgumentException( 'template_lock must be all, insert or contentOnly.' );
+			}
+			$args['template_lock'] = $payload['template_lock'];
 		}
 		if ( array_key_exists( 'permalink', $payload ) && $payload['permalink'] !== null ) {
 			[ $config, $slug ] = $this->permalink( $payload['permalink'] );

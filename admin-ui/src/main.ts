@@ -44,6 +44,7 @@ type CptValidationReport = {
 	candidate: {
 		post_type_key: string | null;
 	};
+	effective_args: Record< string, unknown > | null;
 };
 
 type CptBootstrap = {
@@ -147,6 +148,9 @@ function parseCptValidationReport(
 		valid: value.valid,
 		issues: value.issues,
 		candidate: { post_type_key: key },
+		effective_args: isBootstrapRecord( value.effective_args )
+			? value.effective_args
+			: null,
 	};
 }
 
@@ -367,6 +371,20 @@ function renderValidationReport( report: CptValidationReport ): void {
 			( issue ) => issue.severity === 'blocked'
 		).length;
 		summary.textContent = `Validation blocked by ${ blockedCount } issue(s). Resolve them before saving.`;
+	}
+
+	const argsWrap = container.querySelector< HTMLElement >(
+		'[data-wpessential-cpt-effective-args-wrap]'
+	);
+	const args = container.querySelector< HTMLElement >(
+		'[data-wpessential-cpt-effective-args]'
+	);
+	if ( argsWrap && args ) {
+		argsWrap.hidden = report.effective_args === null;
+		args.textContent =
+			report.effective_args === null
+				? ''
+				: JSON.stringify( report.effective_args, null, 2 );
 	}
 
 	container.hidden = false;

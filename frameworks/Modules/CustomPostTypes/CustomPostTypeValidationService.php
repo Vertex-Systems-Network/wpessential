@@ -50,8 +50,9 @@ final readonly class CustomPostTypeValidationService {
 			dependencies: $current?->dependencies ?? [],
 		);
 
+		$effectiveArgs = null;
 		try {
-			$this->projector->project( $candidate );
+			$effectiveArgs = $this->projector->project( $candidate )->payload;
 		} catch ( InvalidArgumentException $exception ) {
 			$issues[] = $this->issue( 'registration_schema_invalid', 'blocked', 'payload', $exception->getMessage() );
 		}
@@ -62,7 +63,7 @@ final readonly class CustomPostTypeValidationService {
 		}
 		$this->validateTaxonomyDependencies( $payload, $issues );
 
-		return $this->report( $key, $issues );
+		return $this->report( $key, $issues, $effectiveArgs );
 	}
 
 	/**
@@ -183,7 +184,8 @@ final readonly class CustomPostTypeValidationService {
 	 * @param list<array{id:string,severity:string,field:string,message:string}> $issues
 	 * @return array{valid:bool,issues:list<array{id:string,severity:string,field:string,message:string}>,candidate:array{post_type_key:?string}}
 	 */
-	private function report( ?string $key, array $issues ): array {
+	/** @param array<string,mixed>|null $effectiveArgs the compiled register_post_type() args, when the payload projects. */
+	private function report( ?string $key, array $issues, ?array $effectiveArgs = null ): array {
 		$valid = true;
 		foreach ( $issues as $issue ) {
 			if ( $issue['severity'] === 'blocked' ) {
@@ -195,7 +197,8 @@ final readonly class CustomPostTypeValidationService {
 		return [
 			'valid'     => $valid,
 			'issues'    => $issues,
-			'candidate' => [ 'post_type_key' => $key ],
+			'candidate'      => [ 'post_type_key' => $key ],
+			'effective_args' => $effectiveArgs,
 		];
 	}
 
