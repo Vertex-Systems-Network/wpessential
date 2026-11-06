@@ -65,8 +65,32 @@ final readonly class CustomPostTypeValidationService {
 			$this->validateRuntimeOwnership( $key, $current, $issues );
 		}
 		$this->validateTaxonomyDependencies( $payload, $issues );
+		$this->validateBlockTemplate( $payload, $issues );
 
 		return $this->report( $key, $issues, $effectiveArgs );
+	}
+
+	/**
+	 * A lock needs a template, and every template block must be registered, or new posts
+	 * start empty or with a missing-block placeholder that a lock stops editors from replacing.
+	 *
+	 * @param array<string,mixed> $payload
+	 * @param list<array{id:string,severity:string,field:string,message:string}> $issues
+	 */
+	private function validateBlockTemplate( array $payload, array &$issues ): void {
+		$template = is_array( $payload['template'] ?? null ) ? $payload['template'] : [];
+		if ( ( $payload['template_lock'] ?? null ) !== null && $template === [] ) {
+			$issues[] = $this->issue( 'template_lock_without_template', 'blocked', 'template_lock', 'Template lock needs a block template; add the blocks new posts start with.' );
+		}
+		if ( $template === [] || ! class_exists( 'WP_Block_Type_Registry' ) ) {
+			return;
+		}
+		$registry = \WP_Block_Type_Registry::get_instance();
+		foreach ( $template as $block ) {
+			if ( is_string( $block ) && ! $registry->is_registered( $block ) ) {
+				$issues[] = $this->issue( 'template_block_unknown', 'blocked', 'template', sprintf( 'Block "%s" is not registered on this site.', $block ) );
+			}
+		}
 	}
 
 	/**
