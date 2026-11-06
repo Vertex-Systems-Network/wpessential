@@ -8,6 +8,7 @@ on:
       - 'wpessential.php'
       - 'wpessential-pro.php'
       - 'readme.txt'
+      - 'wordpress-org/**'
       - 'LICENSE'
       - 'composer.json'
       - 'composer.lock'
@@ -24,6 +25,7 @@ on:
       - 'wpessential.php'
       - 'wpessential-pro.php'
       - 'readme.txt'
+      - 'wordpress-org/**'
       - 'LICENSE'
       - 'composer.json'
       - 'composer.lock'
@@ -350,6 +352,21 @@ jobs:
             artifacts/wpessential-pro-files.txt
           if-no-files-found: error
           retention-days: 14
+
+      - name: Unpack the Free ZIP for WordPress.org Plugin Check
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "${RUNNER_TEMP}/wporg-plugin-check"
+          unzip -q artifacts/wpessential.zip -d "${RUNNER_TEMP}/wporg-plugin-check"
+          test -f "${RUNNER_TEMP}/wporg-plugin-check/wpessential/wpessential.php"
+
+      # The official WordPress.org Plugin Check, run on the exact Free ZIP that would be submitted.
+      - name: WordPress.org Plugin Check on the Free ZIP
+        uses: WordPress/plugin-check-action@10857da14b6c2246d15402b3e69f777edcf8c12e # v1.1.9
+        with:
+          build-dir: ${{ runner.temp }}/wporg-plugin-check/wpessential
+          slug: wpessential
 
       - name: Verify tracked source remains clean
         shell: bash
