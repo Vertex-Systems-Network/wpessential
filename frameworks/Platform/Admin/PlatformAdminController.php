@@ -8,6 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WPEssential\Platform\Admin\Ui\AdminUrl;
+use WPEssential\Platform\Admin\Ui\OptionGroup;
+use WPEssential\Platform\Admin\Ui\PageHeader;
+use WPEssential\Platform\Admin\Ui\SectionNav;
 use WPEssential\Platform\Admin\Ui\Shell;
 
 final class PlatformAdminController {
@@ -103,75 +107,83 @@ final class PlatformAdminController {
 
 		echo '<div class="wrap wpessential-admin-wrap wpe-ui">';
 		echo Shell::topbar( self::STATUS_SLUG ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit component escapes its own output.
+		$yes = static fn ( $flag ): string => ! empty( $flag ) ? 'yes' : 'no';
+		$row = static fn ( string $label, string $help, string $value ): string => OptionGroup::row( $label, $help, OptionGroup::readonly( $value ) );
+
+		$runtimeRows = [
+			$row( __( 'Framework version', 'wpessential' ), __( 'Installed WPEssential framework.', 'wpessential' ), (string) ( $app['version'] ?? 'unknown' ) ),
+			$row( __( 'Framework API', 'wpessential' ), __( 'Platform API version modules build against.', 'wpessential' ), (string) ( $app['platform_api'] ?? 'unknown' ) ),
+			$row( __( 'Framework schema', 'wpessential' ), __( 'Database schema version.', 'wpessential' ), (string) ( $app['platform_schema'] ?? 'unknown' ) ),
+			$row( __( 'WordPress', 'wpessential' ), __( 'WordPress core version.', 'wpessential' ), (string) ( $runtime['wordpress'] ?? 'unknown' ) ),
+			$row( __( 'PHP', 'wpessential' ), __( 'Server PHP version.', 'wpessential' ), (string) ( $runtime['php'] ?? PHP_VERSION ) ),
+			$row( __( 'Kernel booted', 'wpessential' ), __( 'The framework kernel started on this request.', 'wpessential' ), $yes( $runtime['kernel_booted'] ?? false ) ),
+			$row( __( 'Debug enabled', 'wpessential' ), __( 'WP_DEBUG is on.', 'wpessential' ), $yes( $runtime['debug_enabled'] ?? false ) ),
+			$row( __( 'Trace capture', 'wpessential' ), __( 'Whether request traces are recorded.', 'wpessential' ), (string) ( $runtime['trace_capture'] ?? 'disabled' ) ),
+			$row( __( 'Captured traces', 'wpessential' ), __( 'Traces recorded this request.', 'wpessential' ), (string) ( (int) ( $observability['captured_trace_count'] ?? 0 ) ) ),
+			$row( __( 'Visible traces', 'wpessential' ), __( 'Traces you are allowed to see.', 'wpessential' ), (string) ( (int) ( $observability['visible_trace_count'] ?? 0 ) ) ),
+			$row( __( 'Site ID', 'wpessential' ), __( 'Current site.', 'wpessential' ), (string) ( (int) ( $context['site_id'] ?? 1 ) ) ),
+			$row( __( 'Network ID', 'wpessential' ), __( 'Current network.', 'wpessential' ), (string) ( (int) ( $context['network_id'] ?? 1 ) ) ),
+			$row( __( 'Multisite', 'wpessential' ), __( 'WordPress multisite is on.', 'wpessential' ), $yes( $context['multisite'] ?? false ) ),
+			$row( __( 'About trace data', 'wpessential' ), __( 'Read before acting on these numbers.', 'wpessential' ), __( 'Trace data covers this request only. Use persistent evidence for release or incident decisions.', 'wpessential' ) ),
+		];
+		$proRows     = [
+			$row( __( 'Pair state', 'wpessential' ), __( 'Result of the local Free / Pro check, run before Pro boots.', 'wpessential' ), (string) ( $proCompatibility['state'] ?? 'unavailable' ) ),
+			$row( __( 'Dimension', 'wpessential' ), __( 'What was compared.', 'wpessential' ), (string) ( $proCompatibility['dimension'] ?? 'unavailable' ) ),
+			$row( __( 'Reason', 'wpessential' ), __( 'Why this state was reached.', 'wpessential' ), (string) ( $proCompatibility['reason'] ?? 'unavailable' ) ),
+			$row( __( 'Recovery', 'wpessential' ), __( 'What to do if the pair is blocked.', 'wpessential' ), (string) ( $proCompatibility['remediation'] ?? 'unavailable' ) ),
+			$row( __( 'Certification', 'wpessential' ), __( 'This runtime check is not a certified version pair.', 'wpessential' ), (string) ( $proCompatibility['certification'] ?? 'adr_0010_not_certified' ) ),
+		];
+		$moduleRows  = [
+			$row( __( 'About this list', 'wpessential' ), __( 'State of every module the kernel knows.', 'wpessential' ), __( 'Licence is checked separately from compatibility. Certified Free / Pro pairs are not claimed here.', 'wpessential' ) ),
+			$this->moduleInventory( $moduleInventory ),
+		];
+
+		$groups = OptionGroup::render( 'wpe-status-runtime', __( 'Runtime', 'wpessential' ), 'System', 'status.runtime', $runtimeRows )
+			. OptionGroup::render( 'wpe-status-pro', __( 'Free / Pro compatibility', 'wpessential' ), 'System', 'status.pro_compatibility', $proRows )
+			. OptionGroup::render( 'wpe-status-modules', __( 'Modules', 'wpessential' ), 'System', 'status.modules', $moduleRows );
+
 		echo '<section id="wpessential-admin-root" aria-labelledby="wpessential-admin-title" data-wpessential-surface="runtime-observatory">';
-		echo '<h1 id="wpessential-admin-title">' . esc_html__( 'WPEssential', 'wpessential' ) . '</h1>';
-		echo '<h2>' . esc_html__( 'Runtime Observatory', 'wpessential' ) . '</h2>';
-		echo '<p>' . esc_html__( 'Read-only bounded diagnostics for the shared WPEssential Platform runtime. No mutation controls are exposed on this surface.', 'wpessential' ) . '</p>';
-		echo '<table class="widefat striped" aria-label="' . esc_html__( 'WPEssential runtime diagnostics', 'wpessential' ) . '"><tbody>';
-		$this->renderDiagnosticRow( 'Framework version', (string) ( $app['version'] ?? 'unknown' ) );
-		$this->renderDiagnosticRow( 'Framework API', (string) ( $app['platform_api'] ?? 'unknown' ) );
-		$this->renderDiagnosticRow( 'Framework schema', (string) ( $app['platform_schema'] ?? 'unknown' ) );
-		$this->renderDiagnosticRow( 'WordPress', (string) ( $runtime['wordpress'] ?? 'unknown' ) );
-		$this->renderDiagnosticRow( 'PHP', (string) ( $runtime['php'] ?? PHP_VERSION ) );
-		$this->renderDiagnosticRow( 'Kernel booted', ! empty( $runtime['kernel_booted'] ) ? 'yes' : 'no' );
-		$this->renderDiagnosticRow( 'Debug enabled', ! empty( $runtime['debug_enabled'] ) ? 'yes' : 'no' );
-		$this->renderDiagnosticRow( 'Trace capture', (string) ( $runtime['trace_capture'] ?? 'disabled' ) );
-		$this->renderDiagnosticRow( 'Captured traces', (string) ( (int) ( $observability['captured_trace_count'] ?? 0 ) ) );
-		$this->renderDiagnosticRow( 'Visible traces', (string) ( (int) ( $observability['visible_trace_count'] ?? 0 ) ) );
-		$this->renderDiagnosticRow( 'Site ID', (string) ( (int) ( $context['site_id'] ?? 1 ) ) );
-		$this->renderDiagnosticRow( 'Network ID', (string) ( (int) ( $context['network_id'] ?? 1 ) ) );
-		$this->renderDiagnosticRow( 'Multisite', ! empty( $context['multisite'] ) ? 'yes' : 'no' );
-		echo '</tbody></table>';
-		echo '<p><em>' . esc_html__( 'Trace data is request-bounded and non-authoritative; use canonical persistent evidence for release or incident decisions.', 'wpessential' ) . '</em></p>';
-
-		echo '<h2>' . esc_html__( 'Free / Pro compatibility', 'wpessential' ) . '</h2>';
-		echo '<p>' . esc_html__( 'Local package compatibility is evaluated before premium boot. This runtime result is not ADR-0010 or P-006 certification.', 'wpessential' ) . '</p>';
-		echo '<table class="widefat striped" aria-label="' . esc_html__( 'WPEssential Free Pro compatibility', 'wpessential' ) . '"><tbody>';
-		$this->renderDiagnosticRow( 'Pair state', (string) ( $proCompatibility['state'] ?? 'unavailable' ) );
-		$this->renderDiagnosticRow( 'Dimension', (string) ( $proCompatibility['dimension'] ?? 'unavailable' ) );
-		$this->renderDiagnosticRow( 'Reason', (string) ( $proCompatibility['reason'] ?? 'unavailable' ) );
-		$this->renderDiagnosticRow( 'Recovery', (string) ( $proCompatibility['remediation'] ?? 'unavailable' ) );
-		$this->renderDiagnosticRow( 'Certification', (string) ( $proCompatibility['certification'] ?? 'adr_0010_not_certified' ) );
-		echo '</tbody></table>';
-
-		echo '<h2>' . esc_html__( 'Modules', 'wpessential' ) . '</h2>';
-		echo '<p>' . esc_html__( 'Read-only commercial and runtime inventory for modules known to the current kernel. Pro compatibility consumes the canonical local preflight result; entitlement remains a separate truth. ADR-0010 certified Free/Pro version pairs are not claimed here.', 'wpessential' ) . '</p>';
-		$this->renderModuleInventory( $moduleInventory );
-
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
+		echo PageHeader::breadcrumb( [ [ __( 'Dashboard', 'wpessential' ), AdminUrl::page( Shell::DASHBOARD_SLUG ) ], [ __( 'System status', 'wpessential' ), null ] ] );
+		echo str_replace( '<h1>', '<h1 id="wpessential-admin-title">', PageHeader::render( '', __( 'System status', 'wpessential' ), __( 'Read-only diagnostics for the shared WPEssential runtime. Nothing on this screen changes settings.', 'wpessential' ) ) );
+		echo SectionNav::layout(
+			__( 'Runtime observatory', 'wpessential' ),
+			[
+				__( 'Runtime observatory', 'wpessential' ) => [
+					[ 'wpe-status-runtime', __( 'Runtime', 'wpessential' ), count( $runtimeRows ) ],
+					[ 'wpe-status-pro', __( 'Free / Pro compatibility', 'wpessential' ), count( $proRows ) ],
+					[ 'wpe-status-modules', __( 'Modules', 'wpessential' ), count( $moduleInventory ) ],
+				],
+			],
+			$groups
+		);
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '</section>';
 		echo '<script id="wpessential-admin-bootstrap" type="application/json">' . $json . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON encoded with JSON_HEX_* flags.
 		echo '</div>';
 	}
 
-	private function renderDiagnosticRow( string $label, string $value ): void {
-		echo '<tr><th scope="row">' . esc_html__( $label, 'wpessential' ) . '</th><td><code>' . esc_html( $value ) . '</code></td></tr>'; // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- fixed internal label set.
-	}
-
 	/** @param array<int,mixed> $inventory */
-	private function renderModuleInventory( array $inventory ): void {
-		echo '<table class="widefat striped" aria-label="' . esc_html__( 'WPEssential module commercial inventory', 'wpessential' ) . '">';
-		echo '<caption class="screen-reader-text">' . esc_html__( 'WPEssential module edition, package, compatibility, entitlement and runtime state.', 'wpessential' ) . '</caption>';
-		echo '<thead><tr>';
-		foreach ( [ 'Module', 'Edition', 'Package', 'Compatibility', 'Entitlement', 'Runtime state', 'Reason' ] as $heading ) {
-			echo '<th scope="col">' . esc_html__( $heading, 'wpessential' ) . '</th>'; // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- fixed internal heading set.
+	private function moduleInventory( array $inventory ): string {
+		$html  = '<div class="wpe-ui-table-wrap"><table class="widefat striped" aria-label="' . esc_attr__( 'WPEssential module commercial inventory', 'wpessential' ) . '">';
+		$html .= '<caption class="screen-reader-text">' . esc_html__( 'WPEssential module edition, package, compatibility, entitlement and runtime state.', 'wpessential' ) . '</caption><thead><tr>';
+		foreach ( [ __( 'Module', 'wpessential' ), __( 'Edition', 'wpessential' ), __( 'Package', 'wpessential' ), __( 'Compatibility', 'wpessential' ), __( 'Entitlement', 'wpessential' ), __( 'Runtime state', 'wpessential' ), __( 'Reason', 'wpessential' ) ] as $heading ) {
+			$html .= '<th scope="col">' . esc_html( $heading ) . '</th>';
 		}
-		echo '</tr></thead><tbody>';
+		$html .= '</tr></thead><tbody>';
 
-		if ( $inventory === [] ) {
-			echo '<tr><td colspan="7">' . esc_html__( 'No runtime-known modules are available.', 'wpessential' ) . '</td></tr>';
-		} else {
-			foreach ( $inventory as $row ) {
-				if ( ! is_array( $row ) ) {
-					continue;
-				}
-				echo '<tr>';
-				foreach ( [ 'module', 'edition', 'package', 'compatibility', 'entitlement', 'runtime_state', 'reason' ] as $key ) {
-					echo '<td><code>' . esc_html( (string) ( $row[ $key ] ?? 'unknown' ) ) . '</code></td>';
-				}
-				echo '</tr>';
+		$rows = array_filter( $inventory, 'is_array' );
+		if ( $rows === [] ) {
+			$html .= '<tr><td colspan="7">' . esc_html__( 'No runtime-known modules are available.', 'wpessential' ) . '</td></tr>';
+		}
+		foreach ( $rows as $row ) {
+			$html .= '<tr>';
+			foreach ( [ 'module', 'edition', 'package', 'compatibility', 'entitlement', 'runtime_state', 'reason' ] as $key ) {
+				$html .= '<td><code>' . esc_html( (string) ( $row[ $key ] ?? 'unknown' ) ) . '</code></td>';
 			}
+			$html .= '</tr>';
 		}
 
-		echo '</tbody></table>';
+		return $html . '</tbody></table></div>';
 	}
 }

@@ -334,6 +334,77 @@
 	}
 }
 
+// Read-only value (diagnostics, values set elsewhere): lock icon plus monospace value.
+.wpe-ui-readonly {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--wpe-space-2);
+	max-width: 28rem;
+	padding: 6px 12px;
+	border-radius: var(--wpe-radius);
+	background: var(--wpe-surface);
+	color: var(--wpe-text-2);
+
+	code {
+		padding: 0;
+		background: none;
+		font-family: var(--wpe-font-mono);
+		font-size: 12px;
+		overflow-wrap: anywhere;
+	}
+}
+
+// Section list beside option groups (System Status, editors). Stacks below 960px.
+.wpe-ui-sections {
+	display: grid;
+	grid-template-columns: 15rem minmax(0, 1fr);
+	gap: var(--wpe-space-5);
+	align-items: start;
+
+	@media (max-width: 960px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	&__nav {
+		position: sticky;
+		top: calc(32px + var(--wpe-space-4));
+		padding: var(--wpe-space-3);
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius-lg);
+		background: var(--wpe-card);
+
+		ul {
+			margin: 0 0 var(--wpe-space-3);
+			padding: 0;
+			list-style: none;
+		}
+
+		a {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 6px 10px;
+			border-radius: var(--wpe-radius);
+			color: var(--wpe-text-2);
+			font-weight: 500;
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible {
+				background: var(--wpe-blue-tint);
+				color: var(--wpe-indigo);
+			}
+		}
+	}
+
+	&__heading {
+		margin: var(--wpe-space-2) 0 4px;
+		padding: 0 10px;
+		color: var(--wpe-muted);
+		font-size: 12px;
+	}
+}
+
 .wpe-ui-chip {
 	padding: 3px 9px;
 	border-radius: 999px;

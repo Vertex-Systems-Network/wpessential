@@ -80,17 +80,18 @@ test('packaged Runtime Observatory renders and progressively enhances', async ({
 
   const root = await visitRuntimeObservatory(page);
 
-  await expect(page.getByRole('heading', { name: 'WPEssential', level: 1 })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Runtime Observatory', level: 2 })).toBeVisible();
-  await expect(
-    page.getByRole('table', { name: 'WPEssential runtime diagnostics' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'System status', level: 1 })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Runtime observatory' })).toBeVisible();
 
-  await expect(page.getByRole('row', { name: /Framework version 3\.0\.0/ })).toBeVisible();
-  await expect(page.getByRole('row', { name: /WordPress 7\.1/ })).toBeVisible();
-  await expect(page.getByRole('row', { name: /PHP 8\.2/ })).toBeVisible();
-  await expect(page.getByRole('row', { name: /Kernel booted yes/ })).toBeVisible();
-  await expect(page.getByRole('row', { name: /Multisite no/ })).toBeVisible();
+  const runtime = root.locator('#wpe-status-runtime');
+  await expect(runtime).toContainText(/Framework version.*3\.0\.0/);
+  await expect(runtime).toContainText(/WordPress core version\.\s*7\.1/);
+  await expect(runtime).toContainText(/Server PHP version\.\s*8\.2/);
+  await expect(runtime).toContainText(/Kernel booted\s*.*yes/);
+  await expect(runtime).toContainText(/Multisite\s*.*no/);
+  await expect(
+    page.getByRole('table', { name: 'WPEssential module commercial inventory' }),
+  ).toBeVisible();
 
   await expect(root).toHaveAttribute('data-wpessential-surface', 'runtime-observatory');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
