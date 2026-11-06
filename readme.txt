@@ -1,5 +1,5 @@
 === WPEssential ===
-Tags: custom post types, taxonomy, custom fields, admin, developer-tools
+Tags: custom post types, taxonomy, post types, admin, developer-tools
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
@@ -11,7 +11,7 @@ Build custom post types and taxonomies from the WordPress admin, with one modula
 
 == Description ==
 
-WPEssential is a modular WordPress platform. The free plugin gives you a Custom Post Type builder and a Taxonomy builder, plus the dashboard, module manager, diagnostics and docs that every other WPEssential module builds on. Everything in the free plugin works locally; no account or licence is needed.
+WPEssential is a modular WordPress platform. The free plugin gives you a Custom Post Type builder and a Taxonomy builder, plus the dashboard, module manager, diagnostics and docs that every other WPEssential module builds on. The builders and core screens work locally and need no account or licence. Only the Demo Library, and the account and licence features you choose to use, connect to wpessential.org (see External services).
 
 = What the free plugin includes =
 
@@ -39,8 +39,8 @@ Project website: https://wpessential.org
 The free plugin talks to the WPEssential service at wpessential.org only in these cases:
 
 * **Demo Library** – when an administrator opens the Demo Library screen, the plugin downloads the list of available demos from `https://wpessential.org/wp-json/wpessential-server/v1/demos`. No personal or site data is sent.
-* **Account** – only when an administrator chooses to sign in to or create a WPEssential account. The name, email address and password they type are sent to wpessential.org to create the account or sign in.
-* **Licence** – only when an administrator enters a Pro licence key. The key and the site's domain are sent to wpessential.org to activate, check or deactivate the licence.
+* **Account** – only when an administrator chooses to sign in to or create a WPEssential account. The name, email address and password they type are sent to wpessential.org to create the account or sign in. When they then connect the site, the site's address (home URL) is sent, and wpessential.org may return a Pro licence that the plugin activates for this site.
+* **Licence** – when an administrator enters a Pro licence key, or a connected account assigns one. The key and the site's domain are sent to wpessential.org to activate, check or deactivate the licence.
 
 Documentation and support links open wpessential.org in the browser only when clicked.
 
@@ -58,7 +58,7 @@ Requirements: WordPress 6.9 or newer and PHP 8.2 or newer. If the site does not 
 
 = Do I need an account or licence to use the free plugin? =
 
-No. The Custom Post Type and Taxonomy builders and all other free features work without an account, a licence or any connection to wpessential.org.
+No. The Custom Post Type and Taxonomy builders and the other free screens work without an account or a licence. The only free feature that needs a connection to wpessential.org is the Demo Library, which downloads its list of demos when you open it.
 
 = What happens to my post types if I deactivate WPEssential? =
 
