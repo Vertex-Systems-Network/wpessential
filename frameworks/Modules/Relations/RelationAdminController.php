@@ -203,6 +203,8 @@ final class RelationAdminController {
 		$from      = is_array( $payload['from'] ?? null ) ? $payload['from'] : [];
 		$to        = is_array( $payload['to'] ?? null ) ? $payload['to'] : [];
 		$bounds    = is_array( $payload['bounds'] ?? null ) ? $payload['bounds'] : [];
+		$deletion  = is_array( $payload['deletion_policy'] ?? null ) ? $payload['deletion_policy'] : [];
+		$rest      = is_array( $payload['rest_policy'] ?? null ) ? $payload['rest_policy'] : [];
 		$editing   = $definition !== null;
 
 		echo '<section aria-labelledby="wpessential-relations-editor-title">';
@@ -239,6 +241,29 @@ final class RelationAdminController {
 		$this->checkboxRow( 'reciprocal', __( 'Reciprocal composition', 'wpessential' ), ( $direction['reciprocal'] ?? false ) === true );
 		$this->checkboxRow( 'bidirectional_traversal', __( 'Bidirectional traversal', 'wpessential' ), ( $direction['bidirectional_traversal'] ?? true ) === true );
 		$this->checkboxRow( 'unique_edge', __( 'Unique source/target tuple', 'wpessential' ), ( $payload['unique_edge'] ?? true ) === true );
+
+		$this->headingRow( __( 'When an object is deleted', 'wpessential' ) );
+		$this->checkboxRow( 'delete_edges', __( 'Delete its connections', 'wpessential' ), ( $deletion['delete_edges'] ?? true ) === true );
+		$onDelete = [
+			'detach'           => __( 'Detach: remove the connection only', 'wpessential' ),
+			'restrict'         => __( 'Restrict: block deleting while connected', 'wpessential' ),
+			'cascade_provider' => __( 'Cascade: let the provider delete the other side', 'wpessential' ),
+		];
+		$this->selectRow( 'delete_from_object', __( 'Source object deleted', 'wpessential' ), (string) ( $deletion['from_object'] ?? 'detach' ), $onDelete );
+		$this->selectRow( 'delete_to_object', __( 'Target object deleted', 'wpessential' ), (string) ( $deletion['to_object'] ?? 'detach' ), $onDelete );
+
+		$this->headingRow( __( 'REST & scope', 'wpessential' ) );
+		$this->checkboxRow( 'rest_expose', __( 'Expose in the REST API', 'wpessential' ), ( $rest['expose'] ?? true ) === true );
+		$this->textRow( 'rest_namespace', __( 'REST namespace', 'wpessential' ), (string) ( $rest['namespace'] ?? '' ), false );
+		$this->selectRow(
+			'multisite_scope',
+			__( 'Multisite scope', 'wpessential' ),
+			(string) ( $payload['multisite_scope'] ?? 'site' ),
+			[
+				'site'    => __( 'This site only', 'wpessential' ),
+				'network' => __( 'Whole network', 'wpessential' ),
+			]
+		);
 		$this->selectRow(
 			'status',
 			__( 'Lifecycle status', 'wpessential' ),
@@ -390,6 +415,10 @@ final class RelationAdminController {
 		echo '<textarea class="large-text" rows="3" id="' . esc_attr( 'wpe-rel-' . $name ) . '" name="' . esc_attr( $name ) . '">' . esc_textarea( $value ) . '</textarea></td></tr>';
 	}
 
+	private function headingRow( string $label ): void {
+		echo '<tr><th scope="row" colspan="2"><h3>' . esc_html( $label ) . '</h3></th></tr>';
+	}
+
 	/** @param array<string,string> $options */
 	private function selectRow( string $name, string $label, string $value, array $options ): void {
 		echo '<tr><th scope="row"><label for="' . esc_attr( 'wpe-rel-' . $name ) . '">' . esc_html( $label ) . '</label></th><td>';
@@ -484,6 +513,12 @@ final class RelationAdminController {
 			'reciprocal',
 			'bidirectional_traversal',
 			'unique_edge',
+			'delete_edges',
+			'delete_from_object',
+			'delete_to_object',
+			'rest_expose',
+			'rest_namespace',
+			'multisite_scope',
 			'status',
 		];
 		$values = [];

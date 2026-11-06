@@ -41,6 +41,25 @@ final readonly class RelationAdminPayloadMapper {
 		];
 		$payload['unique_edge']  = ( $input['unique_edge'] ?? '0' ) === '1';
 
+		// Policy fields are set only when the form sent them, so a basic edit keeps stored values.
+		if ( ( $input['delete_edges'] ?? '' ) !== '' ) {
+			$payload['deletion_policy'] = [
+				'delete_edges' => $input['delete_edges'] === '1',
+				'from_object'  => $this->required( $input, 'delete_from_object' ),
+				'to_object'    => $this->required( $input, 'delete_to_object' ),
+			];
+		}
+		if ( ( $input['rest_expose'] ?? '' ) !== '' ) {
+			$namespace              = trim( $input['rest_namespace'] ?? '' );
+			$payload['rest_policy'] = [
+				'expose'    => $input['rest_expose'] === '1',
+				'namespace' => $namespace === '' ? null : $namespace,
+			];
+		}
+		if ( ( $input['multisite_scope'] ?? '' ) !== '' ) {
+			$payload['multisite_scope'] = $input['multisite_scope'];
+		}
+
 		return $payload;
 	}
 

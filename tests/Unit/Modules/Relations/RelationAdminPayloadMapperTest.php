@@ -45,6 +45,31 @@ final class RelationAdminPayloadMapperTest extends TestCase
         self::assertFalse($payload['unique_edge']);
     }
 
+    public function testMapsDeletionRestAndScopePolicies(): void
+    {
+        $payload = (new RelationAdminPayloadMapper())->map([
+            'relation_key' => 'book_authors',
+            'title' => 'Book Authors',
+            'cardinality' => 'many_to_many',
+            'from_type' => 'post',
+            'from_label' => 'Books',
+            'to_type' => 'user',
+            'to_label' => 'Authors',
+            'from_min' => '0',
+            'to_min' => '0',
+            'delete_edges' => '0',
+            'delete_from_object' => 'restrict',
+            'delete_to_object' => 'detach',
+            'rest_expose' => '1',
+            'rest_namespace' => '',
+            'multisite_scope' => 'network',
+        ]);
+
+        self::assertSame(['delete_edges' => false, 'from_object' => 'restrict', 'to_object' => 'detach'], $payload['deletion_policy']);
+        self::assertSame(['expose' => true, 'namespace' => null], $payload['rest_policy']);
+        self::assertSame('network', $payload['multisite_scope']);
+    }
+
     public function testPreservesAdvancedPoliciesAndDirectionCompositionDuringBasicEdit(): void
     {
         $existing = [
