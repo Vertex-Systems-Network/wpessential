@@ -65,6 +65,10 @@ Every group in a contract is designed open. No option is left collapsed or impli
 | 12 Fields, Tools | F9a Import adapters, F9b Migration and sync, F9c Diagnostics, F9d Governance and performance, F9e Developer and control registry | 105 options |
 
 | 13 Admin Columns | 13a View and columns, 13b Sources and formatting, 13c Sorting, filters and editing, 13d Conditions, export and performance, 13e Safety guarantees | 41 options (214 sub-settings) |
+| 05b Relations | Lifecycle, bulk actions, migration, performance, integrity, monitoring, extensibility (22 options) | |
+| 10 F5d Fields | Type settings: Typography, Spacing, Dimensions, Border, Background, Gradient, Unit Control, Angle Picker, Alignment Matrix, Toggle Group, Font Size Picker (rebuilt) | |
+| 14b Fields | Field-group targets, relationship sources, import adapters, Block Bindings (advanced), native meta and GraphQL, scope and network, field options, developer and migration (58 options) | |
+| 13e Admin Columns | adds the Diagnostics group (14 options) | |
 | 14 System Status | Runtime, Free / Pro compatibility, module inventory table (`PlatformAdminController::render`) | read-only |
 | 15 License | 15a Signed out (sign in, create account), 15b Signed in (site, subscriptions, plans, account) (`LicenseScreen`) | |
 | 16 AI Connect | 16a On (switches, connect a client, connected clients), 16b Unavailable states (`AiConnectScreen`) | |
@@ -87,3 +91,7 @@ Custom Fields (`fields.json`, 612 options) is fully covered across F1 to F9. Adm
 
 - The Penpot plugin runs inside the browser tab; the tab must stay open and visible. Large boards (over about 30 groups) freeze the tab when edited, so keep boards to 8 to 10 groups.
 - Helper libraries used to build the screens are stored in the Penpot file's plugin data (`wpelib`, `wpelib2`).
+
+## Design coverage check (2026-11-06)
+
+Every sub-setting that `tools/audit/ui-option-coverage.py` lists as missing from the plugin UI is now designed in Penpot: CPT post formats (page 03), Relations board 05b, Fields boards F5d and 14b, and the Admin Columns Diagnostics group on 13e. Taxonomies needed nothing new. Each screen now has its own page.
