@@ -25,6 +25,7 @@ export const ADVANCED_KEYS = [
 	'capabilities',
 	'map_meta_cap',
 	'delete_with_user',
+	'template',
 	'template_lock',
 	'taxonomies',
 	'automatic_labels',
@@ -99,6 +100,14 @@ export function collectAdvanced(): Payload {
 			case 'text':
 				result = value === '' ? undefined : value;
 				break;
+			case 'list': {
+				const items = value
+					.split( ',' )
+					.map( ( item ) => item.trim() )
+					.filter( ( item ) => item !== '' );
+				result = items.length ? items : undefined;
+				break;
+			}
 			case 'bool-text':
 				result =
 					value === 'custom'
@@ -206,6 +215,19 @@ export function fillAdvanced( payload: Payload ): void {
 		switch ( el.dataset.kind ) {
 			case 'tri':
 				setValue( el, triString( value ) );
+				break;
+			case 'list':
+				setValue(
+					el,
+					Array.isArray( value )
+						? value
+								.map( ( item ) =>
+									Array.isArray( item ) ? item[ 0 ] : item
+								)
+								.filter( ( item ) => typeof item === 'string' )
+								.join( ', ' )
+						: ''
+				);
 				break;
 			case 'int':
 			case 'text':

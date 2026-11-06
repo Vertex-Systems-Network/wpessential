@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
+use WPEssential\Platform\WordPress\Registrations\PermalinkRuntime;
 
 final readonly class CustomPostTypeValidationService {
 
@@ -53,6 +54,8 @@ final readonly class CustomPostTypeValidationService {
 		$effectiveArgs = null;
 		try {
 			$effectiveArgs = $this->projector->project( $candidate )->payload;
+			// Internal WPEssential setting, not a register_post_type() argument.
+			unset( $effectiveArgs[ PermalinkRuntime::ARG ] );
 		} catch ( InvalidArgumentException $exception ) {
 			$issues[] = $this->issue( 'registration_schema_invalid', 'blocked', 'payload', $exception->getMessage() );
 		}
