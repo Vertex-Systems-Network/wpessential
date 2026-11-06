@@ -414,7 +414,8 @@ export function fieldSettingsPanel( field: JsonObject, index: number ): HTMLDeta
 		input.value = typeof current === 'number' ? String( current ) : '';
 		input.dataset.wpessentialFieldsLabel = label;
 		input.addEventListener( 'input', () => {
-			const parsed = optionalNumber( input.value, integer );
+			// Unparseable text such as "1e" reads as an empty value, so badInput is checked too.
+			const parsed = input.validity.badInput ? null : optionalNumber( input.value, integer );
 			// A bad value is flagged and blocks the save; the last good value is never replaced by a guess.
 			input.setAttribute( 'aria-invalid', parsed === null ? 'true' : 'false' );
 			if ( parsed !== null ) {
