@@ -780,7 +780,12 @@ function layoutControl( card: HTMLElement, key: string ): HTMLInputElement | HTM
 export function readColumnLayout( card: HTMLElement ): JsonValue | undefined {
 	// Whole numbers only: a typed 120.5 or 12px must stop the save, never round silently.
 	const whole = ( key: string, label: string ): number | null => {
-		const raw = ( layoutControl( card, key )?.value ?? '' ).trim();
+		const control = layoutControl( card, key );
+		// A number input reports unparseable text (for example "1e") as an empty value.
+		if ( control instanceof HTMLInputElement && control.validity.badInput ) {
+			throw new Error( `${ label } must be a whole number.` );
+		}
+		const raw = ( control?.value ?? '' ).trim();
 		if ( raw === '' ) {
 			return null;
 		}

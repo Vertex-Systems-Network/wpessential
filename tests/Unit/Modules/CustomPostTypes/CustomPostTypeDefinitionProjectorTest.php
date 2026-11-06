@@ -93,7 +93,10 @@ final class CustomPostTypeDefinitionProjectorTest extends TestCase
         self::assertSame([['core/heading'], ['core/paragraph']], $registration->payload['template']);
         self::assertArrayNotHasKey('template_lock', $projector->project($this->definition(DefinitionStatus::Published, $base))->payload);
 
-        foreach ([$locked + ['template_lock' => 'everything'], $base + ['template_lock' => 'all'], $base + ['template' => ['Not a block']]] as $invalid) {
+        // A lock saved without a template (older definitions) is dropped instead of breaking compilation.
+        self::assertArrayNotHasKey('template_lock', $projector->project($this->definition(DefinitionStatus::Published, $base + ['template_lock' => 'all']))->payload);
+
+        foreach ([$locked + ['template_lock' => 'everything'], $base + ['template' => ['Not a block']]] as $invalid) {
             try {
                 $projector->project($this->definition(DefinitionStatus::Published, $invalid));
                 self::fail('Expected the template settings to be rejected.');
