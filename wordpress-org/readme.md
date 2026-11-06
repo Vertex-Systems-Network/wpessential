@@ -109,11 +109,11 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 ## Screenshots
 
 1. Dashboard with active modules and quick actions.
-2. Custom Post Type builder: names, labels and menu settings.
-3. Custom Post Type builder: supports, visibility, REST API and archives.
-4. Custom Post Type builder: block template, template lock and the compiled arguments preview.
-5. Custom Taxonomy builder: post types, hierarchy, labels and permalinks.
-6. Import taxonomies from Custom Post Type UI.
+2. Custom Post Type builder: key, names and option groups.
+3. Custom Post Type builder: visibility, editor supports, block template and template lock.
+4. Custom Post Type builder: archives, rewrite slug, permalinks and capabilities.
+5. Custom Taxonomy builder: key, names and option groups.
+6. Custom Taxonomy builder: key migration, import and export, and the compiled arguments preview.
 7. System Status diagnostics.
 8. Demo Library.
 
@@ -121,22 +121,13 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 ### 3.0.0
 
-- Rewritten as a modular platform. The 2.x Elementor widgets and shortcodes are removed.
 - New: Custom Post Type builder with block template, template lock and a compiled arguments preview.
 - New: Custom Taxonomy builder with permalinks, term counting and sorting, and Custom Post Type UI import.
 - New: Dashboard, Modules, System Status, Demo Library and Docs screens.
 - New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
-### 2.0
-
-- PHP 8 compatibility and a new file structure.
-
-### 1.0.0
-
-- First release: theme framework with Elementor widgets for forms, sliders and WooCommerce.
-
 ## Upgrade Notice
 
 ### 3.0.0
 
-Major rewrite. The 2.x Elementor widgets and shortcodes (forms, sliders, WooCommerce) are removed. If your site uses them, stay on 2.0 or test 3.0.0 on a staging site first. Requires PHP 8.2 and WordPress 6.9.
+The new WPEssential platform with the Custom Post Type and Taxonomy builders. Requires PHP 8.2 and WordPress 6.9.
