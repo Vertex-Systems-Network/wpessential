@@ -90,7 +90,24 @@ final readonly class FieldGroupPostMetaBinder {
 	private function plan( Definition $definition ): array {
 		$this->assertPublishedFieldGroup( $definition );
 
-		$group        = $this->groups->normalize( $definition->payload, true );
+		return $this->planGroup( $this->groups->normalize( $definition->payload, true ) );
+	}
+
+	/**
+	 * Runs every runtime planning check on a normalized group without registering anything,
+	 * so publish validation rejects exactly what bindPublished() would skip.
+	 *
+	 * @param array<string,mixed> $group
+	 */
+	public function assertBindable( array $group ): void {
+		$this->planGroup( $group );
+	}
+
+	/**
+	 * @param array<string,mixed> $group
+	 * @return list<array{post_type:string,field_uuid:string,meta_key:string,args:array<string,mixed>}>
+	 */
+	private function planGroup( array $group ): array {
 		$groupRuntime = $this->storage->projectGroup( $group );
 		$postTypes    = $this->targets->compile( $group );
 

@@ -23,7 +23,7 @@ final readonly class FieldGroupValidationService {
 	 * @param array<string,mixed> $input
 	 * @return array{valid:bool,issues:list<array{id:string,severity:string,field:string,message:string}>,candidate:array{group_key:?string,field_count:int}}
 	 */
-	public function validate( array $input ): array {
+	public function validate( array $input, bool $requireRuntimeBinding = true ): array {
 		$issues  = [];
 		$payload = $input['payload'] ?? null;
 		if ( ! is_array( $payload ) || array_is_list( $payload ) ) {
@@ -61,11 +61,17 @@ final readonly class FieldGroupValidationService {
 		if ( $groupKey !== null && $groupKey !== '' ) {
 			$this->validateUniqueKey( $groupKey, $current?->id, $issues );
 		}
-		if ( $publishing && is_array( $normalized ) ) {
-			// Publishing is only allowed when the runtime can place and store the group.
+		if ( $publishing && $requireRuntimeBinding && is_array( $normalized ) ) {
+			// Publishing is only allowed when the runtime can place, store and compile every field of the group.
 			try {
-				( new FieldGroupRuntimeStorageProjection() )->projectGroup( $normalized );
-				( new FieldGroupPostTypeTargetCompiler() )->compile( $normalized );
+				// New fields get their stable UUID on save, so the check uses a stand-in for missing ones.
+				$candidate = $normalized;
+				foreach ( $candidate['fields'] as $index => $field ) {
+					if ( is_array( $field ) && ! is_string( $field['uuid'] ?? null ) ) {
+						$candidate['fields'][ $index ]['uuid'] = sprintf( '00000000-0000-4000-8000-%012d', $index + 1 );
+					}
+				}
+				( new FieldGroupPostMetaBinder() )->assertBindable( $candidate );
 			} catch ( InvalidArgumentException $exception ) {
 				$issues[] = $this->issue( 'runtime_binding_unsupported', 'blocked', 'locations', $exception->getMessage() );
 			}
