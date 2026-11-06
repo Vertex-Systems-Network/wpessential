@@ -43,7 +43,7 @@ function engineeringExpect(bool $condition, string $message): void
     }
 }
 
-engineeringExpect(HookNames::filter('definition_saved') === 'wpesential/apply_definition_saved', 'filter prefix contract must remain exact');
+engineeringExpect(HookNames::filter('definition_saved') === 'wpessential/apply_definition_saved', 'filter prefix contract must remain exact');
 engineeringExpect(HookNames::action('definition_saved') === 'wpessential/hook_definition_saved', 'action prefix contract must remain exact');
 
 $nonceEnvironment = new class implements NonceEnvironmentInterface {

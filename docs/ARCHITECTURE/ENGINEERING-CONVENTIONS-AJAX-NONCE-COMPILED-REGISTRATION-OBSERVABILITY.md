@@ -28,10 +28,10 @@ A duplicate parallel namespace, source tree, kernel, or loader is prohibited.
 
 The owner-prescribed public hook spellings are intentional API contracts:
 
-- filters: `wpesential/apply_*`;
+- filters: `wpessential/apply_*`;
 - actions: `wpessential/hook_*`.
 
-The asymmetric `wpesential` spelling in the filter prefix is **intentional** and must not be silently corrected by refactoring.
+The filter prefix uses the same `wpessential` spelling as actions; the earlier `wpesential` spelling was corrected by the owner in ADR-0237.
 
 `HookNames` is the canonical constructor for WPE-owned custom hooks. New custom hook suffixes use stable lowercase letters, numbers and underscores. WordPress/core/plugin hooks that WPE merely consumes are not renamed.
 

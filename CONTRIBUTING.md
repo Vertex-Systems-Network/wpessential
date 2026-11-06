@@ -43,9 +43,9 @@ All production contributions must preserve the accepted WPEssential engineering 
 - Canonical PSR-4 production source root: `frameworks/`
 - Global functions: `wpessential_*`
 - Constants: `WPE_*`
-- Custom filters: exactly `wpesential/apply_*`
+- Custom filters: exactly `wpessential/apply_*`
 - Custom actions: `wpessential/hook_*`
-- The asymmetric `wpesential` filter spelling is intentional public API and must not be silently corrected.
+- Filters and actions both use the `wpessential` spelling (ADR-0237).
 - `WPE_VERSION`, the canonical AJAX action and the canonical nonce action must be constants.
 - Production PHP files must fail closed on direct access with an `ABSPATH` guard.
 - Do not add a parallel production `src/` runtime tree.

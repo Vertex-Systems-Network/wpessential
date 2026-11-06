@@ -72,7 +72,7 @@ if (!is_file($root . '/CONTRIBUTING.md')) {
     $errors[] = 'CONTRIBUTING.md is required for contribution/release governance.';
 } else {
     $contributing = (string) file_get_contents($root . '/CONTRIBUTING.md');
-    foreach (['wpesential/apply_*', 'wpessential/hook_*', 'ABSPATH', 'WordPress.org release checklist'] as $marker) {
+    foreach (['wpessential/apply_*', 'wpessential/hook_*', 'ABSPATH', 'WordPress.org release checklist'] as $marker) {
         if (!str_contains($contributing, $marker)) {
             $errors[] = 'CONTRIBUTING.md missing engineering/release marker: ' . $marker;
         }
@@ -80,8 +80,8 @@ if (!is_file($root . '/CONTRIBUTING.md')) {
 }
 
 $hookNames = (string) @file_get_contents($root . '/frameworks/Platform/WordPress/Hooks/HookNames.php');
-if (!str_contains($hookNames, "FILTER_PREFIX = 'wpesential/apply_';")) {
-    $errors[] = 'Filter prefix must remain exactly wpesential/apply_*.';
+if (!str_contains($hookNames, "FILTER_PREFIX = 'wpessential/apply_';")) {
+    $errors[] = 'Filter prefix must remain exactly wpessential/apply_*.';
 }
 if (!str_contains($hookNames, "ACTION_PREFIX = 'wpessential/hook_';")) {
     $errors[] = 'Action prefix must remain exactly wpessential/hook_*.';

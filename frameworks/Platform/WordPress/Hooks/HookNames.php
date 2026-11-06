@@ -12,7 +12,7 @@ use InvalidArgumentException;
 
 final class HookNames {
 
-	public const FILTER_PREFIX = 'wpesential/apply_';
+	public const FILTER_PREFIX = 'wpessential/apply_';
 	public const ACTION_PREFIX = 'wpessential/hook_';
 
 	public static function filter( string $name ): string {
