@@ -1,3 +1,10 @@
+import {
+	collectGroupSettings,
+	fieldSettingsPanel,
+	mountGroupSettings,
+	setGroupSettings,
+} from './fields-settings';
+
 import './fields.scss';
 
 type JsonObject = Record< string, unknown >;
@@ -371,6 +378,8 @@ function renderFields(
 			row.append( immutable );
 		}
 
+		row.append( fieldSettingsPanel( field, index ) );
+
 		const actions = document.createElement( 'div' );
 		actions.className = 'wpessential-fields-row-actions';
 		const up = makeActionButton( 'Up', 'up', index );
@@ -448,6 +457,10 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 	let fields: JsonObject[] = [];
 	let busy = false;
 	const types = typeMap( bootstrap );
+	const builderForm = document.getElementById( 'wpessential-fields-form' );
+	if ( builderForm instanceof HTMLElement ) {
+		mountGroupSettings( builderForm );
+	}
 
 	const current = (): GroupDefinition | undefined => {
 		const id = input( 'wpessential-fields-id' )?.value ?? '';
@@ -486,6 +499,7 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 		if ( cancel ) {
 			cancel.hidden = true;
 		}
+		setGroupSettings( {} );
 		renderFields( fields, types );
 		clearValidation();
 	};
@@ -523,6 +537,7 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 		if ( status ) {
 			status.value = definition.status;
 		}
+		setGroupSettings( definition.payload );
 		fields = fieldsFrom( definition );
 		renderFields( fields, types );
 		const heading = document.getElementById(
@@ -551,6 +566,7 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 				'',
 			show_in_rest:
 				input( 'wpessential-fields-show-rest' )?.checked ?? false,
+			...collectGroupSettings(),
 			fields: fields.map( copyObject ),
 		};
 	};
