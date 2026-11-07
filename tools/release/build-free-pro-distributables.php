@@ -331,7 +331,7 @@ function stageFreePackage(string $root, string $stageRoot, array $freeAssets): v
         . escapeshellarg($stageRoot)
     );
 
-    @unlink($stageRoot . '/composer.json');
+    // composer.json stays in the package: WordPress.org asks for it whenever /vendor is shipped.
     @unlink($stageRoot . '/composer.lock');
 }
 
