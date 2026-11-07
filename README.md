@@ -578,7 +578,7 @@ Production implementation must preserve:
 - canonical PSR-4 source root `frameworks/`;
 - global functions `wpessential_*`;
 - constants `WPE_*`;
-- exact custom filters `wpesential/apply_*`;
+- exact custom filters `wpessential/apply_*`;
 - custom actions `wpessential/hook_*`;
 - one typed allowlisted AJAX gateway;
 - centralized nonce operation handling;
@@ -586,7 +586,7 @@ Production implementation must preserve:
 - bounded/redacted Runtime Observatory diagnostics;
 - direct-access `ABSPATH` guards on shipped PHP source.
 
-The asymmetric `wpesential` filter spelling is intentional public API.
+Filters and actions both use the `wpessential` spelling (ADR-0237).
 
 See `CONTRIBUTING.md` for contribution and WordPress.org release rules. The mandatory WordPress.org/Plugin Check policy is `docs/QUALITY/WORDPRESS-ORG-PLUGIN-CHECK-COMPLIANCE.md`. `readme.txt` is the WordPress.org-facing plugin documentation draft for the current development line.
 
