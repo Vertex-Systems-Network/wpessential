@@ -43,7 +43,7 @@ if ( ! defined( 'WPE_DEBUG' ) ) {
 	define( 'WPE_DEBUG', false );
 }
 
-$compatibilityNotice = static function ( string $message ): void {
+$wpessential_compatibility_notice = static function ( string $message ): void {
 	if ( ! function_exists( 'add_action' ) ) {
 		return;
 	}
@@ -60,25 +60,25 @@ $compatibilityNotice = static function ( string $message ): void {
 };
 
 if ( PHP_VERSION_ID < 80200 ) {
-	$compatibilityNotice( 'WPEssential requires PHP 8.2 or newer.' );
+	$wpessential_compatibility_notice( 'WPEssential requires PHP 8.2 or newer.' );
 	return;
 }
 
 if ( function_exists( 'get_bloginfo' ) ) {
-	$wordpressVersion = (string) get_bloginfo( 'version' );
-	if ( $wordpressVersion !== '' && version_compare( $wordpressVersion, '6.9', '<' ) ) {
-		$compatibilityNotice( 'WPEssential requires WordPress 6.9 or newer.' );
+	$wpessential_wordpress_version = (string) get_bloginfo( 'version' );
+	if ( $wpessential_wordpress_version !== '' && version_compare( $wpessential_wordpress_version, '6.9', '<' ) ) {
+		$wpessential_compatibility_notice( 'WPEssential requires WordPress 6.9 or newer.' );
 		return;
 	}
 }
 
-$autoload = __DIR__ . '/vendor/autoload.php';
-if ( ! is_readable( $autoload ) ) {
-	$compatibilityNotice( 'WPEssential could not load its Composer autoloader. Reinstall the plugin package.' );
+$wpessential_autoload = __DIR__ . '/vendor/autoload.php';
+if ( ! is_readable( $wpessential_autoload ) ) {
+	$wpessential_compatibility_notice( 'WPEssential could not load its Composer autoloader. Reinstall the plugin package.' );
 	return;
 }
 
-require_once $autoload;
+require_once $wpessential_autoload;
 
 if ( ! defined( 'WPE_FREE_BOOTSTRAP_READY' ) ) {
 	define( 'WPE_FREE_BOOTSTRAP_READY', true );

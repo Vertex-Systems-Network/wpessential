@@ -39,6 +39,7 @@ if ( ! function_exists( 'wpessential_apply_filter' ) ) {
 			return $value;
 		}
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- HookNames::filter() always prefixes the name with HookNames::FILTER_PREFIX.
 		return apply_filters( HookNames::filter( $name ), $value, ...$args );
 	}
 }
@@ -46,6 +47,7 @@ if ( ! function_exists( 'wpessential_apply_filter' ) ) {
 if ( ! function_exists( 'wpessential_do_action' ) ) {
 	function wpessential_do_action( string $name, mixed ...$args ): void {
 		if ( function_exists( 'do_action' ) ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- HookNames::action() always prefixes the name with HookNames::ACTION_PREFIX.
 			do_action( HookNames::action( $name ), ...$args );
 		}
 	}
