@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "WPEssential packaged WordPress browser and accessibility evidence toolchain",
-  "author": "VSN Team",
+  "author": "WPEssential",
   "license": "GPL-3.0-or-later",
   "keywords": [
     "wordpress",

@@ -293,8 +293,23 @@ function stageFreePackage(string $root, string $stageRoot, array $freeAssets): v
 {
     ensureDirectory($stageRoot);
 
-    foreach (['wpessential.php', 'readme.txt', 'LICENSE', 'composer.json', 'composer.lock'] as $relative) {
+    foreach (['wpessential.php', 'LICENSE', 'composer.json', 'composer.lock'] as $relative) {
         copyFileNormalized($root . DIRECTORY_SEPARATOR . $relative, $stageRoot . DIRECTORY_SEPARATOR . $relative);
+    }
+    // The WordPress.org readme.txt is always generated from wordpress-org/readme.md.
+    require_once __DIR__ . '/readme-to-txt.php';
+    $readmeSource = file_get_contents($root . '/wordpress-org/readme.md');
+    if ($readmeSource === false) {
+        fail('Unable to read wordpress-org/readme.md.');
+    }
+    try {
+        $readmeTxt = wpeReadmeMarkdownToTxt($readmeSource);
+        wpeAssertReadmeTxtRules($readmeTxt, '3.0.0');
+    } catch (RuntimeException $readmeError) {
+        fail('wordpress-org/readme.md: ' . $readmeError->getMessage());
+    }
+    if (file_put_contents($stageRoot . DIRECTORY_SEPARATOR . 'readme.txt', $readmeTxt) === false) {
+        fail('Unable to write the generated readme.txt.');
     }
 
     copyTreeNormalized($root . '/frameworks', $stageRoot . '/frameworks', 'isFreeFrameworkFile');

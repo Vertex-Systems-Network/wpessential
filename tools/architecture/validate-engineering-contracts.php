@@ -33,11 +33,11 @@ $entrypointPath = $root . '/wpessential.php';
 $entrypoint = (string) @file_get_contents($entrypointPath);
 foreach ([
     'Plugin URI: https://wpessential.org',
-    'Description: Modular WordPress application platform for structured data, automation, integrations, admin tooling, workflows, and AI-ready operations.',
+    'Description: Create custom post types and taxonomies without code. Visual builder for labels, permalinks, REST API, archives, block templates and more.',
     'Version: 3.0.0',
     'Requires at least: 6.9',
     'Requires PHP: 8.2',
-    'Author: VSN Team',
+    'Author: WPEssential',
     'Author URI: https://wpessential.org',
     'License: GPL-3.0-or-later',
     "define('WPE_VERSION', '3.0.0')",
@@ -54,6 +54,18 @@ if (preg_match($directAccessPattern, $entrypoint) !== 1) {
 }
 
 $readmePath = $root . '/readme.txt';
+// readme.txt is generated from wordpress-org/readme.md; a hand edit or a stale copy fails here.
+require_once $root . '/tools/release/readme-to-txt.php';
+$readmeSource = (string) @file_get_contents($root . '/wordpress-org/readme.md');
+try {
+    $generatedReadme = wpeReadmeMarkdownToTxt($readmeSource);
+    wpeAssertReadmeTxtRules($generatedReadme, '3.0.0');
+    if ((string) @file_get_contents($readmePath) !== $generatedReadme) {
+        $errors[] = 'readme.txt is out of date: edit wordpress-org/readme.md and run php tools/release/readme-to-txt.php.';
+    }
+} catch (RuntimeException $readmeError) {
+    $errors[] = 'wordpress-org/readme.md: ' . $readmeError->getMessage();
+}
 $wordpressReadme = (string) @file_get_contents($readmePath);
 foreach ([
     '=== WPEssential ===',
