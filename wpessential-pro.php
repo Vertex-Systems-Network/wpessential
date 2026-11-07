@@ -7,7 +7,7 @@
  * Requires at least: 6.9
  * Requires PHP: 8.2
  * Requires Plugins: wpessential
- * Author: VSN Team
+ * Author: WPEssential
  * Author URI: https://wpessential.org
  * License: GPL-3.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html

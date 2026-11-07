@@ -2,11 +2,11 @@
 /**
  * Plugin Name: WPEssential
  * Plugin URI: https://wpessential.org
- * Description: Modular WordPress application platform for structured data, automation, integrations, admin tooling, workflows, and AI-ready operations.
+ * Description: Create custom post types and taxonomies without code. Visual builder for labels, permalinks, REST API, archives, block templates and more.
  * Version: 3.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.2
- * Author: VSN Team
+ * Author: WPEssential
  * Author URI: https://wpessential.org
  * License: GPL-3.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
