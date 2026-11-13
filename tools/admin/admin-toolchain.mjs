@@ -23,10 +23,6 @@ const entries = {
   main: path.join(sourceRoot, 'main.ts'),
   ui: path.join(sourceRoot, 'ui.ts'),
   taxonomy: path.join(sourceRoot, 'taxonomy.ts'),
-  fields: path.join(sourceRoot, 'fields.ts'),
-  query: path.join(sourceRoot, 'query.ts'),
-  'columns-runtime': path.join(sourceRoot, 'columns-runtime.ts'),
-  'custom-tables': path.join(sourceRoot, 'custom-tables.ts'),
   // Dashboard app: Dashboard, Modules, Demo Library and Elements as React Router routes.
   app: path.join(sourceRoot, 'app/index.tsx'),
 };
@@ -40,10 +36,6 @@ const styles = {
   main: path.join(sourceRoot, 'admin.scss'),
   ui: path.join(sourceRoot, 'ui.scss'),
   taxonomy: path.join(sourceRoot, 'admin.scss'),
-  fields: path.join(sourceRoot, 'fields.scss'),
-  query: path.join(sourceRoot, 'query.scss'),
-  'columns-runtime': path.join(sourceRoot, 'columns.scss'),
-  'custom-tables': path.join(sourceRoot, 'custom-tables.scss'),
   app: path.join(sourceRoot, 'app/app.scss'),
 };
 

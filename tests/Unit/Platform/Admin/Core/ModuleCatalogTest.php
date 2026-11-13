@@ -32,7 +32,8 @@ final class ModuleCatalogTest extends TestCase
             ++$checked;
         }
 
-        self::assertGreaterThanOrEqual(20, $checked);
+        // Free ships CustomPostTypes + Taxonomies; Pro modules are checked in wpessential-pro.
+        self::assertGreaterThanOrEqual(2, $checked);
     }
 
     public function testEveryModuleHasAContractAndKnownCategory(): void

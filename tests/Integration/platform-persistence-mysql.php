@@ -289,479 +289,483 @@ platformPersistenceExpect($otherSite->get($importId)?->payload === $importCandid
 platformPersistenceExpect($networkStore->get($importId)?->payload === $importCandidate->payload, 'network scope must independently create own preset ID');
 platformPersistenceExpect($repository->get($importId)?->revision === 1, 'isolated inserts may not change original site row');
 
-// RB-0113: prove that the *existing* RB-0111 internal Draft-only import
-// service uses real disposable MySQL insert-once persistence. No actual
-// WordPress current-user or site identity is asserted here; RB-0112 covered
-// those gates against pinned real WordPress. This fixture uses a synthetic
-// scoped test capability checker and never touches production credentials.
-$draftWidgetId = '66666666-6666-4666-8666-666666666666';
-$draftTargetId = '77777777-7777-4777-8777-777777777777';
-$draftSecondId = '88888888-8888-4888-8888-888888888888';
-$draftWidget = new Definition(
-    id: $draftWidgetId, slug: 'draft-import-ref-widget', type: DashboardWidgetDefinition::TYPE,
-    schemaVersion: 1, ownerSurfaceId: 10, status: DefinitionStatus::Published, payload: [],
-);
-$repository->create($draftWidget);
-$otherSite->create($draftWidget);
-$draftPayload = [
-    'definition_id' => $draftTargetId,
-    'revision' => 5,
-    'label' => 'MySQL Draft Import',
-    'widget_definition_ids' => [$draftWidgetId],
-    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
-];
-$draftSnapshot = [
-    'format' => 'wpessential-dashboard-preset',
-    'version' => 1,
-    'payload' => $draftPayload,
-    'sha256' => hash('sha256', json_encode(
-        $draftPayload,
-        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-    )),
-];
-$draftChecker = new class implements CapabilityCheckerInterface {
-    public function can(ExecutionContext $context, string $capability): bool
-    {
-        return $capability === 'manage_options'
-            && $context->principal->userId === 42
-            && $context->siteId > 0;
-    }
-};
-$draftService = static fn (PersistentDefinitionRepository $store): DashboardWidgetPresetDraftImportService =>
-    new DashboardWidgetPresetDraftImportService(
-        $store,
-        new DashboardWidgetPresetImportPreflightService($store, new DashboardWidgetPresetCompiler($store)),
-        $draftChecker,
+// Dashboard Widgets preset persistence (RB-0113..RB-0123) belongs to the Pro add-on.
+// It runs in full in wpessential-pro; Free-only CI skips it when the module is absent.
+if (class_exists(DashboardWidgetDefinition::class)) {
+    // RB-0113: prove that the *existing* RB-0111 internal Draft-only import
+    // service uses real disposable MySQL insert-once persistence. No actual
+    // WordPress current-user or site identity is asserted here; RB-0112 covered
+    // those gates against pinned real WordPress. This fixture uses a synthetic
+    // scoped test capability checker and never touches production credentials.
+    $draftWidgetId = '66666666-6666-4666-8666-666666666666';
+    $draftTargetId = '77777777-7777-4777-8777-777777777777';
+    $draftSecondId = '88888888-8888-4888-8888-888888888888';
+    $draftWidget = new Definition(
+        id: $draftWidgetId, slug: 'draft-import-ref-widget', type: DashboardWidgetDefinition::TYPE,
+        schemaVersion: 1, ownerSurfaceId: 10, status: DefinitionStatus::Published, payload: [],
     );
-$draftContext = new ExecutionContext(new Principal(42), 701, ExecutionChannel::Internal, 7);
-$draftOtherContext = new ExecutionContext(new Principal(42), 702, ExecutionChannel::Internal, 7);
-$originalPublishedPreset = $repository->get($importId);
-$originalPublishedWidget = $repository->get($draftWidgetId);
-$draftImporter = $draftService($repository);
-$otherImporter = $draftService($otherSite);
-
-platformPersistenceExpect(
-    $draftImporter->importDraft(
-        new ExecutionContext(new Principal(42), 701, ExecutionChannel::Rest, 7),
-        $draftSnapshot, 'mysql-draft-import',
-    ) === ['status' => 'forbidden'],
-    'REST channel may not call internal-only MySQL Draft importer',
-);
-platformPersistenceExpect(
-    $draftImporter->importDraft(
-        new ExecutionContext(new Principal(null), 701, ExecutionChannel::Internal, 7),
-        $draftSnapshot, 'mysql-draft-import',
-    ) === ['status' => 'forbidden'],
-    'guest may not call internal MySQL Draft importer',
-);
-$badDraft = $draftSnapshot;
-$badDraft['sha256'] = str_repeat('0', 64);
-platformPersistenceExpect(
-    $draftImporter->importDraft($draftContext, $badDraft, 'mysql-draft-import') === ['status' => 'invalid_snapshot'],
-    'invalid snapshot digest may not create MySQL Draft',
-);
-$networkDraft = $draftSnapshot;
-$networkDraft['payload']['assignment'] = ['roles' => [], 'network_default' => true];
-$networkDraft['sha256'] = hash('sha256', json_encode(
-    $networkDraft['payload'], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-));
-platformPersistenceExpect(
-    $draftImporter->importDraft($draftContext, $networkDraft, 'mysql-draft-import') === ['status' => 'forbidden'],
-    'site administrator may not create network-default Draft through internal importer',
-);
-platformPersistenceExpect($repository->get($draftTargetId) === null, 'all denied MySQL Draft imports must leave no row');
-platformPersistenceExpect(
-    $draftImporter->importDraft($draftContext, $draftSnapshot, 'mysql-draft-import')
-        === ['status' => 'created_draft', 'definition_id' => $draftTargetId],
-    'authorized internal human test context must create one real MySQL Draft row',
-);
-$persistedDraft = $repository->get($draftTargetId);
-platformPersistenceExpect($persistedDraft instanceof Definition, 'created Draft must persist in actual MySQL');
-platformPersistenceExpect($persistedDraft->status === DefinitionStatus::Draft, 'MySQL importer must persist only Draft');
-platformPersistenceExpect($persistedDraft->revision === 1, 'imported Draft must start at destination revision one');
-platformPersistenceExpect($persistedDraft->slug === 'mysql-draft-import', 'imported Draft must preserve supplied bounded slug');
-platformPersistenceExpect($persistedDraft->payload === ['preset' => [
-    'label' => 'MySQL Draft Import',
-    'widget_definition_ids' => [$draftWidgetId],
-    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
-]], 'MySQL Draft must preserve canonical preset label/order/role assignment');
-platformPersistenceExpect(
-    $draftImporter->importDraft($draftContext, $draftSnapshot, 'changed-slug') === ['status' => 'id_conflict'],
-    'same preset UUID must not update existing committed MySQL Draft',
-);
-$duplicateSlugSnapshot = $draftSnapshot;
-$duplicateSlugSnapshot['payload']['definition_id'] = $draftSecondId;
-$duplicateSlugSnapshot['sha256'] = hash('sha256', json_encode(
-    $duplicateSlugSnapshot['payload'],
-    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-));
-platformPersistenceExpect(
-    $draftImporter->importDraft($draftContext, $duplicateSlugSnapshot, 'mysql-draft-import') === ['status' => 'write_failed'],
-    'different UUID with existing type and slug must fail insert-only unique index',
-);
-platformPersistenceExpect($repository->get($draftSecondId) === null, 'type+slug collision cannot leave MySQL candidate row');
-platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'rejected MySQL imports may not update committed Draft');
-platformPersistenceExpect($repository->get($importId) == $originalPublishedPreset, 'existing Published preset must remain unchanged');
-platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedWidget, 'Published target widget must remain unchanged');
-platformPersistenceExpect($networkStore->get($draftTargetId) === null, 'site Draft import must not write to network scope');
-platformPersistenceExpect(
-    $otherImporter->importDraft($draftOtherContext, $draftSnapshot, 'mysql-draft-import')
-        === ['status' => 'created_draft', 'definition_id' => $draftTargetId],
-    'independent subsite MySQL scope may create the same Draft id once without modifying original site',
-);
-platformPersistenceExpect($otherSite->get($draftTargetId)?->status === DefinitionStatus::Draft, 'second site import must also stay Draft');
-platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'second subsite create may not modify first site');
-
-// RB-0116: use actual disposable MySQL persistence for the accepted
-// internal-only cross-site mapped Draft flow. Synthetic capability assertions
-// here are NOT real WP identity evidence (RB-0115 proves that separately).
-$mappedMysqlWidgetB = '99999999-9999-4999-8999-999999999999';
-$mappedMysqlTarget = '3d3d3d3d-3d3d-4d3d-8d3d-3d3d3d3d3d3d';
-$mappedMysqlSecondTarget = '4d4d4d4d-4d4d-4d4d-8d4d-4d4d4d4d4d4d';
-$mappedPublishedB = new Definition(
-    id: $mappedMysqlWidgetB, slug: 'mapped-draft-destination-widget-b',
-    type: DashboardWidgetDefinition::TYPE, schemaVersion: 1,
-    ownerSurfaceId: 10, status: DefinitionStatus::Published, payload: [],
-);
-$repository->create($mappedPublishedB);
-$otherSite->create($mappedPublishedB);
-$sourceIdA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
-$sourceIdB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
-$mappedSourcePayload = [
-    'definition_id' => '5d5d5d5d-5d5d-4d5d-8d5d-5d5d5d5d5d5d',
-    'revision' => 8,
-    'label' => 'MySQL Cross-site Mapping',
-    'widget_definition_ids' => [$sourceIdB, $sourceIdA],
-    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
-];
-$mappedMysqlSnapshot = [
-    'format' => 'wpessential-dashboard-preset',
-    'version' => 1,
-    'payload' => $mappedSourcePayload,
-    'sha256' => hash('sha256', json_encode(
-        $mappedSourcePayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-    )),
-];
-$mappingToPublished = [$sourceIdA => $draftWidgetId, $sourceIdB => $mappedMysqlWidgetB];
-$mappedImporterFor = static function (PersistentDefinitionRepository $store) use ($draftChecker): DashboardWidgetPresetMappedDraftImportService {
-    $preflight = new DashboardWidgetPresetImportPreflightService($store, new DashboardWidgetPresetCompiler($store));
-    return new DashboardWidgetPresetMappedDraftImportService(
-        new DashboardWidgetPresetPortabilityMappingPreviewService($preflight),
-        new DashboardWidgetPresetDraftImportService($store, $preflight, $draftChecker),
-    );
-};
-$mappedMysqlImporter = $mappedImporterFor($repository);
-$site702MappedImporter = $mappedImporterFor($otherSite);
-$originalPublishedMappedWidget = $repository->get($draftWidgetId);
-$originalNewPublishedWidget = $repository->get($mappedMysqlWidgetB);
-
-foreach ([
-    new ExecutionContext(new Principal(null), 701, ExecutionChannel::Internal, 7),
-    new ExecutionContext(new Principal(42), 701, ExecutionChannel::Rest, 7),
-    new ExecutionContext(new Principal(43), 701, ExecutionChannel::Internal, 7),
-] as $deniedContext) {
-    platformPersistenceExpect(
-        $mappedMysqlImporter->importMappedDraft(
-            $deniedContext, ['untrusted' => true], 'bad-id', ['unsafe' => []], 'invalid',
-        ) === ['status' => 'forbidden'],
-        'synthetic fixture caller gate must reject BEFORE mapping malformed external payload',
-    );
-}
-$badMappedSha = $mappedMysqlSnapshot;
-$badMappedSha['sha256'] = str_repeat('0', 64);
-platformPersistenceExpect(
-    $mappedMysqlImporter->importMappedDraft(
-        $draftContext, $badMappedSha, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
-    ) === ['status' => 'invalid_snapshot'],
-    'modified source checksum fails before MySQL mapped Draft insert',
-);
-foreach ([
-    [$sourceIdA => $draftWidgetId],
-    [$sourceIdA => $draftWidgetId, $sourceIdB => $draftWidgetId],
-    [$sourceIdA => $draftWidgetId, $sourceIdB => 'cccccccc-cccc-4ccc-8ccc-cccccccccccc'],
-] as $badMapping) {
-    platformPersistenceExpect(
-        $mappedMysqlImporter->importMappedDraft(
-            $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $badMapping, 'mysql-mapped-draft',
-        ) === ['status' => 'invalid_snapshot'],
-        'incomplete/duplicate/unpublished target refs cannot write MySQL mapped Draft',
-    );
-}
-$networkMappedSource = $mappedMysqlSnapshot;
-$networkMappedSource['payload']['assignment'] = ['roles' => [], 'network_default' => true];
-$networkMappedSource['sha256'] = hash('sha256', json_encode(
-    $networkMappedSource['payload'], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-));
-platformPersistenceExpect(
-    $mappedMysqlImporter->importMappedDraft(
-        $draftContext, $networkMappedSource, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
-    ) === ['status' => 'forbidden'],
-    'site capability cannot authorize mapped network-default preset import',
-);
-platformPersistenceExpect($repository->get($mappedMysqlTarget) === null, 'rejected mapped preflight must leave MySQL target empty');
-platformPersistenceExpect(
-    $mappedMysqlImporter->importMappedDraft(
-        $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
-    ) === ['status' => 'created_draft', 'definition_id' => $mappedMysqlTarget],
-    'accepted synthetic Internal caller creates mapped Draft using atomic MySQL insert',
-);
-$mappedDraftMySQL = $repository->get($mappedMysqlTarget);
-platformPersistenceExpect($mappedDraftMySQL instanceof Definition, 'mapped Draft exists in actual disposable MySQL');
-platformPersistenceExpect($mappedDraftMySQL->status === DefinitionStatus::Draft, 'mapped MySQL preset cannot be Published');
-platformPersistenceExpect($mappedDraftMySQL->revision === 1, 'mapped Draft revision must reset to one');
-platformPersistenceExpect($mappedDraftMySQL->slug === 'mysql-mapped-draft', 'mapped Draft stored slug must be destination slug');
-platformPersistenceExpect($mappedDraftMySQL->payload === ['preset' => [
-    'label' => 'MySQL Cross-site Mapping',
-    'widget_definition_ids' => [$mappedMysqlWidgetB, $draftWidgetId],
-    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
-]], 'mapped real MySQL Draft must preserve original widget order through target mapping, roles and label');
-platformPersistenceExpect(
-    $mappedMysqlImporter->importMappedDraft(
-        $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'cannot-overwrite',
-    ) === ['status' => 'id_conflict'],
-    'mapped MySQL UUID uniqueness blocks second create from overwriting',
-);
-platformPersistenceExpect(
-    $mappedMysqlImporter->importMappedDraft(
-        $draftContext, $mappedMysqlSnapshot, $mappedMysqlSecondTarget, $mappingToPublished, 'mysql-mapped-draft',
-    ) === ['status' => 'write_failed'],
-    'distinct target UUID with duplicate type/slug fails atomic MySQL uniqueness',
-);
-platformPersistenceExpect($repository->get($mappedMysqlSecondTarget) === null, 'slug collision must leave no second mapped MySQL row');
-platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'conflicts cannot alter committed MySQL Draft');
-platformPersistenceExpect($networkStore->get($mappedMysqlTarget) === null, 'site mapped Draft cannot touch network-scope MySQL rows');
-platformPersistenceExpect(
-    $site702MappedImporter->importMappedDraft(
-        $draftOtherContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
-    ) === ['status' => 'created_draft', 'definition_id' => $mappedMysqlTarget],
-    'another subsite may independently insert same mapped Draft id without cross-site overwrite',
-);
-platformPersistenceExpect($otherSite->get($mappedMysqlTarget)?->status === DefinitionStatus::Draft, 'other site mapped import remains Draft');
-platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'second site mapped create cannot change first site row');
-platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedMappedWidget, 'existing Published MySQL target widget unchanged');
-platformPersistenceExpect($repository->get($mappedMysqlWidgetB) == $originalNewPublishedWidget, 'second Published MySQL target widget unchanged');
-
-// RB-0118: verify the accepted persisted readback guard on actual disposable
-// MySQL plus fake adapters that *acknowledge* a write without a matching row.
-// Synthetic capability checker: real WP user authorization remains RB-0112/15.
-platformPersistenceExpect(
-    $mappedDraftMySQL->computedChecksum() === (new Definition(
-        id: $mappedMysqlTarget,
-        slug: 'mysql-mapped-draft',
-        type: DashboardWidgetPresetDefinition::TYPE,
-        schemaVersion: 1,
-        ownerSurfaceId: 10,
-        status: DefinitionStatus::Draft,
-        payload: $mappedDraftMySQL->payload,
-        revision: 1,
-    ))->computedChecksum(),
-    'real mapped MySQL Draft readback must preserve canonical payload digest',
-);
-$uncommittedReadbackId = '5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e';
-$uncommittedPayload = $draftSnapshot['payload'];
-$uncommittedPayload['definition_id'] = $uncommittedReadbackId;
-$uncommittedSnapshot = [
-    'format' => 'wpessential-dashboard-preset',
-    'version' => 1,
-    'payload' => $uncommittedPayload,
-    'sha256' => hash('sha256', json_encode(
-        $uncommittedPayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-    )),
-];
-foreach (['ack_only', 'changed_row', 'read_error'] as $mode) {
-    $ackAdapter = new class($repository, $mode) implements DefinitionCreateOnlyRepositoryInterface {
-        private ?Definition $acknowledged = null;
-
-        public function __construct(
-            private readonly PersistentDefinitionRepository $actual,
-            private readonly string $mode,
-        ) {}
-
-        public function create(Definition $definition): void
+    $repository->create($draftWidget);
+    $otherSite->create($draftWidget);
+    $draftPayload = [
+        'definition_id' => $draftTargetId,
+        'revision' => 5,
+        'label' => 'MySQL Draft Import',
+        'widget_definition_ids' => [$draftWidgetId],
+        'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+    ];
+    $draftSnapshot = [
+        'format' => 'wpessential-dashboard-preset',
+        'version' => 1,
+        'payload' => $draftPayload,
+        'sha256' => hash('sha256', json_encode(
+            $draftPayload,
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        )),
+    ];
+    $draftChecker = new class implements CapabilityCheckerInterface {
+        public function can(ExecutionContext $context, string $capability): bool
         {
-            // Deliberately do NOT persist; this is a fake only for failure
-            // verification, not a database adapter or production mutation.
-            $this->acknowledged = $definition;
-        }
-
-        public function get(string $id): ?Definition
-        {
-            if ($this->acknowledged?->id === $id) {
-                if ($this->mode === 'read_error') {
-                    throw new RuntimeException('simulated post-create read error');
-                }
-                if ($this->mode === 'ack_only') {
-                    return null;
-                }
-                $draft = $this->acknowledged;
-                return new Definition(
-                    id: $draft->id,
-                    slug: 'wrong-stored-slug',
-                    type: $draft->type,
-                    schemaVersion: $draft->schemaVersion,
-                    ownerSurfaceId: $draft->ownerSurfaceId,
-                    status: $draft->status,
-                    payload: $draft->payload,
-                    revision: $draft->revision,
-                );
-            }
-            return $this->actual->get($id);
-        }
-
-        public function save(Definition $definition): void
-        {
-            throw new RuntimeException('Fake adapter must never call save');
-        }
-
-        public function byType(string $type): array
-        {
-            return $this->actual->byType($type);
-        }
-
-        public function dependentsOf(string $id): array
-        {
-            return $this->actual->dependentsOf($id);
+            return $capability === 'manage_options'
+                && $context->principal->userId === 42
+                && $context->siteId > 0;
         }
     };
-    $checkService = new DashboardWidgetPresetDraftImportService(
-        $ackAdapter,
-        new DashboardWidgetPresetImportPreflightService(
-            $ackAdapter, new DashboardWidgetPresetCompiler($ackAdapter),
-        ),
-        $draftChecker,
-    );
-    platformPersistenceExpect(
-        $checkService->importDraft(
-            $draftContext, $uncommittedSnapshot, 'mysql-readback-probe',
-        ) === ['status' => 'write_failed'],
-        'adapter ' . $mode . ' cannot claim created_draft without persisted equivalent Draft',
-    );
-    platformPersistenceExpect(
-        $repository->get($uncommittedReadbackId) === null,
-        'failed fake acknowledgment must not create real disposable MySQL rows',
-    );
-}
-platformPersistenceExpect(
-    $otherSite->get($uncommittedReadbackId) === null
-        && $networkStore->get($uncommittedReadbackId) === null,
-    'fake readback failures must not leak across real MySQL site/network scopes',
-);
+    $draftService = static fn (PersistentDefinitionRepository $store): DashboardWidgetPresetDraftImportService =>
+        new DashboardWidgetPresetDraftImportService(
+            $store,
+            new DashboardWidgetPresetImportPreflightService($store, new DashboardWidgetPresetCompiler($store)),
+            $draftChecker,
+        );
+    $draftContext = new ExecutionContext(new Principal(42), 701, ExecutionChannel::Internal, 7);
+    $draftOtherContext = new ExecutionContext(new Principal(42), 702, ExecutionChannel::Internal, 7);
+    $originalPublishedPreset = $repository->get($importId);
+    $originalPublishedWidget = $repository->get($draftWidgetId);
+    $draftImporter = $draftService($repository);
+    $otherImporter = $draftService($otherSite);
 
-// RB-0123: prove RB-0122's Published widget fingerprint race guard using
-// *real disposable MySQL persistence*, not only an in-memory/mock database.
-// The synthetic Internal caller is scoped evidence, NOT a live WP identity
-// or native Dashboard preference write authorization.
-$otherSiteWidgetBeforeDrift = $otherSite->get($draftWidgetId);
-$networkWidgetBeforeDrift = $networkStore->get($draftWidgetId);
-foreach ([
-    ['mode' => 'revision_only', 'id' => '6e6e6e6e-6e6e-4e6e-8e6e-6e6e6e6e6e6e'],
-    ['mode' => 'payload_slug', 'id' => '7e7e7e7e-7e7e-4e7e-8e7e-7e7e7e7e7e7e'],
-] as $driftCase) {
-    $candidate = $draftSnapshot;
-    $candidate['payload']['definition_id'] = $driftCase['id'];
-    $candidate['sha256'] = hash('sha256', json_encode(
-        $candidate['payload'],
+    platformPersistenceExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal(42), 701, ExecutionChannel::Rest, 7),
+            $draftSnapshot, 'mysql-draft-import',
+        ) === ['status' => 'forbidden'],
+        'REST channel may not call internal-only MySQL Draft importer',
+    );
+    platformPersistenceExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal(null), 701, ExecutionChannel::Internal, 7),
+            $draftSnapshot, 'mysql-draft-import',
+        ) === ['status' => 'forbidden'],
+        'guest may not call internal MySQL Draft importer',
+    );
+    $badDraft = $draftSnapshot;
+    $badDraft['sha256'] = str_repeat('0', 64);
+    platformPersistenceExpect(
+        $draftImporter->importDraft($draftContext, $badDraft, 'mysql-draft-import') === ['status' => 'invalid_snapshot'],
+        'invalid snapshot digest may not create MySQL Draft',
+    );
+    $networkDraft = $draftSnapshot;
+    $networkDraft['payload']['assignment'] = ['roles' => [], 'network_default' => true];
+    $networkDraft['sha256'] = hash('sha256', json_encode(
+        $networkDraft['payload'], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    platformPersistenceExpect(
+        $draftImporter->importDraft($draftContext, $networkDraft, 'mysql-draft-import') === ['status' => 'forbidden'],
+        'site administrator may not create network-default Draft through internal importer',
+    );
+    platformPersistenceExpect($repository->get($draftTargetId) === null, 'all denied MySQL Draft imports must leave no row');
+    platformPersistenceExpect(
+        $draftImporter->importDraft($draftContext, $draftSnapshot, 'mysql-draft-import')
+            === ['status' => 'created_draft', 'definition_id' => $draftTargetId],
+        'authorized internal human test context must create one real MySQL Draft row',
+    );
+    $persistedDraft = $repository->get($draftTargetId);
+    platformPersistenceExpect($persistedDraft instanceof Definition, 'created Draft must persist in actual MySQL');
+    platformPersistenceExpect($persistedDraft->status === DefinitionStatus::Draft, 'MySQL importer must persist only Draft');
+    platformPersistenceExpect($persistedDraft->revision === 1, 'imported Draft must start at destination revision one');
+    platformPersistenceExpect($persistedDraft->slug === 'mysql-draft-import', 'imported Draft must preserve supplied bounded slug');
+    platformPersistenceExpect($persistedDraft->payload === ['preset' => [
+        'label' => 'MySQL Draft Import',
+        'widget_definition_ids' => [$draftWidgetId],
+        'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+    ]], 'MySQL Draft must preserve canonical preset label/order/role assignment');
+    platformPersistenceExpect(
+        $draftImporter->importDraft($draftContext, $draftSnapshot, 'changed-slug') === ['status' => 'id_conflict'],
+        'same preset UUID must not update existing committed MySQL Draft',
+    );
+    $duplicateSlugSnapshot = $draftSnapshot;
+    $duplicateSlugSnapshot['payload']['definition_id'] = $draftSecondId;
+    $duplicateSlugSnapshot['sha256'] = hash('sha256', json_encode(
+        $duplicateSlugSnapshot['payload'],
         JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
     ));
-    $originalPublished = $repository->get($draftWidgetId);
     platformPersistenceExpect(
-        $originalPublished instanceof Definition && $originalPublished->status === DefinitionStatus::Published,
-        'real MySQL precondition: referenced target widget must still be Published',
+        $draftImporter->importDraft($draftContext, $duplicateSlugSnapshot, 'mysql-draft-import') === ['status' => 'write_failed'],
+        'different UUID with existing type and slug must fail insert-only unique index',
     );
+    platformPersistenceExpect($repository->get($draftSecondId) === null, 'type+slug collision cannot leave MySQL candidate row');
+    platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'rejected MySQL imports may not update committed Draft');
+    platformPersistenceExpect($repository->get($importId) == $originalPublishedPreset, 'existing Published preset must remain unchanged');
+    platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedWidget, 'Published target widget must remain unchanged');
+    platformPersistenceExpect($networkStore->get($draftTargetId) === null, 'site Draft import must not write to network scope');
+    platformPersistenceExpect(
+        $otherImporter->importDraft($draftOtherContext, $draftSnapshot, 'mysql-draft-import')
+            === ['status' => 'created_draft', 'definition_id' => $draftTargetId],
+        'independent subsite MySQL scope may create the same Draft id once without modifying original site',
+    );
+    platformPersistenceExpect($otherSite->get($draftTargetId)?->status === DefinitionStatus::Draft, 'second site import must also stay Draft');
+    platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'second subsite create may not modify first site');
 
-    $raceRepo = new class($repository, $driftCase['mode'], $draftWidgetId) implements DefinitionCreateOnlyRepositoryInterface {
-        public int $createCalls = 0;
-
-        public function __construct(
-            private readonly PersistentDefinitionRepository $actual,
-            private readonly string $mode,
-            private readonly string $widgetId,
-        ) {}
-
-        public function create(Definition $draft): void
-        {
-            ++$this->createCalls;
-            $this->actual->create($draft);
-
-            // A distinct writer updates a real MySQL Published widget AFTER
-            // the atomic Draft insert. Same id/type/status, advanced revision.
-            $widget = $this->actual->get($this->widgetId);
-            if (!$widget instanceof Definition) {
-                throw new RuntimeException('Missing race fixture widget');
-            }
-            $this->actual->save(new Definition(
-                id: $widget->id,
-                slug: $this->mode === 'payload_slug' ? 'race-renamed-widget' : $widget->slug,
-                type: $widget->type,
-                schemaVersion: $widget->schemaVersion,
-                ownerSurfaceId: $widget->ownerSurfaceId,
-                status: DefinitionStatus::Published,
-                payload: $this->mode === 'payload_slug' ? ['race' => 'changed'] : $widget->payload,
-                revision: $widget->revision + 1,
-                dependencies: $widget->dependencies,
-            ));
-        }
-
-        public function save(Definition $definition): void
-        {
-            throw new RuntimeException('Draft importer may not update, retry or rollback');
-        }
-
-        public function get(string $id): ?Definition { return $this->actual->get($id); }
-        public function byType(string $type): array { return $this->actual->byType($type); }
-        public function dependentsOf(string $id): array { return $this->actual->dependentsOf($id); }
+    // RB-0116: use actual disposable MySQL persistence for the accepted
+    // internal-only cross-site mapped Draft flow. Synthetic capability assertions
+    // here are NOT real WP identity evidence (RB-0115 proves that separately).
+    $mappedMysqlWidgetB = '99999999-9999-4999-8999-999999999999';
+    $mappedMysqlTarget = '3d3d3d3d-3d3d-4d3d-8d3d-3d3d3d3d3d3d';
+    $mappedMysqlSecondTarget = '4d4d4d4d-4d4d-4d4d-8d4d-4d4d4d4d4d4d';
+    $mappedPublishedB = new Definition(
+        id: $mappedMysqlWidgetB, slug: 'mapped-draft-destination-widget-b',
+        type: DashboardWidgetDefinition::TYPE, schemaVersion: 1,
+        ownerSurfaceId: 10, status: DefinitionStatus::Published, payload: [],
+    );
+    $repository->create($mappedPublishedB);
+    $otherSite->create($mappedPublishedB);
+    $sourceIdA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    $sourceIdB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+    $mappedSourcePayload = [
+        'definition_id' => '5d5d5d5d-5d5d-4d5d-8d5d-5d5d5d5d5d5d',
+        'revision' => 8,
+        'label' => 'MySQL Cross-site Mapping',
+        'widget_definition_ids' => [$sourceIdB, $sourceIdA],
+        'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+    ];
+    $mappedMysqlSnapshot = [
+        'format' => 'wpessential-dashboard-preset',
+        'version' => 1,
+        'payload' => $mappedSourcePayload,
+        'sha256' => hash('sha256', json_encode(
+            $mappedSourcePayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        )),
+    ];
+    $mappingToPublished = [$sourceIdA => $draftWidgetId, $sourceIdB => $mappedMysqlWidgetB];
+    $mappedImporterFor = static function (PersistentDefinitionRepository $store) use ($draftChecker): DashboardWidgetPresetMappedDraftImportService {
+        $preflight = new DashboardWidgetPresetImportPreflightService($store, new DashboardWidgetPresetCompiler($store));
+        return new DashboardWidgetPresetMappedDraftImportService(
+            new DashboardWidgetPresetPortabilityMappingPreviewService($preflight),
+            new DashboardWidgetPresetDraftImportService($store, $preflight, $draftChecker),
+        );
     };
+    $mappedMysqlImporter = $mappedImporterFor($repository);
+    $site702MappedImporter = $mappedImporterFor($otherSite);
+    $originalPublishedMappedWidget = $repository->get($draftWidgetId);
+    $originalNewPublishedWidget = $repository->get($mappedMysqlWidgetB);
 
-    $raceImporter = new DashboardWidgetPresetDraftImportService(
-        $raceRepo,
-        new DashboardWidgetPresetImportPreflightService(
-            $raceRepo, new DashboardWidgetPresetCompiler($raceRepo),
-        ),
-        $draftChecker,
+    foreach ([
+        new ExecutionContext(new Principal(null), 701, ExecutionChannel::Internal, 7),
+        new ExecutionContext(new Principal(42), 701, ExecutionChannel::Rest, 7),
+        new ExecutionContext(new Principal(43), 701, ExecutionChannel::Internal, 7),
+    ] as $deniedContext) {
+        platformPersistenceExpect(
+            $mappedMysqlImporter->importMappedDraft(
+                $deniedContext, ['untrusted' => true], 'bad-id', ['unsafe' => []], 'invalid',
+            ) === ['status' => 'forbidden'],
+            'synthetic fixture caller gate must reject BEFORE mapping malformed external payload',
+        );
+    }
+    $badMappedSha = $mappedMysqlSnapshot;
+    $badMappedSha['sha256'] = str_repeat('0', 64);
+    platformPersistenceExpect(
+        $mappedMysqlImporter->importMappedDraft(
+            $draftContext, $badMappedSha, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+        ) === ['status' => 'invalid_snapshot'],
+        'modified source checksum fails before MySQL mapped Draft insert',
     );
-    $raceResult = $raceImporter->importDraft(
-        $draftContext, $candidate, 'mysql-fingerprint-race-' . str_replace('_', '-', $driftCase['mode']),
+    foreach ([
+        [$sourceIdA => $draftWidgetId],
+        [$sourceIdA => $draftWidgetId, $sourceIdB => $draftWidgetId],
+        [$sourceIdA => $draftWidgetId, $sourceIdB => 'cccccccc-cccc-4ccc-8ccc-cccccccccccc'],
+    ] as $badMapping) {
+        platformPersistenceExpect(
+            $mappedMysqlImporter->importMappedDraft(
+                $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $badMapping, 'mysql-mapped-draft',
+            ) === ['status' => 'invalid_snapshot'],
+            'incomplete/duplicate/unpublished target refs cannot write MySQL mapped Draft',
+        );
+    }
+    $networkMappedSource = $mappedMysqlSnapshot;
+    $networkMappedSource['payload']['assignment'] = ['roles' => [], 'network_default' => true];
+    $networkMappedSource['sha256'] = hash('sha256', json_encode(
+        $networkMappedSource['payload'], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    platformPersistenceExpect(
+        $mappedMysqlImporter->importMappedDraft(
+            $draftContext, $networkMappedSource, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+        ) === ['status' => 'forbidden'],
+        'site capability cannot authorize mapped network-default preset import',
+    );
+    platformPersistenceExpect($repository->get($mappedMysqlTarget) === null, 'rejected mapped preflight must leave MySQL target empty');
+    platformPersistenceExpect(
+        $mappedMysqlImporter->importMappedDraft(
+            $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+        ) === ['status' => 'created_draft', 'definition_id' => $mappedMysqlTarget],
+        'accepted synthetic Internal caller creates mapped Draft using atomic MySQL insert',
+    );
+    $mappedDraftMySQL = $repository->get($mappedMysqlTarget);
+    platformPersistenceExpect($mappedDraftMySQL instanceof Definition, 'mapped Draft exists in actual disposable MySQL');
+    platformPersistenceExpect($mappedDraftMySQL->status === DefinitionStatus::Draft, 'mapped MySQL preset cannot be Published');
+    platformPersistenceExpect($mappedDraftMySQL->revision === 1, 'mapped Draft revision must reset to one');
+    platformPersistenceExpect($mappedDraftMySQL->slug === 'mysql-mapped-draft', 'mapped Draft stored slug must be destination slug');
+    platformPersistenceExpect($mappedDraftMySQL->payload === ['preset' => [
+        'label' => 'MySQL Cross-site Mapping',
+        'widget_definition_ids' => [$mappedMysqlWidgetB, $draftWidgetId],
+        'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+    ]], 'mapped real MySQL Draft must preserve original widget order through target mapping, roles and label');
+    platformPersistenceExpect(
+        $mappedMysqlImporter->importMappedDraft(
+            $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'cannot-overwrite',
+        ) === ['status' => 'id_conflict'],
+        'mapped MySQL UUID uniqueness blocks second create from overwriting',
     );
     platformPersistenceExpect(
-        $raceResult === ['status' => 'write_failed'],
-        'concurrent Published widget fingerprint drift must fail closed on real MySQL: '
-            . $driftCase['mode'] . ', returned ' . json_encode($raceResult)
-            . ', draft_status=' . ($repository->get($driftCase['id'])?->status->value ?? 'missing')
-            . ', widget_revision=' . ($repository->get($draftWidgetId)?->revision ?? 'missing'),
+        $mappedMysqlImporter->importMappedDraft(
+            $draftContext, $mappedMysqlSnapshot, $mappedMysqlSecondTarget, $mappingToPublished, 'mysql-mapped-draft',
+        ) === ['status' => 'write_failed'],
+        'distinct target UUID with duplicate type/slug fails atomic MySQL uniqueness',
     );
+    platformPersistenceExpect($repository->get($mappedMysqlSecondTarget) === null, 'slug collision must leave no second mapped MySQL row');
+    platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'conflicts cannot alter committed MySQL Draft');
+    platformPersistenceExpect($networkStore->get($mappedMysqlTarget) === null, 'site mapped Draft cannot touch network-scope MySQL rows');
     platformPersistenceExpect(
-        $raceRepo->createCalls === 1,
-        'real MySQL race guard must not retry atomic Draft create',
+        $site702MappedImporter->importMappedDraft(
+            $draftOtherContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+        ) === ['status' => 'created_draft', 'definition_id' => $mappedMysqlTarget],
+        'another subsite may independently insert same mapped Draft id without cross-site overwrite',
     );
-    $stored = $repository->get($driftCase['id']);
-    $currentWidget = $repository->get($draftWidgetId);
+    platformPersistenceExpect($otherSite->get($mappedMysqlTarget)?->status === DefinitionStatus::Draft, 'other site mapped import remains Draft');
+    platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'second site mapped create cannot change first site row');
+    platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedMappedWidget, 'existing Published MySQL target widget unchanged');
+    platformPersistenceExpect($repository->get($mappedMysqlWidgetB) == $originalNewPublishedWidget, 'second Published MySQL target widget unchanged');
+
+    // RB-0118: verify the accepted persisted readback guard on actual disposable
+    // MySQL plus fake adapters that *acknowledge* a write without a matching row.
+    // Synthetic capability checker: real WP user authorization remains RB-0112/15.
     platformPersistenceExpect(
-        $stored instanceof Definition && $stored->status === DefinitionStatus::Draft
-            && $stored->revision === 1,
-        'race-detected import leaves its one inserted MySQL Draft intact; never claims rollback',
+        $mappedDraftMySQL->computedChecksum() === (new Definition(
+            id: $mappedMysqlTarget,
+            slug: 'mysql-mapped-draft',
+            type: DashboardWidgetPresetDefinition::TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: 10,
+            status: DefinitionStatus::Draft,
+            payload: $mappedDraftMySQL->payload,
+            revision: 1,
+        ))->computedChecksum(),
+        'real mapped MySQL Draft readback must preserve canonical payload digest',
     );
+    $uncommittedReadbackId = '5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e';
+    $uncommittedPayload = $draftSnapshot['payload'];
+    $uncommittedPayload['definition_id'] = $uncommittedReadbackId;
+    $uncommittedSnapshot = [
+        'format' => 'wpessential-dashboard-preset',
+        'version' => 1,
+        'payload' => $uncommittedPayload,
+        'sha256' => hash('sha256', json_encode(
+            $uncommittedPayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        )),
+    ];
+    foreach (['ack_only', 'changed_row', 'read_error'] as $mode) {
+        $ackAdapter = new class($repository, $mode) implements DefinitionCreateOnlyRepositoryInterface {
+            private ?Definition $acknowledged = null;
+
+            public function __construct(
+                private readonly PersistentDefinitionRepository $actual,
+                private readonly string $mode,
+            ) {}
+
+            public function create(Definition $definition): void
+            {
+                // Deliberately do NOT persist; this is a fake only for failure
+                // verification, not a database adapter or production mutation.
+                $this->acknowledged = $definition;
+            }
+
+            public function get(string $id): ?Definition
+            {
+                if ($this->acknowledged?->id === $id) {
+                    if ($this->mode === 'read_error') {
+                        throw new RuntimeException('simulated post-create read error');
+                    }
+                    if ($this->mode === 'ack_only') {
+                        return null;
+                    }
+                    $draft = $this->acknowledged;
+                    return new Definition(
+                        id: $draft->id,
+                        slug: 'wrong-stored-slug',
+                        type: $draft->type,
+                        schemaVersion: $draft->schemaVersion,
+                        ownerSurfaceId: $draft->ownerSurfaceId,
+                        status: $draft->status,
+                        payload: $draft->payload,
+                        revision: $draft->revision,
+                    );
+                }
+                return $this->actual->get($id);
+            }
+
+            public function save(Definition $definition): void
+            {
+                throw new RuntimeException('Fake adapter must never call save');
+            }
+
+            public function byType(string $type): array
+            {
+                return $this->actual->byType($type);
+            }
+
+            public function dependentsOf(string $id): array
+            {
+                return $this->actual->dependentsOf($id);
+            }
+        };
+        $checkService = new DashboardWidgetPresetDraftImportService(
+            $ackAdapter,
+            new DashboardWidgetPresetImportPreflightService(
+                $ackAdapter, new DashboardWidgetPresetCompiler($ackAdapter),
+            ),
+            $draftChecker,
+        );
+        platformPersistenceExpect(
+            $checkService->importDraft(
+                $draftContext, $uncommittedSnapshot, 'mysql-readback-probe',
+            ) === ['status' => 'write_failed'],
+            'adapter ' . $mode . ' cannot claim created_draft without persisted equivalent Draft',
+        );
+        platformPersistenceExpect(
+            $repository->get($uncommittedReadbackId) === null,
+            'failed fake acknowledgment must not create real disposable MySQL rows',
+        );
+    }
     platformPersistenceExpect(
-        $currentWidget instanceof Definition
-            && $currentWidget->status === DefinitionStatus::Published
-            && $currentWidget->id === $originalPublished->id
-            && $currentWidget->revision === $originalPublished->revision + 1,
-        'concurrent actual MySQL Published widget edit retains ID/status but advances revision',
+        $otherSite->get($uncommittedReadbackId) === null
+            && $networkStore->get($uncommittedReadbackId) === null,
+        'fake readback failures must not leak across real MySQL site/network scopes',
     );
+
+    // RB-0123: prove RB-0122's Published widget fingerprint race guard using
+    // *real disposable MySQL persistence*, not only an in-memory/mock database.
+    // The synthetic Internal caller is scoped evidence, NOT a live WP identity
+    // or native Dashboard preference write authorization.
+    $otherSiteWidgetBeforeDrift = $otherSite->get($draftWidgetId);
+    $networkWidgetBeforeDrift = $networkStore->get($draftWidgetId);
+    foreach ([
+        ['mode' => 'revision_only', 'id' => '6e6e6e6e-6e6e-4e6e-8e6e-6e6e6e6e6e6e'],
+        ['mode' => 'payload_slug', 'id' => '7e7e7e7e-7e7e-4e7e-8e7e-7e7e7e7e7e7e'],
+    ] as $driftCase) {
+        $candidate = $draftSnapshot;
+        $candidate['payload']['definition_id'] = $driftCase['id'];
+        $candidate['sha256'] = hash('sha256', json_encode(
+            $candidate['payload'],
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        ));
+        $originalPublished = $repository->get($draftWidgetId);
+        platformPersistenceExpect(
+            $originalPublished instanceof Definition && $originalPublished->status === DefinitionStatus::Published,
+            'real MySQL precondition: referenced target widget must still be Published',
+        );
+
+        $raceRepo = new class($repository, $driftCase['mode'], $draftWidgetId) implements DefinitionCreateOnlyRepositoryInterface {
+            public int $createCalls = 0;
+
+            public function __construct(
+                private readonly PersistentDefinitionRepository $actual,
+                private readonly string $mode,
+                private readonly string $widgetId,
+            ) {}
+
+            public function create(Definition $draft): void
+            {
+                ++$this->createCalls;
+                $this->actual->create($draft);
+
+                // A distinct writer updates a real MySQL Published widget AFTER
+                // the atomic Draft insert. Same id/type/status, advanced revision.
+                $widget = $this->actual->get($this->widgetId);
+                if (!$widget instanceof Definition) {
+                    throw new RuntimeException('Missing race fixture widget');
+                }
+                $this->actual->save(new Definition(
+                    id: $widget->id,
+                    slug: $this->mode === 'payload_slug' ? 'race-renamed-widget' : $widget->slug,
+                    type: $widget->type,
+                    schemaVersion: $widget->schemaVersion,
+                    ownerSurfaceId: $widget->ownerSurfaceId,
+                    status: DefinitionStatus::Published,
+                    payload: $this->mode === 'payload_slug' ? ['race' => 'changed'] : $widget->payload,
+                    revision: $widget->revision + 1,
+                    dependencies: $widget->dependencies,
+                ));
+            }
+
+            public function save(Definition $definition): void
+            {
+                throw new RuntimeException('Draft importer may not update, retry or rollback');
+            }
+
+            public function get(string $id): ?Definition { return $this->actual->get($id); }
+            public function byType(string $type): array { return $this->actual->byType($type); }
+            public function dependentsOf(string $id): array { return $this->actual->dependentsOf($id); }
+        };
+
+        $raceImporter = new DashboardWidgetPresetDraftImportService(
+            $raceRepo,
+            new DashboardWidgetPresetImportPreflightService(
+                $raceRepo, new DashboardWidgetPresetCompiler($raceRepo),
+            ),
+            $draftChecker,
+        );
+        $raceResult = $raceImporter->importDraft(
+            $draftContext, $candidate, 'mysql-fingerprint-race-' . str_replace('_', '-', $driftCase['mode']),
+        );
+        platformPersistenceExpect(
+            $raceResult === ['status' => 'write_failed'],
+            'concurrent Published widget fingerprint drift must fail closed on real MySQL: '
+                . $driftCase['mode'] . ', returned ' . json_encode($raceResult)
+                . ', draft_status=' . ($repository->get($driftCase['id'])?->status->value ?? 'missing')
+                . ', widget_revision=' . ($repository->get($draftWidgetId)?->revision ?? 'missing'),
+        );
+        platformPersistenceExpect(
+            $raceRepo->createCalls === 1,
+            'real MySQL race guard must not retry atomic Draft create',
+        );
+        $stored = $repository->get($driftCase['id']);
+        $currentWidget = $repository->get($draftWidgetId);
+        platformPersistenceExpect(
+            $stored instanceof Definition && $stored->status === DefinitionStatus::Draft
+                && $stored->revision === 1,
+            'race-detected import leaves its one inserted MySQL Draft intact; never claims rollback',
+        );
+        platformPersistenceExpect(
+            $currentWidget instanceof Definition
+                && $currentWidget->status === DefinitionStatus::Published
+                && $currentWidget->id === $originalPublished->id
+                && $currentWidget->revision === $originalPublished->revision + 1,
+            'concurrent actual MySQL Published widget edit retains ID/status but advances revision',
+        );
+        platformPersistenceExpect(
+            $currentWidget->computedChecksum()
+                !== $originalPublished->computedChecksum() || $currentWidget->revision !== $originalPublished->revision,
+            'race fixture must observably change fingerprint',
+        );
+        platformPersistenceExpect(
+            $otherSite->get($driftCase['id']) === null && $networkStore->get($driftCase['id']) === null,
+            'failed-but-persisted Draft cannot write to other site/network scope',
+        );
+    }
     platformPersistenceExpect(
-        $currentWidget->computedChecksum()
-            !== $originalPublished->computedChecksum() || $currentWidget->revision !== $originalPublished->revision,
-        'race fixture must observably change fingerprint',
-    );
-    platformPersistenceExpect(
-        $otherSite->get($driftCase['id']) === null && $networkStore->get($driftCase['id']) === null,
-        'failed-but-persisted Draft cannot write to other site/network scope',
+        $otherSite->get($draftWidgetId) == $otherSiteWidgetBeforeDrift
+            && $networkStore->get($draftWidgetId) == $networkWidgetBeforeDrift,
+        'real MySQL Published widget concurrency probe must not change other site/network scope',
     );
 }
-platformPersistenceExpect(
-    $otherSite->get($draftWidgetId) == $otherSiteWidgetBeforeDrift
-        && $networkStore->get($draftWidgetId) == $networkWidgetBeforeDrift,
-    'real MySQL Published widget concurrency probe must not change other site/network scope',
-);
 
 $context = new ExecutionContext(
     principal: new Principal(42),

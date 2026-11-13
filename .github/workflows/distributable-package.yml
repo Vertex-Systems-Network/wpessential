@@ -6,7 +6,6 @@ on:
       - 'frameworks/**'
       - 'admin-ui/**'
       - 'wpessential.php'
-      - 'wpessential-pro.php'
       - 'readme.txt'
       - 'wordpress-org/**'
       - 'LICENSE'
@@ -23,7 +22,6 @@ on:
       - 'frameworks/**'
       - 'admin-ui/**'
       - 'wpessential.php'
-      - 'wpessential-pro.php'
       - 'readme.txt'
       - 'wordpress-org/**'
       - 'LICENSE'
@@ -79,7 +77,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for entry in main ui taxonomy fields query columns-runtime; do
+          for entry in main ui taxonomy app; do
             test -s "assets/admin/${entry}.js"
             test -s "assets/admin/${entry}.css"
             test -s "assets/admin/${entry}.asset.php"
@@ -99,101 +97,24 @@ jobs:
           set -euo pipefail
           composer validate --strict
           php -l wpessential.php
-          php -l wpessential-pro.php
           php -l frameworks/Bootstrap/Plugin.php
-          php -l frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php
           php -l tools/release/build-distributable.php
           php -l tools/release/build-free-pro-distributables.php
-          php -l tools/release/verify-free-pro-bootstrap.php
           php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
 
-      - name: Prove optional Pro admin entry packaging is complete or fail-closed
-        shell: bash
-        run: |
-          set -euo pipefail
-          original_query_dir=/tmp/wpessential-query-original
-          rm -rf "${original_query_dir}"
-          mkdir -p "${original_query_dir}"
-          query_triplet=(query.js query.css query.asset.php)
-          had_query_triplet=0
-          present_query_files=0
-
-          for file in "${query_triplet[@]}"; do
-            if test -e "assets/admin/${file}"; then
-              present_query_files=$((present_query_files + 1))
-            fi
-          done
-
-          if [ "${present_query_files}" -ne 0 ] && [ "${present_query_files}" -ne 3 ]; then
-            echo 'Production build emitted a partial optional query triplet' >&2
-            exit 1
-          fi
-
-          if [ "${present_query_files}" -eq 3 ]; then
-            for file in "${query_triplet[@]}"; do
-              test -s "assets/admin/${file}"
-              cp "assets/admin/${file}" "${original_query_dir}/${file}"
-            done
-            had_query_triplet=1
-          fi
-
-          restore_query_triplet() {
-            rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
-            if [ "${had_query_triplet}" -eq 1 ]; then
-              for file in "${query_triplet[@]}"; do
-                cp "${original_query_dir}/${file}" "assets/admin/${file}"
-              done
-            fi
-          }
-          trap restore_query_triplet EXIT
-
-          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
-          cp assets/admin/fields.js assets/admin/query.js
-          if php tools/release/build-distributable.php > /tmp/wpessential-partial-query.log 2>&1; then
-            echo 'Packager accepted a partial optional query triplet' >&2
-            exit 1
-          fi
-          grep -Fq 'Optional admin entry query is only partially built' /tmp/wpessential-partial-query.log
-
-          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
-          cp assets/admin/fields.js assets/admin/query.js
-          cp assets/admin/fields.css assets/admin/query.css
-          cp assets/admin/fields.asset.php assets/admin/query.asset.php
-          php tools/release/build-distributable.php
-          unzip -Z1 artifacts/wpessential-pro.zip > /tmp/wpessential-pro-query-files.txt
-          for required in \
-            wpessential-pro/assets/admin/query.js \
-            wpessential-pro/assets/admin/query.css \
-            wpessential-pro/assets/admin/query.asset.php
-          do
-            grep -Fxq "${required}" /tmp/wpessential-pro-query-files.txt
-          done
-
-          rm -f \
-            artifacts/wpessential.zip \
-            artifacts/wpessential-package.json \
-            artifacts/wpessential-pro.zip \
-            artifacts/wpessential-pro-package.json
-          restore_query_triplet
-          trap - EXIT
-
-      - name: Build first independent Free and Pro distributables
+      - name: Build the Free distributable
         shell: bash
         run: |
           set -euo pipefail
           php tools/release/build-distributable.php
           for artifact in \
             artifacts/wpessential.zip \
-            artifacts/wpessential-package.json \
-            artifacts/wpessential-pro.zip \
-            artifacts/wpessential-pro-package.json
+            artifacts/wpessential-package.json
           do
             test -s "${artifact}"
           done
           cp artifacts/wpessential.zip /tmp/wpessential-first.zip
-          cp artifacts/wpessential-pro.zip /tmp/wpessential-pro-first.zip
           sha256sum artifacts/wpessential.zip | tee /tmp/wpessential-first.sha256
-          sha256sum artifacts/wpessential-pro.zip | tee /tmp/wpessential-pro-first.sha256
 
       - name: Rebuild and prove byte-for-byte determinism
         shell: bash
@@ -201,47 +122,9 @@ jobs:
           set -euo pipefail
           php tools/release/build-distributable.php
           test -s artifacts/wpessential.zip
-          test -s artifacts/wpessential-pro.zip
           sha256sum artifacts/wpessential.zip | tee /tmp/wpessential-second.sha256
-          sha256sum artifacts/wpessential-pro.zip | tee /tmp/wpessential-pro-second.sha256
           test "$(cut -d' ' -f1 /tmp/wpessential-first.sha256)" = "$(cut -d' ' -f1 /tmp/wpessential-second.sha256)"
-          test "$(cut -d' ' -f1 /tmp/wpessential-pro-first.sha256)" = "$(cut -d' ' -f1 /tmp/wpessential-pro-second.sha256)"
           cmp --silent /tmp/wpessential-first.zip artifacts/wpessential.zip
-          cmp --silent /tmp/wpessential-pro-first.zip artifacts/wpessential-pro.zip
-
-      - name: Verify packaged Free and Pro compatibility bootstrap behavior
-        shell: bash
-        run: |
-          set -euo pipefail
-          verify_root=/tmp/wpessential-package-bootstrap
-          rm -rf "${verify_root}"
-          mkdir -p "${verify_root}/free" "${verify_root}/pro"
-          unzip -q artifacts/wpessential.zip -d "${verify_root}/free"
-          unzip -q artifacts/wpessential-pro.zip -d "${verify_root}/pro"
-
-          php tools/release/verify-free-pro-bootstrap.php \
-            free \
-            "${verify_root}/free/wpessential"
-          php tools/release/verify-free-pro-bootstrap.php \
-            free-pro \
-            "${verify_root}/free/wpessential" \
-            "${verify_root}/pro/wpessential-pro" \
-            free-first
-          php tools/release/verify-free-pro-bootstrap.php \
-            free-pro \
-            "${verify_root}/free/wpessential" \
-            "${verify_root}/pro/wpessential-pro" \
-            pro-first
-          php tools/release/verify-free-pro-bootstrap.php \
-            free-pro-incompatible \
-            "${verify_root}/free/wpessential" \
-            "${verify_root}/pro/wpessential-pro" \
-            free-first
-          php tools/release/verify-free-pro-bootstrap.php \
-            free-pro-incompatible \
-            "${verify_root}/free/wpessential" \
-            "${verify_root}/pro/wpessential-pro" \
-            pro-first
 
       - name: Validate Free ZIP integrity and package boundary
         shell: bash
@@ -298,58 +181,14 @@ jobs:
             exit 1
           fi
 
-      - name: Validate Pro ZIP integrity and package boundary
-        shell: bash
-        run: |
-          set -euo pipefail
-          unzip -t artifacts/wpessential-pro.zip
-          unzip -Z1 artifacts/wpessential-pro.zip | tee artifacts/wpessential-pro-files.txt
-          test -n "$(cat artifacts/wpessential-pro-files.txt)"
-          if grep -Ev '^wpessential-pro/' artifacts/wpessential-pro-files.txt; then
-            echo 'Pro archive contains an entry outside wpessential-pro/' >&2
-            exit 1
-          fi
-          for required in \
-            wpessential-pro/wpessential-pro.php \
-            wpessential-pro/LICENSE \
-            wpessential-pro/frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php \
-            wpessential-pro/frameworks/Modules/Roles/RolesModule.php \
-            wpessential-pro/frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php \
-            wpessential-pro/frameworks/Modules/Membership/MembershipModule.php \
-            wpessential-pro/frameworks/Modules/Chat/ChatModule.php \
-            wpessential-pro/assets/admin/fields.js \
-            wpessential-pro/assets/admin/fields.css \
-            wpessential-pro/assets/admin/fields.asset.php \
-            wpessential-pro/assets/admin/columns-runtime.js \
-            wpessential-pro/assets/admin/columns-runtime.css \
-            wpessential-pro/assets/admin/columns-runtime.asset.php
-          do
-            grep -Fxq "${required}" artifacts/wpessential-pro-files.txt
-          done
-          if grep -E '^wpessential-pro/frameworks/(Bootstrap|Contracts|Kernel|Platform)/' artifacts/wpessential-pro-files.txt; then
-            echo 'Pro archive duplicates Free Platform/Kernel source' >&2
-            exit 1
-          fi
-          if grep -E '^wpessential-pro/frameworks/Modules/(CustomPostTypes|Taxonomies)/' artifacts/wpessential-pro-files.txt; then
-            echo 'Pro archive duplicates permanently Free module source' >&2
-            exit 1
-          fi
-          if grep -Fxq 'wpessential-pro/wpessential.php' artifacts/wpessential-pro-files.txt; then
-            echo 'Pro archive contains the Free plugin bootstrap' >&2
-            exit 1
-          fi
-
       - name: Upload deterministic package evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: wp121-free-pro-distributables-${{ github.run_id }}
+          name: wp121-free-distributable-${{ github.run_id }}
           path: |
             artifacts/wpessential.zip
             artifacts/wpessential-package.json
             artifacts/wpessential-files.txt
-            artifacts/wpessential-pro.zip
-            artifacts/wpessential-pro-package.json
-            artifacts/wpessential-pro-files.txt
           if-no-files-found: error
           retention-days: 14
 

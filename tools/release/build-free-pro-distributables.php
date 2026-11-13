@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+// Builds the Free (WordPress.org) package only. WPEssential Pro lives in
+// Vertex-Systems-Network/wpessential-pro and builds its own ZIP there.
+
 const WPE_FREE_PACKAGE_SLUG = 'wpessential';
-const WPE_PRO_PACKAGE_SLUG = 'wpessential-pro';
 const WPE_PACKAGE_MTIME = 946684800; // 2000-01-01T00:00:00Z.
 
 function fail(string $message): never
@@ -200,7 +202,6 @@ function optionalAdminArtifactTriplet(string $root, string $entry): array
 function assertProjectMetadata(string $root): void
 {
     $plugin = file_get_contents($root . '/wpessential.php');
-    $proPlugin = file_get_contents($root . '/wpessential-pro.php');
     $readme = file_get_contents($root . '/readme.txt');
     $license = file_get_contents($root . '/LICENSE');
     $composerRaw = file_get_contents($root . '/composer.json');
@@ -208,7 +209,6 @@ function assertProjectMetadata(string $root): void
 
     if (
         $plugin === false
-        || $proPlugin === false
         || $readme === false
         || $license === false
         || $composerRaw === false
@@ -226,19 +226,6 @@ function assertProjectMetadata(string $root): void
     ] as $needle) {
         if (!str_contains($plugin, $needle)) {
             fail("Free plugin metadata is missing required value: {$needle}");
-        }
-    }
-
-    foreach ([
-        'Plugin Name: WPEssential Pro',
-        'Version: 3.0.0',
-        'Requires at least: 6.9',
-        'Requires PHP: 8.2',
-        'Requires Plugins: wpessential',
-        'License: GPL-3.0-or-later',
-    ] as $needle) {
-        if (!str_contains($proPlugin, $needle)) {
-            fail("Pro plugin metadata is missing required value: {$needle}");
         }
     }
 
@@ -335,22 +322,6 @@ function stageFreePackage(string $root, string $stageRoot, array $freeAssets): v
     @unlink($stageRoot . '/composer.lock');
 }
 
-/** @param list<string> $proAssets */
-function stageProPackage(string $root, string $stageRoot, array $proAssets): void
-{
-    ensureDirectory($stageRoot);
-    copyFileNormalized($root . '/wpessential-pro.php', $stageRoot . '/wpessential-pro.php');
-    copyFileNormalized($root . '/LICENSE', $stageRoot . '/LICENSE');
-    copyTreeNormalized($root . '/frameworks/Modules', $stageRoot . '/frameworks/Modules', 'isProModuleFile');
-
-    foreach ($proAssets as $relative) {
-        copyFileNormalized(
-            $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative),
-            $stageRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative)
-        );
-    }
-}
-
 /** @param list<string> $freeAssets */
 function validateFreeStage(string $stageRoot, array $freeAssets): void
 {
@@ -386,49 +357,6 @@ function validateFreeStage(string $stageRoot, array $freeAssets): void
             || $relative === 'wpessential-pro.php'
         ) {
             fail("Pro-owned payload leaked into Free artifact: {$relative}");
-        }
-    }
-}
-
-/** @param list<string> $proAssets */
-function validateProStage(string $stageRoot, array $proAssets): void
-{
-    foreach ([
-        'wpessential-pro.php',
-        'LICENSE',
-        'frameworks/Modules/Roles/RolesModule.php',
-        'frameworks/Modules/AdminMenu/AdminMenuModule.php',
-        'frameworks/Modules/Settings/SettingsModule.php',
-        'frameworks/Modules/Dashboard/DashboardModule.php',
-        'frameworks/Modules/Profiles/ProfilesModule.php',
-        'frameworks/Modules/Membership/MembershipModule.php',
-        'frameworks/Modules/BuilderWidgets/BuilderWidgetsModule.php',
-        'frameworks/Modules/FormsWorkflows/FormsWorkflowsModule.php',
-        'frameworks/Modules/Cron/CronModule.php',
-        'frameworks/Modules/Notifications/NotificationsModule.php',
-        'frameworks/Modules/Emails/EmailsModule.php',
-        'frameworks/Modules/Chat/ChatModule.php',
-        'frameworks/Modules/SiteKit/SiteKitModule.php',
-        'frameworks/Modules/SiteKit/data/google-fonts.json',
-        ...$proAssets,
-    ] as $relative) {
-        $path = $stageRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
-        if (!is_file($path) || filesize($path) === 0) {
-            fail("Required Pro distributable file is missing or empty: {$relative}");
-        }
-    }
-
-    foreach (relativeFiles($stageRoot) as $relative) {
-        if (
-            str_starts_with($relative, 'frameworks/Bootstrap/')
-            || str_starts_with($relative, 'frameworks/Contracts/')
-            || str_starts_with($relative, 'frameworks/Kernel/')
-            || str_starts_with($relative, 'frameworks/Platform/')
-            || str_starts_with($relative, 'frameworks/Modules/CustomPostTypes/')
-            || str_starts_with($relative, 'frameworks/Modules/Taxonomies/')
-            || $relative === 'wpessential.php'
-        ) {
-            fail("Free Platform/module payload leaked into Pro artifact: {$relative}");
         }
     }
 }
@@ -517,25 +445,16 @@ try {
         ...requiredAdminArtifactTriplet($root, 'app'),
         ...requiredAdminArtifact($root, 'assets/admin/option-contracts.json'),
     ];
-    $proAssets = [
-        ...requiredAdminArtifactTriplet($root, 'fields'),
-        ...optionalAdminArtifactTriplet($root, 'query'),
-        ...requiredAdminArtifactTriplet($root, 'columns-runtime'),
-    ];
 
     $tempRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'wpessential-dist-' . bin2hex(random_bytes(8));
     $freeStage = $tempRoot . '/free/' . WPE_FREE_PACKAGE_SLUG;
-    $proStage = $tempRoot . '/pro/' . WPE_PRO_PACKAGE_SLUG;
     register_shutdown_function(static function () use ($tempRoot): void {
         removeTree($tempRoot);
     });
 
     stageFreePackage($root, $freeStage, $freeAssets);
-    stageProPackage($root, $proStage, $proAssets);
     assertNoServerCode($freeStage, 'Free');
-    assertNoServerCode($proStage, 'Pro');
     validateFreeStage($freeStage, $freeAssets);
-    validateProStage($proStage, $proAssets);
 
     $artifactDir = $root . '/artifacts';
     ensureDirectory($artifactDir);
@@ -554,20 +473,6 @@ try {
     }
     @unlink($freeB);
 
-    $proA = $artifactDir . '/wpessential-pro-a.zip';
-    $proB = $artifactDir . '/wpessential-pro-b.zip';
-    $proFinal = $artifactDir . '/wpessential-pro.zip';
-    $proFirst = buildArchive($proStage, $proA, WPE_PRO_PACKAGE_SLUG);
-    $proSecond = buildArchive($proStage, $proB, WPE_PRO_PACKAGE_SLUG);
-    if ($proFirst['sha256'] !== $proSecond['sha256']) {
-        fail('Pro determinism check failed: repeated ZIP builds produced different SHA-256 values.');
-    }
-    @unlink($proFinal);
-    if (!rename($proA, $proFinal)) {
-        fail('Unable to promote deterministic Pro candidate to final artifact.');
-    }
-    @unlink($proB);
-
     writePackageManifest(
         $artifactDir . '/wpessential-package.json',
         'artifacts/wpessential.zip',
@@ -575,17 +480,9 @@ try {
         'free',
         $freeFirst,
     );
-    writePackageManifest(
-        $artifactDir . '/wpessential-pro-package.json',
-        'artifacts/wpessential-pro.zip',
-        WPE_PRO_PACKAGE_SLUG,
-        'pro',
-        $proFirst,
-    );
 
     fwrite(STDOUT, json_encode([
         'free' => $freeFirst + ['artifact' => 'artifacts/wpessential.zip'],
-        'pro' => $proFirst + ['artifact' => 'artifacts/wpessential-pro.zip'],
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
 } catch (JsonException $exception) {
     fail('Invalid JSON metadata: ' . $exception->getMessage());
