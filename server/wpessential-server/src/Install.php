@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Install {
 
-	const DB_VERSION = '3';
+	const DB_VERSION = '4';
 
 	/**
 	 * Activation.
@@ -41,6 +41,7 @@ class Install {
 				if ( get_transient( 'wpes_server_setup_plans' ) ) {
 					delete_transient( 'wpes_server_setup_plans' );
 					Plans::create_products();
+					Trials::product();
 				}
 			},
 			20
@@ -106,6 +107,17 @@ class Install {
 				KEY trace_id (trace_id),
 				KEY level_created (level,created_at),
 				KEY event (event)
+			) $charset;
+			CREATE TABLE {$wpdb->prefix}wpes_trials (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				user_id bigint(20) unsigned NOT NULL,
+				domain varchar(191) NOT NULL,
+				license_id bigint(20) unsigned NOT NULL DEFAULT 0,
+				started_at datetime NOT NULL,
+				ends_at datetime NOT NULL,
+				PRIMARY KEY  (id),
+				UNIQUE KEY domain (domain),
+				UNIQUE KEY user_id (user_id)
 			) $charset;"
 		);
 	}

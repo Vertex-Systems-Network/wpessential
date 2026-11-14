@@ -83,9 +83,10 @@ class Licenses {
 	 * @param int   $user_id User.
 	 * @param array $plan    Plan from Plans::from_product().
 	 * @param int   $order_id Order.
+	 * @param array $fields   Column overrides written in the same insert (e.g. a trial's end date).
 	 * @return array License row.
 	 */
-	public static function create( $user_id, array $plan, $order_id = 0 ) {
+	public static function create( $user_id, array $plan, $order_id = 0, array $fields = array() ) {
 		global $wpdb;
 		list( $table ) = self::tables();
 		do {
@@ -108,7 +109,7 @@ class Licenses {
 				'major'       => self::lifetime_major( $plan ),
 				'created_at'  => $now,
 				'updated_at'  => $now,
-			)
+			) + $fields
 		);
 		if ( ! $wpdb->insert_id ) {
 			Events::error(
@@ -246,9 +247,16 @@ class Licenses {
 	 * @return bool
 	 */
 	public static function is_staging( $domain ) {
-		if ( ! Plugin::settings( 'free_staging' ) ) {
-			return false;
-		}
+		return Plugin::settings( 'free_staging' ) && self::looks_staging( $domain );
+	}
+
+	/**
+	 * Whether a domain looks local or staging, whatever the free-staging setting says.
+	 *
+	 * @param string $domain Domain.
+	 * @return bool
+	 */
+	public static function looks_staging( $domain ) {
 		$patterns = apply_filters(
 			'wpes_staging_patterns',
 			array( '/^localhost$/', '/^127\./', '/^10\./', '/^192\.168\./', '/\.(local|test|localhost|invalid|example)$/', '/^(staging|stage|dev|test)\./', '/\.(wpengine|kinsta|flywheelsites|pantheonsite)\.(com|cloud|io)$/', '/\.instawp\.xyz$/' )
@@ -300,7 +308,9 @@ class Licenses {
 		if ( empty( $license['expires_at'] ) ) {
 			return false;
 		}
-		return strtotime( $license['expires_at'] . ' UTC' ) + DAY_IN_SECONDS * (int) Plugin::settings( 'grace_days' ) < time();
+		// A trial ends on its date: no grace days.
+		$grace = Trials::is_trial( $license ) ? 0 : (int) Plugin::settings( 'grace_days' );
+		return strtotime( $license['expires_at'] . ' UTC' ) + DAY_IN_SECONDS * $grace < time();
 	}
 
 	/**
@@ -346,7 +356,8 @@ class Licenses {
 				return $license;
 			}
 		}
-		$staging = self::is_staging( $domain );
+		// A trial covers exactly one website: staging copies count against it too.
+		$staging = self::is_staging( $domain ) && ! Trials::is_trial( $license );
 		if ( ! $staging && (int) $license['sites_limit'] > 0 && self::used_sites( $license['id'] ) >= (int) $license['sites_limit'] ) {
 			/* translators: %d: site limit. */
 			return new \WP_Error( 'no_activations_left', sprintf( _n( 'This license is already used on %d website. Deactivate it there from your account, or upgrade your plan for more websites.', 'This license is already used on %d websites. Deactivate one from your account, or upgrade your plan for more websites.', (int) $license['sites_limit'], 'wpessential-server' ), (int) $license['sites_limit'] ) );

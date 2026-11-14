@@ -79,7 +79,7 @@ class Plans {
 	 * @return bool
 	 */
 	public static function owner_not_purchasable( $purchasable, $product ) {
-		return self::OWNER === $product->get_meta( '_wpes_plan' ) ? false : $purchasable;
+		return in_array( $product->get_meta( '_wpes_plan' ), array( self::OWNER, Trials::PLAN ), true ) ? false : $purchasable;
 	}
 
 	/**
@@ -274,7 +274,7 @@ class Plans {
 			array(
 				'id'      => '_wpes_plan',
 				'label'   => __( 'Plan', 'wpessential-server' ),
-				'options' => array( '' => __( 'Not a plan', 'wpessential-server' ) ) + wp_list_pluck( self::defaults(), 'name' ) + ( self::OWNER === get_post_meta( $post->ID, '_wpes_plan', true ) ? array( self::OWNER => self::owner()['name'] ) : array() ),
+				'options' => array( '' => __( 'Not a plan', 'wpessential-server' ) ) + wp_list_pluck( self::defaults(), 'name' ) + ( self::OWNER === get_post_meta( $post->ID, '_wpes_plan', true ) ? array( self::OWNER => self::owner()['name'] ) : array() ) + ( Trials::PLAN === get_post_meta( $post->ID, '_wpes_plan', true ) ? array( Trials::PLAN => Trials::plan()['name'] ) : array() ),
 			)
 		);
 		woocommerce_wp_text_input(
@@ -324,7 +324,7 @@ class Plans {
 		// Nonce checked by WooCommerce before this action.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$plan = isset( $_POST['_wpes_plan'] ) ? sanitize_key( wp_unslash( $_POST['_wpes_plan'] ) ) : '';
-		update_post_meta( $post_id, '_wpes_plan', array_key_exists( $plan, self::defaults() ) || self::OWNER === $plan ? $plan : '' );
+		update_post_meta( $post_id, '_wpes_plan', array_key_exists( $plan, self::defaults() ) || in_array( $plan, array( self::OWNER, Trials::PLAN ), true ) ? $plan : '' );
 		update_post_meta( $post_id, '_wpes_months', isset( $_POST['_wpes_months'] ) ? (int) $_POST['_wpes_months'] : 0 );
 		update_post_meta( $post_id, '_wpes_sites', isset( $_POST['_wpes_sites'] ) ? max( 0, (int) $_POST['_wpes_sites'] ) : 1 );
 		update_post_meta( $post_id, '_wpes_pro', empty( $_POST['_wpes_pro'] ) ? 0 : 1 );

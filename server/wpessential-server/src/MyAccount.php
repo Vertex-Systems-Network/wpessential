@@ -92,6 +92,9 @@ class MyAccount {
 		}
 		switch ( $action ) {
 			case 'auto_renew_on':
+				if ( Trials::is_trial( $license ) ) {
+					return new \WP_Error( 'trial', __( 'A trial does not renew. Choose a plan to keep Pro.', 'wpessential-server' ) );
+				}
 				if ( empty( $license['expires_at'] ) ) {
 					return new \WP_Error( 'lifetime', __( 'This plan never expires, so it does not renew.', 'wpessential-server' ) );
 				}

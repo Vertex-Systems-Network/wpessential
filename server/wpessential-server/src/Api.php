@@ -40,6 +40,7 @@ class Api {
 			'/account/license'    => array( 'POST', 'license_action', $auth ),
 			'/account/checkout'   => array( 'POST', 'checkout', $auth ),
 			'/account/connect'    => array( 'POST', 'connect', $auth ),
+			'/account/trial'      => array( 'POST', 'trial', $auth ),
 			'/release'            => array( 'POST', 'release', array( $this, 'can_release' ) ),
 		);
 		foreach ( $routes as $route => $def ) {
@@ -262,7 +263,43 @@ class Api {
 		if ( '' === $domain ) {
 			return $this->fail( new \WP_Error( 'domain', __( 'Send the site address.', 'wpessential-server' ) ), 400 );
 		}
-		$pick = self::pick( Licenses::for_user( (int) $request->get_param( '_user' ) ), $domain );
+		$user     = (int) $request->get_param( '_user' );
+		$licenses = Licenses::for_user( $user );
+
+		// 1. A license already on this domain stays. 2. Otherwise a free slot on a paid Pro plan.
+		$on_site = array_values(
+			array_filter(
+				$licenses,
+				static function ( $l ) use ( $domain ) {
+					return true === Licenses::validate( $l ) && Licenses::has_domain( $l, $domain );
+				}
+			)
+		);
+		$paid    = array_values(
+			array_filter(
+				$licenses,
+				static function ( $l ) {
+					$plan = Plans::from_product( (int) $l['product_id'] );
+					return ! Trials::is_trial( $l ) && $plan && $plan['pro'];
+				}
+			)
+		);
+		$pick    = $on_site ? $on_site[0] : self::pick( $paid, $domain );
+
+		// 3. A website that never had a trial gets the 30-day Pro trial (proved to come from it).
+		$trial_note = '';
+		if ( ! $pick ) {
+			$trial = Trials::start( $user, (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
+			if ( ! is_wp_error( $trial ) ) {
+				return rest_ensure_response( $trial + array( 'message' => __( 'Your 30-day Pro trial has started on this website.', 'wpessential-server' ) ) );
+			}
+			$trial_note = $trial->get_error_message();
+		}
+
+		// 4. Otherwise any usable slot (the Free plan).
+		if ( ! $pick ) {
+			$pick = self::pick( $licenses, $domain );
+		}
 		if ( ! $pick ) {
 			return $this->fail( new \WP_Error( 'no_slot', __( 'Every site slot on your subscriptions is in use. Upgrade or free a slot to connect this site.', 'wpessential-server' ) ), 409 );
 		}
@@ -271,8 +308,25 @@ class Api {
 			return $this->fail( $license, 400 );
 		}
 		return rest_ensure_response(
-			Licenses::owner_shape( Licenses::get( $license['id'] ) ) + array( 'message' => __( 'This website is connected to your subscription.', 'wpessential-server' ) )
+			Licenses::owner_shape( Licenses::get( $license['id'] ) ) + array(
+				'message'    => __( 'This website is connected to your subscription.', 'wpessential-server' ),
+				'trial_note' => $trial_note,
+			)
 		);
+	}
+
+	/**
+	 * Start the 30-day Pro trial on a website (one per website and per account).
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response
+	 */
+	public function trial( $request ) {
+		$result = Trials::start( (int) $request->get_param( '_user' ), (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
+		if ( is_wp_error( $result ) ) {
+			return $this->fail( $result, 'throttled' === $result->get_error_code() ? 429 : 409 );
+		}
+		return rest_ensure_response( $result + array( 'message' => __( 'Your 30-day Pro trial has started on this website.', 'wpessential-server' ) ) );
 	}
 
 	/**
@@ -338,8 +392,12 @@ class Api {
 	 * @param \WP_REST_Request $request Request.
 	 */
 	public function checkout( $request ) {
-		$user    = (int) $request->get_param( '_user' );
-		$product = Plans::product_id( sanitize_key( (string) $request->get_param( 'plan' ) ) );
+		$user = (int) $request->get_param( '_user' );
+		$key  = sanitize_key( (string) $request->get_param( 'plan' ) );
+		if ( Trials::PLAN === $key ) {
+			return $this->fail( new \WP_Error( 'trial_plan', __( 'A trial cannot be renewed. Choose a Pro plan to keep using Pro; your trial licence is upgraded in place.', 'wpessential-server' ) ), 400 );
+		}
+		$product = Plans::OWNER === $key ? 0 : Plans::product_id( $key );
 		if ( ! $product ) {
 			return $this->fail( new \WP_Error( 'plan', __( 'That plan is not for sale right now.', 'wpessential-server' ) ), 400 );
 		}

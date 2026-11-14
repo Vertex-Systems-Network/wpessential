@@ -166,6 +166,26 @@ final class LicenseService {
 		return $this->publicData();
 	}
 
+	/** Frees this site's slot on another key (after switching to a new one). Best effort. */
+	public function release( string $key ): void {
+		if ( $key !== '' ) {
+			$this->adapter()->deactivate( $key, self::domain() );
+		}
+	}
+
+	/**
+	 * Re-check early around the end date (at most hourly), so a renewal or an upgrade bought
+	 * on the licence server shows on this site without waiting for the daily check.
+	 */
+	public function refreshNearExpiry( int $now ): void {
+		$data    = $this->data();
+		$expires = $data['expires'] !== '' ? strtotime( $data['expires'] . ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $data['expires'] ) ? ' 23:59:59 UTC' : '' ) ) : false;
+		if ( $data['key'] === '' || $expires === false || $now < $expires - DAY_IN_SECONDS || $now > $expires + 14 * DAY_IN_SECONDS || $now - $data['checked'] < HOUR_IN_SECONDS ) {
+			return;
+		}
+		$this->refresh();
+	}
+
 	/** Daily re-check. Keeps the last known state while the server is unreachable. */
 	public function refresh(): void {
 		$data = $this->data();
@@ -207,6 +227,7 @@ final class LicenseService {
 		}
 
 		add_action( self::CRON, [ $this, 'refresh' ] );
+		add_action( 'admin_init', fn () => $this->refreshNearExpiry( time() ) );
 		add_action(
 			'admin_init',
 			static function (): void {

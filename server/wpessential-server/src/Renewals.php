@@ -75,6 +75,7 @@ class Renewals {
 			}
 		}
 		Events::begin( 'cron' );
+		$counts['trial_reminders'] = Trials::remind();
 		Events::log( 'renewal.run_end', 'Renewal run finished.', array_merge( $counts, array( 'run' => $run ) ) );
 		Events::end();
 		return $counts;
@@ -87,11 +88,15 @@ class Renewals {
 	 * @param array $counts  Counts (by reference).
 	 */
 	private static function process( $license, array &$counts ) {
+		$trial = Trials::is_trial( $license );
 		if ( Licenses::is_expired( $license ) ) {
 			Licenses::update( $license['id'], array( 'status' => 'expired' ) );
-			self::mail( $license, 'expired' );
+			self::mail( $license, $trial ? 'trial_expired' : 'expired' );
 			++$counts['expired'];
 			return;
+		}
+		if ( $trial ) {
+			return; // Trial reminders run in Trials::remind(); a trial is never renewed.
 		}
 		if ( $license['auto_renew'] ) {
 			$result = self::renewal_order( $license );
@@ -230,15 +235,24 @@ class Renewals {
 	 * Reminder / expiry email.
 	 *
 	 * @param array  $license License.
-	 * @param string $type    reminder|expired.
+	 * @param string $type    reminder|expired|trial_reminder|trial_expired.
+	 * @return bool Whether the email was handed to the mailer.
 	 */
 	public static function mail( $license, $type ) {
 		$user = get_userdata( (int) $license['user_id'] );
 		if ( ! $user ) {
-			return;
+			Events::error( 'mail.' . $type . '_no_user', 'No customer for this license.', Events::of( $license ) );
+			return false;
 		}
 		$link = wc_get_account_endpoint_url( MyAccount::ENDPOINT );
-		if ( 'expired' === $type ) {
+		if ( 'trial_reminder' === $type ) {
+			/* translators: %s: date. */
+			$subject = sprintf( __( 'Your WPEssential Pro trial ends on %s', 'wpessential-server' ), substr( $license['expires_at'], 0, 10 ) );
+			$body    = __( 'Choose a plan before the trial ends to keep editing your Pro modules. Upgrading keeps the same licence key, so nothing changes on your website.', 'wpessential-server' );
+		} elseif ( 'trial_expired' === $type ) {
+			$subject = __( 'Your WPEssential Pro trial has ended', 'wpessential-server' );
+			$body    = __( 'Pro modules on your website are now read-only. Nothing was deleted: choose a plan and everything you built is editable again.', 'wpessential-server' );
+		} elseif ( 'expired' === $type ) {
 			/* translators: %s: key. */
 			$subject = sprintf( __( 'Your WPEssential license %s has expired', 'wpessential-server' ), $license['license_key'] );
 			$body    = __( 'Pro demos and updates are paused on your websites. Renew in one click to continue — your sites keep working either way.', 'wpessential-server' );
@@ -251,5 +265,6 @@ class Renewals {
 		$message = $mailer->wrap_message( $subject, '<p>' . esc_html( $body ) . '</p><p><a href="' . esc_url( $link ) . '">' . esc_html__( 'Manage your licenses', 'wpessential-server' ) . '</a></p>' );
 		$sent    = $mailer->send( $user->user_email, $subject, $message );
 		Events::log( $sent ? 'mail.' . $type : 'mail.' . $type . '_failed', $subject, Events::of( $license ), $sent ? 'info' : 'error' );
+		return (bool) $sent;
 	}
 }
