@@ -4,6 +4,11 @@ WPEssential is a modular WordPress application platform for structured data, aut
 
 Project website: **https://wpessential.org**
 
+> **Repository split (2026-11-14):** WPEssential Pro now lives in its own repository,
+> [Vertex-Systems-Network/wpessential-pro](https://github.com/Vertex-Systems-Network/wpessential-pro), with full history.
+> This repository holds the Free plugin only: Platform/Kernel, the Custom Post Types and Taxonomies modules, the Core admin UI and the WordPress.org package.
+> Pro development and CI use a Free checkout at `../wpessential`. The Free and Pro ZIPs built after the split are byte-for-byte identical to the ones built before it.
+
 ## Milestone Table of Contents & Overall Progress
 
 This roadmap is derived from repository evidence. **Progress is milestone-scoped and does not imply full product parity, production deployment or GA.**

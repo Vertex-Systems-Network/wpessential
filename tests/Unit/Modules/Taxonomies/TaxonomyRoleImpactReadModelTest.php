@@ -5,160 +5,131 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\Taxonomies;
 
 use PHPUnit\Framework\TestCase;
-use WPEssential\Contracts\CapabilityCheckerInterface;
-use WPEssential\Modules\Roles\RoleRuntimeEnvironmentInterface;
-use WPEssential\Modules\Roles\RolesReadService;
+use WPEssential\Contracts\RoleImpactReadServiceInterface;
 use WPEssential\Modules\Taxonomies\TaxonomyRoleImpactReadModel;
 use WPEssential\Platform\Auth\ExecutionContext;
-use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 
+/**
+ * Free-owned coverage for the Taxonomy role-impact read model. The real role service
+ * lives in Pro, so these tests use a fake RoleImpactReadServiceInterface.
+ */
 final class TaxonomyRoleImpactReadModelTest extends TestCase
 {
-    public function testCanonicalConsumerPreservesAllowDenyAbsentAndDeduplicatesCapabilities(): void
+    public function testPreservesAllowDenyAbsentAndDeduplicatesCapabilities(): void
     {
-        $environment = new CountingRoleEnvironment([
-            'administrator' => [
-                'name' => 'Administrator',
-                'capabilities' => [
-                    'manage_categories' => true,
-                    'edit_posts' => true,
-                ],
+        $service = new FakeRoleImpactService([
+            'manage_categories' => [
+                'state' => 'healthy',
+                'capability' => 'manage_categories',
+                'explicit_allow_roles' => ['administrator'],
+                'explicit_deny_roles' => ['editor'],
+                'absent_roles' => ['subscriber'],
+                'caveats' => [],
             ],
-            'editor' => [
-                'name' => 'Editor',
-                'capabilities' => [
-                    'manage_categories' => false,
-                    'edit_posts' => true,
-                ],
-            ],
-            'subscriber' => [
-                'name' => 'Subscriber',
-                'capabilities' => ['read' => true],
+            'edit_posts' => [
+                'state' => 'healthy',
+                'capability' => 'edit_posts',
+                'explicit_allow_roles' => ['administrator', 'editor'],
+                'explicit_deny_roles' => [],
+                'absent_roles' => ['subscriber'],
+                'caveats' => [],
             ],
         ]);
-        $model = new TaxonomyRoleImpactReadModel($this->roles($environment));
-        $context = new ExecutionContext(new Principal(8), 1);
+        $model = new TaxonomyRoleImpactReadModel($service);
 
         $impact = $model->forCapabilities([
             'manage_terms' => 'manage_categories',
             'edit_terms' => 'manage_categories',
             'delete_terms' => 'manage_categories',
             'assign_terms' => 'edit_posts',
-        ], $context);
+        ], new ExecutionContext(new Principal(8), 1));
 
         self::assertSame('healthy', $impact['state']);
         self::assertCount(4, $impact['operations']);
-        self::assertSame(2, $environment->readCount, 'Repeated taxonomy operations must reuse one Surface 30 query per unique capability.');
+        self::assertSame(['manage_categories', 'edit_posts'], $service->queried, 'One query per unique capability.');
 
         $manage = $impact['operations'][0]['impact'];
         self::assertSame(['administrator'], $manage['explicit_allow_roles']);
         self::assertSame(['editor'], $manage['explicit_deny_roles']);
         self::assertSame(['subscriber'], $manage['absent_roles']);
+        self::assertSame('assign_terms', $impact['operations'][3]['operation']);
         self::assertStringContainsString('not final user authorization', implode(' ', $impact['caveats']));
     }
 
-    public function testAuthoredCapabilityMapAndMetaContextCaveatRemainVisible(): void
+    public function testDegradedAndUnavailableImpactsDriveOverallState(): void
     {
-        $environment = new CountingRoleEnvironment([
-            'administrator' => [
-                'name' => 'Administrator',
-                'capabilities' => ['edit_post' => true],
-            ],
+        $service = new FakeRoleImpactService([
+            'a' => ['state' => 'degraded', 'caveats' => ['Role store partially readable.']],
+            'b' => ['state' => 'healthy', 'caveats' => []],
         ]);
-        $model = new TaxonomyRoleImpactReadModel($this->roles($environment));
-        $capabilities = $model->effectiveCapabilities([
-            'capabilities' => [
-                'manage_terms' => 'edit_post',
-                'assign_terms' => 'custom_assign_terms',
-            ],
-        ]);
+        $context = new ExecutionContext(new Principal(1), 1);
+        $model = new TaxonomyRoleImpactReadModel($service);
 
-        self::assertSame('edit_post', $capabilities['manage_terms']);
-        self::assertSame('manage_categories', $capabilities['edit_terms']);
-        self::assertSame('custom_assign_terms', $capabilities['assign_terms']);
+        $degraded = $model->forCapabilities(['manage_terms' => 'a', 'assign_terms' => 'b'], $context);
+        self::assertSame('degraded', $degraded['state']);
+        self::assertContains('Role store partially readable.', $degraded['caveats']);
 
-        $impact = $model->forCapabilities($capabilities, new ExecutionContext(new Principal(8), 1));
-        self::assertTrue($impact['operations'][0]['impact']['context_required']);
-        self::assertSame('contextual_meta', $impact['operations'][0]['impact']['classification']);
+        $service->impacts['b'] = ['state' => 'unavailable'];
+        $unavailable = (new TaxonomyRoleImpactReadModel($service))
+            ->forCapabilities(['manage_terms' => 'a', 'assign_terms' => 'b'], $context);
+        self::assertSame('unavailable', $unavailable['state']);
     }
 
-    public function testUnavailableSurface30TruthFailsVisibleWithoutPrivateFallback(): void
+    public function testWithoutServiceOrContextReportsUnavailableWithoutFallback(): void
     {
-        $environment = new CountingRoleEnvironment([], available: false);
-        $impact = (new TaxonomyRoleImpactReadModel($this->roles($environment)))->forCapabilities(
-            ['manage_terms' => 'manage_categories'],
-            new ExecutionContext(new Principal(8), 1),
-        );
+        $capabilities = ['manage_terms' => 'manage_categories', 'assign_terms' => 'edit_posts'];
 
-        self::assertSame('unavailable', $impact['state']);
-        self::assertSame([], $impact['operations'][0]['impact']['explicit_allow_roles']);
-        self::assertSame([], $impact['operations'][0]['impact']['explicit_deny_roles']);
-        self::assertSame([], $impact['operations'][0]['impact']['absent_roles']);
+        foreach ([
+            (new TaxonomyRoleImpactReadModel())->forCapabilities($capabilities, new ExecutionContext(new Principal(1), 1)),
+            (new TaxonomyRoleImpactReadModel(new FakeRoleImpactService([])))->forCapabilities($capabilities),
+        ] as $impact) {
+            self::assertSame('unavailable', $impact['state']);
+            self::assertCount(2, $impact['operations']);
+            self::assertSame('unavailable', $impact['operations'][0]['impact']['state']);
+            self::assertSame('manage_categories', $impact['operations'][0]['impact']['capability']);
+            self::assertSame([], $impact['operations'][1]['impact']['explicit_allow_roles']);
+            self::assertStringContainsString('does not fall back', implode(' ', $impact['caveats']));
+        }
     }
 
-    public function testMissingCanonicalServiceFailsVisibleWithoutWordPressFallback(): void
+    public function testEffectiveCapabilitiesUseDefaultsAndTrimmedAuthoredOverrides(): void
     {
-        $impact = (new TaxonomyRoleImpactReadModel())->forCapabilities(
-            ['manage_terms' => 'manage_categories'],
-            new ExecutionContext(new Principal(8), 1),
-        );
+        $model = new TaxonomyRoleImpactReadModel();
 
-        self::assertSame('unavailable', $impact['state']);
-        self::assertSame('manage_categories', $impact['operations'][0]['capability']);
-        self::assertSame([], $impact['operations'][0]['impact']['explicit_allow_roles']);
-        self::assertStringContainsString(
-            'does not fall back to direct WordPress role-store inspection',
-            implode(' ', $impact['caveats']),
-        );
-    }
+        self::assertSame([
+            'manage_terms' => 'manage_categories',
+            'edit_terms' => 'manage_categories',
+            'delete_terms' => 'manage_categories',
+            'assign_terms' => 'edit_posts',
+        ], $model->effectiveCapabilities([]));
 
-    private function roles(RoleRuntimeEnvironmentInterface $environment): RolesReadService
-    {
-        $checker = new class implements CapabilityCheckerInterface {
-            public function can(ExecutionContext $context, string $capability): bool
-            {
-                return true;
-            }
-        };
+        $effective = $model->effectiveCapabilities(['capabilities' => [
+            'manage_terms' => '  manage_genres ',
+            'edit_terms' => '   ',
+            'unknown' => 'ignored',
+        ]]);
+        self::assertSame('manage_genres', $effective['manage_terms']);
+        self::assertSame('manage_categories', $effective['edit_terms']);
+        self::assertArrayNotHasKey('unknown', $effective);
 
-        return new RolesReadService(new PolicyEngine($checker), $environment);
+        self::assertSame('manage_categories', $model->effectiveCapabilities(['capabilities' => ['x', 'y']])['manage_terms']);
     }
 }
 
-final class CountingRoleEnvironment implements RoleRuntimeEnvironmentInterface
+final class FakeRoleImpactService implements RoleImpactReadServiceInterface
 {
-    public int $readCount = 0;
+    /** @var list<string> */
+    public array $queried = [];
 
-    /** @param array<string,array{name:string,capabilities:array<string,bool>}> $roles */
-    public function __construct(
-        private readonly array $roles,
-        private readonly bool $available = true,
-    ) {}
-
-    public function available(): bool
+    /** @param array<string,array<string,mixed>> $impacts */
+    public function __construct(public array $impacts)
     {
-        return $this->available;
     }
 
-    public function siteExists(int $siteId): bool
+    public function capabilityImpact(string $capability, ExecutionContext $context): array
     {
-        return $siteId === 1;
-    }
-
-    public function networkIdForSite(int $siteId): ?int
-    {
-        return $siteId === 1 ? 1 : null;
-    }
-
-    public function isMultisite(): bool
-    {
-        return false;
-    }
-
-    public function rolesForSite(int $siteId): array
-    {
-        $this->readCount++;
-        return $this->roles;
+        $this->queried[] = $capability;
+        return $this->impacts[$capability] ?? ['state' => 'unavailable'];
     }
 }

@@ -47,6 +47,6 @@ final class HostLockTest extends TestCase
     {
         $builder = (string) file_get_contents(dirname(__DIR__, 3) . '/tools/release/build-free-pro-distributables.php');
         self::assertStringContainsString("assertNoServerCode(\$freeStage, 'Free');", $builder);
-        self::assertStringContainsString("assertNoServerCode(\$proStage, 'Pro');", $builder);
+        // The Pro ZIP builder (and its guard) lives in Vertex-Systems-Network/wpessential-pro.
     }
 }

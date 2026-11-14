@@ -190,7 +190,7 @@ jobs:
           npm run build:admin
           diff -ru /tmp/wpessential-admin-build-first assets/admin
 
-          for entry in main taxonomy fields query columns-runtime; do
+          for entry in main taxonomy ui; do
             test -s "assets/admin/${entry}.js"
             test -s "assets/admin/${entry}.css"
             test -s "assets/admin/${entry}.asset.php"

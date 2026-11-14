@@ -39,7 +39,6 @@ final class AbilityNameCollisionTest extends TestCase
                 $moduleNames = array_merge($moduleNames, $matches[1]);
             }
         }
-        self::assertContains('wpessential/settings/get', $moduleNames, 'the scan must see Pro module ability names');
         self::assertSame([], array_values(array_intersect($framework, $moduleNames)));
     }
 }

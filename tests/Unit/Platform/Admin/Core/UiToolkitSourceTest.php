@@ -22,10 +22,6 @@ final class UiToolkitSourceTest extends TestCase
         foreach (
             [
                 'Taxonomies/TaxonomyAdminController.php',
-                'Fields/FieldAdminController.php',
-                'Relations/RelationAdminController.php',
-                'Query/QueryAdminController.php',
-                'AdminColumns/AdminColumnsAdminController.php',
             ] as $controller
         ) {
             $source = file_get_contents($root . '/frameworks/Modules/' . $controller);
