@@ -71,6 +71,8 @@ final class LicenseService {
 			'expires'     => is_string( $stored['expires'] ?? null ) ? $stored['expires'] : '',
 			'plan'        => is_string( $stored['plan'] ?? null ) ? $stored['plan'] : '',
 			'checked'     => (int) ( $stored['checked'] ?? 0 ),
+			'verified'    => (int) ( $stored['verified'] ?? 0 ),
+			'error'       => is_string( $stored['error'] ?? null ) ? $stored['error'] : '',
 			'message'     => is_string( $stored['message'] ?? null ) ? $stored['message'] : '',
 			'pro'         => ! empty( $stored['pro'] ),
 			'white_label' => ! empty( $stored['white_label'] ),
@@ -138,8 +140,10 @@ final class LicenseService {
 			array_merge(
 				$result,
 				[
-					'key'     => $key,
-					'checked' => time(),
+					'key'      => $key,
+					'checked'  => time(),
+					'verified' => time(),
+					'error'    => '',
 				]
 			),
 			false
@@ -174,9 +178,12 @@ final class LicenseService {
 			if ( $result->get_error_code() !== 'wpe_http' ) {
 				$data['status']  = 'invalid';
 				$data['message'] = $result->get_error_message();
+				$data['error']   = (string) $result->get_error_code();
 			}
 		} else {
-			$data = array_merge( $data, $result );
+			$data             = array_merge( $data, $result );
+			$data['verified'] = time();
+			$data['error']    = '';
 		}
 		$data['checked'] = time();
 		update_option( self::OPTION, $data, false );
