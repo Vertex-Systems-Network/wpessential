@@ -321,6 +321,17 @@ class Admin {
 		echo '<tr><th>' . esc_html__( 'Free staging sites', 'wpessential-server' ) . '</th><td><label><input type="checkbox" name="free_staging" value="1"' . checked( $s['free_staging'], 1, false ) . '> ' . esc_html__( 'Do not count localhost, *.local, *.test and staging.* domains against the website limit.', 'wpessential-server' ) . '</label></td></tr>';
 		echo '<tr><th>' . esc_html__( 'Live demos', 'wpessential-server' ) . '</th><td><label><input type="checkbox" name="playground" value="1"' . checked( $s['playground'], 1, false ) . '> ' . esc_html__( 'Open demos in WordPress Playground (runs in the visitor\'s browser, no demo sites to host).', 'wpessential-server' ) . '</label>';
 		echo '<p class="description">' . ( is_readable( Playground::theme_path() ) ? esc_html( sprintf( /* translators: %s: size. */ __( 'Theme zip uploaded (%s). Upload a new one after each release:', 'wpessential-server' ), size_format( filesize( Playground::theme_path() ) ) ) ) : esc_html__( 'Upload the theme zip to enable live demos:', 'wpessential-server' ) ) . '</p><p><input type="file" name="wpes_theme_zip" accept=".zip"></p></td></tr>';
+		// Payments.
+		$ls = LemonSqueezy::secrets();
+		echo '<tr><th colspan="2"><h2>' . esc_html__( 'Payments', 'wpessential-server' ) . '</h2><p class="description">' . esc_html__( 'JazzCash, EasyPaisa, Bank Alfalah and Direct bank transfer are WooCommerce payment methods: switch them on or off under WooCommerce → Settings → Payments. Their paid orders create licenses automatically.', 'wpessential-server' ) . '</p></th></tr>';
+		echo '<tr><th>' . esc_html__( 'Bank transfer', 'wpessential-server' ) . '</th><td><label><input type="checkbox" name="bank_grace" value="1"' . checked( $s['bank_grace'], 1, false ) . '> ' . esc_html__( 'Keep the customer\'s license working while you check their transfer for', 'wpessential-server' ) . '</label> <input type="number" min="1" max="30" name="bank_grace_days" value="' . (int) $s['bank_grace_days'] . '" style="width:5em"> ' . esc_html__( 'days', 'wpessential-server' );
+		echo '<p><label><input type="checkbox" name="receipts" value="1"' . checked( $s['receipts'], 1, false ) . '> ' . esc_html__( 'Let customers upload a transfer receipt on their order (JPG, PNG or PDF, up to 5 MB, stored privately).', 'wpessential-server' ) . '</label></p></td></tr>';
+		echo '<tr><th>' . esc_html__( 'Lemon Squeezy (USD, card and PayPal)', 'wpessential-server' ) . '</th><td><label><input type="checkbox" name="ls_enabled" value="1"' . checked( $s['ls_enabled'], 1, false ) . '> ' . esc_html__( 'Offer card and PayPal checkout for international customers', 'wpessential-server' ) . '</label> <label style="margin-left:1em"><input type="checkbox" name="ls_test" value="1"' . checked( $s['ls_test'], 1, false ) . '> ' . esc_html__( 'Test mode', 'wpessential-server' ) . '</label>';
+		echo '<p><label>' . esc_html__( 'Store ID', 'wpessential-server' ) . ' <input type="text" name="ls_store_id" value="' . esc_attr( (string) $s['ls_store_id'] ) . '" class="regular-text"></label></p>';
+		echo '<p><label>' . esc_html__( 'API key', 'wpessential-server' ) . ' <input type="password" name="ls_api_key" value="" autocomplete="new-password" class="regular-text" placeholder="' . esc_attr( '' !== $ls['api_key'] ? __( 'Saved. Type a new one to replace it.', 'wpessential-server' ) : '' ) . '"></label></p>';
+		echo '<p><label>' . esc_html__( 'Webhook signing secret', 'wpessential-server' ) . ' <input type="password" name="ls_secret" value="" autocomplete="new-password" class="regular-text" placeholder="' . esc_attr( '' !== $ls['secret'] ? __( 'Saved. Type a new one to replace it.', 'wpessential-server' ) : '' ) . '"></label></p>';
+		echo '<p class="description">' . esc_html__( 'Webhook URL (events: order_created, order_refunded, subscription_created, subscription_updated, subscription_payment_success, subscription_cancelled, subscription_resumed, subscription_expired):', 'wpessential-server' ) . ' <code>' . esc_html( rest_url( Api::NS . '/lemonsqueezy' ) ) . '</code></p>';
+		echo '<p class="description">' . esc_html__( 'Put each plan\'s Lemon Squeezy variant ID on its WooCommerce product. Status:', 'wpessential-server' ) . ' <strong>' . esc_html( LemonSqueezy::enabled() ? __( 'ready', 'wpessential-server' ) : __( 'off or incomplete', 'wpessential-server' ) ) . '</strong></p></td></tr>';
 		echo '<tr><th>' . esc_html__( 'Theme endpoint', 'wpessential-server' ) . '</th><td><code>' . esc_html( rest_url( Api::NS . '/license' ) ) . '</code><p class="description">' . esc_html__( 'Use this as the license endpoint and the demos manifest URL below in the theme.', 'wpessential-server' ) . '</p><code>' . esc_html( rest_url( Api::NS . '/demos' ) ) . '</code></td></tr>';
 		echo '</table>';
 		submit_button();
@@ -544,8 +555,27 @@ class Admin {
 		foreach ( array( 'grace_days', 'remind_days', 'token_days', 'download_mins', 'event_days' ) as $key ) {
 			$out[ $key ] = isset( $_POST[ $key ] ) ? max( 1, (int) $_POST[ $key ] ) : Plugin::settings( $key );
 		}
-		$out['free_staging'] = empty( $_POST['free_staging'] ) ? 0 : 1;
-		$out['playground']   = empty( $_POST['playground'] ) ? 0 : 1;
+		$out['free_staging']    = empty( $_POST['free_staging'] ) ? 0 : 1;
+		$out['playground']      = empty( $_POST['playground'] ) ? 0 : 1;
+		$out['bank_grace']      = empty( $_POST['bank_grace'] ) ? 0 : 1;
+		$out['bank_grace_days'] = isset( $_POST['bank_grace_days'] ) ? min( 30, max( 1, (int) $_POST['bank_grace_days'] ) ) : 5;
+		$out['receipts']        = empty( $_POST['receipts'] ) ? 0 : 1;
+		$out['ls_enabled']      = empty( $_POST['ls_enabled'] ) ? 0 : 1;
+		$out['ls_test']         = empty( $_POST['ls_test'] ) ? 0 : 1;
+		$out['ls_store_id']     = isset( $_POST['ls_store_id'] ) ? preg_replace( '/[^0-9]/', '', sanitize_text_field( wp_unslash( $_POST['ls_store_id'] ) ) ) : '';
+		// Secrets: an empty field keeps the saved value.
+		$secrets = LemonSqueezy::secrets();
+		$fields  = array(
+			'ls_api_key' => 'api_key',
+			'ls_secret'  => 'secret',
+		);
+		foreach ( $fields as $field => $key ) {
+			$value = isset( $_POST[ $field ] ) ? trim( sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) ) : '';
+			if ( '' !== $value ) {
+				$secrets[ $key ] = $value;
+			}
+		}
+		update_option( LemonSqueezy::SECRETS, $secrets, false );
 		if ( ! empty( $_FILES['wpes_theme_zip']['tmp_name'] ) && '.zip' === strtolower( substr( sanitize_file_name( wp_unslash( $_FILES['wpes_theme_zip']['name'] ?? '' ) ), -4 ) ) ) {
 			move_uploaded_file( $_FILES['wpes_theme_zip']['tmp_name'], Playground::theme_path() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,Generic.PHP.ForbiddenFunctions.Found -- Uploaded zip moved to the private folder.
 		}

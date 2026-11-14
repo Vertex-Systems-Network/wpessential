@@ -328,7 +328,11 @@ final class Account {
 	}
 
 	/** Checkout URL on wpessential.org for buy / renew / upgrade. */
-	public function checkout( string $plan, int $licenseId = 0, string $mode = 'buy' ): string|WP_Error {
+	/**
+	 * Checkout link. Channel "local" is the licence server's own checkout (PKR: JazzCash,
+	 * EasyPaisa, Bank Alfalah, bank transfer); "international" is Lemon Squeezy (USD: card, PayPal).
+	 */
+	public function checkout( string $plan, int $licenseId = 0, string $mode = 'buy', string $channel = 'local' ): string|WP_Error {
 		$data = $this->request(
 			'POST',
 			'/account/checkout',
@@ -336,6 +340,7 @@ final class Account {
 				'plan'       => $plan,
 				'license_id' => $licenseId,
 				'mode'       => in_array( $mode, [ 'buy', 'renew', 'upgrade' ], true ) ? $mode : 'buy',
+				'channel'    => $channel === 'international' ? 'international' : 'local',
 			]
 		);
 		if ( $data instanceof WP_Error ) {
@@ -346,10 +351,24 @@ final class Account {
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		$api  = wp_parse_url( $this->api(), PHP_URL_HOST );
 
-		// Only follow checkout links that stay on the account server's own host.
-		return $url !== '' && is_string( $host ) && $host === $api
+		return $url !== '' && self::trustedCheckoutHost( $host, $api, str_starts_with( $url, 'https://' ) )
 			? $url
 			: new WP_Error( 'wpe_checkout', __( 'The checkout link could not be verified.', 'wpessential' ) );
+	}
+
+	/**
+	 * Only follow checkout links on the account server's own host, or Lemon Squeezy's hosted
+	 * checkout over HTTPS.
+	 */
+	public static function trustedCheckoutHost( mixed $host, mixed $api, bool $https ): bool {
+		if ( ! is_string( $host ) || $host === '' ) {
+			return false;
+		}
+		if ( is_string( $api ) && $host === $api ) {
+			return true;
+		}
+
+		return $https && ( $host === 'lemonsqueezy.com' || str_ends_with( $host, '.lemonsqueezy.com' ) );
 	}
 
 	/** @return array<string,mixed>|WP_Error */

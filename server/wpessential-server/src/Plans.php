@@ -233,6 +233,8 @@ class Plans {
 			'sites'       => (int) $product->get_meta( '_wpes_sites' ),
 			'white_label' => (bool) $product->get_meta( '_wpes_white_label' ),
 			'pro'         => (bool) $product->get_meta( '_wpes_pro' ),
+			'usd_price'   => (string) $product->get_meta( '_wpes_usd_price' ),
+			'card_paypal' => '' !== (string) $product->get_meta( '_wpes_ls_variant' ),
 			'features'    => $defaults['features'],
 		);
 	}
@@ -312,6 +314,22 @@ class Plans {
 				'value'       => get_post_meta( $post->ID, '_wpes_white_label', true ),
 			)
 		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_wpes_ls_variant',
+				'label'       => __( 'Lemon Squeezy variant ID', 'wpessential-server' ),
+				'description' => __( 'International (USD) card and PayPal checkout for this plan. Leave empty to sell it only through WooCommerce (PKR gateways and bank transfer).', 'wpessential-server' ),
+				'value'       => get_post_meta( $post->ID, '_wpes_ls_variant', true ),
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_wpes_usd_price',
+				'label'       => __( 'International price (USD, shown to customers)', 'wpessential-server' ),
+				'description' => __( 'The amount itself is set on the Lemon Squeezy variant; this is only for pricing tables.', 'wpessential-server' ),
+				'value'       => get_post_meta( $post->ID, '_wpes_usd_price', true ),
+			)
+		);
 		echo '</div>';
 	}
 
@@ -329,6 +347,8 @@ class Plans {
 		update_post_meta( $post_id, '_wpes_sites', isset( $_POST['_wpes_sites'] ) ? max( 0, (int) $_POST['_wpes_sites'] ) : 1 );
 		update_post_meta( $post_id, '_wpes_pro', empty( $_POST['_wpes_pro'] ) ? 0 : 1 );
 		update_post_meta( $post_id, '_wpes_white_label', empty( $_POST['_wpes_white_label'] ) ? 0 : 1 );
+		update_post_meta( $post_id, '_wpes_ls_variant', isset( $_POST['_wpes_ls_variant'] ) ? preg_replace( '/[^0-9]/', '', sanitize_text_field( wp_unslash( $_POST['_wpes_ls_variant'] ) ) ) : '' );
+		update_post_meta( $post_id, '_wpes_usd_price', isset( $_POST['_wpes_usd_price'] ) ? (string) max( 0, (float) sanitize_text_field( wp_unslash( $_POST['_wpes_usd_price'] ) ) ) : '' );
 		// phpcs:enable
 	}
 
