@@ -51,6 +51,22 @@ final class PremiumMutationGateTest extends TestCase
         self::assertTrue($registry->authorize('wpessential/pro-mod/write', $context)->allowed);
     }
 
+    public function testMissingCapabilityIsReportedBeforeReadOnly(): void
+    {
+        [$kernel, $registry] = $this->kernel(false);
+        $kernel->boot();
+        $calls = 0;
+        $registry->setPremiumMutationGate(static function () use (&$calls): bool {
+            $calls++;
+            return false;
+        });
+
+        $decision = $registry->authorize('wpessential/pro-mod/write', new ExecutionContext(new Principal(1), 1));
+        self::assertFalse($decision->allowed);
+        self::assertNotSame('premium_read_only', $decision->reason);
+        self::assertSame(0, $calls);
+    }
+
     public function testWithoutGateProWritesAreUnchanged(): void
     {
         [$kernel, $registry] = $this->kernel();
@@ -60,13 +76,17 @@ final class PremiumMutationGateTest extends TestCase
     }
 
     /** @return array{Kernel, AbilityRegistry} */
-    private function kernel(): array
+    private function kernel(bool $can = true): array
     {
-        $capabilities = new class implements CapabilityCheckerInterface {
+        $capabilities = new class ($can) implements CapabilityCheckerInterface {
+            public function __construct(private bool $can)
+            {
+            }
+
             public function can(ExecutionContext $context, string $capability): bool
             {
                 unset($context, $capability);
-                return true;
+                return $this->can;
             }
         };
         $registry = new AbilityRegistry(new PolicyEngine($capabilities));

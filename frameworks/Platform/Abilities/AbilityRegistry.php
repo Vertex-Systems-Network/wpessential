@@ -96,14 +96,6 @@ final class AbilityRegistry implements ModuleEditionScopeInterface {
 			return PolicyDecision::deny( 'channel_not_exposed' );
 		}
 
-		if ( $descriptor->mutates
-			&& $entry['edition'] === 'pro'
-			&& $this->premiumMutationGate !== null
-			&& ( $this->premiumMutationGate )() !== true
-		) {
-			return PolicyDecision::deny( 'premium_read_only' );
-		}
-
 		$decision = $this->policy->authorize(
 			new AuthorizationRequest(
 				context: $context,
@@ -113,6 +105,15 @@ final class AbilityRegistry implements ModuleEditionScopeInterface {
 		);
 		if ( ! $decision->allowed ) {
 			return $decision;
+		}
+
+		// Checked after the caller's own permission, so a denial never hides a missing capability.
+		if ( $descriptor->mutates
+			&& $entry['edition'] === 'pro'
+			&& $this->premiumMutationGate !== null
+			&& ( $this->premiumMutationGate )() !== true
+		) {
+			return PolicyDecision::deny( 'premium_read_only' );
 		}
 
 		$handler = $entry['handler'];
