@@ -60,7 +60,7 @@ final class LicenseService {
 		return new $class( $config );
 	}
 
-	/** @return array{key:string,status:string,expires:string,plan:string,checked:int,message:string,pro:bool,white_label:bool,sites_used:int,sites_limit:int} */
+	/** @return array{key:string,status:string,expires:string,plan:string,checked:int,verified:int,error:string,message:string,pro:bool,white_label:bool,sites_used:int,sites_limit:int} */
 	public function data(): array {
 		$stored = function_exists( 'get_option' ) ? get_option( self::OPTION, [] ) : [];
 		$stored = is_array( $stored ) ? $stored : [];
@@ -71,6 +71,8 @@ final class LicenseService {
 			'expires'     => is_string( $stored['expires'] ?? null ) ? $stored['expires'] : '',
 			'plan'        => is_string( $stored['plan'] ?? null ) ? $stored['plan'] : '',
 			'checked'     => (int) ( $stored['checked'] ?? 0 ),
+			'verified'    => (int) ( $stored['verified'] ?? 0 ),
+			'error'       => is_string( $stored['error'] ?? null ) ? $stored['error'] : '',
 			'message'     => is_string( $stored['message'] ?? null ) ? $stored['message'] : '',
 			'pro'         => ! empty( $stored['pro'] ),
 			'white_label' => ! empty( $stored['white_label'] ),
@@ -138,8 +140,10 @@ final class LicenseService {
 			array_merge(
 				$result,
 				[
-					'key'     => $key,
-					'checked' => time(),
+					'key'      => $key,
+					'checked'  => time(),
+					'verified' => time(),
+					'error'    => '',
 				]
 			),
 			false
@@ -169,14 +173,21 @@ final class LicenseService {
 			return;
 		}
 
+		if ( $data['verified'] === 0 ) {
+			// Licence stored before `verified` existed: its last check is the last known success.
+			$data['verified'] = $data['checked'];
+		}
 		$result = $this->adapter()->check( $data['key'], self::domain() );
 		if ( $result instanceof WP_Error ) {
 			if ( $result->get_error_code() !== 'wpe_http' ) {
 				$data['status']  = 'invalid';
 				$data['message'] = $result->get_error_message();
+				$data['error']   = (string) $result->get_error_code();
 			}
 		} else {
-			$data = array_merge( $data, $result );
+			$data             = array_merge( $data, $result );
+			$data['verified'] = time();
+			$data['error']    = '';
 		}
 		$data['checked'] = time();
 		update_option( self::OPTION, $data, false );
