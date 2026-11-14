@@ -13,15 +13,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 use RuntimeException;
 use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\InputAuthorizingAbilityHandlerInterface;
+use WPEssential\Contracts\ModuleEditionScopeInterface;
 use WPEssential\Platform\Auth\AuthorizationRequest;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyDecision;
 use WPEssential\Platform\Auth\PolicyEngine;
 
-final class AbilityRegistry {
+final class AbilityRegistry implements ModuleEditionScopeInterface {
 
-	/** @var array<string, array{descriptor: AbilityDescriptor, handler: AbilityHandlerInterface}> */
+	/** @var array<string, array{descriptor: AbilityDescriptor, handler: AbilityHandlerInterface, edition: string}> */
 	private array $abilities = [];
+
+	/** @var string Edition of the module currently registering abilities. */
+	private string $edition = 'free';
+
+	/**
+	 * Answers whether premium (pro) abilities may change data.
+	 *
+	 * @var (callable(): bool)|null
+	 */
+	private $premiumMutationGate = null;
 
 	public function __construct( private readonly PolicyEngine $policy ) {}
 
@@ -32,7 +43,31 @@ final class AbilityRegistry {
 		$this->abilities[ $descriptor->name ] = [
 			'descriptor' => $descriptor,
 			'handler'    => $handler,
+			'edition'    => $this->edition,
 		];
+	}
+
+	public function enterEdition( string $edition ): void {
+		$this->edition = $edition === 'free' ? 'free' : 'pro';
+	}
+
+	public function leaveEdition(): void {
+		$this->edition = 'free';
+	}
+
+	/** Edition ("free" or "pro") of the module that registered the ability. */
+	public function edition( string $name ): ?string {
+		return $this->abilities[ $name ]['edition'] ?? null;
+	}
+
+	/**
+	 * Set by the Pro add-on: when the gate answers false, mutating pro abilities are denied
+	 * (read-only). Free abilities are never gated.
+	 *
+	 * @param callable(): bool $gate
+	 */
+	public function setPremiumMutationGate( callable $gate ): void {
+		$this->premiumMutationGate = $gate;
 	}
 
 	public function descriptor( string $name ): ?AbilityDescriptor {
@@ -70,6 +105,15 @@ final class AbilityRegistry {
 		);
 		if ( ! $decision->allowed ) {
 			return $decision;
+		}
+
+		// Checked after the caller's own permission, so a denial never hides a missing capability.
+		if ( $descriptor->mutates
+			&& $entry['edition'] === 'pro'
+			&& $this->premiumMutationGate !== null
+			&& ( $this->premiumMutationGate )() !== true
+		) {
+			return PolicyDecision::deny( 'premium_read_only' );
 		}
 
 		$handler = $entry['handler'];
