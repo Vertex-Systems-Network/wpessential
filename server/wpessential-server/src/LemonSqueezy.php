@@ -150,7 +150,9 @@ class LemonSqueezy {
 						),
 					),
 					'product_options' => array(
-						'redirect_url' => wc_get_account_endpoint_url( MyAccount::ENDPOINT ),
+						'redirect_url'     => wc_get_account_endpoint_url( MyAccount::ENDPOINT ),
+						// Only this plan's variant can be bought from this checkout.
+						'enabled_variants' => array( (int) $variant ),
 					),
 					'test_mode'       => (bool) Plugin::settings( 'ls_test' ),
 				),
@@ -194,7 +196,24 @@ class LemonSqueezy {
 	// ---------------------------------------------------------------- webhooks
 
 	/**
+	 * Whether a paid order bought the variant of the plan named in its custom data (pure,
+	 * unit-tested). Custom data comes from the buyer's checkout link, so the plan is trusted
+	 * only when the variant actually paid for is that plan's variant.
+	 *
+	 * @param string $paid_variant  first_order_item.variant_id.
+	 * @param string $plan_variant  The plan product's _wpes_ls_variant.
+	 * @return bool
+	 */
+	public static function variant_matches( $paid_variant, $plan_variant ) {
+		return '' !== (string) $plan_variant && (int) $plan_variant > 0 && (int) $plan_variant === (int) $paid_variant;
+	}
+
+	/**
 	 * Webhook endpoint (POST /lemonsqueezy).
+	 *
+	 * Each delivery is claimed atomically before any side effect (so concurrent duplicates do
+	 * nothing). An event whose order or subscription is not linked yet is parked and replayed
+	 * as soon as the link exists.
 	 *
 	 * @param \WP_REST_Request $request Request.
 	 * @return \WP_REST_Response
@@ -208,45 +227,157 @@ class LemonSqueezy {
 		if ( ! is_array( $payload ) ) {
 			return new \WP_REST_Response( array( 'success' => false ), 400 );
 		}
-		$seen = 'wpes_ls_seen_' . self::event_key( $payload );
-		if ( get_option( $seen ) ) {
-			return new \WP_REST_Response( array( 'success' => true, 'duplicate' => true ), 200 ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound -- Short response.
+		$claim = 'wpes_ls_seen_' . self::event_key( $payload );
+		if ( ! add_option( $claim, time(), '', 'no' ) ) {
+			return new \WP_REST_Response( array( 'success' => true ), 200 ); // Already handled (or being handled).
 		}
+		Events::begin( 'lemonsqueezy' );
+		try {
+			self::dispatch( $payload );
+		} catch ( \Throwable $e ) {
+			delete_option( $claim ); // Let Lemon Squeezy retry.
+			Events::error( 'ls.webhook_exception', $e->getMessage(), array( 'event' => (string) ( $payload['meta']['event_name'] ?? '' ) ) );
+			return new \WP_REST_Response( array( 'success' => false ), 500 );
+		}
+		return new \WP_REST_Response( array( 'success' => true ), 200 );
+	}
+
+	/**
+	 * Route one event.
+	 *
+	 * @param array $payload Decoded body.
+	 */
+	private static function dispatch( array $payload ) {
 		$event = (string) ( $payload['meta']['event_name'] ?? '' );
 		$data  = is_array( $payload['data'] ?? null ) ? $payload['data'] : array();
 		$attrs = is_array( $data['attributes'] ?? null ) ? $data['attributes'] : array();
 		$id    = (string) ( $data['id'] ?? '' );
-		Events::begin( 'lemonsqueezy' );
-		try {
-			switch ( $event ) {
-				case 'order_created':
-					self::order_created( $id, $attrs, $payload['meta']['custom_data'] ?? array() );
-					break;
-				case 'subscription_created':
-					self::link_subscription( $id, (string) ( $attrs['order_id'] ?? '' ) );
-					self::remember_portal( $id, $attrs );
-					break;
-				case 'subscription_updated':
-					self::remember_portal( $id, $attrs );
-					break;
-				case 'subscription_payment_success':
-					self::renewal( (string) ( $attrs['subscription_id'] ?? '' ), (string) ( $attrs['billing_reason'] ?? '' ), $id );
-					break;
-				case 'subscription_cancelled':
-				case 'subscription_resumed':
-				case 'subscription_expired':
-					self::subscription_state( $id, $event );
-					break;
-				case 'order_refunded':
-					self::refunded( $id );
-					break;
-			}
-		} catch ( \Throwable $e ) {
-			Events::error( 'ls.webhook_exception', $e->getMessage(), array( 'event' => $event ) );
-			return new \WP_REST_Response( array( 'success' => false ), 500 );
+		switch ( $event ) {
+			case 'order_created':
+				self::order_created( $id, $attrs, $payload['meta']['custom_data'] ?? array() );
+				break;
+			case 'subscription_created':
+				self::remember_portal( $id, $attrs );
+				self::link_subscription( $id, (string) ( $attrs['order_id'] ?? '' ) );
+				break;
+			case 'subscription_updated':
+				self::remember_portal( $id, $attrs );
+				break;
+			case 'subscription_payment_success':
+				$sub = (string) ( $attrs['subscription_id'] ?? '' );
+				if ( ! self::sub_license( $sub ) ) {
+					self::park( 'sub', $sub, $payload );
+					return;
+				}
+				self::renewal( $sub, (string) ( $attrs['billing_reason'] ?? '' ), $id );
+				break;
+			case 'subscription_cancelled':
+			case 'subscription_resumed':
+			case 'subscription_expired':
+				if ( ! self::sub_license( $id ) ) {
+					self::park( 'sub', $id, $payload );
+					return;
+				}
+				self::subscription_state( $id, $event );
+				break;
+			case 'order_refunded':
+				if ( ! (int) get_option( 'wpes_ls_order_' . $id, 0 ) ) {
+					self::park( 'order', $id, $payload );
+					return;
+				}
+				self::refunded( $id, $attrs );
+				break;
 		}
-		update_option( $seen, time(), false );
-		return new \WP_REST_Response( array( 'success' => true ), 200 );
+	}
+
+	/**
+	 * Keep an event until its order or subscription is linked to a license.
+	 *
+	 * @param string $kind    order|sub.
+	 * @param string $id      Order or subscription id.
+	 * @param array  $payload Event.
+	 */
+	private static function park( $kind, $id, array $payload ) {
+		$key     = 'wpes_ls_wait_' . $kind . '_' . $id;
+		$queue   = (array) get_option( $key, array() );
+		$queue[] = $payload;
+		update_option( $key, $queue, false );
+		Events::log( 'ls.parked', sprintf( 'Lemon Squeezy %1$s for %2$s %3$s waits for its license.', (string) ( $payload['meta']['event_name'] ?? '' ), $kind, $id ), array() );
+	}
+
+	/**
+	 * Replay parked events once their order or subscription is linked.
+	 *
+	 * @param string $kind order|sub.
+	 * @param string $id   Order or subscription id.
+	 */
+	private static function replay( $kind, $id ) {
+		$key   = 'wpes_ls_wait_' . $kind . '_' . $id;
+		$queue = (array) get_option( $key, array() );
+		delete_option( $key );
+		foreach ( $queue as $payload ) {
+			if ( is_array( $payload ) ) {
+				self::dispatch( $payload );
+			}
+		}
+	}
+
+	/**
+	 * License billed by a subscription (0 none).
+	 *
+	 * @param string $subscription_id Subscription.
+	 * @return int
+	 */
+	private static function sub_license( $subscription_id ) {
+		return '' === (string) $subscription_id ? 0 : (int) get_option( 'wpes_ls_sub_license_' . $subscription_id, 0 );
+	}
+
+	/**
+	 * Forget that Lemon Squeezy bills a license (ended, refunded or moved to WooCommerce).
+	 *
+	 * @param int $license_id License.
+	 */
+	public static function unlink( $license_id ) {
+		$sub = (string) get_option( 'wpes_ls_sub_' . (int) $license_id, '' );
+		delete_option( 'wpes_ls_sub_' . (int) $license_id );
+		if ( '' !== $sub ) {
+			delete_option( 'wpes_ls_sub_license_' . $sub );
+			delete_option( 'wpes_ls_portal_' . $sub );
+		}
+	}
+
+	/**
+	 * A WooCommerce payment now bills this license: cancel its Lemon Squeezy subscription so
+	 * the customer is not charged twice, and stop treating it as Lemon Squeezy's.
+	 *
+	 * @param array $license License.
+	 * @return bool Whether the subscription was cancelled (or there was none).
+	 */
+	public static function detach( $license ) {
+		$sub = (string) get_option( 'wpes_ls_sub_' . (int) $license['id'], '' );
+		if ( '' === $sub ) {
+			return true;
+		}
+		$response = wp_remote_request(
+			self::API . '/subscriptions/' . rawurlencode( $sub ),
+			array(
+				'method'  => 'DELETE',
+				'timeout' => 20,
+				'headers' => array(
+					'Accept'        => 'application/vnd.api+json',
+					'Content-Type'  => 'application/vnd.api+json',
+					'Authorization' => 'Bearer ' . self::secrets()['api_key'],
+				),
+			)
+		);
+		$ok       = ! is_wp_error( $response ) && (int) wp_remote_retrieve_response_code( $response ) < 300;
+		self::unlink( (int) $license['id'] );
+		if ( $ok ) {
+			Events::log( 'ls.detached', sprintf( 'License #%1$d is now billed by WooCommerce; Lemon Squeezy subscription %2$s cancelled.', (int) $license['id'], $sub ), array( 'license_id' => (int) $license['id'] ) );
+		} else {
+			Events::error( 'ls.detach_failed', sprintf( 'License #%1$d moved to WooCommerce but Lemon Squeezy subscription %2$s could not be cancelled. Cancel it in Lemon Squeezy.', (int) $license['id'], $sub ), array( 'license_id' => (int) $license['id'] ) );
+		}
+		return $ok;
 	}
 
 	/**
@@ -266,6 +397,11 @@ class LemonSqueezy {
 			Events::error( 'ls.order_unmatched', sprintf( 'Lemon Squeezy order %s has no matching buyer or plan.', $order_id ), array() );
 			return;
 		}
+		$paid_variant = (string) ( $attrs['first_order_item']['variant_id'] ?? '' );
+		if ( ! self::variant_matches( $paid_variant, (string) get_post_meta( (int) $plan['product_id'], '_wpes_ls_variant', true ) ) ) {
+			Events::error( 'ls.variant_mismatch', sprintf( 'Lemon Squeezy order %1$s paid for variant %2$s, which is not the variant of plan %3$s. No license was changed; check the order.', $order_id, $paid_variant, $plan['key'] ), array( 'user_id' => $intent['user'] ) );
+			return;
+		}
 		foreach ( array( 'renew', 'upgrade' ) as $k ) {
 			$row = $intent[ $k ] ? Licenses::get( $intent[ $k ] ) : null;
 			if ( $intent[ $k ] && ( ! $row || (int) $row['user_id'] !== $intent['user'] ) ) {
@@ -273,12 +409,12 @@ class LemonSqueezy {
 			}
 		}
 		$result = Fulfilment::apply( $intent['user'], $plan, $intent['renew'], $intent['upgrade'], 0, 'ls:' . $order_id );
-		$id     = (int) $result['license']['id'];
-		update_option( 'wpes_ls_order_' . $order_id, $id, false );
+		update_option( 'wpes_ls_order_' . $order_id, (int) $result['license']['id'], false );
 		$pending_sub = (string) get_option( 'wpes_ls_order_sub_' . $order_id, '' );
 		if ( '' !== $pending_sub ) {
 			self::link_subscription( $pending_sub, $order_id );
 		}
+		self::replay( 'order', $order_id );
 	}
 
 	/**
@@ -296,8 +432,9 @@ class LemonSqueezy {
 		update_option( 'wpes_ls_sub_' . $license_id, $subscription_id, false );
 		update_option( 'wpes_ls_sub_license_' . $subscription_id, $license_id, false );
 		delete_option( 'wpes_ls_order_sub_' . $order_id );
-		// Lemon Squeezy renews it; our cron must not create WooCommerce renewal orders.
+		// Lemon Squeezy renews it; our cron does not create WooCommerce renewal orders for it.
 		Licenses::update( $license_id, array( 'auto_renew' => 1 ) );
+		self::replay( 'sub', $subscription_id );
 	}
 
 	/**
@@ -335,8 +472,8 @@ class LemonSqueezy {
 		if ( 'renewal' !== $reason ) {
 			return; // The first payment is fulfilled by order_created.
 		}
-		$license_id = (int) get_option( 'wpes_ls_sub_license_' . $subscription_id, 0 );
-		$license    = $license_id ? Licenses::get( $license_id ) : null;
+		$license_id = self::sub_license( $subscription_id );
+		$license    = Licenses::get( $license_id );
 		$plan       = $license ? Plans::from_product( (int) $license['product_id'] ) : null;
 		if ( ! $license || ! $plan ) {
 			Events::error( 'ls.renewal_unmatched', sprintf( 'Lemon Squeezy subscription %s has no license.', $subscription_id ), array() );
@@ -352,11 +489,8 @@ class LemonSqueezy {
 	 * @param string $event           Event name.
 	 */
 	private static function subscription_state( $subscription_id, $event ) {
-		$license_id = (int) get_option( 'wpes_ls_sub_license_' . $subscription_id, 0 );
-		if ( ! $license_id ) {
-			return;
-		}
-		$fields = array(
+		$license_id = self::sub_license( $subscription_id );
+		$fields     = array(
 			'subscription_cancelled' => array( 'auto_renew' => 0 ),
 			'subscription_resumed'   => array( 'auto_renew' => 1 ),
 			'subscription_expired'   => array(
@@ -365,17 +499,27 @@ class LemonSqueezy {
 			),
 		);
 		Licenses::update( $license_id, $fields[ $event ] );
+		if ( 'subscription_expired' === $event ) {
+			self::unlink( $license_id ); // The license can be renewed through any channel now.
+		}
 		Events::log( 'ls.' . $event, sprintf( 'Lemon Squeezy %1$s for license #%2$d.', $event, $license_id ), array( 'license_id' => $license_id ) );
 	}
 
 	/**
-	 * Refund: back to the trial if the order upgraded one, else revoke.
+	 * Full refund: back to the trial if the order upgraded one, else revoke. Partial refunds
+	 * change nothing.
 	 *
 	 * @param string $order_id Order.
+	 * @param array  $attrs    Order attributes.
 	 */
-	private static function refunded( $order_id ) {
+	private static function refunded( $order_id, array $attrs ) {
 		$license_id = (int) get_option( 'wpes_ls_order_' . $order_id, 0 );
-		if ( ! $license_id || Trials::restore_after_refund( $license_id, 'ls:' . $order_id ) ) {
+		if ( 'refunded' !== (string) ( $attrs['status'] ?? '' ) ) {
+			Events::log( 'ls.partial_refund', sprintf( 'Lemon Squeezy order %1$s partly refunded; license #%2$d unchanged.', $order_id, $license_id ), array( 'license_id' => $license_id ), 'warning' );
+			return;
+		}
+		self::unlink( $license_id );
+		if ( Trials::restore_after_refund( $license_id, 'ls:' . $order_id ) ) {
 			return;
 		}
 		Licenses::update(

@@ -96,4 +96,21 @@ final class PaymentsTest extends TestCase
         self::assertFalse(Account::trustedCheckoutHost('evil-lemonsqueezy.com', 'wpessential.org', true));
         self::assertFalse(Account::trustedCheckoutHost(null, 'wpessential.org', true));
     }
+
+    public function testOnlyThePlansOwnVariantFulfilsIt(): void
+    {
+        self::assertTrue(LemonSqueezy::variant_matches('123', '123'));
+        self::assertTrue(LemonSqueezy::variant_matches(123, '123'));
+        self::assertFalse(LemonSqueezy::variant_matches('124', '123'), 'A cheaper variant cannot buy this plan.');
+        self::assertFalse(LemonSqueezy::variant_matches('', ''), 'A plan without a variant is not sold there.');
+        self::assertFalse(LemonSqueezy::variant_matches('0', '0'));
+    }
+
+    public function testBankGraceIsGrantedAtMostOncePerSixtyDays(): void
+    {
+        $day = 86400;
+        self::assertTrue(Payments::grace_allowed(0, 1_000_000_000));
+        self::assertFalse(Payments::grace_allowed(1_000_000_000, 1_000_000_000 + 59 * $day));
+        self::assertTrue(Payments::grace_allowed(1_000_000_000, 1_000_000_000 + 60 * $day));
+    }
 }

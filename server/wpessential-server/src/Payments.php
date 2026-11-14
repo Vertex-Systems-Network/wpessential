@@ -27,6 +27,10 @@ class Payments {
 		'pdf'  => 'application/pdf',
 	);
 	const RECEIPT_MAX    = 5242880;
+	const RECEIPT_LIMIT  = 5;
+
+	/** A license gets bank-transfer grace at most once in this period (stops unpaid-order loops). */
+	const GRACE_COOLDOWN = 5184000;
 
 	/**
 	 * Hooks.
@@ -49,7 +53,19 @@ class Payments {
 	 * @return int Unix time.
 	 */
 	public static function pending_until( $license_id ) {
-		return (int) get_option( 'wpes_pending_' . (int) $license_id, 0 );
+		$orders = get_option( 'wpes_pending_' . (int) $license_id, array() );
+		return is_array( $orders ) && $orders ? (int) max( $orders ) : 0;
+	}
+
+	/**
+	 * Whether a license may get bank-transfer grace now (pure, unit-tested).
+	 *
+	 * @param int $last_grant When it last got grace (0 never).
+	 * @param int $now        Now.
+	 * @return bool
+	 */
+	public static function grace_allowed( $last_grant, $now ) {
+		return $last_grant <= 0 || $now - $last_grant >= self::GRACE_COOLDOWN;
 	}
 
 	/**
@@ -94,10 +110,18 @@ class Payments {
 			$upgrade             = (int) $item->get_meta( '_wpes_upgrade' );
 			list( $action, $id ) = Fulfilment::decide( $renew, Trials::is_trial( $renew ? Licenses::get( $renew ) : null ), $upgrade, (bool) $plan['pro'], Trials::active_trial_id( $order->get_customer_id() ) );
 			$license             = 'create' === $action ? null : Licenses::get( $id );
-			if ( $license && (int) $license['user_id'] === (int) $order->get_customer_id() ) {
-				update_option( 'wpes_pending_' . $id, $until, false );
-				$ids[] = $id;
+			if ( ! $license || (int) $license['user_id'] !== (int) $order->get_customer_id() ) {
+				continue;
 			}
+			if ( ! self::grace_allowed( (int) get_option( 'wpes_grace_last_' . $id, 0 ), time() ) ) {
+				$order->add_order_note( __( 'Bank transfer pending. This license already had a waiting period recently, so it is not extended until the payment is confirmed.', 'wpessential-server' ) );
+				continue;
+			}
+			$orders              = (array) get_option( 'wpes_pending_' . $id, array() );
+			$orders[ $order_id ] = $until;
+			update_option( 'wpes_pending_' . $id, $orders, false );
+			update_option( 'wpes_grace_last_' . $id, time(), false );
+			$ids[] = $id;
 		}
 		if ( $ids ) {
 			$order->update_meta_data( '_wpes_pending', $ids );
@@ -118,8 +142,15 @@ class Payments {
 		if ( ! $order ) {
 			return;
 		}
+		// End only this order's grace; another waiting order for the same license keeps its own.
 		foreach ( (array) $order->get_meta( '_wpes_pending' ) as $id ) {
-			self::clear_pending( (int) $id );
+			$orders = (array) get_option( 'wpes_pending_' . (int) $id, array() );
+			unset( $orders[ (int) $order_id ] );
+			if ( $orders ) {
+				update_option( 'wpes_pending_' . (int) $id, $orders, false );
+			} else {
+				delete_option( 'wpes_pending_' . (int) $id );
+			}
 		}
 	}
 
@@ -150,6 +181,12 @@ class Payments {
 	 * @return string
 	 */
 	private static function receipt_dir() {
+		// Outside the web root when the host allows it, so no server setup can serve receipts
+		// directly; otherwise a denied folder in uploads with long random file names.
+		$outside = dirname( untrailingslashit( ABSPATH ) ) . '/wpes-private/receipts';
+		if ( is_dir( $outside ) || wp_mkdir_p( $outside ) ) {
+			return $outside;
+		}
 		$uploads = wp_upload_dir();
 		$dir     = trailingslashit( $uploads['basedir'] ) . 'wpes-receipts';
 		if ( ! is_dir( $dir ) ) {
@@ -191,8 +228,19 @@ class Payments {
 		$order_id = isset( $_POST['order'] ) ? (int) $_POST['order'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked below.
 		check_admin_referer( self::RECEIPT_ACTION . '_' . $order_id );
 		$order = wc_get_order( $order_id );
-		if ( ! Plugin::settings( 'receipts' ) || ! $order || (int) $order->get_customer_id() !== get_current_user_id() || 'bacs' !== $order->get_payment_method() ) {
+		if ( ! Plugin::settings( 'receipts' ) || ! $order || (int) $order->get_customer_id() !== get_current_user_id() || 'bacs' !== $order->get_payment_method() || ! $order->has_status( 'on-hold' ) ) {
 			wp_die( esc_html__( 'Not allowed.', 'wpessential-server' ), '', array( 'response' => 403 ) );
+		}
+		$count = (int) $order->get_meta( '_wpes_receipt_count' );
+		if ( $count >= self::RECEIPT_LIMIT ) {
+			wp_die(
+				esc_html__( 'You have uploaded the most receipts allowed for this order. Contact us if you need to send another.', 'wpessential-server' ),
+				'',
+				array(
+					'response'  => 429,
+					'back_link' => true,
+				)
+			);
 		}
 		$file = $_FILES['receipt'] ?? array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checked below.
 		$tmp  = (string) ( $file['tmp_name'] ?? '' );
@@ -209,13 +257,26 @@ class Payments {
 			);
 		}
 		$ext  = strtolower( pathinfo( sanitize_file_name( (string) $file['name'] ), PATHINFO_EXTENSION ) );
-		$name = 'order-' . $order_id . '-' . wp_generate_password( 12, false ) . '.' . $ext;
-		if ( ! move_uploaded_file( $tmp, self::receipt_dir() . '/' . $name ) ) { // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Validated upload moved to the private folder.
+		$name = 'order-' . $order_id . '-' . wp_generate_password( 32, false ) . '.' . $ext;
+		$dir  = self::receipt_dir();
+		if ( ! move_uploaded_file( $tmp, $dir . '/' . $name ) ) { // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Validated upload moved to the private folder.
 			wp_die( esc_html__( 'The receipt could not be saved. Try again.', 'wpessential-server' ) );
 		}
+		$previous = basename( (string) $order->get_meta( '_wpes_receipt' ) );
+		if ( '' !== $previous && is_file( $dir . '/' . $previous ) ) {
+			wp_delete_file( $dir . '/' . $previous ); // A replacement keeps only the newest receipt.
+		}
 		$order->update_meta_data( '_wpes_receipt', $name );
+		$order->update_meta_data( '_wpes_receipt_count', $count + 1 );
 		$order->save();
-		$view = wp_nonce_url( add_query_arg( array( 'action' => self::RECEIPT_VIEW, 'order' => $order_id ), admin_url( 'admin-post.php' ) ), self::RECEIPT_VIEW . '_' . $order_id ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound -- Short args.
+		// Managers open it by capability (no nonce: the link is made in the customer's session).
+		$view = add_query_arg(
+			array(
+				'action' => self::RECEIPT_VIEW,
+				'order'  => $order_id,
+			),
+			admin_url( 'admin-post.php' )
+		);
 		/* translators: %s: link. */
 		$order->add_order_note( sprintf( __( 'Bank transfer receipt uploaded by the customer: %s', 'wpessential-server' ), $view ) );
 		Events::log( 'payment.receipt_uploaded', sprintf( 'Receipt uploaded for order #%d.', $order_id ), array( 'order_id' => $order_id ) );
@@ -227,11 +288,13 @@ class Payments {
 	 * Show a receipt to shop managers.
 	 */
 	public static function receipt_view() {
-		$order_id = isset( $_GET['order'] ) ? (int) $_GET['order'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked below.
-		check_admin_referer( self::RECEIPT_VIEW . '_' . $order_id );
-		$order = wc_get_order( $order_id );
-		if ( ! current_user_can( 'manage_woocommerce' ) || ! $order ) {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_die( esc_html__( 'Not allowed.', 'wpessential-server' ), '', array( 'response' => 403 ) );
+		}
+		$order_id = isset( $_GET['order'] ) ? (int) $_GET['order'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view for shop managers.
+		$order    = wc_get_order( $order_id );
+		if ( ! $order ) {
+			wp_die( esc_html__( 'No receipt.', 'wpessential-server' ), '', array( 'response' => 404 ) );
 		}
 		$name = basename( (string) $order->get_meta( '_wpes_receipt' ) );
 		$path = self::receipt_dir() . '/' . $name;

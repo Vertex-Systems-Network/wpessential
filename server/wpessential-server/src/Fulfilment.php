@@ -77,6 +77,11 @@ class Fulfilment {
 			Trials::active_trial_id( (int) $user_id )
 		);
 
+		// A WooCommerce payment now bills a license Lemon Squeezy billed: stop that subscription.
+		if ( $order_id > 0 && 'create' !== $action && LemonSqueezy::manages( Licenses::get( $id ) ) ) {
+			LemonSqueezy::detach( Licenses::get( $id ) );
+		}
+
 		if ( 'renew' === $action ) {
 			$license = Licenses::get( $id );
 			$license = Licenses::update(

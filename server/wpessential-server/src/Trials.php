@@ -407,6 +407,11 @@ class Trials {
 	public static function restore_after_refund( $license_id, $ref ) {
 		$option = 'wpes_trial_upgrade_' . sanitize_key( (string) $ref );
 		$saved  = get_option( $option );
+		if ( ! is_array( $saved ) && preg_match( '/^wc:(\d+)$/', (string) $ref, $m ) ) {
+			// Records written before refs existed used the bare WooCommerce order id.
+			$option = 'wpes_trial_upgrade_' . $m[1];
+			$saved  = get_option( $option );
+		}
 		if ( ! is_array( $saved ) || (int) $saved['license_id'] !== (int) $license_id ) {
 			return false;
 		}

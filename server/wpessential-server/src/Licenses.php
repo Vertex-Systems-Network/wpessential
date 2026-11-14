@@ -476,7 +476,7 @@ class Licenses {
 		$plan = Plans::from_product( (int) $license['product_id'] );
 		return array(
 			'success'     => true,
-			'status'      => self::is_expired( $license ) ? 'expired' : $license['status'],
+			'status'      => self::is_expired( $license ) ? 'expired' : ( 'expired' === $license['status'] && Payments::pending_covers( Payments::pending_until( (int) $license['id'] ), time() ) ? 'active' : $license['status'] ),
 			'expires'     => $license['expires_at'] ? substr( $license['expires_at'], 0, 10 ) : 'lifetime',
 			'plan'        => $plan ? $plan['name'] : ucfirst( $license['plan'] ),
 			'plan_key'    => $license['plan'],
