@@ -203,11 +203,14 @@ final class Account {
 		if ( $key === '' ) {
 			return new WP_Error( 'wpe_trial', __( 'The trial could not be started. Try again in a minute.', 'wpessential' ) );
 		}
-		if ( $this->license->isActive() && $this->license->data()['key'] !== $key ) {
-			$this->license->deactivate();
+		// Switch keys only once the trial key is active, so a failure keeps the current licence.
+		$previous  = $this->license->isActive() ? $this->license->data()['key'] : '';
+		$activated = $this->license->activate( $key );
+		if ( ! $activated instanceof WP_Error && $previous !== '' && $previous !== $key ) {
+			$this->license->release( $previous );
 		}
 
-		return $this->license->activate( $key );
+		return $activated;
 	}
 
 	public function connectSite(): array|WP_Error {

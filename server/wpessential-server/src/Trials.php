@@ -184,7 +184,7 @@ class Trials {
 		$table        = $wpdb->prefix . 'wpes_trials';
 		$site_used    = '' !== $domain && (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE domain = %s", $domain ) ); // phpcs:ignore WordPress.DB -- Custom table.
 		$account_used = (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE user_id = %d", (int) $user_id ) ); // phpcs:ignore WordPress.DB -- Custom table.
-		$refusal      = self::refusal( $domain, '' !== $domain && Licenses::is_staging( $domain ), $site_used, $account_used, $has_pro );
+		$refusal      = self::refusal( $domain, '' !== $domain && Licenses::looks_staging( $domain ), $site_used, $account_used, $has_pro );
 		if ( null !== $refusal ) {
 			Events::log(
 				'trial.refused',
@@ -211,22 +211,28 @@ class Trials {
 			)
 		);
 		if ( ! $inserted ) {
-			return self::error( 'trial_used_site' );
+			// Unique keys on domain and user_id: a concurrent request already started a trial.
+			return self::error( $site_used ? 'trial_used_site' : 'trial_used_account' );
 		}
 		$trial_id = (int) $wpdb->insert_id;
 
-		$license = Licenses::create( (int) $user_id, Plans::from_product( self::product() ) );
-		if ( ! $license ) {
-			$wpdb->delete( $table, array( 'id' => $trial_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom table.
-			return self::error( 'trial_failed' );
-		}
-		$license = Licenses::update(
-			$license['id'],
+		// The end date is written in the same insert, so a trial can never exist without one.
+		$license = Licenses::create(
+			(int) $user_id,
+			Plans::from_product( self::product() ),
+			0,
 			array(
 				'expires_at' => self::ends_at( $now ),
 				'auto_renew' => 0,
 			)
 		);
+		if ( ! $license || empty( $license['expires_at'] ) ) {
+			if ( $license ) {
+				Licenses::update( $license['id'], array( 'status' => 'revoked' ) );
+			}
+			$wpdb->delete( $table, array( 'id' => $trial_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom table.
+			return self::error( 'trial_failed' );
+		}
 		$wpdb->update( $table, array( 'license_id' => (int) $license['id'] ), array( 'id' => $trial_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom table.
 		$activated = Licenses::activate( $license['license_key'], $domain );
 		if ( is_wp_error( $activated ) ) {
@@ -252,6 +258,65 @@ class Trials {
 	}
 
 	/**
+	 * Remember that a paid order upgraded this trial license, so a refund can restore the trial.
+	 *
+	 * @param array $license  Trial license before the upgrade.
+	 * @param int   $order_id Order.
+	 */
+	public static function remember_upgrade( $license, $order_id ) {
+		update_option(
+			'wpes_trial_upgrade_' . (int) $order_id,
+			array(
+				'license_id' => (int) $license['id'],
+				'product_id' => (int) $license['product_id'],
+				'expires_at' => (string) $license['expires_at'],
+			),
+			false
+		);
+	}
+
+	/**
+	 * On refund of an order that upgraded a trial: give back the rest of the trial instead of
+	 * revoking the license. Returns true when the license was restored.
+	 *
+	 * @param int $license_id License.
+	 * @param int $order_id   Refunded order.
+	 * @return bool
+	 */
+	public static function restore_after_refund( $license_id, $order_id ) {
+		$saved = get_option( 'wpes_trial_upgrade_' . (int) $order_id );
+		if ( ! is_array( $saved ) || (int) $saved['license_id'] !== (int) $license_id ) {
+			return false;
+		}
+		delete_option( 'wpes_trial_upgrade_' . (int) $order_id );
+		$active = strtotime( $saved['expires_at'] . ' UTC' ) > time();
+		Licenses::update(
+			$license_id,
+			array(
+				'plan'        => self::PLAN,
+				'product_id'  => (int) $saved['product_id'],
+				'sites_limit' => 1,
+				'white_label' => 0,
+				'major'       => 0,
+				'auto_renew'  => 0,
+				'expires_at'  => $saved['expires_at'],
+				'status'      => $active ? 'active' : 'expired',
+				'order_id'    => 0,
+			)
+		);
+		Events::log(
+			'trial.restored_after_refund',
+			sprintf( 'Order #%1$d refunded: license #%2$d is back on its trial until %3$s.', $order_id, $license_id, $saved['expires_at'] ),
+			array(
+				'license_id' => (int) $license_id,
+				'order_id'   => (int) $order_id,
+			),
+			'warning'
+		);
+		return true;
+	}
+
+	/**
 	 * Daily: reminders 7 and 2 days before the end (once each).
 	 *
 	 * @return int Reminders sent.
@@ -271,8 +336,8 @@ class Trials {
 		foreach ( (array) $rows as $license ) {
 			$stage = self::reminder_stage( strtotime( $license['expires_at'] . ' UTC' ), time() );
 			$flag  = 'wpes_trial_reminded_' . $license['id'] . '_' . $stage;
-			if ( $stage && ! get_option( $flag ) ) {
-				Renewals::mail( $license, 'trial_reminder' );
+			// The stage is marked only when the email went out, so a failed send is retried tomorrow.
+			if ( $stage && ! get_option( $flag ) && Renewals::mail( $license, 'trial_reminder' ) ) {
 				update_option( $flag, 1, false );
 				++$sent;
 			}

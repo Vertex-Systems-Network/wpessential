@@ -235,12 +235,14 @@ class Renewals {
 	 * Reminder / expiry email.
 	 *
 	 * @param array  $license License.
-	 * @param string $type    reminder|expired.
+	 * @param string $type    reminder|expired|trial_reminder|trial_expired.
+	 * @return bool Whether the email was handed to the mailer.
 	 */
 	public static function mail( $license, $type ) {
 		$user = get_userdata( (int) $license['user_id'] );
 		if ( ! $user ) {
-			return;
+			Events::error( 'mail.' . $type . '_no_user', 'No customer for this license.', Events::of( $license ) );
+			return false;
 		}
 		$link = wc_get_account_endpoint_url( MyAccount::ENDPOINT );
 		if ( 'trial_reminder' === $type ) {
@@ -263,5 +265,6 @@ class Renewals {
 		$message = $mailer->wrap_message( $subject, '<p>' . esc_html( $body ) . '</p><p><a href="' . esc_url( $link ) . '">' . esc_html__( 'Manage your licenses', 'wpessential-server' ) . '</a></p>' );
 		$sent    = $mailer->send( $user->user_email, $subject, $message );
 		Events::log( $sent ? 'mail.' . $type : 'mail.' . $type . '_failed', $subject, Events::of( $license ), $sent ? 'info' : 'error' );
+		return (bool) $sent;
 	}
 }

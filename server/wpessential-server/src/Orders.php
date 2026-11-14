@@ -227,6 +227,9 @@ class Orders {
 				$order->add_order_note( sprintf( __( 'License %s renewed.', 'wpessential-server' ), $license['license_key'] ) );
 				Events::log( 'subscription.renewed', sprintf( 'License %1$s renewed until %2$s.', $license['license_key'], (string) $license['expires_at'] ), Events::of( $license, array( 'order_id' => $order_id ) ) );
 			} elseif ( $upgrade && ( $license = Licenses::get( $upgrade ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found,Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure -- Compact lookup.
+				if ( Trials::is_trial( $license ) ) {
+					Trials::remember_upgrade( $license, $order_id );
+				}
 				$license = Licenses::update(
 					$upgrade,
 					array(
@@ -281,6 +284,9 @@ class Orders {
 		foreach ( (array) $order->get_meta( '_wpes_licenses' ) as $id ) {
 			$license = Licenses::get( $id );
 			if ( $license && (int) $license['order_id'] === (int) $order_id ) {
+				if ( Trials::restore_after_refund( (int) $id, (int) $order_id ) ) {
+					continue;
+				}
 				Licenses::update(
 					$id,
 					array(

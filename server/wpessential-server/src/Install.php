@@ -117,7 +117,7 @@ class Install {
 				ends_at datetime NOT NULL,
 				PRIMARY KEY  (id),
 				UNIQUE KEY domain (domain),
-				KEY user_id (user_id)
+				UNIQUE KEY user_id (user_id)
 			) $charset;"
 		);
 	}

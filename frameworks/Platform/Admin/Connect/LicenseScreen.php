@@ -187,7 +187,8 @@ final class LicenseScreen implements AdminScreen {
 					OptionGroup::row( __( 'Sites', 'wpessential' ), __( 'Slots used on this subscription.', 'wpessential' ), OptionGroup::readonly( $sites ) ),
 					OptionGroup::row( __( 'Domain', 'wpessential' ), __( 'The domain this slot is tied to.', 'wpessential' ), OptionGroup::readonly( (string) $data['domain'] ) ),
 					OptionGroup::row( __( 'Manage', 'wpessential' ), __( 'Refresh the status, or free this slot for another site.', 'wpessential' ), self::form( 'refresh', self::submit( __( 'Check now', 'wpessential' ), 'ghost', true ), [], 'wpe-ui-inline' ) . self::form( 'deactivate', self::submit( __( 'Disconnect this site', 'wpessential' ), 'secondary', true ), [], 'wpe-ui-inline' ) ),
-				]
+				],
+				$this->trialRows()
 			);
 		}
 
@@ -197,12 +198,23 @@ final class LicenseScreen implements AdminScreen {
 		$rows[] = $this->account->signedIn()
 			? OptionGroup::row( __( 'Connect this site', 'wpessential' ), __( 'Connect this site to one of your subscriptions. WPEssential keeps the one already on this domain, or uses a free site slot.', 'wpessential' ), self::form( 'connect', self::submit( __( 'Connect this site', 'wpessential' ) ), [], 'wpe-ui-inline' ) )
 			: OptionGroup::row( __( 'How it works', 'wpessential' ), __( 'No licence key needed.', 'wpessential' ), OptionGroup::readonly( __( 'Sign in with your WPEssential account. This site is connected to your subscription automatically, no key needed.', 'wpessential' ) ) );
-		if ( $this->account->signedIn() && ! $this->license->hasPro() ) {
-			$rows[] = OptionGroup::row( __( 'Try Pro', 'wpessential' ), __( 'Every Pro module free for 30 days on this site, once per site. When it ends, Pro becomes read-only and nothing is deleted.', 'wpessential' ), self::form( 'trial', self::submit( __( 'Start 30-day Pro trial', 'wpessential' ), 'secondary' ), [], 'wpe-ui-inline' ) );
-		}
+		$rows   = array_merge( $rows, $this->trialRows() );
 		$rows[] = OptionGroup::row( __( 'Free modules', 'wpessential' ), __( 'What works without an account.', 'wpessential' ), OptionGroup::readonly( __( 'Free modules work without an account. A Premium subscription unlocks every Premium module.', 'wpessential' ) ) );
 
 		return $rows;
+	}
+
+	/**
+	 * "Try Pro" for a signed-in site without Pro, including one connected to a Free plan.
+	 *
+	 * @return list<string>
+	 */
+	private function trialRows(): array {
+		if ( ! $this->account->signedIn() || $this->license->hasPro() ) {
+			return [];
+		}
+
+		return [ OptionGroup::row( __( 'Try Pro', 'wpessential' ), __( 'Every Pro module free for 30 days on this site, once per site. When it ends, Pro becomes read-only and nothing is deleted.', 'wpessential' ), self::form( 'trial', self::submit( __( 'Start 30-day Pro trial', 'wpessential' ), 'secondary' ), [], 'wpe-ui-inline' ) ) ];
 	}
 
 	/** @return list<array{0:string,1:string,2:string,3:list<string>,4?:int}> [ id, title, contract key, rows, visible row count when a form wraps them ] */
@@ -263,6 +275,11 @@ final class LicenseScreen implements AdminScreen {
 					],
 					'wpe-ui-inline'
 				);
+				if ( ( $item['plan_key'] ?? '' ) === 'pro_trial' ) {
+					// A trial never renews: buying a Pro plan upgrades it in place.
+					$manage   = '';
+					$checkout = '';
+				}
 				$rows[]   = OptionGroup::row( (string) ( $item['plan'] ?? '' ), (string) ( $item['mask'] ?? '' ), $here . $manage . $checkout );
 			}
 			$groups[] = [ 'wpe-license-subscriptions', __( 'Subscriptions', 'wpessential' ), 'license.account.subscriptions', $rows ];

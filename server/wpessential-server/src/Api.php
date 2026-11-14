@@ -353,8 +353,12 @@ class Api {
 	 * @param \WP_REST_Request $request Request.
 	 */
 	public function checkout( $request ) {
-		$user    = (int) $request->get_param( '_user' );
-		$product = Plans::product_id( sanitize_key( (string) $request->get_param( 'plan' ) ) );
+		$user = (int) $request->get_param( '_user' );
+		$key  = sanitize_key( (string) $request->get_param( 'plan' ) );
+		if ( Trials::PLAN === $key ) {
+			return $this->fail( new \WP_Error( 'trial_plan', __( 'A trial cannot be renewed. Choose a Pro plan to keep using Pro; your trial licence is upgraded in place.', 'wpessential-server' ) ), 400 );
+		}
+		$product = Plans::OWNER === $key ? 0 : Plans::product_id( $key );
 		if ( ! $product ) {
 			return $this->fail( new \WP_Error( 'plan', __( 'That plan is not for sale right now.', 'wpessential-server' ) ), 400 );
 		}
