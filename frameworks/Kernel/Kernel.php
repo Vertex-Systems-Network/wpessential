@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use LogicException;
 use WPEssential\Contracts\ModuleActivationPolicyInterface;
+use WPEssential\Contracts\ModuleEditionScopeInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
 use WPEssential\Platform\Modules\ModuleRegistry;
@@ -60,18 +61,33 @@ final class Kernel {
 			if ( $this->modules->state( $module->manifest()->id ) === ModuleState::Degraded ) {
 				continue;
 			}
-			$module->register( $this->services );
+			$this->inEdition( $module, fn () => $module->register( $this->services ) );
 		}
 
 		foreach ( $this->modules->bootOrder() as $module ) {
 			if ( $this->modules->state( $module->manifest()->id ) === ModuleState::Degraded ) {
 				continue;
 			}
-			$module->boot( $this->services );
+			$this->inEdition( $module, fn () => $module->boot( $this->services ) );
 			$this->modules->markBooted( $module->manifest()->id );
 		}
 
 		$this->booted = true;
+	}
+
+	/** Runs a module step with the ability registry scoped to the module's edition. */
+	private function inEdition( ModuleInterface $module, callable $step ): void {
+		$scope = $this->services->has( 'platform.abilities' ) ? $this->services->get( 'platform.abilities' ) : null;
+		if ( ! $scope instanceof ModuleEditionScopeInterface ) {
+			$step();
+			return;
+		}
+		$scope->enterEdition( $module->manifest()->edition );
+		try {
+			$step();
+		} finally {
+			$scope->leaveEdition();
+		}
 	}
 
 	public function isBooted(): bool {
