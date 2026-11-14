@@ -290,18 +290,12 @@ class Api {
 		// site when the trial started on a local copy.
 		$trial_note = '';
 		$trial_id   = $pick ? 0 : Trials::active_trial_id( $user );
-		if ( $trial_id && Licenses::looks_staging( $domain ) ) {
-			$license = Licenses::activate( Licenses::get( $trial_id )['license_key'], $domain );
-			if ( ! is_wp_error( $license ) ) {
-				return rest_ensure_response( Licenses::owner_shape( Licenses::get( $trial_id ) ) + array( 'message' => __( 'Your Pro trial now also runs on this copy of your website.', 'wpessential-server' ) ) );
+		if ( $trial_id ) {
+			$used = self::use_trial( $request, $user, $trial_id, $domain );
+			if ( ! is_wp_error( $used ) ) {
+				return $used;
 			}
-			$trial_note = $license->get_error_message();
-		} elseif ( $trial_id ) {
-			$moved = Trials::attach_live( $user, (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
-			if ( is_array( $moved ) ) {
-				return rest_ensure_response( $moved + array( 'message' => __( 'Your Pro trial now runs on this website.', 'wpessential-server' ) ) );
-			}
-			$trial_note = is_wp_error( $moved ) ? $moved->get_error_message() : '';
+			$trial_note = $used->get_error_message();
 		}
 
 		// 4. A website that never had a trial gets the 30-day Pro trial (proved to come from it).
@@ -315,7 +309,18 @@ class Api {
 
 		// 5. Otherwise any usable slot (the Free plan).
 		if ( ! $pick ) {
-			$pick = self::pick( $licenses, $domain );
+			// Trial licences only take sites through use_trial() above.
+			$pick = self::pick(
+				array_values(
+					array_filter(
+						$licenses,
+						static function ( $l ) {
+							return ! Trials::is_trial( $l );
+						}
+					)
+				),
+				$domain
+			);
 		}
 		if ( ! $pick ) {
 			return $this->fail( new \WP_Error( 'no_slot', __( 'Every site slot on your subscriptions is in use. Upgrade or free a slot to connect this site.', 'wpessential-server' ) ), 409 );
@@ -339,15 +344,43 @@ class Api {
 	 * @return \WP_REST_Response
 	 */
 	public function trial( $request ) {
-		// The account already has a trial: put this site on it (copy or live site) like connect does.
-		if ( Trials::active_trial_id( (int) $request->get_param( '_user' ) ) ) {
-			return $this->connect( $request );
+		// The account already has a trial: put this site on it (a copy, or the live site).
+		$user     = (int) $request->get_param( '_user' );
+		$trial_id = Trials::active_trial_id( $user );
+		if ( $trial_id ) {
+			$used = self::use_trial( $request, $user, $trial_id, Licenses::domain( (string) $request->get_param( 'site' ) ) );
+			return is_wp_error( $used ) ? $this->fail( $used, 409 ) : $used;
 		}
 		$result = Trials::start( (int) $request->get_param( '_user' ), (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
 		if ( is_wp_error( $result ) ) {
 			return $this->fail( $result, 'throttled' === $result->get_error_code() ? 429 : 409 );
 		}
 		return rest_ensure_response( $result + array( 'message' => __( 'Your 30-day Pro trial has started on this website.', 'wpessential-server' ) ) );
+	}
+
+	/**
+	 * Put a site on the account's running trial: a local/staging copy directly, a live site only
+	 * through Trials::attach_live() (site proof and the account's trial-domain reservation).
+	 *
+	 * @param \WP_REST_Request $request  Request.
+	 * @param int              $user     User.
+	 * @param int              $trial_id Trial license.
+	 * @param string           $domain   Normalised domain.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	private static function use_trial( $request, $user, $trial_id, $domain ) {
+		if ( Licenses::looks_staging( $domain ) ) {
+			$license = Licenses::activate( Licenses::get( $trial_id )['license_key'], $domain );
+			if ( is_wp_error( $license ) ) {
+				return $license;
+			}
+			return rest_ensure_response( Licenses::owner_shape( Licenses::get( $trial_id ) ) + array( 'message' => __( 'Your Pro trial now also runs on this copy of your website.', 'wpessential-server' ) ) );
+		}
+		$moved = Trials::attach_live( $user, (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
+		if ( is_array( $moved ) ) {
+			return rest_ensure_response( $moved + array( 'message' => __( 'Your Pro trial now runs on this website.', 'wpessential-server' ) ) );
+		}
+		return is_wp_error( $moved ) ? $moved : new \WP_Error( 'trial_live_used', Trials::message( 'trial_live_used' ) );
 	}
 
 	/**

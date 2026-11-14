@@ -140,6 +140,20 @@ class Trials {
 	}
 
 	/**
+	 * Whether a trial license may take this live domain: only the domain reserved for the
+	 * account's trial (set at start with site proof, or by attach_live()).
+	 *
+	 * @param array  $license Trial license.
+	 * @param string $domain  Normalised live domain.
+	 * @return bool
+	 */
+	public static function live_domain_reserved( $license, $domain ) {
+		global $wpdb;
+		$table = $wpdb->prefix . 'wpes_trials';
+		return $domain === (string) $wpdb->get_var( $wpdb->prepare( "SELECT domain FROM {$table} WHERE user_id = %d", (int) $license['user_id'] ) ); // phpcs:ignore WordPress.DB -- Custom table.
+	}
+
+	/**
 	 * Messages for refusal codes.
 	 *
 	 * @param string $code Code.
@@ -301,21 +315,48 @@ class Trials {
 		if ( ! $id || '' === $domain || Licenses::looks_staging( $domain ) ) {
 			return null;
 		}
-		if ( null !== self::activation_refusal( false, Licenses::activations( $id ) ) ) {
+		$table    = $wpdb->prefix . 'wpes_trials';
+		$reserved = (string) $wpdb->get_var( $wpdb->prepare( "SELECT domain FROM {$table} WHERE user_id = %d", (int) $user_id ) ); // phpcs:ignore WordPress.DB -- Custom table.
+		$license  = Licenses::get( $id );
+		if ( $reserved === $domain ) {
+			// The trial's own live website (e.g. reconnecting it): no move needed.
+			$activated = Licenses::activate( $license['license_key'], $domain );
+			return is_wp_error( $activated ) ? $activated : Licenses::owner_shape( Licenses::get( $id ) );
+		}
+		// A trial moves to a live website once: from a local start. A trial that already has its
+		// live website keeps it, so every domain that ever had a trial stays reserved.
+		if ( 0 !== strpos( $reserved, 'local:' ) ) {
 			return self::error( 'trial_live_used' );
 		}
-		$table = $wpdb->prefix . 'wpes_trials';
 		$taken = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$table} WHERE domain = %s", $domain ) ); // phpcs:ignore WordPress.DB -- Custom table.
-		if ( null !== $taken && (int) $taken !== (int) $user_id ) {
+		if ( null !== $taken ) {
 			return self::error( 'trial_used_site' );
 		}
 		if ( ! SiteProof::verify( $site, $proof ) ) {
 			return self::error( 'trial_site_unverified' );
 		}
-		$wpdb->update( $table, array( 'domain' => $domain ), array( 'user_id' => (int) $user_id ) ); // phpcs:ignore WordPress.DB -- Custom table.
-		$license   = Licenses::get( $id );
+		// Reserve the domain only if the row still holds the local marker (and the unique key holds).
+		$moved = $wpdb->update( // phpcs:ignore WordPress.DB -- Custom table.
+			$table,
+			array( 'domain' => $domain ),
+			array(
+				'user_id' => (int) $user_id,
+				'domain'  => $reserved,
+			)
+		);
+		if ( 1 !== $moved ) {
+			return self::error( 'trial_used_site' );
+		}
 		$activated = Licenses::activate( $license['license_key'], $domain );
 		if ( is_wp_error( $activated ) ) {
+			$wpdb->update( // phpcs:ignore WordPress.DB -- Custom table.
+				$table,
+				array( 'domain' => $reserved ),
+				array(
+					'user_id' => (int) $user_id,
+					'domain'  => $domain,
+				)
+			);
 			return $activated;
 		}
 		Events::log( 'trial.moved_live', sprintf( 'Pro trial %1$s now runs on %2$s.', $license['license_key'], $domain ), Events::of( $license, array( 'domain' => $domain ) ) );

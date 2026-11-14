@@ -227,7 +227,8 @@ class Orders {
 				$order->add_order_note( sprintf( __( 'License %s renewed.', 'wpessential-server' ), $license['license_key'] ) );
 				Events::log( 'subscription.renewed', sprintf( 'License %1$s renewed until %2$s.', $license['license_key'], (string) $license['expires_at'] ), Events::of( $license, array( 'order_id' => $order_id ) ) );
 			} elseif ( $upgrade && ( $license = Licenses::get( $upgrade ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found,Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure -- Compact lookup.
-				if ( Trials::is_trial( $license ) ) {
+				$was_trial = Trials::is_trial( $license );
+				if ( $was_trial ) {
 					Trials::remember_upgrade( $license, $order_id );
 				}
 				$license = Licenses::update(
@@ -244,6 +245,9 @@ class Orders {
 						'order_id'    => $order_id,
 					)
 				);
+				if ( $was_trial ) {
+					Licenses::reclassify_activations( (int) $license['id'] );
+				}
 				/* translators: 1: key, 2: plan. */
 				$order->add_order_note( sprintf( __( 'License %1$s upgraded to %2$s.', 'wpessential-server' ), $license['license_key'], $plan['name'] ) );
 				Events::log( 'subscription.upgraded', sprintf( 'License %1$s upgraded to %2$s.', $license['license_key'], $plan['name'] ), Events::of( $license, array( 'order_id' => $order_id ) ) );
