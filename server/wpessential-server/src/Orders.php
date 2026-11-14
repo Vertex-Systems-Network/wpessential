@@ -193,69 +193,24 @@ class Orders {
 			if ( ! $plan ) {
 				continue;
 			}
-			$renew   = (int) $item->get_meta( '_wpes_renew' );
-			$upgrade = (int) $item->get_meta( '_wpes_upgrade' );
-			// A trial is never renewed, and buying Pro during a trial upgrades the trial license in
-			// place, so the website keeps its key and goes straight from trial to paid.
-			if ( $renew && Trials::is_trial( Licenses::get( $renew ) ) ) {
-				$upgrade = $renew;
-				$renew   = 0;
-			}
-			if ( ! $renew && ! $upgrade && $plan['pro'] ) {
-				$upgrade = Trials::active_trial_id( $user_id );
-			}
-			if ( ( $renew && ! Licenses::get( $renew ) ) || ( $upgrade && ! Licenses::get( $upgrade ) ) ) {
-				Events::error(
-					'order.license_missing',
-					sprintf( 'Order #%1$d points at license #%2$d, which does not exist. A new license is created instead.', $order_id, $renew ? $renew : $upgrade ),
-					array(
-						'order_id' => $order_id,
-						'user_id'  => $user_id,
-					)
-				);
-			}
-			if ( $renew && ( $license = Licenses::get( $renew ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found,Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure -- Compact lookup.
-				$license = Licenses::update(
-					$renew,
-					array(
-						'status'     => 'active',
-						'expires_at' => Licenses::expiry( $plan['months'], $license['expires_at'] ),
-						'order_id'   => $order_id,
-					)
-				);
+			$result  = Fulfilment::apply(
+				$user_id,
+				$plan,
+				(int) $item->get_meta( '_wpes_renew' ),
+				(int) $item->get_meta( '_wpes_upgrade' ),
+				$order_id,
+				'wc:' . $order_id
+			);
+			$license = $result['license'];
+			$notes   = array(
 				/* translators: %s: key. */
-				$order->add_order_note( sprintf( __( 'License %s renewed.', 'wpessential-server' ), $license['license_key'] ) );
-				Events::log( 'subscription.renewed', sprintf( 'License %1$s renewed until %2$s.', $license['license_key'], (string) $license['expires_at'] ), Events::of( $license, array( 'order_id' => $order_id ) ) );
-			} elseif ( $upgrade && ( $license = Licenses::get( $upgrade ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found,Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure -- Compact lookup.
-				$was_trial = Trials::is_trial( $license );
-				if ( $was_trial ) {
-					Trials::remember_upgrade( $license, $order_id );
-				}
-				$license = Licenses::update(
-					$upgrade,
-					array(
-						'plan'        => $plan['key'],
-						'product_id'  => $plan['product_id'],
-						'sites_limit' => $plan['sites'],
-						'white_label' => $plan['white_label'] ? 1 : 0,
-						'status'      => 'active',
-						'auto_renew'  => $plan['months'] > 0 ? 1 : 0,
-						'expires_at'  => Licenses::expiry( $plan['months'] ),
-						'major'       => Licenses::lifetime_major( $plan ),
-						'order_id'    => $order_id,
-					)
-				);
-				if ( $was_trial ) {
-					Licenses::reclassify_activations( (int) $license['id'] );
-				}
-				/* translators: 1: key, 2: plan. */
-				$order->add_order_note( sprintf( __( 'License %1$s upgraded to %2$s.', 'wpessential-server' ), $license['license_key'], $plan['name'] ) );
-				Events::log( 'subscription.upgraded', sprintf( 'License %1$s upgraded to %2$s.', $license['license_key'], $plan['name'] ), Events::of( $license, array( 'order_id' => $order_id ) ) );
-			} else {
-				$license = Licenses::create( $user_id, $plan, $order_id );
+				'renew'   => __( 'License %s renewed.', 'wpessential-server' ),
 				/* translators: %s: key. */
-				$order->add_order_note( sprintf( __( 'License %s created.', 'wpessential-server' ), $license['license_key'] ) );
-			}
+				'upgrade' => __( 'License %s upgraded.', 'wpessential-server' ),
+				/* translators: %s: key. */
+				'create'  => __( 'License %s created.', 'wpessential-server' ),
+			);
+			$order->add_order_note( sprintf( $notes[ $result['action'] ], $license['license_key'] ) );
 			$ids[] = (int) $license['id'];
 		}
 		if ( $ids ) {
@@ -288,7 +243,7 @@ class Orders {
 		foreach ( (array) $order->get_meta( '_wpes_licenses' ) as $id ) {
 			$license = Licenses::get( $id );
 			if ( $license && (int) $license['order_id'] === (int) $order_id ) {
-				if ( Trials::restore_after_refund( (int) $id, (int) $order_id ) ) {
+				if ( Trials::restore_after_refund( (int) $id, 'wc:' . (int) $order_id ) ) {
 					continue;
 				}
 				Licenses::update(

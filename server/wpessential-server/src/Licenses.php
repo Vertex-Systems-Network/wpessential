@@ -303,7 +303,8 @@ class Licenses {
 				sprintf( __( 'Your lifetime license covers version %1$d.x. Version %2$d is out: buy a new plan in your account to keep Pro demos and updates.', 'wpessential-server' ), (int) $license['major'], self::current_major() )
 			);
 		}
-		if ( 'expired' === $license['status'] || self::is_expired( $license ) ) {
+		$pending = Payments::pending_covers( Payments::pending_until( (int) $license['id'] ), time() );
+		if ( ( 'expired' === $license['status'] && ! $pending ) || self::is_expired( $license ) ) {
 			return new \WP_Error( 'expired', __( 'This license has expired. Renew it in your account to keep Pro demos and updates.', 'wpessential-server' ) );
 		}
 		return true;
@@ -317,6 +318,10 @@ class Licenses {
 	 */
 	public static function is_expired( $license ) {
 		if ( empty( $license['expires_at'] ) ) {
+			return false;
+		}
+		// A bank transfer being checked keeps the license working (see Payments::on_hold()).
+		if ( Payments::pending_covers( Payments::pending_until( (int) $license['id'] ), time() ) ) {
 			return false;
 		}
 		// A trial ends on its date: no grace days.
@@ -471,7 +476,7 @@ class Licenses {
 		$plan = Plans::from_product( (int) $license['product_id'] );
 		return array(
 			'success'     => true,
-			'status'      => self::is_expired( $license ) ? 'expired' : $license['status'],
+			'status'      => self::is_expired( $license ) ? 'expired' : ( 'expired' === $license['status'] && Payments::pending_covers( Payments::pending_until( (int) $license['id'] ), time() ) ? 'active' : $license['status'] ),
 			'expires'     => $license['expires_at'] ? substr( $license['expires_at'], 0, 10 ) : 'lifetime',
 			'plan'        => $plan ? $plan['name'] : ucfirst( $license['plan'] ),
 			'plan_key'    => $license['plan'],

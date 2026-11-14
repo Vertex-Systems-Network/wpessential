@@ -86,7 +86,7 @@ final class LicenseScreen implements AdminScreen {
 			'register'   => $done( $this->account->register( $this->field( 'name' ), sanitize_email( $this->field( 'email' ) ), (string) wp_unslash( $_POST['password'] ?? '' ) ), __( 'Account created and this site connected.', 'wpessential' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are sent as typed.
 			'logout'     => $done( $this->account->logout(), __( 'Signed out.', 'wpessential' ) ),
 			'use'        => $done( $this->account->useLicense( (int) $this->field( 'license' ) ), __( 'This site now uses that subscription.', 'wpessential' ) ),
-			'checkout'   => $this->account->checkout( sanitize_key( $this->field( 'plan' ) ), (int) $this->field( 'license' ), sanitize_key( $this->field( 'mode' ) ) ?: 'buy' ),
+			'checkout'   => $this->account->checkout( sanitize_key( $this->field( 'plan' ) ), (int) $this->field( 'license' ), sanitize_key( $this->field( 'mode' ) ) ?: 'buy', sanitize_key( $this->field( 'channel' ) ) ),
 			default      => $done( $this->account->licenseAction( (int) $this->field( 'license' ), sanitize_key( $this->field( 'do' ) ) ), __( 'License updated.', 'wpessential' ) ),
 		};
 	}
@@ -288,8 +288,35 @@ final class LicenseScreen implements AdminScreen {
 		$plans = is_array( $me['plans'] ?? null ) ? $me['plans'] : [];
 		if ( $plans !== [] ) {
 			$rows = [];
+			$international = ! empty( $me['payments']['international'] );
 			foreach ( $plans as $plan ) {
-				$rows[] = OptionGroup::row( (string) ( $plan['name'] ?? $plan['key'] ?? '' ), (string) ( $plan['price'] ?? '' ), self::form( 'checkout', self::submit( __( 'Choose', 'wpessential' ), 'primary', true ), [ 'plan' => (string) ( $plan['key'] ?? '' ) ], 'wpe-ui-inline' ) );
+				$key   = (string) ( $plan['key'] ?? '' );
+				$local = self::form(
+					'checkout',
+					self::submit( __( 'Pay in PKR', 'wpessential' ), 'primary', true ),
+					[
+						'plan'    => $key,
+						'channel' => 'local',
+					],
+					'wpe-ui-inline'
+				);
+				$card  = $international && ! empty( $plan['card_paypal'] )
+					? self::form(
+						'checkout',
+						self::submit( __( 'Card or PayPal (USD)', 'wpessential' ), 'secondary', true ),
+						[
+							'plan'    => $key,
+							'channel' => 'international',
+						],
+						'wpe-ui-inline'
+					)
+					: '';
+				$price = (string) ( $plan['price'] ?? '' );
+				if ( ( $plan['usd_price'] ?? '' ) !== '' ) {
+					/* translators: 1: PKR price, 2: USD price. */
+					$price = sprintf( __( 'PKR %1$s · USD %2$s', 'wpessential' ), $price, (string) $plan['usd_price'] );
+				}
+				$rows[] = OptionGroup::row( (string) ( $plan['name'] ?? $key ), $price, $local . $card );
 			}
 			$groups[] = [ 'wpe-license-plans', __( 'Plans', 'wpessential' ), 'license.account.plans', $rows ];
 		}

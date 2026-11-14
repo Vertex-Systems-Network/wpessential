@@ -98,6 +98,9 @@ class Renewals {
 		if ( $trial ) {
 			return; // Trial reminders run in Trials::remind(); a trial is never renewed.
 		}
+		if ( LemonSqueezy::manages( $license ) ) {
+			return; // Lemon Squeezy charges and emails its own renewals.
+		}
 		if ( $license['auto_renew'] ) {
 			$result = self::renewal_order( $license );
 			if ( $result ) {

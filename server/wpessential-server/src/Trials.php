@@ -381,12 +381,12 @@ class Trials {
 	/**
 	 * Remember that a paid order upgraded this trial license, so a refund can restore the trial.
 	 *
-	 * @param array $license  Trial license before the upgrade.
-	 * @param int   $order_id Order.
+	 * @param array  $license Trial license before the upgrade.
+	 * @param string $ref     Purchase reference ("wc:123", "ls:456").
 	 */
-	public static function remember_upgrade( $license, $order_id ) {
+	public static function remember_upgrade( $license, $ref ) {
 		update_option(
-			'wpes_trial_upgrade_' . (int) $order_id,
+			'wpes_trial_upgrade_' . sanitize_key( (string) $ref ),
 			array(
 				'license_id' => (int) $license['id'],
 				'product_id' => (int) $license['product_id'],
@@ -400,16 +400,22 @@ class Trials {
 	 * On refund of an order that upgraded a trial: give back the rest of the trial instead of
 	 * revoking the license. Returns true when the license was restored.
 	 *
-	 * @param int $license_id License.
-	 * @param int $order_id   Refunded order.
+	 * @param int    $license_id License.
+	 * @param string $ref        Refunded purchase reference ("wc:123", "ls:456").
 	 * @return bool
 	 */
-	public static function restore_after_refund( $license_id, $order_id ) {
-		$saved = get_option( 'wpes_trial_upgrade_' . (int) $order_id );
+	public static function restore_after_refund( $license_id, $ref ) {
+		$option = 'wpes_trial_upgrade_' . sanitize_key( (string) $ref );
+		$saved  = get_option( $option );
+		if ( ! is_array( $saved ) && preg_match( '/^wc:(\d+)$/', (string) $ref, $m ) ) {
+			// Records written before refs existed used the bare WooCommerce order id.
+			$option = 'wpes_trial_upgrade_' . $m[1];
+			$saved  = get_option( $option );
+		}
 		if ( ! is_array( $saved ) || (int) $saved['license_id'] !== (int) $license_id ) {
 			return false;
 		}
-		delete_option( 'wpes_trial_upgrade_' . (int) $order_id );
+		delete_option( $option );
 		$active = strtotime( $saved['expires_at'] . ' UTC' ) > time();
 		Licenses::update(
 			$license_id,
@@ -427,10 +433,10 @@ class Trials {
 		);
 		Events::log(
 			'trial.restored_after_refund',
-			sprintf( 'Order #%1$d refunded: license #%2$d is back on its trial until %3$s.', $order_id, $license_id, $saved['expires_at'] ),
+			sprintf( 'Purchase %1$s refunded: license #%2$d is back on its trial until %3$s.', $ref, $license_id, $saved['expires_at'] ),
 			array(
 				'license_id' => (int) $license_id,
-				'order_id'   => (int) $order_id,
+				'ref'        => (string) $ref,
 			),
 			'warning'
 		);

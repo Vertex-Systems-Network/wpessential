@@ -41,6 +41,7 @@ class Api {
 			'/account/checkout'   => array( 'POST', 'checkout', $auth ),
 			'/account/connect'    => array( 'POST', 'connect', $auth ),
 			'/account/trial'      => array( 'POST', 'trial', $auth ),
+			'/lemonsqueezy'       => array( 'POST', 'lemonsqueezy', $public ),
 			'/release'            => array( 'POST', 'release', array( $this, 'can_release' ) ),
 		);
 		foreach ( $routes as $route => $def ) {
@@ -248,7 +249,12 @@ class Api {
 	 * @param \WP_REST_Request $request Request.
 	 */
 	public function me( $request ) {
-		return rest_ensure_response( array( 'success' => true ) + Accounts::me( (int) $request->get_param( '_user' ) ) + array( 'plans' => Plans::all() ) );
+		return rest_ensure_response(
+			array( 'success' => true ) + Accounts::me( (int) $request->get_param( '_user' ) ) + array(
+				'plans'    => Plans::all(),
+				'payments' => self::channels(),
+			)
+		);
 	}
 
 	/**
@@ -441,6 +447,28 @@ class Api {
 	}
 
 	/**
+	 * Lemon Squeezy webhooks (signature-checked inside).
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response
+	 */
+	public function lemonsqueezy( $request ) {
+		return LemonSqueezy::webhook( $request );
+	}
+
+	/**
+	 * Payment channels the account can choose from.
+	 *
+	 * @return array{local:bool,international:bool}
+	 */
+	public static function channels() {
+		return array(
+			'local'         => true,
+			'international' => LemonSqueezy::enabled(),
+		);
+	}
+
+	/**
 	 * One-time checkout link for buy / renew / upgrade.
 	 *
 	 * @param \WP_REST_Request $request Request.
@@ -464,6 +492,20 @@ class Api {
 				return $this->fail( new \WP_Error( 'owner', __( 'This license is not in your account.', 'wpessential-server' ) ), 403 );
 			}
 			$extra[ 'renew' === $mode ? 'wpes_renew' : 'wpes_upgrade' ] = $license;
+		}
+		// International customers pay by card or PayPal on Lemon Squeezy (USD); everyone else
+		// uses the WooCommerce checkout (JazzCash, EasyPaisa, Bank Alfalah, bank transfer, PKR).
+		if ( 'international' === (string) $request->get_param( 'channel' ) ) {
+			$url = LemonSqueezy::checkout_url( $user, Plans::from_product( $product ), $license, $mode );
+			if ( is_wp_error( $url ) ) {
+				return $this->fail( $url, 400 );
+			}
+			return rest_ensure_response(
+				array(
+					'success' => true,
+					'url'     => $url,
+				)
+			);
 		}
 		return rest_ensure_response(
 			array(

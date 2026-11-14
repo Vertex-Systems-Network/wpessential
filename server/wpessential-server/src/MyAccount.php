@@ -90,6 +90,17 @@ class MyAccount {
 		if ( ! $license || (int) $license['user_id'] !== (int) $user_id ) {
 			return new \WP_Error( 'owner', __( 'This license is not in your account.', 'wpessential-server' ) );
 		}
+		// Lemon Squeezy bills these: cancelling here would not stop its charges.
+		if ( in_array( $action, array( 'auto_renew_on', 'auto_renew_off', 'cancel' ), true ) && LemonSqueezy::manages( $license ) ) {
+			$portal = LemonSqueezy::portal( $license );
+			return new \WP_Error(
+				'ls_portal',
+				'' !== $portal
+					/* translators: %s: link. */
+					? sprintf( __( 'This subscription is paid by card or PayPal. Manage renewal or cancel it here: %s', 'wpessential-server' ), $portal )
+					: __( 'This subscription is paid by card or PayPal. Manage renewal or cancel it from the link in your Lemon Squeezy receipt email.', 'wpessential-server' )
+			);
+		}
 		switch ( $action ) {
 			case 'auto_renew_on':
 				if ( Trials::is_trial( $license ) ) {
