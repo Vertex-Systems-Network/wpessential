@@ -20,21 +20,22 @@ final class TrialsTest extends TestCase
         require_once dirname(__DIR__, 3) . '/server/wpessential-server/src/Trials.php';
     }
 
-    /** @return iterable<string,array{string,bool,bool,bool,bool,?string}> */
+    /** @return iterable<string,array{string,bool,bool,bool,bool,bool,?string}> */
     public static function eligibility(): iterable
     {
-        yield 'new live site, new account' => ['shop.example.com', false, false, false, false, null];
-        yield 'no site address' => ['', false, false, false, false, 'domain'];
-        yield 'staging site' => ['staging.example.com', true, false, false, false, 'trial_staging'];
-        yield 'account already has Pro' => ['shop.example.com', false, false, false, true, 'trial_has_pro'];
-        yield 'site had a trial (other account)' => ['shop.example.com', false, true, false, false, 'trial_used_site'];
-        yield 'account had a trial (other site)' => ['other.example.com', false, false, true, false, 'trial_used_account'];
+        yield 'new live site, new account' => ['shop.example.com', true, false, false, false, false, null];
+        yield 'no site address' => ['', true, false, false, false, false, 'domain'];
+        yield 'request not proved to come from the site' => ['shop.example.com', false, false, false, false, false, 'trial_site_unverified'];
+        yield 'staging site' => ['staging.example.com', true, true, false, false, false, 'trial_staging'];
+        yield 'account already has Pro' => ['shop.example.com', true, false, false, false, true, 'trial_has_pro'];
+        yield 'site had a trial (other account)' => ['shop.example.com', true, false, true, false, false, 'trial_used_site'];
+        yield 'account had a trial (other site)' => ['other.example.com', true, false, false, true, false, 'trial_used_account'];
     }
 
     #[DataProvider('eligibility')]
-    public function testOneTrialPerSiteAndPerAccount(string $domain, bool $staging, bool $siteUsed, bool $accountUsed, bool $hasPro, ?string $expected): void
+    public function testOneTrialPerSiteAndPerAccount(string $domain, bool $verified, bool $staging, bool $siteUsed, bool $accountUsed, bool $hasPro, ?string $expected): void
     {
-        self::assertSame($expected, Trials::refusal($domain, $staging, $siteUsed, $accountUsed, $hasPro));
+        self::assertSame($expected, Trials::refusal($domain, $verified, $staging, $siteUsed, $accountUsed, $hasPro));
     }
 
     public function testTrialLastsThirtyDays(): void

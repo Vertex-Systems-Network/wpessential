@@ -21,7 +21,11 @@ final class Account {
 	public const OPTION          = 'wpessential_account';
 	public const LICENSE_ACTIONS = [ 'auto_renew_on', 'auto_renew_off', 'cancel', 'deactivate_domain' ];
 
-	public function __construct( private readonly LicenseService $license ) {}
+	private readonly SiteProof $proof;
+
+	public function __construct( private readonly LicenseService $license, ?SiteProof $proof = null ) {
+		$this->proof = $proof ?? new SiteProof();
+	}
 
 	public function api(): string {
 		return untrailingslashit( $this->license->config()['api'] );
@@ -195,7 +199,14 @@ final class Account {
 	 * @return array<string,mixed>|WP_Error
 	 */
 	public function startTrial(): array|WP_Error {
-		$trial = $this->request( 'POST', '/account/trial', [ 'site' => home_url() ] );
+		$trial = $this->request(
+			'POST',
+			'/account/trial',
+			[
+				'site'  => home_url(),
+				'proof' => $this->proof->issue( time() ),
+			]
+		);
 		if ( $trial instanceof WP_Error ) {
 			return $trial;
 		}
@@ -215,7 +226,17 @@ final class Account {
 
 	public function connectSite(): array|WP_Error {
 		// WPE Server picks and assigns the slot itself (account/connect); older servers do not have it.
-		$connected = $this->request( 'POST', '/account/connect', [ 'site' => home_url() ] );
+		// The server keeps a slot already on this domain, else uses a free paid-Pro slot, else
+		// starts the 30-day trial for a site that never had one, else the Free plan. The proof
+		// lets it check that this request really comes from this site.
+		$connected = $this->request(
+			'POST',
+			'/account/connect',
+			[
+				'site'  => home_url(),
+				'proof' => $this->proof->issue( time() ),
+			]
+		);
 		if ( ! $connected instanceof WP_Error && is_string( $connected['key'] ?? null ) && $connected['key'] !== '' ) {
 			if ( $this->license->isActive() && $this->license->data()['key'] !== $connected['key'] ) {
 				$this->license->deactivate();

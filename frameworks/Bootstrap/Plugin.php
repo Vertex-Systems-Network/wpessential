@@ -44,6 +44,7 @@ use WPEssential\Platform\Admin\Connect\Mcp\SettingsAbilities;
 use WPEssential\Platform\Admin\Connect\McpServer;
 use WPEssential\Platform\Admin\Connect\LicenseScreen;
 use WPEssential\Platform\Admin\Connect\LicenseService;
+use WPEssential\Platform\Admin\Connect\SiteProof;
 use WPEssential\Platform\Admin\Core\CoreAdminController;
 use WPEssential\Platform\Admin\Core\CoreAjaxRoutes;
 use WPEssential\Platform\Admin\Demos\DemoCatalog;
@@ -183,6 +184,8 @@ final class Plugin {
 		$moduleToggles      = new ModuleToggleStore();
 		$license            = new LicenseService();
 		$license->schedule();
+		$siteProof = new SiteProof();
+		$siteProof->register();
 		$elements  = new ElementRegistry();
 		$aiConnect = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
@@ -197,7 +200,7 @@ final class Plugin {
 				new DemosScreen( new DemoCatalog() ),
 				new ElementsScreen( $elements ),
 				new AiConnectScreen( $aiConnect ),
-				new LicenseScreen( $license, new Account( $license ) ),
+				new LicenseScreen( $license, new Account( $license, $siteProof ) ),
 				new DocsScreen(),
 			]
 		);

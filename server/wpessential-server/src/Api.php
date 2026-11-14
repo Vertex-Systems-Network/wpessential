@@ -263,7 +263,43 @@ class Api {
 		if ( '' === $domain ) {
 			return $this->fail( new \WP_Error( 'domain', __( 'Send the site address.', 'wpessential-server' ) ), 400 );
 		}
-		$pick = self::pick( Licenses::for_user( (int) $request->get_param( '_user' ) ), $domain );
+		$user     = (int) $request->get_param( '_user' );
+		$licenses = Licenses::for_user( $user );
+
+		// 1. A license already on this domain stays. 2. Otherwise a free slot on a paid Pro plan.
+		$on_site = array_values(
+			array_filter(
+				$licenses,
+				static function ( $l ) use ( $domain ) {
+					return true === Licenses::validate( $l ) && Licenses::has_domain( $l, $domain );
+				}
+			)
+		);
+		$paid    = array_values(
+			array_filter(
+				$licenses,
+				static function ( $l ) {
+					$plan = Plans::from_product( (int) $l['product_id'] );
+					return ! Trials::is_trial( $l ) && $plan && $plan['pro'];
+				}
+			)
+		);
+		$pick    = $on_site ? $on_site[0] : self::pick( $paid, $domain );
+
+		// 3. A website that never had a trial gets the 30-day Pro trial (proved to come from it).
+		$trial_note = '';
+		if ( ! $pick ) {
+			$trial = Trials::start( $user, (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
+			if ( ! is_wp_error( $trial ) ) {
+				return rest_ensure_response( $trial + array( 'message' => __( 'Your 30-day Pro trial has started on this website.', 'wpessential-server' ) ) );
+			}
+			$trial_note = $trial->get_error_message();
+		}
+
+		// 4. Otherwise any usable slot (the Free plan).
+		if ( ! $pick ) {
+			$pick = self::pick( $licenses, $domain );
+		}
 		if ( ! $pick ) {
 			return $this->fail( new \WP_Error( 'no_slot', __( 'Every site slot on your subscriptions is in use. Upgrade or free a slot to connect this site.', 'wpessential-server' ) ), 409 );
 		}
@@ -272,7 +308,10 @@ class Api {
 			return $this->fail( $license, 400 );
 		}
 		return rest_ensure_response(
-			Licenses::owner_shape( Licenses::get( $license['id'] ) ) + array( 'message' => __( 'This website is connected to your subscription.', 'wpessential-server' ) )
+			Licenses::owner_shape( Licenses::get( $license['id'] ) ) + array(
+				'message'    => __( 'This website is connected to your subscription.', 'wpessential-server' ),
+				'trial_note' => $trial_note,
+			)
 		);
 	}
 
@@ -283,7 +322,7 @@ class Api {
 	 * @return \WP_REST_Response
 	 */
 	public function trial( $request ) {
-		$result = Trials::start( (int) $request->get_param( '_user' ), (string) $request->get_param( 'site' ) );
+		$result = Trials::start( (int) $request->get_param( '_user' ), (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
 		if ( is_wp_error( $result ) ) {
 			return $this->fail( $result, 'throttled' === $result->get_error_code() ? 429 : 409 );
 		}

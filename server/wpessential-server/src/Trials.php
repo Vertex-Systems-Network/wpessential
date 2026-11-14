@@ -84,15 +84,19 @@ class Trials {
 	 * Eligibility rule (pure, unit-tested). Returns an error code, or null when allowed.
 	 *
 	 * @param string $domain       Normalised domain.
+	 * @param bool   $verified     The request proved it comes from that site.
 	 * @param bool   $staging      Domain is local/staging.
 	 * @param bool   $site_used    A trial was ever started for this domain.
 	 * @param bool   $account_used This account ever started a trial.
 	 * @param bool   $has_pro      This account already has a usable paid Pro license.
 	 * @return string|null
 	 */
-	public static function refusal( $domain, $staging, $site_used, $account_used, $has_pro ) {
+	public static function refusal( $domain, $verified, $staging, $site_used, $account_used, $has_pro ) {
 		if ( '' === $domain ) {
 			return 'domain';
+		}
+		if ( ! $verified ) {
+			return 'trial_site_unverified';
 		}
 		if ( $staging ) {
 			return 'trial_staging';
@@ -117,13 +121,14 @@ class Trials {
 	 */
 	public static function message( $code ) {
 		$messages = array(
-			'domain'             => __( 'Send the site address.', 'wpessential-server' ),
-			'trial_staging'      => __( 'Start the trial on your live website. Local and staging sites can use Pro with a paid plan at no extra cost.', 'wpessential-server' ),
-			'trial_has_pro'      => __( 'Your account already has Pro. Connect this website to your subscription instead.', 'wpessential-server' ),
-			'trial_used_site'    => __( 'This website already had a Pro trial. Choose a plan to keep using Pro.', 'wpessential-server' ),
-			'trial_used_account' => __( 'Your account already used its Pro trial. Choose a plan to keep using Pro.', 'wpessential-server' ),
-			'throttled'          => __( 'Too many attempts. Wait 15 minutes and try again.', 'wpessential-server' ),
-			'trial_failed'       => __( 'The trial could not be started. Try again in a minute.', 'wpessential-server' ),
+			'domain'                => __( 'Send the site address.', 'wpessential-server' ),
+			'trial_site_unverified' => __( 'WPEssential could not confirm that this request came from that website. Start the trial from the WPEssential plugin on the website itself, and make sure its REST API is reachable.', 'wpessential-server' ),
+			'trial_staging'         => __( 'Start the trial on your live website. Local and staging sites can use Pro with a paid plan at no extra cost.', 'wpessential-server' ),
+			'trial_has_pro'         => __( 'Your account already has Pro. Connect this website to your subscription instead.', 'wpessential-server' ),
+			'trial_used_site'       => __( 'This website already had a Pro trial. Choose a plan to keep using Pro.', 'wpessential-server' ),
+			'trial_used_account'    => __( 'Your account already used its Pro trial. Choose a plan to keep using Pro.', 'wpessential-server' ),
+			'throttled'             => __( 'Too many attempts. Wait 15 minutes and try again.', 'wpessential-server' ),
+			'trial_failed'          => __( 'The trial could not be started. Try again in a minute.', 'wpessential-server' ),
 		);
 		return $messages[ $code ] ?? $messages['trial_failed'];
 	}
@@ -164,9 +169,10 @@ class Trials {
 	 *
 	 * @param int    $user_id User.
 	 * @param string $site    Site address.
+	 * @param string $proof   One-time token the site published the hash of (see SiteProof).
 	 * @return array|\WP_Error Owner-shaped license.
 	 */
-	public static function start( $user_id, $site ) {
+	public static function start( $user_id, $site, $proof = '' ) {
 		global $wpdb;
 		if ( Accounts::throttled( 'trial' ) ) {
 			return self::error( 'throttled' );
@@ -184,7 +190,10 @@ class Trials {
 		$table        = $wpdb->prefix . 'wpes_trials';
 		$site_used    = '' !== $domain && (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE domain = %s", $domain ) ); // phpcs:ignore WordPress.DB -- Custom table.
 		$account_used = (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE user_id = %d", (int) $user_id ) ); // phpcs:ignore WordPress.DB -- Custom table.
-		$refusal      = self::refusal( $domain, '' !== $domain && Licenses::looks_staging( $domain ), $site_used, $account_used, $has_pro );
+		$staging      = '' !== $domain && Licenses::looks_staging( $domain );
+		// Only reach out to the site once the cheap rules pass.
+		$verified = null === self::refusal( $domain, true, $staging, $site_used, $account_used, $has_pro ) && SiteProof::verify( $site, $proof );
+		$refusal  = self::refusal( $domain, $verified, $staging, $site_used, $account_used, $has_pro );
 		if ( null !== $refusal ) {
 			Events::log(
 				'trial.refused',
