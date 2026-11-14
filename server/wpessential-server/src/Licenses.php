@@ -251,6 +251,17 @@ class Licenses {
 	}
 
 	/**
+	 * Whether a domain is a local development site (never public): localhost, private IPs,
+	 * .local, .test, .localhost.
+	 *
+	 * @param string $domain Domain.
+	 * @return bool
+	 */
+	public static function looks_local( $domain ) {
+		return (bool) preg_match( '/^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)$|\.(local|test|localhost)$/', (string) $domain );
+	}
+
+	/**
 	 * Whether a domain looks local or staging, whatever the free-staging setting says.
 	 *
 	 * @param string $domain Domain.
@@ -356,9 +367,17 @@ class Licenses {
 				return $license;
 			}
 		}
-		// A trial covers exactly one website: staging copies count against it too.
-		$staging = self::is_staging( $domain ) && ! Trials::is_trial( $license );
-		if ( ! $staging && (int) $license['sites_limit'] > 0 && self::used_sites( $license['id'] ) >= (int) $license['sites_limit'] ) {
+		if ( Trials::is_trial( $license ) ) {
+			// A trial: one live website plus a few local/staging copies of it.
+			$staging = self::looks_staging( $domain );
+			$refusal = Trials::activation_refusal( $staging, self::activations( $license['id'] ) );
+			if ( null !== $refusal ) {
+				return new \WP_Error( $refusal, Trials::message( $refusal ) );
+			}
+		} else {
+			$staging = self::is_staging( $domain );
+		}
+		if ( ! $staging && ! Trials::is_trial( $license ) && (int) $license['sites_limit'] > 0 && self::used_sites( $license['id'] ) >= (int) $license['sites_limit'] ) {
 			/* translators: %d: site limit. */
 			return new \WP_Error( 'no_activations_left', sprintf( _n( 'This license is already used on %d website. Deactivate it there from your account, or upgrade your plan for more websites.', 'This license is already used on %d websites. Deactivate one from your account, or upgrade your plan for more websites.', (int) $license['sites_limit'], 'wpessential-server' ), (int) $license['sites_limit'] ) );
 		}

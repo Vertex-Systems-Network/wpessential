@@ -22,6 +22,9 @@ class Trials {
 
 	const DAYS = 30;
 
+	/** Local/staging copies one trial may run on, besides its live website. */
+	const COPIES = 3;
+
 	/** Days before the end when a reminder is sent. */
 	const REMINDER_DAYS = array( 7, 2 );
 
@@ -114,6 +117,29 @@ class Trials {
 	}
 
 	/**
+	 * Can a trial license be activated on one more site? (pure, unit-tested)
+	 *
+	 * @param bool  $staging     The new site is local/staging.
+	 * @param array $activations Existing activation rows (with is_staging).
+	 * @return string|null Error code, or null when allowed.
+	 */
+	public static function activation_refusal( $staging, array $activations ) {
+		$copies = count(
+			array_filter(
+				$activations,
+				static function ( $a ) {
+					return ! empty( $a['is_staging'] );
+				}
+			)
+		);
+		$live   = count( $activations ) - $copies;
+		if ( $staging ) {
+			return $copies >= self::COPIES ? 'trial_copies_used' : null;
+		}
+		return $live >= 1 ? 'trial_live_used' : null;
+	}
+
+	/**
 	 * Messages for refusal codes.
 	 *
 	 * @param string $code Code.
@@ -123,7 +149,9 @@ class Trials {
 		$messages = array(
 			'domain'                => __( 'Send the site address.', 'wpessential-server' ),
 			'trial_site_unverified' => __( 'WPEssential could not confirm that this request came from that website. Start the trial from the WPEssential plugin on the website itself, and make sure its REST API is reachable.', 'wpessential-server' ),
-			'trial_staging'         => __( 'Start the trial on your live website. Local and staging sites can use Pro with a paid plan at no extra cost.', 'wpessential-server' ),
+			'trial_staging'         => __( 'Start the trial on your live website or on a local copy (localhost, .local, .test). Once it runs, it also works on staging copies of that site.', 'wpessential-server' ),
+			'trial_live_used'       => __( 'Your Pro trial is already on a live website. Use it on staging or local copies of that site, or choose a plan.', 'wpessential-server' ),
+			'trial_copies_used'     => __( 'Your Pro trial is already on 3 staging or local copies. Remove one from your account first.', 'wpessential-server' ),
 			'trial_has_pro'         => __( 'Your account already has Pro. Connect this website to your subscription instead.', 'wpessential-server' ),
 			'trial_used_site'       => __( 'This website already had a Pro trial. Choose a plan to keep using Pro.', 'wpessential-server' ),
 			'trial_used_account'    => __( 'Your account already used its Pro trial. Choose a plan to keep using Pro.', 'wpessential-server' ),
@@ -190,9 +218,13 @@ class Trials {
 		$table        = $wpdb->prefix . 'wpes_trials';
 		$site_used    = '' !== $domain && (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE domain = %s", $domain ) ); // phpcs:ignore WordPress.DB -- Custom table.
 		$account_used = (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE user_id = %d", (int) $user_id ) ); // phpcs:ignore WordPress.DB -- Custom table.
-		$staging      = '' !== $domain && Licenses::looks_staging( $domain );
-		// Only reach out to the site once the cheap rules pass.
-		$verified = null === self::refusal( $domain, true, $staging, $site_used, $account_used, $has_pro ) && SiteProof::verify( $site, $proof );
+		// A local development site can start the account's trial (it cannot be public, so there is
+		// no one to take a trial from); public staging hosts cannot.
+		$local     = '' !== $domain && Licenses::looks_local( $domain );
+		$staging   = '' !== $domain && ! $local && Licenses::looks_staging( $domain );
+		$site_used = $site_used && ! $local;
+		// Only reach out to a public site once the cheap rules pass.
+		$verified = $local || ( null === self::refusal( $domain, true, $staging, $site_used, $account_used, $has_pro ) && SiteProof::verify( $site, $proof ) );
 		$refusal  = self::refusal( $domain, $verified, $staging, $site_used, $account_used, $has_pro );
 		if ( null !== $refusal ) {
 			Events::log(
@@ -213,7 +245,8 @@ class Trials {
 			$table,
 			array(
 				'user_id'    => (int) $user_id,
-				'domain'     => $domain,
+				// Local names (localhost, *.test) are shared by everyone, so they are not reserved.
+				'domain'     => $local ? 'local:' . (int) $user_id : $domain,
 				'license_id' => 0,
 				'started_at' => gmdate( 'Y-m-d H:i:s', $now ),
 				'ends_at'    => self::ends_at( $now ),
@@ -249,6 +282,44 @@ class Trials {
 		}
 		Events::log( 'trial.started', sprintf( 'Pro trial %1$s started for %2$s, ends %3$s.', $license['license_key'], $domain, $license['expires_at'] ), Events::of( $license, array( 'domain' => $domain ) ) );
 		return Licenses::owner_shape( Licenses::get( $license['id'] ) );
+	}
+
+	/**
+	 * Move the account's running trial onto a live website (e.g. a trial started on a local copy
+	 * when the site goes live). The site must prove the request comes from it, and the domain
+	 * becomes this account's trial site.
+	 *
+	 * @param int    $user_id User.
+	 * @param string $site    Site URL.
+	 * @param string $proof   Site proof token.
+	 * @return array|\WP_Error|null Owner-shaped license, an error, or null when there is no trial to move.
+	 */
+	public static function attach_live( $user_id, $site, $proof ) {
+		global $wpdb;
+		$domain = Licenses::domain( (string) $site );
+		$id     = self::active_trial_id( (int) $user_id );
+		if ( ! $id || '' === $domain || Licenses::looks_staging( $domain ) ) {
+			return null;
+		}
+		if ( null !== self::activation_refusal( false, Licenses::activations( $id ) ) ) {
+			return self::error( 'trial_live_used' );
+		}
+		$table = $wpdb->prefix . 'wpes_trials';
+		$taken = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$table} WHERE domain = %s", $domain ) ); // phpcs:ignore WordPress.DB -- Custom table.
+		if ( null !== $taken && (int) $taken !== (int) $user_id ) {
+			return self::error( 'trial_used_site' );
+		}
+		if ( ! SiteProof::verify( $site, $proof ) ) {
+			return self::error( 'trial_site_unverified' );
+		}
+		$wpdb->update( $table, array( 'domain' => $domain ), array( 'user_id' => (int) $user_id ) ); // phpcs:ignore WordPress.DB -- Custom table.
+		$license   = Licenses::get( $id );
+		$activated = Licenses::activate( $license['license_key'], $domain );
+		if ( is_wp_error( $activated ) ) {
+			return $activated;
+		}
+		Events::log( 'trial.moved_live', sprintf( 'Pro trial %1$s now runs on %2$s.', $license['license_key'], $domain ), Events::of( $license, array( 'domain' => $domain ) ) );
+		return Licenses::owner_shape( Licenses::get( $id ) );
 	}
 
 	/**

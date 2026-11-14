@@ -286,9 +286,26 @@ class Api {
 		);
 		$pick    = $on_site ? $on_site[0] : self::pick( $paid, $domain );
 
-		// 3. A website that never had a trial gets the 30-day Pro trial (proved to come from it).
+		// 3. The account's running trial covers this site: its local/staging copies, or the live
+		// site when the trial started on a local copy.
 		$trial_note = '';
-		if ( ! $pick ) {
+		$trial_id   = $pick ? 0 : Trials::active_trial_id( $user );
+		if ( $trial_id && Licenses::looks_staging( $domain ) ) {
+			$license = Licenses::activate( Licenses::get( $trial_id )['license_key'], $domain );
+			if ( ! is_wp_error( $license ) ) {
+				return rest_ensure_response( Licenses::owner_shape( Licenses::get( $trial_id ) ) + array( 'message' => __( 'Your Pro trial now also runs on this copy of your website.', 'wpessential-server' ) ) );
+			}
+			$trial_note = $license->get_error_message();
+		} elseif ( $trial_id ) {
+			$moved = Trials::attach_live( $user, (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
+			if ( is_array( $moved ) ) {
+				return rest_ensure_response( $moved + array( 'message' => __( 'Your Pro trial now runs on this website.', 'wpessential-server' ) ) );
+			}
+			$trial_note = is_wp_error( $moved ) ? $moved->get_error_message() : '';
+		}
+
+		// 4. A website that never had a trial gets the 30-day Pro trial (proved to come from it).
+		if ( ! $pick && ! $trial_id ) {
 			$trial = Trials::start( $user, (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
 			if ( ! is_wp_error( $trial ) ) {
 				return rest_ensure_response( $trial + array( 'message' => __( 'Your 30-day Pro trial has started on this website.', 'wpessential-server' ) ) );
@@ -296,7 +313,7 @@ class Api {
 			$trial_note = $trial->get_error_message();
 		}
 
-		// 4. Otherwise any usable slot (the Free plan).
+		// 5. Otherwise any usable slot (the Free plan).
 		if ( ! $pick ) {
 			$pick = self::pick( $licenses, $domain );
 		}
@@ -322,6 +339,10 @@ class Api {
 	 * @return \WP_REST_Response
 	 */
 	public function trial( $request ) {
+		// The account already has a trial: put this site on it (copy or live site) like connect does.
+		if ( Trials::active_trial_id( (int) $request->get_param( '_user' ) ) ) {
+			return $this->connect( $request );
+		}
 		$result = Trials::start( (int) $request->get_param( '_user' ), (string) $request->get_param( 'site' ), (string) $request->get_param( 'proof' ) );
 		if ( is_wp_error( $result ) ) {
 			return $this->fail( $result, 'throttled' === $result->get_error_code() ? 429 : 409 );
