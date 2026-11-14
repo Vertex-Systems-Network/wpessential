@@ -60,7 +60,7 @@ final class LicenseService {
 		return new $class( $config );
 	}
 
-	/** @return array{key:string,status:string,expires:string,plan:string,checked:int,message:string,pro:bool,white_label:bool,sites_used:int,sites_limit:int} */
+	/** @return array{key:string,status:string,expires:string,plan:string,checked:int,verified:int,error:string,message:string,pro:bool,white_label:bool,sites_used:int,sites_limit:int} */
 	public function data(): array {
 		$stored = function_exists( 'get_option' ) ? get_option( self::OPTION, [] ) : [];
 		$stored = is_array( $stored ) ? $stored : [];
@@ -173,6 +173,10 @@ final class LicenseService {
 			return;
 		}
 
+		if ( $data['verified'] === 0 ) {
+			// Licence stored before `verified` existed: its last check is the last known success.
+			$data['verified'] = $data['checked'];
+		}
 		$result = $this->adapter()->check( $data['key'], self::domain() );
 		if ( $result instanceof WP_Error ) {
 			if ( $result->get_error_code() !== 'wpe_http' ) {

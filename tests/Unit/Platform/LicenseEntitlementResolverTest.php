@@ -24,7 +24,10 @@ final class LicenseEntitlementResolverTest extends TestCase
         yield 'active pro' => [$active + ['expires' => $future], ProductEntitlementState::ProActive, null, true, true];
         yield 'lifetime pro' => [$active + ['expires' => ''], ProductEntitlementState::ProActive, null, true, true];
         yield 'trial' => [$active + ['plan' => 'Pro Trial', 'expires' => $future], ProductEntitlementState::TrialActive, null, true, true];
-        yield 'grace' => [$active + ['expires' => $past], ProductEntitlementState::Grace, 'license_in_grace', true, true];
+        yield 'grace confirmed after expiry' => [['verified' => self::NOW - 3600] + $active + ['expires' => $past], ProductEntitlementState::Grace, 'license_in_grace', true, true];
+        yield 'expiry not yet confirmed by server' => [['verified' => self::NOW - 12 * 86400] + $active + ['expires' => $past], ProductEntitlementState::VerificationStale, 'license_expiry_unconfirmed', true, false];
+        yield 'explicit expired status' => [['status' => 'expired', 'expires' => ''] + $active, ProductEntitlementState::Expired, 'license_expired', true, false];
+        yield 'explicit revoked status' => [['status' => 'revoked'] + $active, ProductEntitlementState::Suspended, 'license_revoked', true, false];
         yield 'free plan licence' => [['pro' => false] + $active, ProductEntitlementState::VerificationUnavailable, 'license_not_pro', true, false];
         yield 'stale check' => [['verified' => self::NOW - 31 * 86400] + $active, ProductEntitlementState::VerificationStale, 'license_check_stale', true, false];
         yield 'legacy data uses checked' => [['verified' => 0, 'checked' => self::NOW - 40 * 86400] + $active, ProductEntitlementState::VerificationStale, 'license_check_stale', true, false];

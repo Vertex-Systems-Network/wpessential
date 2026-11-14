@@ -28,8 +28,8 @@ final class LicenseEntitlementResolver {
 
 	/** Snapshot for the licence stored on this site. */
 	public static function current( ?int $now = null ): ProductEntitlementSnapshot {
-		$service = new LicenseService();
-		$data    = $service->data();
+		$service     = new LicenseService();
+		$data        = $service->data();
 		$data['pro'] = $data['pro'] || $service->config()['provider'] !== 'custom';
 		return self::resolve( $data, $now ?? time() );
 	}
@@ -58,8 +58,11 @@ final class LicenseEntitlementResolver {
 				return self::snapshot( ProductEntitlementState::VerificationStale, 'license_check_stale' );
 			}
 			if ( $expires !== null && $now > $expires ) {
-				// The server still answers "active" during its grace days.
-				return self::snapshot( ProductEntitlementState::Grace, 'license_in_grace' );
+				// Grace only once the server confirmed the licence after its expiry; until then
+				// the next check decides between grace and expired.
+				return $verified > $expires
+					? self::snapshot( ProductEntitlementState::Grace, 'license_in_grace' )
+					: self::snapshot( ProductEntitlementState::VerificationStale, 'license_expiry_unconfirmed' );
 			}
 			if ( str_contains( $plan, 'trial' ) ) {
 				return self::snapshot( ProductEntitlementState::TrialActive );
@@ -67,10 +70,15 @@ final class LicenseEntitlementResolver {
 			return self::snapshot( ProductEntitlementState::ProActive );
 		}
 
-		if ( in_array( $error, self::SUSPENDED_ERRORS, true ) ) {
+		$revoked = in_array( $status, [ 'revoked', 'suspended' ], true ) || in_array( $error, self::SUSPENDED_ERRORS, true );
+		if ( $revoked ) {
 			return self::snapshot( ProductEntitlementState::Suspended, 'license_revoked' );
 		}
-		if ( in_array( $error, self::EXPIRED_ERRORS, true ) || ( $expires !== null && $now > $expires ) ) {
+		if (
+			in_array( $status, [ 'expired', 'cancelled' ], true )
+			|| in_array( $error, self::EXPIRED_ERRORS, true )
+			|| ( $expires !== null && $now > $expires )
+		) {
 			return self::snapshot( ProductEntitlementState::Expired, 'license_expired' );
 		}
 		return self::snapshot( ProductEntitlementState::VerificationUnavailable, 'license_inactive' );
