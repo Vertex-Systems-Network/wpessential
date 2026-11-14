@@ -300,7 +300,9 @@ class Licenses {
 		if ( empty( $license['expires_at'] ) ) {
 			return false;
 		}
-		return strtotime( $license['expires_at'] . ' UTC' ) + DAY_IN_SECONDS * (int) Plugin::settings( 'grace_days' ) < time();
+		// A trial ends on its date: no grace days.
+		$grace = Trials::is_trial( $license ) ? 0 : (int) Plugin::settings( 'grace_days' );
+		return strtotime( $license['expires_at'] . ' UTC' ) + DAY_IN_SECONDS * $grace < time();
 	}
 
 	/**

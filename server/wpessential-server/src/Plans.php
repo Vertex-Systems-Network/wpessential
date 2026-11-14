@@ -79,7 +79,7 @@ class Plans {
 	 * @return bool
 	 */
 	public static function owner_not_purchasable( $purchasable, $product ) {
-		return self::OWNER === $product->get_meta( '_wpes_plan' ) ? false : $purchasable;
+		return in_array( $product->get_meta( '_wpes_plan' ), array( self::OWNER, Trials::PLAN ), true ) ? false : $purchasable;
 	}
 
 	/**

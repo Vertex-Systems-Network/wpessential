@@ -187,6 +187,29 @@ final class Account {
 	 *
 	 * @return array<string,mixed>|WP_Error
 	 */
+	/**
+	 * Start the 30-day Pro trial for this site on the licence server (one per site and per
+	 * account) and activate the trial licence here. Only the Pro add-on reads the result;
+	 * Free features never depend on it.
+	 *
+	 * @return array<string,mixed>|WP_Error
+	 */
+	public function startTrial(): array|WP_Error {
+		$trial = $this->request( 'POST', '/account/trial', [ 'site' => home_url() ] );
+		if ( $trial instanceof WP_Error ) {
+			return $trial;
+		}
+		$key = is_string( $trial['key'] ?? null ) ? $trial['key'] : '';
+		if ( $key === '' ) {
+			return new WP_Error( 'wpe_trial', __( 'The trial could not be started. Try again in a minute.', 'wpessential' ) );
+		}
+		if ( $this->license->isActive() && $this->license->data()['key'] !== $key ) {
+			$this->license->deactivate();
+		}
+
+		return $this->license->activate( $key );
+	}
+
 	public function connectSite(): array|WP_Error {
 		// WPE Server picks and assigns the slot itself (account/connect); older servers do not have it.
 		$connected = $this->request( 'POST', '/account/connect', [ 'site' => home_url() ] );

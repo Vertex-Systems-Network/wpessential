@@ -195,6 +195,15 @@ class Orders {
 			}
 			$renew   = (int) $item->get_meta( '_wpes_renew' );
 			$upgrade = (int) $item->get_meta( '_wpes_upgrade' );
+			// A trial is never renewed, and buying Pro during a trial upgrades the trial license in
+			// place, so the website keeps its key and goes straight from trial to paid.
+			if ( $renew && Trials::is_trial( Licenses::get( $renew ) ) ) {
+				$upgrade = $renew;
+				$renew   = 0;
+			}
+			if ( ! $renew && ! $upgrade && $plan['pro'] ) {
+				$upgrade = Trials::active_trial_id( $user_id );
+			}
 			if ( ( $renew && ! Licenses::get( $renew ) ) || ( $upgrade && ! Licenses::get( $upgrade ) ) ) {
 				Events::error(
 					'order.license_missing',

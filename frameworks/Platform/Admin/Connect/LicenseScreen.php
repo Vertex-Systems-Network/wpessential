@@ -30,7 +30,7 @@ use WP_Error;
 final class LicenseScreen implements AdminScreen {
 
 	public const ACTION = 'wpessential_license';
-	private const OPS   = [ 'connect', 'deactivate', 'refresh', 'login', 'register', 'logout', 'use', 'checkout', 'manage' ];
+	private const OPS   = [ 'connect', 'trial', 'deactivate', 'refresh', 'login', 'register', 'logout', 'use', 'checkout', 'manage' ];
 	private const FLASH = 'wpessential_license_flash_';
 
 	public function __construct( private readonly LicenseService $license, private readonly Account $account ) {}
@@ -79,6 +79,7 @@ final class LicenseScreen implements AdminScreen {
 
 		return match ( $op ) {
 			'connect'    => $done( $this->account->connectSite(), __( 'This site is connected to your subscription.', 'wpessential' ) ),
+			'trial'      => $done( $this->account->startTrial(), __( 'Your 30-day Pro trial has started on this site. Download WPEssential Pro from your account to use it.', 'wpessential' ) ),
 			'deactivate' => $done( $this->license->deactivate(), __( 'This site was disconnected and its slot is free again.', 'wpessential' ) ),
 			'refresh'    => $this->refreshed(),
 			'login'      => $done( $this->account->login( $this->field( 'login' ), (string) wp_unslash( $_POST['password'] ?? '' ) ), __( 'Signed in. This site is connected to your subscription when a slot is available.', 'wpessential' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are sent as typed.
@@ -196,6 +197,9 @@ final class LicenseScreen implements AdminScreen {
 		$rows[] = $this->account->signedIn()
 			? OptionGroup::row( __( 'Connect this site', 'wpessential' ), __( 'Connect this site to one of your subscriptions. WPEssential keeps the one already on this domain, or uses a free site slot.', 'wpessential' ), self::form( 'connect', self::submit( __( 'Connect this site', 'wpessential' ) ), [], 'wpe-ui-inline' ) )
 			: OptionGroup::row( __( 'How it works', 'wpessential' ), __( 'No licence key needed.', 'wpessential' ), OptionGroup::readonly( __( 'Sign in with your WPEssential account. This site is connected to your subscription automatically, no key needed.', 'wpessential' ) ) );
+		if ( $this->account->signedIn() && ! $this->license->hasPro() ) {
+			$rows[] = OptionGroup::row( __( 'Try Pro', 'wpessential' ), __( 'Every Pro module free for 30 days on this site, once per site. When it ends, Pro becomes read-only and nothing is deleted.', 'wpessential' ), self::form( 'trial', self::submit( __( 'Start 30-day Pro trial', 'wpessential' ), 'secondary' ), [], 'wpe-ui-inline' ) );
+		}
 		$rows[] = OptionGroup::row( __( 'Free modules', 'wpessential' ), __( 'What works without an account.', 'wpessential' ), OptionGroup::readonly( __( 'Free modules work without an account. A Premium subscription unlocks every Premium module.', 'wpessential' ) ) );
 
 		return $rows;

@@ -40,6 +40,7 @@ class Api {
 			'/account/license'    => array( 'POST', 'license_action', $auth ),
 			'/account/checkout'   => array( 'POST', 'checkout', $auth ),
 			'/account/connect'    => array( 'POST', 'connect', $auth ),
+			'/account/trial'      => array( 'POST', 'trial', $auth ),
 			'/release'            => array( 'POST', 'release', array( $this, 'can_release' ) ),
 		);
 		foreach ( $routes as $route => $def ) {
@@ -273,6 +274,20 @@ class Api {
 		return rest_ensure_response(
 			Licenses::owner_shape( Licenses::get( $license['id'] ) ) + array( 'message' => __( 'This website is connected to your subscription.', 'wpessential-server' ) )
 		);
+	}
+
+	/**
+	 * Start the 30-day Pro trial on a website (one per website and per account).
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response
+	 */
+	public function trial( $request ) {
+		$result = Trials::start( (int) $request->get_param( '_user' ), (string) $request->get_param( 'site' ) );
+		if ( is_wp_error( $result ) ) {
+			return $this->fail( $result, 'throttled' === $result->get_error_code() ? 429 : 409 );
+		}
+		return rest_ensure_response( $result + array( 'message' => __( 'Your 30-day Pro trial has started on this website.', 'wpessential-server' ) ) );
 	}
 
 	/**
