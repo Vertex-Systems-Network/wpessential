@@ -18,6 +18,7 @@ final class TrialsTest extends TestCase
             define('DAY_IN_SECONDS', self::DAY);
         }
         require_once dirname(__DIR__, 3) . '/server/wpessential-server/src/Trials.php';
+        require_once dirname(__DIR__, 3) . '/server/wpessential-server/src/Licenses.php';
     }
 
     /** @return iterable<string,array{string,bool,bool,bool,bool,bool,?string}> */
@@ -60,5 +61,28 @@ final class TrialsTest extends TestCase
         self::assertTrue(Trials::is_trial(['plan' => 'pro_trial']));
         self::assertFalse(Trials::is_trial(['plan' => 'pro_yearly']));
         self::assertFalse(Trials::is_trial(null));
+    }
+
+    public function testOneTrialRunsOnOneLiveSiteAndThreeCopies(): void
+    {
+        $live = ['is_staging' => 0];
+        $copy = ['is_staging' => 1];
+
+        self::assertNull(Trials::activation_refusal(false, []), 'First live site.');
+        self::assertNull(Trials::activation_refusal(true, [$live]), 'A copy next to the live site.');
+        self::assertSame('trial_live_used', Trials::activation_refusal(false, [$live]), 'A second live site.');
+        self::assertNull(Trials::activation_refusal(true, [$live, $copy, $copy]));
+        self::assertSame('trial_copies_used', Trials::activation_refusal(true, [$live, $copy, $copy, $copy]));
+        self::assertNull(Trials::activation_refusal(false, [$copy, $copy]), 'Started on a local copy, then the live site.');
+    }
+
+    public function testLocalSitesAreRecognisedButPublicStagingHostsAreNot(): void
+    {
+        foreach (['localhost', 'mysite.local', 'shop.test', 'app.localhost', '127.0.0.1', '192.168.1.20', '10.0.0.5', '172.16.0.5', '172.31.255.1'] as $domain) {
+            self::assertTrue(\WPEssential\Server\Licenses::looks_local($domain), $domain);
+        }
+        foreach (['staging.example.com', 'example.com', 'site.wpengine.com', 'mylocal.com', 'test.example.com', '172.32.0.1', '172.15.0.1'] as $domain) {
+            self::assertFalse(\WPEssential\Server\Licenses::looks_local($domain), $domain);
+        }
     }
 }

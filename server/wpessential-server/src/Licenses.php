@@ -251,6 +251,17 @@ class Licenses {
 	}
 
 	/**
+	 * Whether a domain is a local development site (never public): localhost, private IPs,
+	 * .local, .test, .localhost.
+	 *
+	 * @param string $domain Domain.
+	 * @return bool
+	 */
+	public static function looks_local( $domain ) {
+		return (bool) preg_match( '/^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$|\.(local|test|localhost)$/', (string) $domain );
+	}
+
+	/**
 	 * Whether a domain looks local or staging, whatever the free-staging setting says.
 	 *
 	 * @param string $domain Domain.
@@ -356,9 +367,28 @@ class Licenses {
 				return $license;
 			}
 		}
-		// A trial covers exactly one website: staging copies count against it too.
-		$staging = self::is_staging( $domain ) && ! Trials::is_trial( $license );
-		if ( ! $staging && (int) $license['sites_limit'] > 0 && self::used_sites( $license['id'] ) >= (int) $license['sites_limit'] ) {
+		$lock = '';
+		if ( Trials::is_trial( $license ) ) {
+			// A trial: one live website (only the one reserved for it, see Trials::attach_live())
+			// plus a few local/staging copies. Check and insert run under a lock so parallel
+			// requests cannot exceed the limits.
+			$staging = self::looks_staging( $domain );
+			if ( ! $staging && ! Trials::live_domain_reserved( $license, $domain ) ) {
+				return new \WP_Error( 'trial_site_unverified', Trials::message( 'trial_site_unverified' ) );
+			}
+			$lock = 'wpes_trial_' . (int) $license['id'];
+			if ( 1 !== (int) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock ) ) ) { // phpcs:ignore WordPress.DB -- Named lock.
+				return new \WP_Error( 'busy', __( 'Please try again in a moment.', 'wpessential-server' ) );
+			}
+			$refusal = Trials::activation_refusal( $staging, self::activations( $license['id'] ) );
+			if ( null !== $refusal ) {
+				$wpdb->query( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) ); // phpcs:ignore WordPress.DB -- Named lock.
+				return new \WP_Error( $refusal, Trials::message( $refusal ) );
+			}
+		} else {
+			$staging = self::is_staging( $domain );
+		}
+		if ( ! $staging && ! Trials::is_trial( $license ) && (int) $license['sites_limit'] > 0 && self::used_sites( $license['id'] ) >= (int) $license['sites_limit'] ) {
 			/* translators: %d: site limit. */
 			return new \WP_Error( 'no_activations_left', sprintf( _n( 'This license is already used on %d website. Deactivate it there from your account, or upgrade your plan for more websites.', 'This license is already used on %d websites. Deactivate one from your account, or upgrade your plan for more websites.', (int) $license['sites_limit'], 'wpessential-server' ), (int) $license['sites_limit'] ) );
 		}
@@ -372,8 +402,28 @@ class Licenses {
 				'last_check' => $now,
 			)
 		);
+		if ( '' !== $lock ) {
+			$wpdb->query( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) ); // phpcs:ignore WordPress.DB -- Named lock.
+		}
 		do_action( 'wpes_license_activated', $license, $domain );
 		return $license;
+	}
+
+	/**
+	 * Re-apply the paid-plan staging rule to a license's activations (after a trial is upgraded:
+	 * trial copies were stored as staging whatever the free-staging setting says).
+	 *
+	 * @param int $license_id License.
+	 */
+	public static function reclassify_activations( $license_id ) {
+		global $wpdb;
+		list( , $table ) = self::tables();
+		foreach ( self::activations( $license_id ) as $row ) {
+			$staging = self::is_staging( $row['domain'] ) ? 1 : 0;
+			if ( (int) $row['is_staging'] !== $staging ) {
+				$wpdb->update( $table, array( 'is_staging' => $staging ), array( 'id' => $row['id'] ) ); // phpcs:ignore WordPress.DB -- Custom table.
+			}
+		}
 	}
 
 	/**
