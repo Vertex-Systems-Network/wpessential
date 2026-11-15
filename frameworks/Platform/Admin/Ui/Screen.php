@@ -22,7 +22,8 @@ final class Screen {
 	 * @param array<string,mixed>|null $appData
 	 */
 	public static function render( string $current, string $content, string $notice = '', string $surface = 'core', ?array $appData = null ): void {
-		echo '<div class="wrap wpe-ui" data-wpessential-surface="' . esc_attr( $surface ) . '">';
+		$loading = function_exists( '__' ) ? __( 'Loading…', 'wpessential' ) : 'Loading…';
+		echo '<div class="wrap wpe-ui" data-wpessential-surface="' . esc_attr( $surface ) . '" data-loading-label="' . esc_attr( $loading ) . '">';
 		echo Shell::topbar( $current ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo $notice; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by Notice::render().
 		if ( $appData === null ) {

@@ -3,6 +3,7 @@
 // full page reload, and the address bar and Back button keep working. A screen that needs a
 // script this page has not loaded (or runs inline script) falls back to a normal page load.
 import { APP_PAGES } from '../app/routes';
+import { showScreenSkeleton } from './skeleton';
 
 const LINKS = 'a.wpe-ui-nav__item, a.wpe-ui-account__item, .wpe-ui-topbar a.wpe-ui-button[href*="page=wpessential"], .wpe-ui-topbar a.wpe-ui-logo';
 
@@ -50,6 +51,10 @@ async function go( url: URL, push: boolean, reinit: () => void ): Promise< void 
 	}
 	current.setAttribute( 'aria-busy', 'true' );
 	current.classList.add( 'is-navigating' );
+	// The dashboard app shows its own skeleton; other screens get one here.
+	if ( ! current.querySelector( '[data-wpe-app-root]' ) ) {
+		showScreenSkeleton( current, current.dataset.loadingLabel ?? 'Loading…' );
+	}
 	try {
 		const response = await fetch( url.toString(), { credentials: 'same-origin' } );
 		if ( ! response.ok ) {
