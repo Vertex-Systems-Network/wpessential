@@ -1,0 +1,274 @@
+{
+	"name": "container",
+	"title": "Container (WPEssential)",
+	"category": "layout",
+	"description": "Responsive flex/grid layout: native nested blocks in Gutenberg, WYSIWYG content in Elementor widgets. Use Elementor's native Container for draggable nested widgets.",
+	"icon": "screenoptions",
+	"elementor_icon": "eicon-container",
+	"keywords": [
+		"container",
+		"section",
+		"row",
+		"columns",
+		"grid",
+		"flex",
+		"layout"
+	],
+	"panels": {
+		"content": "Content",
+		"layout": "Layout",
+		"size": "Size & spacing",
+		"style": "Style"
+	},
+	"attributes": {
+		"content": {
+			"type": "html",
+			"panel": "content",
+			"label": "Content (Elementor; Gutenberg uses nested blocks)",
+			"default": ""
+		},
+		"tag": {
+			"type": "select",
+			"panel": "content",
+			"label": "HTML element",
+			"default": "div",
+			"options": {
+				"div": "Div",
+				"section": "Section",
+				"article": "Article",
+				"aside": "Aside"
+			}
+		},
+		"ariaLabel": {
+			"type": "text",
+			"panel": "content",
+			"label": "Accessible section label (optional)",
+			"default": ""
+		},
+		"layout": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Layout mode",
+			"default": "flex",
+			"options": {
+				"flex": "Flex",
+				"grid": "Grid"
+			}
+		},
+		"direction": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Flex direction",
+			"default": "row",
+			"options": {
+				"row": "Row",
+				"column": "Column",
+				"row-reverse": "Row reversed",
+				"column-reverse": "Column reversed"
+			},
+			"responsive": true,
+			"css": "--wpek-direction"
+		},
+		"wrap": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Flex wrapping",
+			"default": "wrap",
+			"options": {
+				"wrap": "Wrap",
+				"nowrap": "No wrap"
+			},
+			"responsive": true,
+			"css": "--wpek-wrap"
+		},
+		"columns": {
+			"type": "range",
+			"panel": "layout",
+			"label": "Grid columns",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-cols",
+			"min": 1,
+			"max": 12,
+			"step": 1,
+			"unit": ""
+		},
+		"gap": {
+			"type": "range",
+			"panel": "layout",
+			"label": "Column / item gap",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-gap",
+			"min": 0,
+			"max": 120,
+			"step": 1,
+			"unit": "px"
+		},
+		"rowGap": {
+			"type": "range",
+			"panel": "layout",
+			"label": "Row gap",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-row-gap",
+			"min": 0,
+			"max": 120,
+			"step": 1,
+			"unit": "px"
+		},
+		"justify": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Distribute content",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End",
+				"between": "Space between",
+				"around": "Space around",
+				"evenly": "Space evenly"
+			},
+			"responsive": true,
+			"css": "--wpek-justify",
+			"map": {
+				"start": "--wpek-justify:flex-start",
+				"center": "--wpek-justify:center",
+				"end": "--wpek-justify:flex-end",
+				"between": "--wpek-justify:space-between",
+				"around": "--wpek-justify:space-around",
+				"evenly": "--wpek-justify:space-evenly"
+			}
+		},
+		"alignItems": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Align items",
+			"default": "stretch",
+			"options": {
+				"stretch": "Stretch",
+				"start": "Start",
+				"center": "Center",
+				"end": "End",
+				"baseline": "Baseline"
+			},
+			"responsive": true,
+			"css": "--wpek-align-items",
+			"map": {
+				"stretch": "--wpek-align-items:stretch",
+				"start": "--wpek-align-items:flex-start",
+				"center": "--wpek-align-items:center",
+				"end": "--wpek-align-items:flex-end",
+				"baseline": "--wpek-align-items:baseline"
+			}
+		},
+		"contentWidth": {
+			"type": "select",
+			"panel": "size",
+			"label": "Content width",
+			"default": "boxed",
+			"options": {
+				"boxed": "Boxed / constrained",
+				"full": "Full width"
+			}
+		},
+		"maxWidth": {
+			"type": "range",
+			"panel": "size",
+			"label": "Maximum content width",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-max",
+			"min": 320,
+			"max": 1920,
+			"step": 10,
+			"unit": "px"
+		},
+		"minHeight": {
+			"type": "range",
+			"panel": "size",
+			"label": "Minimum height",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-min-height",
+			"min": 0,
+			"max": 1200,
+			"step": 10,
+			"unit": "px"
+		},
+		"alignSelf": {
+			"type": "select",
+			"panel": "size",
+			"label": "Container alignment",
+			"default": "center",
+			"options": {
+				"center": "Center",
+				"start": "Start",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-container-align",
+			"map": {
+				"center": "--wpek-container-align:0 auto",
+				"start": "--wpek-container-align:0 auto 0 0",
+				"end": "--wpek-container-align:0 0 0 auto"
+			}
+		},
+		"overflow": {
+			"type": "select",
+			"panel": "size",
+			"label": "Overflow",
+			"default": "visible",
+			"options": {
+				"visible": "Visible",
+				"hidden": "Hidden",
+				"auto": "Auto"
+			}
+		},
+		"equalChildren": {
+			"type": "toggle",
+			"panel": "layout",
+			"label": "Equal-width flex children",
+			"default": true
+		},
+		"hover": {
+			"type": "select",
+			"panel": "style",
+			"label": "Hover preset",
+			"default": "none",
+			"options": {
+				"none": "None",
+				"lift": "Lift",
+				"border": "Highlight border"
+			}
+		}
+	},
+	"groups": {
+		"outerBackground": {
+			"type": "background",
+			"label": "Container background",
+			"selector": ".wpe-container",
+			"panel": "style"
+		},
+		"outerBorder": {
+			"type": "border",
+			"label": "Container border/radius",
+			"selector": ".wpe-container",
+			"panel": "style"
+		},
+		"outerShadow": {
+			"type": "shadow",
+			"label": "Container shadow",
+			"selector": ".wpe-container",
+			"panel": "style"
+		},
+		"outerPadding": {
+			"type": "spacing",
+			"label": "Container padding",
+			"prop": "padding",
+			"selector": ".wpe-container",
+			"panel": "style"
+		}
+	}
+}

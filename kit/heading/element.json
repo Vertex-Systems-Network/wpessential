@@ -1,0 +1,33 @@
+{
+	"name": "heading",
+	"title": "Heading (WPEssential)",
+	"category": "basic",
+	"description": "Title with eyebrow, accent words, gradient and fluid size.",
+	"icon": "heading",
+	"elementor_icon": "eicon-t-letter",
+	"keywords": ["heading", "title", "eyebrow", "gradient"],
+	"panels": { "content": "Content", "style": "Style", "motion": "Hover & motion" },
+	"attributes": {
+		"eyebrow": { "type": "text", "label": "Eyebrow (small text above)", "default": "" },
+		"text": { "type": "textarea", "label": "Heading", "default": "Launch a WordPress site" },
+		"accent": { "type": "textarea", "label": "Accent words (after the heading)", "default": "" },
+		"tag": { "type": "select", "label": "HTML tag", "default": "h2", "options": { "h1": "H1", "h2": "H2", "h3": "H3", "h4": "H4", "h5": "H5", "h6": "H6", "p": "Paragraph", "div": "Div", "span": "Span"  } },
+		"link": { "type": "url", "label": "Link", "default": "" },
+		"accentNewLine": { "type": "toggle", "label": "Accent on a new line", "default": false },
+		"align": { "type": "select", "panel": "style", "label": "Alignment", "responsive": true, "css": "--wpek-align", "default": "", "options": { "": "Default", "left": "Left", "center": "Center", "right": "Right" }, "map": { "left": "--wpek-align:left;--wpek-mx:0 auto 0 0", "center": "--wpek-align:center;--wpek-mx:0 auto", "right": "--wpek-align:right;--wpek-mx:0 0 0 auto"  } },
+		"maxWidth": { "type": "range", "panel": "style", "label": "Max width (characters)", "responsive": true, "css": "--wpek-max", "unit": "ch", "min": 8, "max": 80, "default": "" },
+		"accentStyle": { "type": "select", "panel": "style", "label": "Accent style", "default": "gradient", "options": { "gradient": "Brand gradient", "primary": "Primary colour", "outline": "Outline", "highlight": "Highlighter"  } },
+		"spaceBelow": { "type": "range", "panel": "style", "label": "Space below", "responsive": true, "css": "--wpek-gap", "unit": "px", "min": 0, "max": 160, "default": "" },
+		"hover": { "type": "select", "panel": "motion", "label": "Hover (links)", "default": "underline", "options": { "none": "None", "underline": "Drawn underline", "glow": "Glow"  } },
+		"motion": { "type": "select", "panel": "motion", "label": "Entrance", "default": "none", "options": { "none": "None", "fade-up": "Fade up", "reveal": "Reveal"  } }
+	},
+	"groups": {
+		"titleTypography": { "type": "typography", "label": "Title typography", "selector": ".wpe-heading__title", "panel": "style" },
+		"titleColor": { "type": "colors", "label": "Title colour", "prop": "color", "selector": ".wpe-heading__title", "panel": "style" },
+		"titleEffects": { "type": "textEffects", "label": "Title text shadow, stroke and blend", "selector": ".wpe-heading__title", "panel": "style" },
+		"accentTypography": { "type": "typography", "label": "Accent typography", "selector": ".wpe-heading__accent", "panel": "style" },
+		"eyebrowTypography": { "type": "typography", "label": "Eyebrow typography", "selector": ".wpe-heading__eyebrow", "panel": "style" },
+		"eyebrowColor": { "type": "colors", "label": "Eyebrow colour", "prop": "color", "selector": ".wpe-heading__eyebrow", "panel": "style" },
+		"titleMargin": { "type": "spacing", "label": "Title margin", "prop": "margin", "selector": ".wpe-heading__title", "panel": "style" }
+	}
+}

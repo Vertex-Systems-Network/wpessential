@@ -1,0 +1,38 @@
+{
+	"name": "text",
+	"title": "Text (WPEssential)",
+	"category": "basic",
+	"description": "Rich text with drop cap, columns, line limit and read more.",
+	"icon": "editor-paragraph",
+	"elementor_icon": "eicon-text",
+	"keywords": ["text", "paragraph", "rich text", "drop cap", "columns"],
+	"panels": { "content": "Content", "style": "Style" },
+	"attributes": {
+		"content": { "type": "html", "label": "Text", "default": "<p>Premium themes and one-click demos, native for Gutenberg and Elementor.</p>" },
+		"tag": { "type": "select", "label": "Wrapper tag", "default": "div", "options": { "div": "Div", "section": "Section", "article": "Article", "aside": "Aside", "blockquote": "Blockquote"  } },
+		"dropCap": { "type": "toggle", "label": "Drop cap", "default": false },
+		"dropCapView": { "type": "select", "label": "Drop cap view", "default": "default", "options": { "default": "Default", "stacked": "Stacked (filled)", "framed": "Framed (outline)"  } },
+		"clamp": { "type": "range", "label": "Show only N lines (0 = all)", "responsive": true, "css": "--wpek-clamp", "unit": "", "min": 0, "max": 20, "default": "" },
+		"moreText": { "type": "text", "label": "Read-more text (with line limit)", "default": "" },
+		"columns": { "type": "range", "panel": "style", "label": "Columns", "responsive": true, "css": "--wpek-cols", "unit": "", "min": 1, "max": 4, "default": "" },
+		"columnGap": { "type": "range", "panel": "style", "label": "Column gap", "responsive": true, "css": "--wpek-colgap", "unit": "px", "min": 0, "max": 120, "default": "" },
+		"align": { "type": "select", "panel": "style", "label": "Alignment", "responsive": true, "css": "--wpek-align", "map": { "center": "--wpek-align:center;--wpek-mx:auto", "right": "--wpek-align:right;--wpek-mx:auto 0" }, "default": "", "options": { "": "Default", "left": "Left", "center": "Center", "right": "Right", "justify": "Justify"  } },
+		"maxWidth": { "type": "range", "panel": "style", "label": "Max width (characters)", "responsive": true, "css": "--wpek-max", "unit": "ch", "min": 20, "max": 120, "default": "" },
+		"paragraphGap": { "type": "range", "panel": "style", "label": "Space between paragraphs", "responsive": true, "css": "--wpek-pgap", "unit": "px", "min": 0, "max": 80, "default": "" },
+		"gradientText": { "type": "toggle", "panel": "style", "label": "Gradient text (brand)", "default": false },
+		"wrap": { "type": "select", "panel": "style", "label": "Line breaking", "default": "pretty", "options": { "pretty": "Pretty (no lonely last word)", "balance": "Balanced", "normal": "Normal"  } },
+		"dropCapSize": { "type": "range", "panel": "style", "label": "Drop cap box size", "css": "--wpek-dcsize", "unit": "em", "min": 0, "max": 3, "step": 0.1, "default": "" },
+		"dropCapSpace": { "type": "range", "panel": "style", "label": "Drop cap space", "css": "--wpek-dcgap", "unit": "px", "min": 0, "max": 60, "default": "" }
+	},
+	"groups": {
+		"typography": { "type": "typography", "label": "Typography", "selector": ".wpe-text__body", "panel": "style" },
+		"color": { "type": "colors", "label": "Text colour", "prop": "color", "selector": ".wpe-text__body", "panel": "style" },
+		"textEffects": { "type": "textEffects", "label": "Text shadow, stroke and blend", "selector": ".wpe-text__body", "panel": "style" },
+		"linkColor": { "type": "colors", "label": "Link colour", "prop": "color", "selector": ".wpe-text__body a", "panel": "style" },
+		"dropCapTypography": { "type": "typography", "label": "Drop cap typography", "selector": ".wpe-text__body > p:first-of-type::first-letter", "panel": "style" },
+		"dropCapColor": { "type": "colors", "label": "Drop cap colour", "prop": "color", "selector": ".wpe-text__body > p:first-of-type::first-letter", "panel": "style" },
+		"dropCapBackground": { "type": "colors", "label": "Drop cap background (stacked)", "prop": "background-color", "selector": ".wpe-text__body > p:first-of-type::first-letter", "panel": "style" },
+		"dropCapBorder": { "type": "border", "label": "Drop cap border and radius (framed)", "selector": ".wpe-text__body > p:first-of-type::first-letter", "panel": "style" },
+		"dropCapEffects": { "type": "textEffects", "label": "Drop cap text shadow", "selector": ".wpe-text__body > p:first-of-type::first-letter", "panel": "style" }
+	}
+}

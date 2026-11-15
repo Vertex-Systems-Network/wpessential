@@ -1,0 +1,205 @@
+{
+	"name": "call-to-action",
+	"title": "Call to Action (WPEssential)",
+	"category": "content",
+	"description": "Responsive two-action banner with validated links, rich text, optional responsive WordPress image and semantic heading.",
+	"icon": "megaphone",
+	"elementor_icon": "eicon-call-to-action",
+	"keywords": [
+		"cta",
+		"banner",
+		"conversion",
+		"button",
+		"action"
+	],
+	"panels": {
+		"content": "Message",
+		"media": "Image",
+		"actions": "Buttons",
+		"style": "Appearance"
+	},
+	"attributes": {
+		"eyebrow": {
+			"type": "text",
+			"label": "Eyebrow",
+			"default": "Ready to get started?",
+			"panel": "content"
+		},
+		"title": {
+			"type": "text",
+			"label": "Title",
+			"default": "Build something remarkable.",
+			"panel": "content"
+		},
+		"titleTag": {
+			"type": "select",
+			"label": "Heading level",
+			"default": "h2",
+			"options": {
+				"h2": "H2",
+				"h3": "H3",
+				"h4": "H4"
+			},
+			"panel": "content"
+		},
+		"description": {
+			"type": "html",
+			"label": "Description (safe rich text)",
+			"default": "<p>Make your next project simpler, faster and more effective.</p>",
+			"panel": "content"
+		},
+		"image": {
+			"type": "image",
+			"label": "Optional banner image",
+			"default": {},
+			"panel": "media"
+		},
+		"imageAlt": {
+			"type": "text",
+			"label": "Banner image alt",
+			"default": "",
+			"panel": "media"
+		},
+		"imagePosition": {
+			"type": "select",
+			"label": "Image placement",
+			"default": "right",
+			"options": {
+				"right": "Right",
+				"left": "Left",
+				"top": "Above text"
+			},
+			"panel": "media"
+		},
+		"primaryText": {
+			"type": "text",
+			"label": "Primary button",
+			"default": "Get started",
+			"panel": "actions"
+		},
+		"primaryUrl": {
+			"type": "url",
+			"label": "Primary URL",
+			"default": "",
+			"panel": "actions"
+		},
+		"primaryNewTab": {
+			"type": "toggle",
+			"label": "Primary opens new tab",
+			"default": false,
+			"panel": "actions"
+		},
+		"secondaryText": {
+			"type": "text",
+			"label": "Secondary button",
+			"default": "Learn more",
+			"panel": "actions"
+		},
+		"secondaryUrl": {
+			"type": "url",
+			"label": "Secondary URL",
+			"default": "",
+			"panel": "actions"
+		},
+		"secondaryNewTab": {
+			"type": "toggle",
+			"label": "Secondary opens new tab",
+			"default": false,
+			"panel": "actions"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Text alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"css": "--wpek-cta-align",
+			"responsive": true,
+			"panel": "style"
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Maximum banner width",
+			"default": "",
+			"min": 320,
+			"max": 1600,
+			"step": 10,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-cta-max",
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Banner spacing",
+			"default": "",
+			"min": 0,
+			"max": 100,
+			"step": 2,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-cta-gap",
+			"panel": "style"
+		},
+		"style": {
+			"type": "select",
+			"label": "Visual preset",
+			"default": "boxed",
+			"options": {
+				"boxed": "Boxed",
+				"bordered": "Bordered",
+				"minimal": "Minimal"
+			},
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"background": {
+			"type": "background",
+			"label": "Banner background",
+			"selector": ".wpe-call-to-action",
+			"panel": "style"
+		},
+		"border": {
+			"type": "border",
+			"label": "Banner border",
+			"selector": ".wpe-call-to-action",
+			"panel": "style"
+		},
+		"padding": {
+			"type": "spacing",
+			"label": "Banner padding",
+			"selector": ".wpe-call-to-action",
+			"prop": "padding",
+			"panel": "style"
+		},
+		"shadow": {
+			"type": "shadow",
+			"label": "Banner shadow",
+			"selector": ".wpe-call-to-action",
+			"panel": "style"
+		},
+		"headingTypography": {
+			"type": "typography",
+			"label": "Heading typography",
+			"selector": ".wpe-call-to-action__title",
+			"panel": "style"
+		},
+		"headingColor": {
+			"type": "colors",
+			"label": "Heading color",
+			"selector": ".wpe-call-to-action__title",
+			"prop": "color",
+			"panel": "style"
+		},
+		"primaryBackground": {
+			"type": "background",
+			"label": "Primary button background",
+			"selector": ".wpe-call-to-action__button.is-primary",
+			"panel": "actions"
+		}
+	}
+}

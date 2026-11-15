@@ -1,0 +1,12 @@
+/* Dynamic site and archive components. */
+.wpe-site-archive-widgets{--wpek-archive-max:1300px;--wpek-archive-gap:12px;max-width:var(--wpek-archive-max);min-width:0;text-align:var(--wpek-archive-align,start)}
+.wpe-site-archive-widgets__title{margin:0;line-height:1.25;overflow-wrap:anywhere}
+.wpe-site-archive-widgets__body{line-height:1.6}
+.wpe-site-archive-widgets__meta{display:flex;flex-wrap:wrap;gap:var(--wpek-archive-gap);align-items:center}
+.wpe-site-archive-widgets__author{display:flex;gap:var(--wpek-archive-gap);align-items:flex-start}
+.wpe-site-archive-widgets__author img{width:64px;height:64px;flex:none;border-radius:50%}
+.wpe-site-archive-widgets__breadcrumbs ol,.wpe-site-archive-widgets__pagination ul{display:flex;flex-wrap:wrap;gap:var(--wpek-archive-gap);align-items:center;padding:0;margin:0;list-style:none}
+.wpe-site-archive-widgets__breadcrumbs li+li:before{content:"/";margin-inline-end:var(--wpek-archive-gap);opacity:.5}
+.wpe-site-archive-widgets a{color:inherit;text-underline-offset:.2em}
+.wpe-site-archive-widgets a:focus-visible{outline:2px solid var(--wp--preset--color--primary,currentColor);outline-offset:3px}
+.wpe-site-archive-widgets__pagination a,.wpe-site-archive-widgets__pagination .current{padding:6px 12px;border:1px solid var(--wp--preset--color--border,#ddd);border-radius:7px}

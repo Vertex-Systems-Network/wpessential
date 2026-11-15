@@ -1,0 +1,12 @@
+/* Standalone icon and linked icon. */
+.wpe-icon-single{--wpek-single-size:40px;--wpek-single-pad:12px;display:flex;justify-content:var(--wpek-single-align,flex-start)}
+.wpe-icon-single__face{display:inline-grid;place-items:center;font-size:var(--wpek-single-size);line-height:1;color:var(--wp--preset--color--primary,currentColor);text-decoration:none;transition:transform .25s ease}
+.wpe-icon-single__face svg,.wpe-icon-single__face img{display:block;width:1em;height:1em}
+.wpe-icon-single.is-stacked .wpe-icon-single__face,.wpe-icon-single.is-framed .wpe-icon-single__face{padding:var(--wpek-single-pad);border-radius:50%}
+.wpe-icon-single.is-stacked .wpe-icon-single__face{background:var(--wp--preset--color--primary-soft,rgb(0 0 0 / 7%))}
+.wpe-icon-single.is-framed .wpe-icon-single__face{border:2px solid currentColor}
+.wpe-icon-single.is-shape-rounded .wpe-icon-single__face{border-radius:20%}
+.wpe-icon-single.is-shape-square .wpe-icon-single__face{border-radius:0}
+.wpe-icon-single a:is(:hover,:focus-visible){transform:translateY(-3px)}
+.wpe-icon-single a:focus-visible{outline:2px solid var(--wp--preset--color--primary,currentColor);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.wpe-icon-single__face{transition:none}.wpe-icon-single a:is(:hover,:focus-visible){transform:none}}

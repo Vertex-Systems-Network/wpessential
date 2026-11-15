@@ -1,0 +1,237 @@
+/* WPEssential kit — options shared by every element (Advanced panel). */
+
+/* Transform, normal and hover; values come from the element's custom properties. */
+.wpek-tf { transform: translate(var(--wpek-tx, 0), var(--wpek-ty, 0)) rotate(var(--wpek-rot, 0deg)) scale(var(--wpek-sc, 1)); transition: transform var(--wpek-dur, 300ms) var(--wp--custom--hover--ease, cubic-bezier(.2, .8, .2, 1)), opacity var(--wpek-dur, 300ms), box-shadow var(--wpek-dur, 300ms), background-color var(--wpek-dur, 300ms), border-color var(--wpek-dur, 300ms); }
+.wpek-tf:is(:hover, :focus-within) { transform: translate(var(--wpek-tx, 0), var(--wpek-h-ty, var(--wpek-ty, 0))) rotate(var(--wpek-h-rot, var(--wpek-rot, 0deg))) scale(var(--wpek-h-sc, var(--wpek-sc, 1))); }
+
+/* Entrance animations, played as the element scrolls into view. */
+@media (prefers-reduced-motion: no-preference) {
+	.wpek-anim { animation-duration: var(--wpek-adur, 800ms); animation-delay: var(--wpek-adelay, 0ms); animation-timing-function: cubic-bezier(.2, .8, .2, 1); animation-fill-mode: both; }
+	@supports (animation-timeline: view()) {
+		.wpek-anim { animation-timeline: view(); animation-range: entry 0% entry 60%; animation-delay: 0ms; }
+	}
+	.wpek-anim-fade { animation-name: wpek-fade; }
+	.wpek-anim-fade-up { animation-name: wpek-fade-up; }
+	.wpek-anim-fade-down { animation-name: wpek-fade-down; }
+	.wpek-anim-fade-left { animation-name: wpek-fade-left; }
+	.wpek-anim-fade-right { animation-name: wpek-fade-right; }
+	.wpek-anim-zoom-in { animation-name: wpek-zoom-in; }
+	.wpek-anim-zoom-out { animation-name: wpek-zoom-out; }
+	.wpek-anim-slide-up { animation-name: wpek-slide-up; }
+	.wpek-anim-flip-x { animation-name: wpek-flip-x; }
+	.wpek-anim-blur-in { animation-name: wpek-blur-in; }
+	.wpek-anim-reveal { animation-name: wpek-reveal; }
+	.wpek-anim-rotate-in { animation-name: wpek-rotate-in; }
+}
+@keyframes wpek-fade { from { opacity: 0; } }
+@keyframes wpek-fade-up { from { opacity: 0; transform: translateY(32px); } }
+@keyframes wpek-fade-down { from { opacity: 0; transform: translateY(-32px); } }
+@keyframes wpek-fade-left { from { opacity: 0; transform: translateX(40px); } }
+@keyframes wpek-fade-right { from { opacity: 0; transform: translateX(-40px); } }
+@keyframes wpek-zoom-in { from { opacity: 0; transform: scale(.9); } }
+@keyframes wpek-zoom-out { from { opacity: 0; transform: scale(1.1); } }
+@keyframes wpek-slide-up { from { transform: translateY(100%); } }
+@keyframes wpek-flip-x { from { opacity: 0; transform: perspective(800px) rotateX(-70deg); } }
+@keyframes wpek-blur-in { from { opacity: 0; filter: blur(12px); } }
+@keyframes wpek-reveal { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes wpek-rotate-in { from { opacity: 0; transform: rotate(-8deg) translateY(24px); } }
+
+/* Transition options (duration, easing, delay) for every state change. */
+.wpek-tr, .wpek-tr * { transition-duration: var(--wpek-dur, 300ms); transition-timing-function: var(--wpek-ease, var(--wp--custom--hover--ease, cubic-bezier(.2, .8, .2, 1))); transition-delay: var(--wpek-tdelay, 0ms); }
+
+/* Hover presets: values come from the demo's hover tokens, so one demo restyles every element. */
+[class*="wpek-hp-"] { transition: transform var(--wp--custom--hover--duration, .35s) var(--wp--custom--hover--ease, ease), box-shadow var(--wp--custom--hover--duration, .35s), filter var(--wp--custom--hover--duration, .35s), opacity var(--wp--custom--hover--duration, .35s); }
+.wpek-hp-lift:is(:hover, :focus-within) { transform: translateY(var(--wp--custom--hover--lift, -4px)); box-shadow: var(--wp--custom--hover--shadow, 0 18px 40px rgba(11, 26, 61, .14)); }
+.wpek-hp-zoom:is(:hover, :focus-within) { transform: scale(var(--wp--custom--hover--zoom, 1.04)); }
+.wpek-hp-glow:is(:hover, :focus-within) { box-shadow: 0 0 0 4px color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 22%, transparent), 0 14px 36px color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 35%, transparent); }
+.wpek-hp-shadow:is(:hover, :focus-within) { box-shadow: var(--wp--custom--hover--card-shadow, 0 24px 60px rgba(11, 26, 61, .18)); }
+:has(> .wpek-hp-dim:hover) > .wpek-hp-dim:not(:hover) { opacity: .55; filter: saturate(.6); }
+.wpek-hp-tilt:is(:hover, :focus-within) { transform: perspective(900px) rotateX(4deg) rotateY(-4deg) translateY(-2px); }
+@media (prefers-reduced-motion: reduce) { [class*="wpek-hp-"], .wpek-tr, .wpek-tf { transition: none !important; } [class*="wpek-hp-"]:hover { transform: none !important; } }
+
+/* The opt-in ring controls style keyboard focus on both root links and descendants. */
+.wpek-focus-ring:is(a,button,input,select,textarea,[tabindex]):focus-visible,
+.wpek-focus-ring :is(a,button,input,select,textarea,[tabindex]):focus-visible{
+	outline-width:var(--wpek-focus-width,2px)!important;
+	outline-style:var(--wpek-focus-style,solid)!important;
+	outline-color:var(--wpek-focus-color,var(--wp--preset--color--primary,currentColor))!important;
+	outline-offset:var(--wpek-focus-offset,3px)!important;
+}
+
+/* Prefer theme-aware tinted glass; use an opaque scheme-safe fallback. */
+.wpek-glass{
+	background-color:var(--wp--preset--color--surface,#fff);
+	-webkit-backdrop-filter:blur(var(--wpek-glass-blur,12px));
+	backdrop-filter:blur(var(--wpek-glass-blur,12px));
+}
+@supports (background-color:color-mix(in srgb,white 70%,transparent)){
+	.wpek-glass{background-color:color-mix(in srgb,var(--wp--preset--color--surface,#fff) var(--wpek-glass-opacity,78%),transparent)}
+}
+@media print{
+	.wpek-hide-print{display:none!important}
+}
+
+/* Enable parent-width queries only on explicitly selected Kit containers. */
+.wpek-query-container{container-type:inline-size}
+
+/* Device visibility is viewport CSS, never a security/authorization boundary. */
+@media(max-width:767px){.wpek-device-desktop,.wpek-device-tablet{display:none!important}}
+@media(min-width:768px) and (max-width:1023px){.wpek-device-mobile,.wpek-device-desktop{display:none!important}}
+@media(min-width:1024px){.wpek-device-mobile,.wpek-device-tablet{display:none!important}}
+
+
+/* Motion triggers are opt-in; without JS existing CSS scroll animations still work. */
+@media (prefers-reduced-motion: no-preference) {
+	.wpek-anim.wpek-motion-ready:is(.wpek-motion-trigger-click,.wpek-motion-trigger-hover,.wpek-motion-trigger-load,.wpek-motion-trigger-scroll) {
+		animation-timeline: auto !important;
+		animation-range: normal !important;
+	}
+	.wpek-anim.wpek-motion-ready:not(.is-motion-active):is(.wpek-motion-trigger-click,.wpek-motion-trigger-hover,.wpek-motion-trigger-load,.wpek-motion-trigger-scroll) {
+		animation-name: none !important;
+	}
+	/* Scroll-triggered elements are only hidden when an observer has been attached. */
+	.wpek-anim.wpek-motion-ready.wpek-motion-trigger-scroll:not(.is-motion-active) { opacity: 0; }
+	.wpek-anim.wpek-motion-ready.wpek-motion-trigger-scroll.is-motion-active { opacity: 1; }
+	/* Child stagger uses a safe, bounded set of direct children (up to 12). */
+	.wpek-stagger > * { animation-name: wpek-fade-up; animation-duration: var(--wpek-adur,800ms); animation-fill-mode: both; animation-timing-function: ease-out; }
+	.wpek-stagger > :nth-child(1) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 0); }
+	.wpek-stagger > :nth-child(2) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 1); }
+	.wpek-stagger > :nth-child(3) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 2); }
+	.wpek-stagger > :nth-child(4) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 3); }
+	.wpek-stagger > :nth-child(5) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 4); }
+	.wpek-stagger > :nth-child(6) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 5); }
+	.wpek-stagger > :nth-child(7) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 6); }
+	.wpek-stagger > :nth-child(8) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 7); }
+	.wpek-stagger > :nth-child(9) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 8); }
+	.wpek-stagger > :nth-child(10) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 9); }
+	.wpek-stagger > :nth-child(11) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 10); }
+	.wpek-stagger > :nth-child(12) { animation-delay: calc(var(--wpek-adelay,0ms) + var(--wpek-stagger-step,100ms) * 11); }
+	.wpek-motion-ready.wpek-stagger:not(.is-motion-active) > * { animation-play-state: paused; }
+}
+/* No transform or parallax when reduced motion is requested. */
+@media (prefers-reduced-motion: reduce) {
+	.wpek-anim, .wpek-stagger > * { animation:none!important; transform:none!important; opacity:1!important; }
+	.wpek-anim.wpek-motion-reduced-fade.is-motion-active { animation:wpek-reduced-fade 180ms ease-out both!important; }
+	.wpek-anim.wpek-motion-reduced-fade.is-motion-active > * { animation:none!important; }
+}
+@keyframes wpek-reduced-fade { from { opacity:.85 } to { opacity:1 } }
+/* Sticky ends at the containing block boundary (never overlaps beyond parent). */
+.wpek-sticky { position:sticky!important; top:var(--wpek-sticky-offset,0px)!important; align-self:start; }
+@media(max-width:767px) {
+	.wpek-sticky-from-tablet,.wpek-sticky-from-desktop{position:static!important;top:auto!important}
+}
+@media(min-width:768px) and (max-width:1023px) {
+	.wpek-sticky-from-desktop{position:static!important;top:auto!important}
+}
+
+/* Parallax uses the CSS individual translate property, preserving existing transforms. */
+@media (prefers-reduced-motion: no-preference) {
+	.wpek-parallax .wpek-parallax-layer {
+		translate: var(--wpek-parallax-x, 0px) var(--wpek-parallax-y, 0px);
+	}
+}
+/* Explicit stop targets can constrain sticky before the parent container ends. */
+.wpek-sticky.wpek-sticky-stop {
+	translate: 0 var(--wpek-sticky-stop-push, 0px);
+}
+@media (prefers-reduced-motion: reduce) {
+	.wpek-parallax .wpek-parallax-layer { translate: none !important; }
+}
+
+/* Opt-in gradient outlines use a non-interactive pseudo overlay, not border-image,
+   to preserve rounded corners without affecting box dimensions. */
+.wpek-gradient-border { position: relative; }
+.wpek-gradient-border::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+	padding: var(--wpek-gradient-width, 2px);
+	border-radius: inherit;
+	background: conic-gradient(from var(--wpek-gradient-angle, 135deg),
+		var(--wpek-gradient-a, var(--wp--preset--color--primary, #6366f1)),
+		var(--wpek-gradient-b, var(--wp--preset--color--secondary, #38bdf8)),
+		var(--wpek-gradient-a, var(--wp--preset--color--primary, #6366f1)));
+	-webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+	mask-composite: exclude;
+}
+@property --wpek-gradient-angle {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 135deg;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.wpek-gradient-border-animated::after {
+		animation: wpek-gradient-spin var(--wpek-gradient-speed, 5000ms) linear infinite;
+	}
+}
+@keyframes wpek-gradient-spin {
+	to { --wpek-gradient-angle: 495deg; }
+}
+.wpek-blend-multiply { mix-blend-mode: multiply; }
+.wpek-blend-screen { mix-blend-mode: screen; }
+.wpek-blend-overlay { mix-blend-mode: overlay; }
+.wpek-blend-darken { mix-blend-mode: darken; }
+.wpek-blend-lighten { mix-blend-mode: lighten; }
+.wpek-blend-difference { mix-blend-mode: difference; }
+.wpek-blend-exclusion { mix-blend-mode: exclusion; }
+
+/* Masking is strictly opt-in. Any faded-out edge may also hide its children. */
+.wpek-mask-top { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%); mask-image: linear-gradient(to bottom, transparent, #000 25%); }
+.wpek-mask-bottom { -webkit-mask-image: linear-gradient(to top, transparent, #000 25%); mask-image: linear-gradient(to top, transparent, #000 25%); }
+.wpek-mask-left { -webkit-mask-image: linear-gradient(to right, transparent, #000 25%); mask-image: linear-gradient(to right, transparent, #000 25%); }
+.wpek-mask-right { -webkit-mask-image: linear-gradient(to left, transparent, #000 25%); mask-image: linear-gradient(to left, transparent, #000 25%); }
+.wpek-mask-vertical { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 20% 80%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 20% 80%, transparent); }
+.wpek-mask-horizontal { -webkit-mask-image: linear-gradient(to right, transparent, #000 20% 80%, transparent); mask-image: linear-gradient(to right, transparent, #000 20% 80%, transparent); }
+@media (prefers-reduced-motion: reduce), print {
+	.wpek-gradient-border-animated::after { animation: none !important; }
+}
+
+
+/* Visual shapes use fixed, allowlisted polygons, never user-provided raw CSS. */
+.wpek-clip-slant { clip-path: polygon(0 0,100% 0,100% 100%,0 92%); }
+.wpek-clip-wave { clip-path: polygon(0 0,100% 0,100% 93%,92% 96%,84% 99%,76% 100%,68% 99%,60% 96%,52% 93%,44% 91%,36% 92%,28% 95%,20% 98%,12% 100%,4% 98%,0 96%); }
+.wpek-clip-blob { clip-path: polygon(50% 2%,68% 5%,84% 12%,95% 29%,98% 48%,94% 69%,80% 89%,63% 97%,43% 94%,25% 99%,9% 83%,3% 63%,6% 42%,2% 24%,17% 9%,33% 4%); }
+/* Noise is a tiny embedded turbulence SVG, no network request or script.
+   Pseudo overlay never takes pointer input. Opt in only on suitable widgets. */
+.wpek-grain { position: relative; }
+.wpek-grain::before {
+	content:"";
+	position:absolute;
+	inset:0;
+	pointer-events:none;
+	z-index:1;
+	border-radius:inherit;
+	background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144' viewBox='0 0 144 144'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E");
+	background-repeat:repeat;
+	background-size:144px 144px;
+	opacity:var(--wpek-grain-opacity,8%);
+	mix-blend-mode:soft-light;
+}
+@media print { .wpek-grain::before { display:none!important; } }
+
+/* WordPress theme.json shadow presets remain the source of elevation tokens. */
+.wpek-elev-rest-sm { --wpek-elev-rest:var(--wp--preset--shadow--sm,0 1px 2px rgba(10,15,33,.06)); }
+.wpek-elev-rest-md { --wpek-elev-rest:var(--wp--preset--shadow--md,0 4px 12px rgba(10,15,33,.06)); }
+.wpek-elev-rest-lg { --wpek-elev-rest:var(--wp--preset--shadow--lg,0 24px 64px rgba(10,15,33,.14)); }
+.wpek-elev-hover-sm { --wpek-elev-hover:var(--wp--preset--shadow--sm,0 1px 2px rgba(10,15,33,.06)); }
+.wpek-elev-hover-md { --wpek-elev-hover:var(--wp--preset--shadow--md,0 4px 12px rgba(10,15,33,.06)); }
+.wpek-elev-hover-lg { --wpek-elev-hover:var(--wp--preset--shadow--lg,0 24px 64px rgba(10,15,33,.14)); }
+.wpek-elev-focus-sm { --wpek-elev-focus:var(--wp--preset--shadow--sm,0 1px 2px rgba(10,15,33,.06)); }
+.wpek-elev-focus-md { --wpek-elev-focus:var(--wp--preset--shadow--md,0 4px 12px rgba(10,15,33,.06)); }
+.wpek-elev-focus-lg { --wpek-elev-focus:var(--wp--preset--shadow--lg,0 24px 64px rgba(10,15,33,.14)); }
+.wpek-elevation {
+	box-shadow:var(--wpek-elev-rest,none);
+	transition:box-shadow var(--wp--custom--hover--duration,.3s) ease;
+}
+.wpek-elevation:is(:hover,:focus-within) {
+	box-shadow:var(--wpek-elev-hover,var(--wpek-elev-rest,none));
+}
+.wpek-elevation:focus-visible,
+.wpek-elevation:has(:focus-visible) {
+	box-shadow:var(--wpek-elev-focus,var(--wpek-elev-hover,var(--wpek-elev-rest,none)));
+}
+@media (prefers-reduced-motion:reduce) { .wpek-elevation { transition:none!important; } }

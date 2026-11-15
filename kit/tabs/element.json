@@ -1,0 +1,405 @@
+{
+	"name": "tabs",
+	"title": "Tabs (WPEssential)",
+	"category": "content",
+	"description": "Accessible tabs: top, bottom, left or right per breakpoint, icons, indicator styles, deep links, autoplay and an accordion on phones.",
+	"icon": "index-card",
+	"elementor_icon": "eicon-tabs",
+	"keywords": [
+		"tabs",
+		"tabbed",
+		"switch",
+		"toggle content"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Tabs",
+		"titles": "Titles",
+		"icon_style": "Icon",
+		"content_style": "Content box"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Tabs",
+			"title_field": "title",
+			"fields": {
+				"title": {
+					"type": "text",
+					"label": "Title",
+					"default": "Tab"
+				},
+				"icon": {
+					"type": "icon",
+					"label": "Icon",
+					"default": {}
+				},
+				"badge": {
+					"type": "text",
+					"label": "Badge (optional)",
+					"default": ""
+				},
+				"content": {
+					"type": "html",
+					"label": "Content",
+					"default": "<p>Tab content.</p>"
+				},
+				"anchor": {
+					"type": "text",
+					"label": "Link name (#name, optional)",
+					"default": ""
+				}
+			},
+			"default": [
+				{
+					"title": "Gutenberg",
+					"content": "<p>Every demo ships as native blocks with the WPEssential kit.</p>"
+				},
+				{
+					"title": "Elementor",
+					"content": "<p>The same demo, built with native Elementor widgets.</p>"
+				},
+				{
+					"title": "WooCommerce",
+					"content": "<p>Shop, cart and checkout styled by the theme.</p>"
+				}
+			]
+		},
+		"active": {
+			"type": "range",
+			"label": "Open tab (1 = first)",
+			"min": 1,
+			"max": 20,
+			"default": 1
+		},
+		"direction": {
+			"type": "select",
+			"panel": "content",
+			"label": "Tabs position",
+			"default": "",
+			"options": {
+				"": "Top",
+				"bottom": "Bottom",
+				"left": "Left",
+				"right": "Right"
+			},
+			"responsive": true,
+			"css": "--wpek-dir",
+			"map": {
+				"bottom": "--wpek-dir:column-reverse;--wpek-nav-dir:row",
+				"left": "--wpek-dir:row;--wpek-nav-dir:column",
+				"right": "--wpek-dir:row-reverse;--wpek-nav-dir:column",
+				"top": "--wpek-dir:column;--wpek-nav-dir:row"
+			}
+		},
+		"justify": {
+			"type": "select",
+			"panel": "content",
+			"label": "Tabs alignment",
+			"default": "",
+			"options": {
+				"": "Start",
+				"center": "Center",
+				"end": "End",
+				"stretch": "Stretch (equal width)"
+			},
+			"responsive": true,
+			"css": "--wpek-justify",
+			"map": {
+				"center": "--wpek-justify:center;--wpek-grow:0",
+				"end": "--wpek-justify:flex-end;--wpek-grow:0",
+				"stretch": "--wpek-justify:stretch;--wpek-grow:1",
+				"start": "--wpek-justify:flex-start;--wpek-grow:0"
+			}
+		},
+		"titleAlign": {
+			"type": "select",
+			"panel": "content",
+			"label": "Title alignment",
+			"default": "",
+			"options": {
+				"": "Center",
+				"start": "Start",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-title-align"
+		},
+		"iconPosition": {
+			"type": "select",
+			"panel": "content",
+			"label": "Icon position",
+			"default": "start",
+			"options": {
+				"start": "Before",
+				"end": "After",
+				"top": "Above"
+			}
+		},
+		"mobile": {
+			"type": "select",
+			"panel": "content",
+			"label": "On small screens",
+			"default": "scroll",
+			"options": {
+				"scroll": "Scroll the tabs sideways",
+				"stack": "Stack the tabs",
+				"accordion": "Turn into an accordion"
+			}
+		},
+		"mobileAt": {
+			"type": "select",
+			"panel": "content",
+			"label": "Small screen means",
+			"default": "767",
+			"options": {
+				"767": "Below 768 px",
+				"559": "Below 560 px",
+				"1023": "Below 1024 px"
+			}
+		},
+		"deepLink": {
+			"type": "toggle",
+			"label": "Open a tab from the page link (#name)",
+			"default": true
+		},
+		"autoplay": {
+			"type": "range",
+			"panel": "content",
+			"label": "Switch tabs automatically every (seconds, 0 = off)",
+			"responsive": false,
+			"unit": "",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"default": ""
+		},
+		"indicator": {
+			"type": "select",
+			"panel": "style",
+			"label": "Active tab style",
+			"default": "underline",
+			"options": {
+				"underline": "Underline",
+				"pill": "Pill",
+				"box": "Box (joins the content)",
+				"none": "Colour only"
+			}
+		},
+		"gap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space between tabs",
+			"responsive": true,
+			"css": "--wpek-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"default": ""
+		},
+		"contentGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Distance from content",
+			"responsive": true,
+			"css": "--wpek-content-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"default": ""
+		},
+		"navWidth": {
+			"type": "range",
+			"panel": "style",
+			"label": "Tab list width (left / right)",
+			"responsive": true,
+			"css": "--wpek-nav-w",
+			"unit": "px",
+			"min": 120,
+			"max": 600,
+			"step": 1,
+			"default": ""
+		},
+		"radius": {
+			"type": "range",
+			"panel": "style",
+			"label": "Tab corner radius",
+			"responsive": true,
+			"css": "--wpek-tab-r",
+			"unit": "px",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"default": ""
+		},
+		"transition": {
+			"type": "range",
+			"panel": "style",
+			"label": "Transition",
+			"responsive": false,
+			"css": "--wpek-dur",
+			"unit": "ms",
+			"min": 0,
+			"max": 1000,
+			"step": 10,
+			"default": ""
+		},
+		"panelMotion": {
+			"type": "select",
+			"panel": "content_style",
+			"label": "Content change",
+			"default": "fade",
+			"options": {
+				"fade": "Fade",
+				"slide": "Slide up",
+				"none": "None"
+			}
+		},
+		"iconSize": {
+			"type": "range",
+			"panel": "icon_style",
+			"label": "Icon size",
+			"responsive": true,
+			"css": "--wpek-icon",
+			"unit": "px",
+			"min": 8,
+			"max": 64,
+			"step": 1,
+			"default": ""
+		},
+		"iconGap": {
+			"type": "range",
+			"panel": "icon_style",
+			"label": "Icon spacing",
+			"responsive": true,
+			"css": "--wpek-icon-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"default": ""
+		}
+	},
+	"groups": {
+		"tabPadding": {
+			"type": "spacing",
+			"label": "Tab padding",
+			"prop": "padding",
+			"selector": ".wpe-tabs__tab",
+			"panel": "style"
+		},
+		"tabBg": {
+			"type": "colors",
+			"label": "Tab background",
+			"prop": "background-color",
+			"selector": ".wpe-tabs__tab",
+			"panel": "style"
+		},
+		"activeBg": {
+			"type": "colors",
+			"label": "Active tab background",
+			"prop": "background-color",
+			"selector": ".wpe-tabs__tab[aria-selected=\"true\"]",
+			"panel": "style"
+		},
+		"tabBorder": {
+			"type": "border",
+			"label": "Tab border",
+			"selector": ".wpe-tabs__tab",
+			"panel": "style"
+		},
+		"tabShadow": {
+			"type": "shadow",
+			"label": "Tab shadow",
+			"selector": ".wpe-tabs__tab",
+			"panel": "style"
+		},
+		"indicatorColor": {
+			"type": "colors",
+			"label": "Indicator colour",
+			"prop": "--wpek-indicator",
+			"selector": "",
+			"panel": "style"
+		},
+		"titleTypography": {
+			"type": "typography",
+			"label": "Title typography",
+			"selector": ".wpe-tabs__tab",
+			"panel": "titles"
+		},
+		"titleColor": {
+			"type": "colors",
+			"label": "Title colour",
+			"prop": "color",
+			"selector": ".wpe-tabs__tab",
+			"panel": "titles"
+		},
+		"activeColor": {
+			"type": "colors",
+			"label": "Active title colour",
+			"prop": "color",
+			"selector": ".wpe-tabs__tab[aria-selected=\"true\"]",
+			"panel": "titles"
+		},
+		"titleEffects": {
+			"type": "textEffects",
+			"label": "Title shadow and stroke",
+			"selector": ".wpe-tabs__tab",
+			"panel": "titles"
+		},
+		"iconColor": {
+			"type": "colors",
+			"label": "Icon colour",
+			"prop": "color",
+			"selector": ".wpe-tabs__icon",
+			"panel": "icon_style"
+		},
+		"activeIconColor": {
+			"type": "colors",
+			"label": "Active icon colour",
+			"prop": "color",
+			"selector": ".wpe-tabs__tab[aria-selected=\"true\"] .wpe-tabs__icon",
+			"panel": "icon_style"
+		},
+		"panelPadding": {
+			"type": "spacing",
+			"label": "Content padding",
+			"prop": "padding",
+			"selector": ".wpe-tabs__panel",
+			"panel": "content_style"
+		},
+		"panelBackground": {
+			"type": "background",
+			"label": "Content background",
+			"selector": ".wpe-tabs__panels",
+			"panel": "content_style"
+		},
+		"panelBorder": {
+			"type": "border",
+			"label": "Content border and radius",
+			"selector": ".wpe-tabs__panels",
+			"panel": "content_style"
+		},
+		"panelShadow": {
+			"type": "shadow",
+			"label": "Content shadow",
+			"selector": ".wpe-tabs__panels",
+			"panel": "content_style"
+		},
+		"panelTypography": {
+			"type": "typography",
+			"label": "Content typography",
+			"selector": ".wpe-tabs__panel",
+			"panel": "content_style"
+		},
+		"panelColor": {
+			"type": "colors",
+			"label": "Content colour",
+			"prop": "color",
+			"selector": ".wpe-tabs__panel",
+			"panel": "content_style"
+		}
+	}
+}

@@ -1,0 +1,15 @@
+.wpe-team-member{--wpek-team-photo-width:220px;--wpek-team-gap:18px;--wpek-team-align:start;display:flex;flex-direction:column;gap:var(--wpek-team-gap);box-sizing:border-box;min-width:0}
+.wpe-team-member.is-side{flex-direction:row;align-items:flex-start}
+.wpe-team-member__media{width:100%;max-width:var(--wpek-team-photo-width);flex-shrink:0}
+.wpe-team-member__photo{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:12px}
+.wpe-team-member.is-photo-circle .wpe-team-member__photo{border-radius:50%}
+.wpe-team-member__content{display:flex;flex-direction:column;gap:10px;text-align:var(--wpek-team-align);min-width:0;overflow-wrap:anywhere}
+.wpe-team-member__name{font-weight:750;margin:0}
+.wpe-team-member__role{font-size:.92rem;opacity:.8;margin:0}
+.wpe-team-member__bio{line-height:1.6;margin:0}
+.wpe-team-member__profile,.wpe-team-member__email{display:inline-block;align-self:flex-start;overflow-wrap:anywhere}
+.wpe-team-member__socials{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0;padding:0;list-style:none}
+.wpe-team-member__socials a:focus-visible,.wpe-team-member__profile:focus-visible,.wpe-team-member__email:focus-visible{outline:3px solid var(--wp--preset--color--primary,#cc8c3a);outline-offset:3px}
+.wpe-team-member.is-boxed{padding:24px;border:1px solid var(--wp--preset--color--border,#ddd);border-radius:14px;background:var(--wp--preset--color--surface,transparent)}
+.wpe-team-member.is-accent{padding-inline-start:20px;border-inline-start:4px solid var(--wp--preset--color--primary,currentColor)}
+@media(max-width:600px){.wpe-team-member.is-side{flex-direction:column}}

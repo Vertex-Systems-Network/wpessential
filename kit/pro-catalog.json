@@ -1,0 +1,87 @@
+{
+	"business-hours": {
+		"title": "Business Hours",
+		"description": "Seven-day hours schedule with site timezone, closed-day support, strict clock validation and optional highlight of current weekday.",
+		"icon": "clock"
+	},
+	"calendar": {
+		"title": "Events Calendar",
+		"description": "Timezone-aware curated events with strict date validation, upcoming list or accessible monthly grid, and optional safe event links.",
+		"icon": "calendar-alt"
+	},
+	"chart": {
+		"title": "Chart / Graph",
+		"description": "Server-rendered accessible horizontal bars, columns and donut using numeric data and palette tokens.",
+		"icon": "chart-bar"
+	},
+	"countdown": {
+		"title": "Countdown",
+		"description": "Timezone-aware countdown to a fixed date, accessible units, completion message and no-JS target-date fallback.",
+		"icon": "clock"
+	},
+	"flip": {
+		"title": "Flip / Hover Box",
+		"description": "Two-sided native disclosure card with reduced-motion CSS, keyboard/touch support and optional CTA.",
+		"icon": "image-flip-horizontal"
+	},
+	"forms": {
+		"title": "WPForms Form",
+		"description": "Embed a published WPForms Lite form by ID, leaving validation, submissions and spam prevention to the form plugin.",
+		"icon": "feedback"
+	},
+	"image-carousel": {
+		"title": "Image Carousel",
+		"description": "Scroll-snap carousel with WordPress responsive images, arrows/dots, reduced-motion-aware opt-in autoplay, and usable no-JS horizontal scroll.",
+		"icon": "images-alt2"
+	},
+	"image-comparison": {
+		"title": "Image Comparison",
+		"description": "Before/after image reveal with accessible keyboard range slider and static no-JS 50/50 comparison.",
+		"icon": "images-alt2"
+	},
+	"map": {
+		"title": "Privacy-first Map",
+		"description": "Validated coordinates, link to OpenStreetMap, and optional click-to-load interactive map without third-party requests until consent.",
+		"icon": "location-alt"
+	},
+	"modal": {
+		"title": "Modal / Popup",
+		"description": "Explicit-click, accessible native dialog with backdrop/Escape close and an independently usable no-JS disclosure.",
+		"icon": "welcome-view-site"
+	},
+	"posts-grid": {
+		"title": "Posts Grid",
+		"description": "Dynamic posts, pages and public custom post types in a responsive grid with term filters, metadata and accessible pagination.",
+		"icon": "grid-view"
+	},
+	"price-list": {
+		"title": "Price List / Restaurant Menu",
+		"description": "Accessible repeatable product, service or restaurant price list with image, descriptions, old prices, badges, safe links and responsive layouts.",
+		"icon": "list-view"
+	},
+	"pricing-table": {
+		"title": "Pricing Table",
+		"description": "Accessible standalone plan card with included/excluded features, honest price display, optional badge and safe CTA.",
+		"icon": "money-alt"
+	},
+	"products": {
+		"title": "WooCommerce Products",
+		"description": "Dependency-safe WooCommerce product grid with featured/category/ID query, published products, pricing, ratings and safe product-page links.",
+		"icon": "cart"
+	},
+	"social-feed": {
+		"title": "Social Feed",
+		"description": "Curated social posts or live native WordPress post cards; no unapproved third-party scraping or background API calls.",
+		"icon": "format-gallery"
+	},
+	"timeline": {
+		"title": "Timeline / Steps",
+		"description": "Semantic timeline of milestones with safe rich descriptions, media attachments, optional details links and responsive layouts.",
+		"icon": "list-view"
+	},
+	"tooltip": {
+		"title": "Interactive / Tooltip",
+		"description": "Accessible tooltip, native show-more disclosure and keyboard-operated two-panel content switcher. No-JavaScript fallbacks and responsive controls.",
+		"icon": "info"
+	}
+}

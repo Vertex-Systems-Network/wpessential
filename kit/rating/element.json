@@ -1,0 +1,134 @@
+{
+	"name": "rating",
+	"title": "Rating (WPEssential)",
+	"category": "content",
+	"description": "Accessible display-only 5/10-scale rating with clamped value and fractional SVG symbols; not a review submission form.",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-rating",
+	"keywords": [
+		"rating",
+		"score",
+		"stars",
+		"reviews"
+	],
+	"panels": {
+		"content": "Score",
+		"style": "Style"
+	},
+	"attributes": {
+		"title": {
+			"type": "text",
+			"label": "Rating title",
+			"default": "Customer satisfaction",
+			"panel": "content"
+		},
+		"rating": {
+			"type": "range",
+			"label": "Rating value",
+			"default": 4.5,
+			"min": 0,
+			"max": 10,
+			"step": 0.5,
+			"unit": "",
+			"panel": "content"
+		},
+		"scale": {
+			"type": "select",
+			"label": "Rating scale",
+			"default": "5",
+			"options": {
+				"5": "Out of 5",
+				"10": "Out of 10"
+			},
+			"panel": "content"
+		},
+		"icon": {
+			"type": "select",
+			"label": "Rating symbol",
+			"default": "star",
+			"options": {
+				"star": "Star",
+				"heart": "Heart",
+				"circle": "Circle"
+			},
+			"panel": "content"
+		},
+		"showNumber": {
+			"type": "toggle",
+			"label": "Show numeric rating",
+			"default": true,
+			"panel": "content"
+		},
+		"showScale": {
+			"type": "toggle",
+			"label": "Show score denominator",
+			"default": true,
+			"panel": "content"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"css": "--wpek-rating-align",
+			"responsive": true,
+			"panel": "style"
+		},
+		"iconSize": {
+			"type": "range",
+			"label": "Icon size",
+			"default": "",
+			"min": 12,
+			"max": 96,
+			"step": 2,
+			"unit": "px",
+			"css": "--wpek-rating-size",
+			"responsive": true,
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Icon spacing",
+			"default": "",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-rating-gap",
+			"responsive": true,
+			"panel": "style"
+		},
+		"activeColor": {
+			"type": "color",
+			"label": "Selected symbol color",
+			"default": "",
+			"css": "--wpek-rating-active",
+			"panel": "style"
+		},
+		"mutedColor": {
+			"type": "color",
+			"label": "Unselected symbol color",
+			"default": "",
+			"css": "--wpek-rating-inactive",
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"titleTypography": {
+			"type": "typography",
+			"selector": ".wpe-rating__title",
+			"label": "Title typography",
+			"panel": "style"
+		},
+		"scoreTypography": {
+			"type": "typography",
+			"selector": ".wpe-rating__score",
+			"label": "Score typography",
+			"panel": "style"
+		}
+	}
+}

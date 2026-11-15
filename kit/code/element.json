@@ -1,0 +1,185 @@
+{
+	"name": "code",
+	"title": "Code / Embed / HTML (WPEssential)",
+	"description": "A safe HTML content widget, literal code sample with copy action, or a trusted WordPress oEmbed with link fallback.",
+	"category": "content",
+	"icon": "editor-code",
+	"elementor_icon": "eicon-code",
+	"keywords": [
+		"code",
+		"html",
+		"embed",
+		"oembed",
+		"snippet",
+		"source"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Layout",
+		"code_style": "Code appearance"
+	},
+	"attributes": {
+		"mode": {
+			"type": "select",
+			"label": "Content mode",
+			"default": "html",
+			"options": {
+				"html": "Safe rich HTML",
+				"code": "Display code sample",
+				"embed": "WordPress oEmbed URL"
+			},
+			"panel": "content"
+		},
+		"html": {
+			"type": "html",
+			"label": "HTML content (safe tags only)",
+			"default": "<p>Add <strong>rich content</strong> using safe HTML.</p>",
+			"panel": "content"
+		},
+		"code": {
+			"type": "textarea",
+			"label": "Source code (shown literally, never executed)",
+			"default": "<h1>Hello world</h1>",
+			"panel": "content"
+		},
+		"language": {
+			"type": "select",
+			"label": "Code language",
+			"default": "html",
+			"options": {
+				"text": "Plain text",
+				"html": "HTML",
+				"css": "CSS",
+				"javascript": "JavaScript",
+				"php": "PHP",
+				"json": "JSON",
+				"bash": "Shell",
+				"python": "Python"
+			},
+			"panel": "content"
+		},
+		"embedUrl": {
+			"type": "url",
+			"label": "WordPress oEmbed URL",
+			"default": "",
+			"panel": "content"
+		},
+		"embedTitle": {
+			"type": "text",
+			"label": "Fallback link label",
+			"default": "Open embedded content",
+			"panel": "content"
+		},
+		"showCopy": {
+			"type": "toggle",
+			"label": "Show copy code button",
+			"default": true,
+			"panel": "code_style"
+		},
+		"copyLabel": {
+			"type": "text",
+			"label": "Copy button label",
+			"default": "Copy",
+			"panel": "code_style"
+		},
+		"wrapCode": {
+			"type": "toggle",
+			"label": "Wrap long lines of code",
+			"default": false,
+			"panel": "code_style"
+		},
+		"showLanguage": {
+			"type": "toggle",
+			"label": "Show code language label",
+			"default": true,
+			"panel": "code_style"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Content alignment",
+			"default": "center",
+			"options": {
+				"start": "Left",
+				"center": "Center",
+				"end": "Right"
+			},
+			"panel": "style",
+			"css": "--wpek-content-margin",
+			"map": {
+				"start": "--wpek-content-margin:0 auto 0 0",
+				"center": "--wpek-content-margin:0 auto",
+				"end": "--wpek-content-margin:0 0 0 auto"
+			}
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Maximum content width",
+			"default": "",
+			"min": 240,
+			"max": 1800,
+			"step": 10,
+			"unit": "px",
+			"css": "--wpek-content-width",
+			"responsive": true,
+			"panel": "style"
+		},
+		"padding": {
+			"type": "range",
+			"label": "Code block padding",
+			"default": "",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-code-padding",
+			"responsive": true,
+			"panel": "code_style"
+		}
+	},
+	"groups": {
+		"codeBackground": {
+			"type": "background",
+			"label": "Code panel background",
+			"selector": ".wpe-code__code-panel",
+			"panel": "code_style"
+		},
+		"codeBorder": {
+			"type": "border",
+			"label": "Code border/radius",
+			"selector": ".wpe-code__code-panel",
+			"panel": "code_style"
+		},
+		"codeShadow": {
+			"type": "shadow",
+			"label": "Code shadow",
+			"selector": ".wpe-code__code-panel",
+			"panel": "code_style"
+		},
+		"codeTypography": {
+			"type": "typography",
+			"label": "Code typography",
+			"selector": ".wpe-code__source",
+			"panel": "code_style"
+		},
+		"codeColor": {
+			"type": "colors",
+			"label": "Code colour",
+			"prop": "color",
+			"selector": ".wpe-code__source",
+			"panel": "code_style"
+		},
+		"contentTypography": {
+			"type": "typography",
+			"label": "HTML typography",
+			"selector": ".wpe-code__html",
+			"panel": "style"
+		},
+		"contentColor": {
+			"type": "colors",
+			"label": "HTML colour",
+			"prop": "color",
+			"selector": ".wpe-code__html",
+			"panel": "style"
+		}
+	}
+}

@@ -1,0 +1,29 @@
+/* WPEssential kit — Icon list. */
+.wpe-icon-list { display: flex; flex-direction: column; gap: var(--wpek-gap, 12px); margin: 0; padding: 0; list-style: none; align-items: var(--wpek-justify, stretch); }
+.wpe-icon-list.is-inline { flex-direction: row; flex-wrap: wrap; column-gap: var(--wpek-colgap, 24px); justify-content: var(--wpek-justify, flex-start); align-items: center; }
+.wpe-icon-list.is-grid { display: grid; grid-template-columns: repeat(var(--wpek-cols, 2), minmax(0, 1fr)); column-gap: var(--wpek-colgap, 24px); }
+.wpe-icon-list__item { position: relative; margin: 0; transition: background var(--wpek-dur, 200ms), transform var(--wpek-dur, 200ms), box-shadow var(--wpek-dur, 200ms); }
+.wpe-icon-list__item, .wpe-icon-list__link { display: flex; align-items: var(--wpek-icon-align, flex-start); gap: var(--wpek-icon-gap, 10px); }
+.wpe-icon-list__link { color: inherit; text-decoration: none; flex: 1; }
+.wpe-icon-list__link:focus-visible, a.wpe-icon-list__text:focus-visible { outline: 2px solid var(--wp--preset--color--primary, currentColor); outline-offset: 3px; border-radius: 4px; }
+.wpe-icon-list__icon { flex: none; display: inline-grid; place-items: center; font-size: var(--wpek-icon, 18px); line-height: 1; color: var(--wp--preset--color--primary, currentColor); transform: translateY(calc(.2em + var(--wpek-icon-y, 0px))); transition: color var(--wpek-dur, 200ms), background var(--wpek-dur, 200ms), transform var(--wpek-dur, 200ms); }
+.wpe-icon-list__icon img, .wpe-icon-list__icon svg { width: 1em; height: 1em; }
+.wpe-icon-list__icon.is-number { min-width: 1.5em; font-weight: 700; font-size: calc(var(--wpek-icon, 18px) * .85); }
+.wpe-icon-list[class*="is-shape-"]:not(.is-shape-none) .wpe-icon-list__icon { width: var(--wpek-icon-box, 2em); height: var(--wpek-icon-box, 2em); background: var(--wp--preset--color--primary-soft, color-mix(in srgb, currentColor 12%, transparent)); transform: translateY(var(--wpek-icon-y, 0px)); }
+.wpe-icon-list.is-shape-circle .wpe-icon-list__icon, .wpe-icon-list.is-shape-outline .wpe-icon-list__icon { border-radius: 50%; }
+.wpe-icon-list.is-shape-rounded .wpe-icon-list__icon { border-radius: 28%; }
+.wpe-icon-list.is-shape-outline .wpe-icon-list__icon { background: transparent; border: 1.5px solid currentColor; }
+.wpe-icon-list__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.wpe-icon-list__text { color: inherit; }
+a.wpe-icon-list__text { text-decoration: none; }
+.wpe-icon-list__desc { font-size: .875em; color: var(--wp--preset--color--text-muted, inherit); }
+/* Dividers */
+.wpe-icon-list.has-divider:not(.is-inline) > .wpe-icon-list__item + .wpe-icon-list__item::before { content: ""; position: absolute; inset-inline-start: 0; top: calc(var(--wpek-gap, 12px) / -2); width: var(--wpek-div-len, 100%); border-top: var(--wpek-div-w, 1px) var(--wpek-div-style, solid) var(--wpek-div-c, var(--wp--preset--color--border, rgb(0 0 0 / 12%))); }
+.wpe-icon-list.has-divider.is-inline > .wpe-icon-list__item + .wpe-icon-list__item::before { content: ""; position: absolute; inset-inline-start: calc(var(--wpek-colgap, 24px) / -2); top: 50%; height: var(--wpek-div-len, 70%); transform: translateY(-50%); border-inline-start: var(--wpek-div-w, 1px) var(--wpek-div-style, solid) var(--wpek-div-c, var(--wp--preset--color--border, rgb(0 0 0 / 12%))); }
+.wpe-icon-list.has-divider.is-grid > .wpe-icon-list__item::before { display: none; }
+/* Hover */
+.wpe-icon-list.is-hover-slide .wpe-icon-list__item:is(:hover, :focus-within) { transform: translateX(4px); }
+.wpe-icon-list.is-hover-icon-pop .wpe-icon-list__item:is(:hover, :focus-within) .wpe-icon-list__icon { transform: translateY(var(--wpek-icon-y, 0px)) scale(1.18); }
+.wpe-icon-list.is-hover-highlight .wpe-icon-list__item:is(:hover, :focus-within) { background: var(--wp--preset--color--surface-alt, rgb(0 0 0 / 4%)); }
+@media (max-width: 767px) { .wpe-icon-list.is-grid { grid-template-columns: repeat(var(--wpek-cols, 1), minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .wpe-icon-list__item, .wpe-icon-list__icon { transition: none; transform: none !important; } }

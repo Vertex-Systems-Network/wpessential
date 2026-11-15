@@ -1,0 +1,11 @@
+.wpe-social{--wpek-social-gap:10px;--wpek-social-size:44px;--wpek-social-justify:flex-start;box-sizing:border-box;min-width:0}
+.wpe-social__list{display:flex;gap:var(--wpek-social-gap);align-items:center;justify-content:var(--wpek-social-justify);flex-wrap:wrap;padding:0;margin:0;list-style:none}
+.wpe-social__link{width:var(--wpek-social-size);min-height:var(--wpek-social-size);box-sizing:border-box;padding:11px;display:inline-flex;align-items:center;justify-content:center;gap:8px;color:inherit;background:var(--wp--preset--color--surface,transparent);border:1px solid var(--wp--preset--color--border,#ccc);border-radius:14px;text-decoration:none;transition:transform .16s ease,background .16s ease}
+.wpe-social__link:hover{transform:translateY(-2px);background:var(--wp--preset--color--surface-alt,rgba(127,127,127,.1))}
+.wpe-social.is-circle .wpe-social__link{border-radius:50%}
+.wpe-social.is-square .wpe-social__link{border-radius:3px}
+.wpe-social.is-pill .wpe-social__link{width:auto;padding-inline:14px;border-radius:99px}
+.wpe-social__link svg{width:22px;height:22px;flex:none}
+.wpe-social__label{font-size:.9rem;white-space:nowrap}
+.wpe-social__link:focus-visible{outline:3px solid var(--wp--preset--color--primary,#bb823a);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.wpe-social__link{transition:none!important;transform:none!important}}

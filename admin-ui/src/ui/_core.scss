@@ -470,6 +470,10 @@
 	padding: 0;
 }
 
+.wpe-ui-option.is-locked .wpe-ui-option__copy {
+	opacity: 0.55;
+}
+
 .wpe-ui-option__copy--row {
 	flex-direction: row;
 	align-items: center;

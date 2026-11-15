@@ -1,0 +1,132 @@
+{
+	"name": "alert",
+	"title": "Alert / Notice (WPEssential)",
+	"category": "content",
+	"description": "Accessible information and warning banners with safe rich content, opt-in dismiss and optional session-only persistence.",
+	"icon": "warning",
+	"elementor_icon": "eicon-alert",
+	"keywords": [
+		"alert",
+		"notice",
+		"message",
+		"success",
+		"warning"
+	],
+	"panels": {
+		"content": "Message",
+		"behavior": "Dismissal",
+		"style": "Appearance"
+	},
+	"attributes": {
+		"type": {
+			"type": "select",
+			"label": "Notice type",
+			"default": "info",
+			"options": {
+				"info": "Information",
+				"success": "Success",
+				"warning": "Warning",
+				"error": "Error"
+			},
+			"panel": "content"
+		},
+		"title": {
+			"type": "text",
+			"label": "Notice title",
+			"default": "Important update",
+			"panel": "content"
+		},
+		"content": {
+			"type": "html",
+			"label": "Notice content",
+			"default": "<p>Here is a helpful message for your visitors.</p>",
+			"panel": "content"
+		},
+		"icon": {
+			"type": "toggle",
+			"label": "Show notice icon",
+			"default": true,
+			"panel": "content"
+		},
+		"dismissible": {
+			"type": "toggle",
+			"label": "Allow visitor to dismiss",
+			"default": true,
+			"panel": "behavior"
+		},
+		"remember": {
+			"type": "toggle",
+			"label": "Remember dismissal this browser tab",
+			"default": false,
+			"panel": "behavior"
+		},
+		"dismissLabel": {
+			"type": "text",
+			"label": "Dismiss button label",
+			"default": "Dismiss notification",
+			"panel": "behavior"
+		},
+		"style": {
+			"type": "select",
+			"label": "Notice layout",
+			"default": "boxed",
+			"options": {
+				"boxed": "Boxed",
+				"accent": "Accent side",
+				"minimal": "Minimal"
+			},
+			"panel": "style"
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Maximum notice width",
+			"default": "",
+			"min": 240,
+			"max": 1400,
+			"step": 10,
+			"unit": "px",
+			"css": "--wpek-alert-max",
+			"responsive": true,
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Content spacing",
+			"default": "",
+			"min": 0,
+			"max": 44,
+			"step": 2,
+			"unit": "px",
+			"css": "--wpek-alert-gap",
+			"responsive": true,
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"background": {
+			"type": "background",
+			"label": "Notice background",
+			"selector": ".wpe-alert",
+			"panel": "style"
+		},
+		"border": {
+			"type": "border",
+			"label": "Notice border",
+			"selector": ".wpe-alert",
+			"panel": "style"
+		},
+		"padding": {
+			"type": "spacing",
+			"label": "Notice padding",
+			"prop": "padding",
+			"selector": ".wpe-alert",
+			"panel": "style"
+		},
+		"titleTypography": {
+			"type": "typography",
+			"label": "Notice title typography",
+			"selector": ".wpe-alert__title",
+			"panel": "style"
+		}
+	}
+}

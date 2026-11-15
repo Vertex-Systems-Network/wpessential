@@ -1,0 +1,13 @@
+.wpe-search{--wpek-search-max:580px;--wpek-search-gap:8px;box-sizing:border-box;max-width:var(--wpek-search-max);min-width:0}
+.wpe-search__form{min-width:0}
+.wpe-search__label{display:block;font-weight:650;margin-bottom:8px}
+.wpe-search__row{display:flex;align-items:stretch;gap:var(--wpek-search-gap)}
+.wpe-search__input{box-sizing:border-box;flex:1 1 0;min-width:0;width:100%;background:var(--wp--preset--color--surface,transparent);color:inherit;padding:12px 14px;border:1px solid var(--wp--preset--color--border,#bbb);border-radius:8px;font:inherit}
+.wpe-search__submit{box-sizing:border-box;min-width:48px;padding:12px 18px;border:0;border-radius:8px;font:inherit;font-weight:700;background:var(--wp--preset--color--primary,#28694f);color:var(--wp--preset--color--surface,#fff);cursor:pointer}
+.wpe-search__submit svg{display:block;width:20px;height:20px}
+.wpe-search.is-line .wpe-search__input{border:0;border-bottom:2px solid currentColor;border-radius:0}
+.wpe-search.is-minimal .wpe-search__input{border:0}
+.wpe-search__toggle{font:inherit;font-weight:650;cursor:pointer;padding:10px 0}
+.wpe-search.is-expand .wpe-search__form{margin-top:12px}
+.wpe-search__input:focus-visible,.wpe-search__submit:focus-visible,.wpe-search__toggle:focus-visible{outline:3px solid var(--wp--preset--color--primary,#ae7f32);outline-offset:3px}
+@media(max-width:370px){.wpe-search__row{flex-wrap:wrap}.wpe-search__submit{width:100%}}

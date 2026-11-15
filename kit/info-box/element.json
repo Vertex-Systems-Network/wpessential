@@ -1,0 +1,576 @@
+{
+	"name": "info-box",
+	"title": "Info Box (WPEssential)",
+	"category": "content",
+	"description": "Feature box with an icon, image or number, title, text, badge and button; any layout per breakpoint.",
+	"icon": "info-outline",
+	"elementor_icon": "eicon-info-box",
+	"keywords": [
+		"info box",
+		"icon box",
+		"image box",
+		"feature",
+		"service",
+		"card"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style",
+		"media": "Icon / image",
+		"motion": "Hover"
+	},
+	"attributes": {
+		"mediaType": {
+			"type": "select",
+			"label": "Show",
+			"default": "icon",
+			"options": {
+				"icon": "Icon",
+				"image": "Image",
+				"number": "Number or text",
+				"none": "Nothing"
+			}
+		},
+		"icon": {
+			"type": "icon",
+			"label": "Icon",
+			"default": {
+				"library": "wpessential",
+				"value": "bolt"
+			}
+		},
+		"image": {
+			"type": "image",
+			"label": "Image",
+			"default": {}
+		},
+		"imageSize": {
+			"type": "select",
+			"label": "Image size",
+			"default": "medium_large",
+			"options": {
+				"thumbnail": "Thumbnail",
+				"medium": "Medium",
+				"medium_large": "Medium large",
+				"large": "Large",
+				"full": "Full"
+			}
+		},
+		"number": {
+			"type": "text",
+			"label": "Number or text (e.g. 01)",
+			"default": "01"
+		},
+		"badge": {
+			"type": "text",
+			"label": "Badge (optional)",
+			"default": ""
+		},
+		"title": {
+			"type": "text",
+			"label": "Title",
+			"default": "Fast by default"
+		},
+		"tag": {
+			"type": "select",
+			"panel": "content",
+			"label": "Title tag",
+			"default": "h3",
+			"options": {
+				"h2": "H2",
+				"h3": "H3",
+				"h4": "H4",
+				"h5": "H5",
+				"h6": "H6",
+				"p": "p",
+				"div": "div"
+			}
+		},
+		"description": {
+			"type": "html",
+			"label": "Description",
+			"default": "<p>Lightweight blocks, no jQuery, and only the CSS each page uses.</p>"
+		},
+		"buttonText": {
+			"type": "text",
+			"label": "Button text (optional)",
+			"default": ""
+		},
+		"buttonIcon": {
+			"type": "icon",
+			"label": "Button icon",
+			"default": {
+				"library": "wpessential",
+				"value": "arrow-right"
+			}
+		},
+		"link": {
+			"type": "url",
+			"label": "Link",
+			"default": ""
+		},
+		"newTab": {
+			"type": "toggle",
+			"label": "Open in new tab",
+			"default": false
+		},
+		"linkArea": {
+			"type": "select",
+			"panel": "content",
+			"label": "Link covers",
+			"default": "box",
+			"options": {
+				"box": "Whole box",
+				"title": "Title",
+				"button": "Button only"
+			}
+		},
+		"position": {
+			"type": "select",
+			"panel": "style",
+			"label": "Icon / image position",
+			"default": "",
+			"options": {
+				"": "Top (default)",
+				"top": "Top",
+				"left": "Left",
+				"right": "Right"
+			},
+			"responsive": true,
+			"css": "--wpek-pos",
+			"map": {
+				"left": "--wpek-dir:row;--wpek-text:start;--wpek-valign-row:var(--wpek-valign, flex-start)",
+				"right": "--wpek-dir:row-reverse;--wpek-text:start;--wpek-valign-row:var(--wpek-valign, flex-start)",
+				"top": "--wpek-dir:column;--wpek-text:inherit;--wpek-valign-row:var(--wpek-items, flex-start)"
+			}
+		},
+		"vAlign": {
+			"type": "select",
+			"panel": "style",
+			"label": "Vertical alignment (side layouts)",
+			"default": "",
+			"options": {
+				"": "Top",
+				"center": "Middle",
+				"end": "Bottom"
+			},
+			"responsive": true,
+			"css": "--wpek-valign"
+		},
+		"align": {
+			"type": "select",
+			"panel": "style",
+			"label": "Alignment",
+			"default": "",
+			"options": {
+				"": "Default",
+				"start": "Left",
+				"center": "Center",
+				"end": "Right"
+			},
+			"responsive": true,
+			"css": "--wpek-align",
+			"map": {
+				"start": "--wpek-align:start;--wpek-items:flex-start",
+				"center": "--wpek-align:center;--wpek-items:center",
+				"end": "--wpek-align:end;--wpek-items:flex-end"
+			}
+		},
+		"mediaGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space after icon / image",
+			"responsive": true,
+			"css": "--wpek-media-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 120,
+			"step": 1,
+			"default": ""
+		},
+		"titleGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space after title",
+			"responsive": true,
+			"css": "--wpek-title-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"default": ""
+		},
+		"descGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space after description",
+			"responsive": true,
+			"css": "--wpek-desc-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"default": ""
+		},
+		"minHeight": {
+			"type": "range",
+			"panel": "style",
+			"label": "Minimum height",
+			"responsive": true,
+			"css": "--wpek-minh",
+			"unit": "px",
+			"min": 0,
+			"max": 800,
+			"step": 1,
+			"default": ""
+		},
+		"equalHeight": {
+			"type": "toggle",
+			"panel": "style",
+			"label": "Fill the column height (equal-height cards)",
+			"default": false
+		},
+		"iconView": {
+			"type": "select",
+			"panel": "media",
+			"label": "Icon view",
+			"default": "default",
+			"options": {
+				"default": "Default",
+				"stacked": "Stacked (filled)",
+				"framed": "Framed (outline)"
+			}
+		},
+		"iconShape": {
+			"type": "select",
+			"panel": "media",
+			"label": "Shape",
+			"default": "circle",
+			"options": {
+				"circle": "Circle",
+				"rounded": "Rounded",
+				"square": "Square"
+			}
+		},
+		"iconSize": {
+			"type": "range",
+			"panel": "media",
+			"label": "Icon size",
+			"responsive": true,
+			"css": "--wpek-icon",
+			"unit": "px",
+			"min": 8,
+			"max": 200,
+			"step": 1,
+			"default": ""
+		},
+		"iconPadding": {
+			"type": "range",
+			"panel": "media",
+			"label": "Icon padding",
+			"responsive": true,
+			"css": "--wpek-icon-pad",
+			"unit": "px",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"default": ""
+		},
+		"iconRotate": {
+			"type": "range",
+			"panel": "media",
+			"label": "Rotate",
+			"responsive": false,
+			"css": "--wpek-icon-rot",
+			"unit": "deg",
+			"min": 0,
+			"max": 360,
+			"step": 1,
+			"default": ""
+		},
+		"iconBorder": {
+			"type": "range",
+			"panel": "media",
+			"label": "Border width (framed)",
+			"responsive": false,
+			"css": "--wpek-icon-bw",
+			"unit": "px",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"default": ""
+		},
+		"iconRadius": {
+			"type": "range",
+			"panel": "media",
+			"label": "Corner radius",
+			"responsive": false,
+			"css": "--wpek-icon-r",
+			"unit": "px",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"default": ""
+		},
+		"imageWidth": {
+			"type": "range",
+			"panel": "media",
+			"label": "Image width",
+			"responsive": true,
+			"css": "--wpek-img-w",
+			"unit": "%",
+			"min": 5,
+			"max": 100,
+			"step": 1,
+			"default": ""
+		},
+		"imageHeight": {
+			"type": "range",
+			"panel": "media",
+			"label": "Image height",
+			"responsive": true,
+			"css": "--wpek-img-h",
+			"unit": "px",
+			"min": 20,
+			"max": 800,
+			"step": 1,
+			"default": ""
+		},
+		"imageFit": {
+			"type": "select",
+			"panel": "media",
+			"label": "Object fit",
+			"default": "",
+			"options": {
+				"": "Cover",
+				"contain": "Contain",
+				"fill": "Fill",
+				"none": "None"
+			},
+			"responsive": true,
+			"css": "--wpek-img-fit"
+		},
+		"imagePosition": {
+			"type": "select",
+			"panel": "media",
+			"label": "Object position",
+			"default": "",
+			"options": {
+				"": "Center",
+				"top": "Top",
+				"bottom": "Bottom",
+				"left": "Left",
+				"right": "Right"
+			},
+			"responsive": true,
+			"css": "--wpek-img-pos"
+		},
+		"imageRadius": {
+			"type": "range",
+			"panel": "media",
+			"label": "Image radius",
+			"responsive": false,
+			"css": "--wpek-img-r",
+			"unit": "px",
+			"min": 0,
+			"max": 200,
+			"step": 1,
+			"default": ""
+		},
+		"hover": {
+			"type": "select",
+			"panel": "motion",
+			"label": "Box hover",
+			"default": "lift",
+			"options": {
+				"none": "None",
+				"lift": "Lift",
+				"glow": "Glow",
+				"border": "Highlight border",
+				"fill": "Fill with brand colour"
+			}
+		},
+		"mediaHover": {
+			"type": "select",
+			"panel": "motion",
+			"label": "Icon / image hover",
+			"default": "pop",
+			"options": {
+				"none": "None",
+				"pop": "Pop",
+				"rotate": "Rotate",
+				"float": "Float up",
+				"zoom": "Image zoom"
+			}
+		},
+		"transition": {
+			"type": "range",
+			"panel": "motion",
+			"label": "Transition",
+			"responsive": false,
+			"css": "--wpek-dur",
+			"unit": "ms",
+			"min": 0,
+			"max": 1500,
+			"step": 10,
+			"default": ""
+		}
+	},
+	"groups": {
+		"boxPadding": {
+			"type": "spacing",
+			"label": "Box padding",
+			"prop": "padding",
+			"selector": ".wpe-info-box",
+			"panel": "style"
+		},
+		"boxBackground": {
+			"type": "background",
+			"label": "Box background",
+			"selector": ".wpe-info-box",
+			"panel": "style"
+		},
+		"boxBorder": {
+			"type": "border",
+			"label": "Box border and radius",
+			"selector": ".wpe-info-box",
+			"panel": "style"
+		},
+		"boxShadow": {
+			"type": "shadow",
+			"label": "Box shadow",
+			"selector": ".wpe-info-box",
+			"panel": "style"
+		},
+		"iconColor": {
+			"type": "colors",
+			"label": "Icon colour",
+			"prop": "color",
+			"selector": ".wpe-info-box__icon",
+			"panel": "media"
+		},
+		"iconBg": {
+			"type": "colors",
+			"label": "Icon background (stacked)",
+			"prop": "background-color",
+			"selector": ".wpe-info-box__icon",
+			"panel": "media"
+		},
+		"iconBorderColor": {
+			"type": "colors",
+			"label": "Icon border colour (framed)",
+			"prop": "border-color",
+			"selector": ".wpe-info-box__icon",
+			"panel": "media"
+		},
+		"imageBorder": {
+			"type": "border",
+			"label": "Image border",
+			"selector": ".wpe-info-box__image img",
+			"panel": "media"
+		},
+		"imageShadow": {
+			"type": "shadow",
+			"label": "Image shadow",
+			"selector": ".wpe-info-box__image img",
+			"panel": "media"
+		},
+		"imageFilters": {
+			"type": "filters",
+			"label": "Image CSS filters",
+			"selector": ".wpe-info-box__image img",
+			"panel": "media"
+		},
+		"numberTypography": {
+			"type": "typography",
+			"label": "Number typography",
+			"selector": ".wpe-info-box__number",
+			"panel": "media"
+		},
+		"badgeColor": {
+			"type": "colors",
+			"label": "Badge text colour",
+			"prop": "color",
+			"selector": ".wpe-info-box__badge",
+			"panel": "style"
+		},
+		"badgeBg": {
+			"type": "colors",
+			"label": "Badge background",
+			"prop": "background-color",
+			"selector": ".wpe-info-box__badge",
+			"panel": "style"
+		},
+		"titleTypography": {
+			"type": "typography",
+			"label": "Title typography",
+			"selector": ".wpe-info-box__title",
+			"panel": "style"
+		},
+		"titleColor": {
+			"type": "colors",
+			"label": "Title colour",
+			"prop": "color",
+			"selector": ".wpe-info-box__title",
+			"panel": "style"
+		},
+		"titleEffects": {
+			"type": "textEffects",
+			"label": "Title shadow, stroke and blend",
+			"selector": ".wpe-info-box__title",
+			"panel": "style"
+		},
+		"descTypography": {
+			"type": "typography",
+			"label": "Description typography",
+			"selector": ".wpe-info-box__desc",
+			"panel": "style"
+		},
+		"descColor": {
+			"type": "colors",
+			"label": "Description colour",
+			"prop": "color",
+			"selector": ".wpe-info-box__desc",
+			"panel": "style"
+		},
+		"descEffects": {
+			"type": "textEffects",
+			"label": "Description shadow",
+			"selector": ".wpe-info-box__desc",
+			"panel": "style"
+		},
+		"buttonTypography": {
+			"type": "typography",
+			"label": "Button typography",
+			"selector": ".wpe-info-box__button",
+			"panel": "style"
+		},
+		"buttonColor": {
+			"type": "colors",
+			"label": "Button text colour",
+			"prop": "color",
+			"selector": ".wpe-info-box__button",
+			"panel": "style"
+		},
+		"buttonBg": {
+			"type": "colors",
+			"label": "Button background",
+			"prop": "background-color",
+			"selector": ".wpe-info-box__button",
+			"panel": "style"
+		},
+		"buttonPadding": {
+			"type": "spacing",
+			"label": "Button padding",
+			"prop": "padding",
+			"selector": ".wpe-info-box__button",
+			"panel": "style"
+		},
+		"buttonBorder": {
+			"type": "border",
+			"label": "Button border",
+			"selector": ".wpe-info-box__button",
+			"panel": "style"
+		}
+	}
+}

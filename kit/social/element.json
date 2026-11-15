@@ -1,0 +1,167 @@
+{
+	"name": "social",
+	"title": "Social Icons (WPEssential)",
+	"description": "Accessible social profile links with fixed whitelist icons, validated HTTPS URLs and responsive appearance.",
+	"category": "content",
+	"icon": "share",
+	"elementor_icon": "eicon-social-icons",
+	"keywords": [
+		"social",
+		"links",
+		"profiles",
+		"icons",
+		"facebook",
+		"instagram"
+	],
+	"panels": {
+		"content": "Profiles",
+		"style": "Design"
+	},
+	"attributes": {
+		"heading": {
+			"type": "text",
+			"label": "Accessible list heading",
+			"default": "Connect with us",
+			"panel": "content"
+		},
+		"items": {
+			"type": "repeater",
+			"label": "Social profile links",
+			"title_field": "platform",
+			"panel": "content",
+			"default": [
+				{
+					"platform": "instagram",
+					"label": "Instagram",
+					"url": "https://www.instagram.com/"
+				},
+				{
+					"platform": "linkedin",
+					"label": "LinkedIn",
+					"url": "https://www.linkedin.com/"
+				},
+				{
+					"platform": "youtube",
+					"label": "YouTube",
+					"url": "https://www.youtube.com/"
+				}
+			],
+			"fields": {
+				"platform": {
+					"type": "select",
+					"label": "Platform",
+					"default": "instagram",
+					"options": {
+						"instagram": "Instagram",
+						"facebook": "Facebook",
+						"linkedin": "LinkedIn",
+						"youtube": "YouTube",
+						"x": "X",
+						"tiktok": "TikTok",
+						"pinterest": "Pinterest",
+						"github": "GitHub",
+						"whatsapp": "WhatsApp",
+						"telegram": "Telegram",
+						"website": "Website"
+					}
+				},
+				"label": {
+					"type": "text",
+					"label": "Accessible link label",
+					"default": ""
+				},
+				"url": {
+					"type": "url",
+					"label": "Profile URL (HTTPS only)",
+					"default": ""
+				}
+			}
+		},
+		"newTab": {
+			"type": "toggle",
+			"label": "Open links in new tab",
+			"default": true,
+			"panel": "content"
+		},
+		"showLabels": {
+			"type": "toggle",
+			"label": "Display platform names",
+			"default": false,
+			"panel": "style"
+		},
+		"shape": {
+			"type": "select",
+			"label": "Link shape",
+			"default": "circle",
+			"options": {
+				"circle": "Round",
+				"square": "Square",
+				"pill": "Pill"
+			},
+			"panel": "style"
+		},
+		"justify": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-social-justify",
+			"map": {
+				"start": "--wpek-social-justify:flex-start",
+				"center": "--wpek-social-justify:center",
+				"end": "--wpek-social-justify:flex-end"
+			},
+			"panel": "style"
+		},
+		"size": {
+			"type": "range",
+			"label": "Icon size",
+			"default": "",
+			"min": 32,
+			"max": 100,
+			"step": 2,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-social-size",
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Icon spacing",
+			"default": "",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-social-gap",
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"iconBg": {
+			"type": "background",
+			"selector": ".wpe-social__link",
+			"label": "Icon background",
+			"panel": "style"
+		},
+		"iconBorder": {
+			"type": "border",
+			"selector": ".wpe-social__link",
+			"label": "Icon border",
+			"panel": "style"
+		},
+		"iconColor": {
+			"type": "colors",
+			"selector": ".wpe-social__link",
+			"prop": "color",
+			"label": "Icon colour",
+			"panel": "style"
+		}
+	}
+}

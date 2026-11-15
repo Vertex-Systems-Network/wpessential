@@ -1,0 +1,149 @@
+{
+	"name": "divider",
+	"title": "Divider / Spacer (WPEssential)",
+	"category": "layout",
+	"description": "Semantic separator, accessible labelled line or decorative spacer with responsive dimensions and patterns.",
+	"icon": "minus",
+	"elementor_icon": "eicon-divider",
+	"keywords": [
+		"divider",
+		"separator",
+		"rule",
+		"spacer"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"mode": {
+			"type": "select",
+			"label": "Separator type",
+			"default": "line",
+			"options": {
+				"line": "Horizontal rule",
+				"text": "Rule with text",
+				"symbol": "Decorative symbol",
+				"space": "Vertical spacer"
+			},
+			"panel": "content"
+		},
+		"text": {
+			"type": "text",
+			"label": "Middle label",
+			"default": "Our services",
+			"panel": "content"
+		},
+		"symbol": {
+			"type": "select",
+			"label": "Decorative symbol",
+			"default": "star",
+			"options": {
+				"star": "Star",
+				"diamond": "Diamond",
+				"dot": "Dot"
+			},
+			"panel": "content"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "center",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-divider-align",
+			"map": {
+				"start": "--wpek-divider-align:flex-start",
+				"center": "--wpek-divider-align:center",
+				"end": "--wpek-divider-align:flex-end"
+			},
+			"panel": "style"
+		},
+		"lineStyle": {
+			"type": "select",
+			"label": "Line pattern",
+			"default": "solid",
+			"options": {
+				"solid": "Solid",
+				"dashed": "Dashed",
+				"dotted": "Dotted",
+				"double": "Double"
+			},
+			"panel": "style"
+		},
+		"lineColor": {
+			"type": "color",
+			"label": "Divider colour",
+			"default": "",
+			"css": "--wpek-divider-color",
+			"panel": "style"
+		},
+		"lineThickness": {
+			"type": "range",
+			"label": "Line thickness",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-divider-thickness",
+			"min": 1,
+			"max": 16,
+			"step": 1,
+			"unit": "px",
+			"panel": "style"
+		},
+		"width": {
+			"type": "range",
+			"label": "Divider width",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-divider-width",
+			"min": 10,
+			"max": 100,
+			"step": 5,
+			"unit": "%",
+			"panel": "style"
+		},
+		"height": {
+			"type": "range",
+			"label": "Spacer height",
+			"default": 40,
+			"responsive": true,
+			"css": "--wpek-spacer-height",
+			"min": 0,
+			"max": 500,
+			"step": 5,
+			"unit": "px",
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Space around middle label",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-divider-gap",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"textTypography": {
+			"type": "typography",
+			"label": "Divider label typography",
+			"selector": ".wpe-divider__label",
+			"panel": "style"
+		},
+		"textColor": {
+			"type": "colors",
+			"label": "Divider label colour",
+			"prop": "color",
+			"selector": ".wpe-divider__label",
+			"panel": "style"
+		}
+	}
+}

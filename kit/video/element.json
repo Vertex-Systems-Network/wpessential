@@ -1,0 +1,193 @@
+{
+	"name": "video",
+	"title": "Video & Audio (WPEssential)",
+	"category": "media",
+	"description": "Native HTML5 video/audio with captions and privacy-conscious click-to-load YouTube/Vimeo embeds. Single shared Gutenberg/Elementor renderer.",
+	"icon": "format-video",
+	"elementor_icon": "eicon-video-playlist",
+	"keywords": [
+		"video",
+		"audio",
+		"YouTube",
+		"Vimeo",
+		"media",
+		"player",
+		"captions"
+	],
+	"panels": {
+		"content": "Content",
+		"playback": "Playback",
+		"captions": "Captions",
+		"style": "Style"
+	},
+	"attributes": {
+		"source": {
+			"type": "select",
+			"panel": "content",
+			"label": "Media source",
+			"default": "file",
+			"options": {
+				"file": "Self-hosted video or audio URL",
+				"youtube": "YouTube link",
+				"vimeo": "Vimeo link"
+			}
+		},
+		"mediaType": {
+			"type": "select",
+			"panel": "content",
+			"label": "Self-hosted media type",
+			"default": "video",
+			"options": {
+				"video": "Video",
+				"audio": "Audio"
+			}
+		},
+		"mediaUrl": {
+			"type": "url",
+			"panel": "content",
+			"label": "Video/audio URL (paste Media Library file URL or YouTube/Vimeo link)",
+			"default": ""
+		},
+		"title": {
+			"type": "text",
+			"panel": "content",
+			"label": "Accessible media title",
+			"default": "Video"
+		},
+		"description": {
+			"type": "textarea",
+			"panel": "content",
+			"label": "Description below player (optional)",
+			"default": ""
+		},
+		"poster": {
+			"type": "image",
+			"panel": "content",
+			"label": "Poster image (for video)",
+			"default": {}
+		},
+		"preload": {
+			"type": "select",
+			"panel": "playback",
+			"label": "Self-hosted preload",
+			"default": "metadata",
+			"options": {
+				"none": "None",
+				"metadata": "Metadata only"
+			}
+		},
+		"loop": {
+			"type": "toggle",
+			"panel": "playback",
+			"label": "Loop self-hosted playback",
+			"default": false
+		},
+		"muted": {
+			"type": "toggle",
+			"panel": "playback",
+			"label": "Mute self-hosted video",
+			"default": false
+		},
+		"captionsUrl": {
+			"type": "url",
+			"panel": "captions",
+			"label": "WebVTT captions URL (video only)",
+			"default": ""
+		},
+		"captionsLanguage": {
+			"type": "text",
+			"panel": "captions",
+			"label": "Captions language code",
+			"default": "en"
+		},
+		"captionsLabel": {
+			"type": "text",
+			"panel": "captions",
+			"label": "Captions label",
+			"default": "English"
+		},
+		"ratio": {
+			"type": "select",
+			"panel": "style",
+			"label": "Video aspect ratio",
+			"default": "16/9",
+			"options": {
+				"16/9": "16:9",
+				"4/3": "4:3",
+				"1/1": "Square",
+				"9/16": "Vertical"
+			}
+		},
+		"fit": {
+			"type": "select",
+			"panel": "style",
+			"label": "Poster and video fit",
+			"default": "contain",
+			"options": {
+				"contain": "Contain",
+				"cover": "Cover"
+			}
+		},
+		"maxWidth": {
+			"type": "range",
+			"panel": "style",
+			"label": "Max player width",
+			"default": "",
+			"min": 280,
+			"max": 1800,
+			"step": 10,
+			"unit": "px",
+			"css": "--wpek-media-max"
+		},
+		"align": {
+			"type": "select",
+			"panel": "style",
+			"label": "Player alignment",
+			"default": "center",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"map": {
+				"start": "--wpek-media-margin:0 auto 0 0",
+				"center": "--wpek-media-margin:0 auto",
+				"end": "--wpek-media-margin:0 0 0 auto"
+			},
+			"css": "--wpek-media-margin"
+		},
+		"emptyText": {
+			"type": "text",
+			"panel": "content",
+			"label": "Empty source hint in editor",
+			"default": "Add a video or audio URL."
+		}
+	},
+	"groups": {
+		"playerBorder": {
+			"type": "border",
+			"panel": "style",
+			"label": "Player border and radius",
+			"selector": ".wpe-video__frame"
+		},
+		"playerShadow": {
+			"type": "shadow",
+			"panel": "style",
+			"label": "Player shadow",
+			"selector": ".wpe-video__frame"
+		},
+		"descriptionTypography": {
+			"type": "typography",
+			"panel": "style",
+			"label": "Description typography",
+			"selector": ".wpe-video__description"
+		},
+		"descriptionColor": {
+			"type": "colors",
+			"panel": "style",
+			"label": "Description colour",
+			"prop": "color",
+			"selector": ".wpe-video__description"
+		}
+	}
+}

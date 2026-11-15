@@ -102,10 +102,10 @@ final class ElementsScreen implements AdminScreen {
 			$html .= '<details class="wpe-ui-group" id="wpe-elements-' . esc_attr( $type ) . '" open><summary><span class="wpe-ui-group__title">' . esc_html( $labels[ $type ] ) . '</span>' . Badge::count( count( $elements ) )
 				. '<span class="wpe-ui-chip wpe-ui-chip--essential">Essential</span><code class="wpe-ui-code">elements.' . esc_html( $type ) . '</code></summary>';
 			foreach ( $elements as $element ) {
-				$html .= '<div class="wpe-ui-option"><div class="wpe-ui-option__copy wpe-ui-option__copy--row"><span class="wpe-ui-icon">' . Icon::render( $element['icon'], 20 ) . '</span>';
+				$html .= '<div class="wpe-ui-option' . ( $this->locked( $element ) ? ' is-locked' : '' ) . '"><div class="wpe-ui-option__copy wpe-ui-option__copy--row"><span class="wpe-ui-icon">' . Icon::render( $element['icon'], 20 ) . '</span>';
 				$html .= '<span><span class="wpe-ui-option__label">' . esc_html( $element['name'] ) . '</span><br><span class="wpe-ui-muted">' . esc_html( $element['description'] ) . '</span></span></div>';
 				$html .= '<div class="wpe-ui-option__meta">' . Badge::edition( $element['edition'] );
-				$html .= Toggle::form(
+				$html .= $this->locked( $element ) ? Toggle::locked( Shell::UPGRADE_URL ) . '</div></div>' : Toggle::form(
 					self::TOGGLE_ACTION,
 					self::TOGGLE_ACTION,
 					$this->elements->isEnabled( $type, $element['id'] ),
@@ -146,7 +146,8 @@ final class ElementsScreen implements AdminScreen {
 					'description' => $element['description'],
 					'iconHtml'    => Icon::render( $element['icon'], 20 ),
 					'badgeHtml'   => Badge::edition( $element['edition'] ),
-					'toggleHtml'  => Toggle::form(
+					'locked'      => $this->locked( $element ),
+					'toggleHtml'  => $this->locked( $element ) ? Toggle::locked( Shell::UPGRADE_URL ) : Toggle::form(
 						self::TOGGLE_ACTION,
 						self::TOGGLE_ACTION,
 						$this->elements->isEnabled( $key, $element['id'] ),
@@ -184,5 +185,14 @@ final class ElementsScreen implements AdminScreen {
 			'docsUrl' => AdminUrl::page( Shell::DOCS_SLUG ),
 			'types'   => $types,
 		];
+	}
+
+	/**
+	 * Pro elements are listed without WPEssential Premium, dimmed and locked.
+	 *
+	 * @param array{edition:string} $element
+	 */
+	private function locked( array $element ): bool {
+		return $element['edition'] === 'pro' && ! Shell::premiumAvailable();
 	}
 }

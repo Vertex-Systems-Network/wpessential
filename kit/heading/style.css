@@ -1,0 +1,21 @@
+/* WPEssential kit — Heading. Values arrive as custom properties per breakpoint. */
+.wpe-heading { text-align: var(--wpek-align, inherit); margin-block-end: var(--wpek-gap, 0); }
+.wpe-heading__eyebrow { margin: 0 0 .75em; font-family: var(--wp--preset--font-family--mono, ui-monospace, monospace); font-size: .75rem; letter-spacing: .18em; text-transform: uppercase; color: var(--wp--preset--color--secondary, currentColor); }
+.wpe-heading__title { margin-block: 0; font-family: var(--wp--preset--font-family--heading, inherit); font-weight: 700; line-height: 1.1; letter-spacing: -.02em; color: inherit; max-width: var(--wpek-max, none); margin-inline: var(--wpek-mx, 0); text-wrap: balance; }
+.wpe-heading__title a { color: inherit; text-decoration: none; }
+.wpe-heading__accent.is-gradient { background: linear-gradient(90deg, var(--wp--preset--color--primary, #ec7d1a), var(--wp--preset--color--secondary, #f7a23e)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.wpe-heading__accent.is-primary { color: var(--wp--preset--color--primary, currentColor); }
+.wpe-heading__accent.is-outline { color: transparent; -webkit-text-stroke: 1.5px currentColor; }
+.wpe-heading__accent.is-highlight { background: linear-gradient(transparent 60%, color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 35%, transparent) 0); }
+/* Hover presets (links): timing from the demo's hover tokens. */
+.wpe-heading.wpe-hover-underline .wpe-heading__title a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size var(--wp--custom--hover--duration, .35s) var(--wp--custom--hover--ease, ease); }
+.wpe-heading.wpe-hover-underline .wpe-heading__title a:is(:hover, :focus-visible) { background-size: 100% 2px; }
+.wpe-heading.wpe-hover-glow .wpe-heading__title a:is(:hover, :focus-visible) { text-shadow: 0 0 24px color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 55%, transparent); }
+.wpe-heading__title a:focus-visible { outline: 2px solid var(--wp--preset--color--primary, currentColor); outline-offset: 4px; border-radius: 4px; }
+/* Entrance (no motion for people who ask for less). */
+@media (prefers-reduced-motion: no-preference) {
+	.wpe-heading.wpe-motion-fade-up { animation: wpe-fade-up .7s cubic-bezier(.2, .8, .2, 1) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+	.wpe-heading.wpe-motion-reveal .wpe-heading__title { animation: wpe-reveal .9s cubic-bezier(.2, .8, .2, 1) both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+}
+@keyframes wpe-fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes wpe-reveal { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }

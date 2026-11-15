@@ -1,0 +1,37 @@
+/* WPEssential kit — Accordion. */
+.wpe-accordion { display: flex; flex-direction: column; gap: var(--wpek-gap, 12px); interpolate-size: allow-keywords; }
+.wpe-accordion__item { border: 1px solid var(--wp--preset--color--border, rgb(0 0 0 / 12%)); border-radius: var(--wp--custom--radius--md, 12px); background: var(--wp--preset--color--surface, transparent); transition: background var(--wpek-dur, 250ms), border-color var(--wpek-dur, 250ms), box-shadow var(--wpek-dur, 250ms); }
+.wpe-accordion__title { display: flex; align-items: center; gap: var(--wpek-icon-gap, 14px); padding: 18px 22px; cursor: pointer; list-style: none; border-radius: inherit; transition: background var(--wpek-dur, 250ms), color var(--wpek-dur, 250ms), transform var(--wpek-dur, 250ms); }
+.wpe-accordion__title::-webkit-details-marker { display: none; }
+.wpe-accordion__title::marker { content: ""; }
+.wpe-accordion__title:focus-visible { outline: 2px solid var(--wp--preset--color--primary, currentColor); outline-offset: 2px; }
+.wpe-accordion__label { flex: 1; min-width: 0; margin: 0; font-family: var(--wp--preset--font-family--heading, inherit); font-size: 1.0625rem; font-weight: 600; line-height: 1.4; color: inherit; }
+.wpe-accordion__num { flex: none; min-width: 2ch; font-weight: 700; color: var(--wp--preset--color--primary, currentColor); font-variant-numeric: tabular-nums; }
+.wpe-accordion.is-icon-start .wpe-accordion__icon { order: -1; }
+.wpe-accordion.is-icon-start .wpe-accordion__num { order: -2; }
+.wpe-accordion__icon { flex: none; display: inline-grid; place-items: center; font-size: var(--wpek-icon, 18px); line-height: 1; color: var(--wp--preset--color--primary, currentColor); transition: transform var(--wpek-dur, 250ms) var(--wp--custom--hover--ease, ease), color var(--wpek-dur, 250ms); }
+.wpe-accordion__icon > * { grid-area: 1 / 1; width: 1em; height: 1em; }
+.wpe-accordion__item[open] > .wpe-accordion__title .wpe-accordion__icon { transform: rotate(var(--wpek-icon-rot, 45deg)); }
+.wpe-accordion.has-active-icon .wpe-accordion__item[open] > .wpe-accordion__title .wpe-accordion__icon { transform: none; }
+.wpe-accordion__svg.is-open, .wpe-accordion__item[open] .wpe-accordion__svg.is-closed:not(:only-child) { display: none; }
+.wpe-accordion__item[open] .wpe-accordion__svg.is-open { display: block; }
+.wpe-accordion__body { padding: 0 22px 20px; margin-top: calc(var(--wpek-content-gap, 0px) * 1); color: var(--wp--preset--color--text-muted, inherit); }
+.wpe-accordion__body > * { margin: 0; }
+.wpe-accordion__body > * + * { margin-top: .75em; }
+/* Smooth open/close where the browser supports animating details. */
+.wpe-accordion__item::details-content { block-size: 0; overflow: clip; transition: block-size var(--wpek-dur, 250ms) ease, content-visibility var(--wpek-dur, 250ms) allow-discrete; }
+.wpe-accordion__item[open]::details-content { block-size: auto; }
+/* Presets */
+.wpe-accordion.is-separated { gap: 0; }
+.wpe-accordion.is-separated .wpe-accordion__item { border-width: 0 0 1px; border-radius: 0; background: transparent; }
+.wpe-accordion.is-separated .wpe-accordion__title, .wpe-accordion.is-separated .wpe-accordion__body { padding-inline: 0; }
+.wpe-accordion.is-minimal .wpe-accordion__item { border: 0; background: transparent; }
+.wpe-accordion.is-minimal .wpe-accordion__title { padding-inline: 0; }
+.wpe-accordion.is-minimal .wpe-accordion__body { padding-inline: 0; }
+.wpe-accordion.is-flush .wpe-accordion__item { border: 0; border-radius: 0; background: var(--wp--preset--color--surface-alt, rgb(0 0 0 / 3%)); }
+.wpe-accordion.is-boxed .wpe-accordion__item[open] { box-shadow: var(--wp--preset--shadow--sm, 0 2px 8px rgb(0 0 0 / 6%)); }
+/* Title hover */
+.wpe-accordion.is-hover-shade .wpe-accordion__title:hover { background: color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 6%, transparent); }
+.wpe-accordion.is-hover-slide .wpe-accordion__title:hover .wpe-accordion__label { transform: translateX(4px); }
+.wpe-accordion__label { transition: transform var(--wpek-dur, 250ms); }
+@media (prefers-reduced-motion: reduce) { .wpe-accordion *, .wpe-accordion__item::details-content { transition: none !important; } }

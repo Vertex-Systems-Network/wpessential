@@ -1,0 +1,75 @@
+/* WPEssential kit — Tabs. */
+.wpe-tabs { display: flex; flex-direction: var(--wpek-dir, column); gap: var(--wpek-content-gap, 0); }
+.wpe-tabs__nav { display: flex; flex-direction: var(--wpek-nav-dir, row); justify-content: var(--wpek-justify, flex-start); gap: var(--wpek-gap, 4px); flex: none; }
+.wpe-tabs__tab { position: relative; display: inline-flex; align-items: center; justify-content: var(--wpek-title-align, center); gap: var(--wpek-icon-gap, 8px); flex: var(--wpek-grow, 0) 1 auto; padding: 12px 20px; border: 0; border-radius: var(--wpek-tab-r, 8px) var(--wpek-tab-r, 8px) 0 0; background: transparent; color: var(--wp--preset--color--text-muted, inherit); font: inherit; font-weight: 600; line-height: 1.3; text-align: start; cursor: pointer; transition: color var(--wpek-dur, 200ms), background var(--wpek-dur, 200ms), box-shadow var(--wpek-dur, 200ms); }
+.wpe-tabs__tab:hover { color: var(--wp--preset--color--text, currentColor); }
+.wpe-tabs__tab[aria-selected="true"] { color: var(--wpek-indicator, var(--wp--preset--color--primary, currentColor)); }
+.wpe-tabs__tab:focus-visible { outline: 2px solid var(--wp--preset--color--primary, currentColor); outline-offset: 2px; z-index: 1; }
+.wpe-tabs.is-icon-end .wpe-tabs__icon { order: 2; }
+.wpe-tabs.is-icon-top .wpe-tabs__tab { flex-direction: column; }
+.wpe-tabs__icon { display: inline-grid; place-items: center; font-size: var(--wpek-icon, 18px); line-height: 1; }
+.wpe-tabs__icon svg, .wpe-tabs__icon img { width: 1em; height: 1em; }
+.wpe-tabs__badge { padding: 1px 8px; border-radius: 99px; background: var(--wp--preset--color--primary-soft, rgb(0 0 0 / 6%)); color: var(--wp--preset--color--primary, currentColor); font-size: .75em; font-weight: 700; }
+/* Indicator styles */
+.wpe-tabs.is-indicator-underline .wpe-tabs__nav { box-shadow: inset 0 -1px 0 var(--wp--preset--color--border, rgb(0 0 0 / 12%)); }
+.wpe-tabs.is-indicator-underline .wpe-tabs__tab[aria-selected="true"] { box-shadow: inset 0 -2px 0 var(--wpek-indicator, var(--wp--preset--color--primary, currentColor)); }
+.wpe-tabs.is-indicator-pill .wpe-tabs__nav { padding: 4px; border-radius: 99px; background: var(--wp--preset--color--surface-alt, rgb(0 0 0 / 5%)); width: max-content; max-width: 100%; }
+.wpe-tabs.is-indicator-pill .wpe-tabs__tab { border-radius: 99px; }
+.wpe-tabs.is-indicator-pill .wpe-tabs__tab[aria-selected="true"] { background: var(--wp--preset--color--surface, #fff); box-shadow: var(--wp--preset--shadow--sm, 0 1px 3px rgb(0 0 0 / 12%)); }
+.wpe-tabs.is-indicator-box .wpe-tabs__tab[aria-selected="true"] { background: var(--wp--preset--color--surface-alt, rgb(0 0 0 / 4%)); }
+.wpe-tabs.is-indicator-box .wpe-tabs__panels { background: var(--wp--preset--color--surface-alt, rgb(0 0 0 / 4%)); border-radius: 0 var(--wp--custom--radius--md, 12px) var(--wp--custom--radius--md, 12px) var(--wp--custom--radius--md, 12px); }
+/* Side tabs */
+.wpe-tabs__nav:where([aria-orientation="vertical"]) { width: var(--wpek-nav-w, 240px); }
+.wpe-tabs__nav:where([aria-orientation="vertical"]) .wpe-tabs__tab { border-radius: var(--wpek-tab-r, 8px); justify-content: var(--wpek-title-align, flex-start); }
+.wpe-tabs.is-indicator-underline .wpe-tabs__nav:where([aria-orientation="vertical"]) { box-shadow: inset -1px 0 0 var(--wp--preset--color--border, rgb(0 0 0 / 12%)); }
+.wpe-tabs.is-indicator-underline .wpe-tabs__nav:where([aria-orientation="vertical"]) .wpe-tabs__tab[aria-selected="true"] { box-shadow: inset -2px 0 0 var(--wpek-indicator, var(--wp--preset--color--primary, currentColor)); }
+/* Panels */
+.wpe-tabs__panels { flex: 1; min-width: 0; }
+.wpe-tabs__panel { padding: 24px 0; }
+.wpe-tabs__panel:focus-visible { outline: 2px solid var(--wp--preset--color--primary, currentColor); outline-offset: 2px; }
+.wpe-tabs__content > * { margin: 0; }
+.wpe-tabs__content > * + * { margin-top: .75em; }
+.wpe-tabs__accordion-title { display: none; }
+/* Without JavaScript every panel shows, so nothing is ever hidden from visitors. */
+.wpe-tabs:not(.is-ready) .wpe-tabs__panel[hidden] { display: block; }
+.wpe-tabs.is-motion-fade .wpe-tabs__panel:not([hidden]) { animation: wpek-tab-fade var(--wpek-dur, 250ms) ease both; }
+.wpe-tabs.is-motion-slide .wpe-tabs__panel:not([hidden]) { animation: wpek-tab-slide var(--wpek-dur, 250ms) ease both; }
+@keyframes wpek-tab-fade { from { opacity: 0; } }
+@keyframes wpek-tab-slide { from { opacity: 0; transform: translateY(8px); } }
+/* Small screens (below 768 by default; data-mobile-at picks the size). */
+@media (max-width: 767px) {
+	.wpe-tabs.is-mobile-scroll[data-mobile-at="767"] .wpe-tabs__nav, .wpe-tabs.is-mobile-scroll[data-mobile-at="1023"] .wpe-tabs__nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; width: auto; }
+	.wpe-tabs.is-mobile-scroll .wpe-tabs__tab { flex: none; white-space: nowrap; }
+	.wpe-tabs.is-mobile-stack[data-mobile-at="767"], .wpe-tabs.is-mobile-stack[data-mobile-at="1023"] { flex-direction: column; }
+	.wpe-tabs.is-mobile-stack[data-mobile-at="767"] .wpe-tabs__nav, .wpe-tabs.is-mobile-stack[data-mobile-at="1023"] .wpe-tabs__nav { flex-direction: column; width: auto; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="767"] .wpe-tabs__nav, .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__nav { display: none; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="767"] .wpe-tabs__panel[hidden], .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__panel[hidden] { display: block; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="767"] .wpe-tabs__panel[hidden] .wpe-tabs__content, .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__panel[hidden] .wpe-tabs__content { display: none; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="767"] .wpe-tabs__accordion-title, .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__accordion-title { display: block; }
+}
+@media (max-width: 1023px) {
+	.wpe-tabs.is-mobile-scroll[data-mobile-at="1023"] .wpe-tabs__nav { flex-direction: row; overflow-x: auto; width: auto; }
+	.wpe-tabs.is-mobile-stack[data-mobile-at="1023"] { flex-direction: column; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__nav { display: none; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__panel[hidden] { display: block; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__panel[hidden] .wpe-tabs__content { display: none; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__accordion-title { display: block; }
+}
+@media (max-width: 559px) {
+	.wpe-tabs.is-mobile-scroll[data-mobile-at="559"] .wpe-tabs__nav { flex-direction: row; overflow-x: auto; width: auto; }
+	.wpe-tabs.is-mobile-stack[data-mobile-at="559"] { flex-direction: column; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="559"] .wpe-tabs__nav { display: none; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="559"] .wpe-tabs__panel[hidden] { display: block; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="559"] .wpe-tabs__panel[hidden] .wpe-tabs__content { display: none; }
+	.wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="559"] .wpe-tabs__accordion-title { display: block; }
+}
+.wpe-tabs__accordion-title { width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--wp--preset--color--border, rgb(0 0 0 / 12%)); background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; cursor: pointer; }
+.wpe-tabs__accordion-title[aria-expanded="true"] { color: var(--wpek-indicator, var(--wp--preset--color--primary, currentColor)); }
+@media (prefers-reduced-motion: reduce) { .wpe-tabs__panel { animation: none !important; } .wpe-tabs__tab { transition: none; } }
+/* Accordion mode: titles carry the spacing, closed panels take no room. */
+@media (max-width: 1023px) { .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__panel { padding: 0; } .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="1023"] .wpe-tabs__content { padding: 12px 0 18px; } }
+@media (max-width: 767px) { .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="767"] .wpe-tabs__panel { padding: 0; } .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="767"] .wpe-tabs__content { padding: 12px 0 18px; } }
+@media (max-width: 559px) { .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="559"] .wpe-tabs__panel { padding: 0; } .wpe-tabs.is-mobile-accordion.is-ready[data-mobile-at="559"] .wpe-tabs__content { padding: 12px 0 18px; } }
+/* Pill in a side list: a rounded panel, not a capsule. */
+.wpe-tabs.is-indicator-pill .wpe-tabs__nav[aria-orientation="vertical"] { border-radius: calc(var(--wpek-tab-r, 8px) + 4px); width: var(--wpek-nav-w, 240px); }
+.wpe-tabs.is-indicator-pill .wpe-tabs__nav[aria-orientation="vertical"] .wpe-tabs__tab { border-radius: var(--wpek-tab-r, 8px); }

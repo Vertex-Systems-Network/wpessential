@@ -1,0 +1,320 @@
+{
+	"name": "counter",
+	"title": "Counter (WPEssential)",
+	"category": "content",
+	"description": "Accessible static or animated number for stats and milestones, with prefix/suffix, decimals, locale-style separators and responsive styling.",
+	"icon": "chart-bar",
+	"elementor_icon": "eicon-counter",
+	"keywords": [
+		"counter",
+		"statistic",
+		"number",
+		"milestone",
+		"metrics"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style",
+		"icon_style": "Icon",
+		"motion": "Animation"
+	},
+	"attributes": {
+		"start": {
+			"type": "text",
+			"label": "Starting number",
+			"default": "0",
+			"panel": "content"
+		},
+		"end": {
+			"type": "text",
+			"label": "Final number",
+			"default": "1250",
+			"panel": "content"
+		},
+		"decimals": {
+			"type": "range",
+			"label": "Decimal places (0–4)",
+			"default": 0,
+			"min": 0,
+			"max": 4,
+			"step": 1,
+			"unit": "",
+			"panel": "content"
+		},
+		"thousands": {
+			"type": "select",
+			"label": "Thousands separator",
+			"default": "comma",
+			"options": {
+				"comma": "Comma (1,000)",
+				"dot": "Dot (1.000)",
+				"space": "Space (1 000)",
+				"none": "None (1000)"
+			},
+			"panel": "content"
+		},
+		"decimalMark": {
+			"type": "select",
+			"label": "Decimal separator",
+			"default": "dot",
+			"options": {
+				"dot": "Dot (1.5)",
+				"comma": "Comma (1,5)"
+			},
+			"panel": "content"
+		},
+		"prefix": {
+			"type": "text",
+			"label": "Before number (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"suffix": {
+			"type": "text",
+			"label": "After number (optional)",
+			"default": "+",
+			"panel": "content"
+		},
+		"label": {
+			"type": "text",
+			"label": "Title",
+			"default": "Projects delivered",
+			"panel": "content"
+		},
+		"titleTag": {
+			"type": "select",
+			"label": "Title HTML tag",
+			"default": "h3",
+			"options": {
+				"h2": "H2",
+				"h3": "H3",
+				"h4": "H4",
+				"h5": "H5",
+				"h6": "H6",
+				"p": "Paragraph",
+				"div": "Div"
+			},
+			"panel": "content"
+		},
+		"description": {
+			"type": "textarea",
+			"label": "Description (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"animate": {
+			"type": "toggle",
+			"label": "Animate number when visible",
+			"default": true,
+			"panel": "motion"
+		},
+		"duration": {
+			"type": "range",
+			"label": "Animation duration (milliseconds)",
+			"default": 1600,
+			"min": 200,
+			"max": 10000,
+			"step": 100,
+			"unit": "ms",
+			"panel": "motion"
+		},
+		"easing": {
+			"type": "select",
+			"label": "Animation easing",
+			"default": "ease-out",
+			"options": {
+				"ease-out": "Ease out",
+				"linear": "Linear",
+				"ease-in-out": "Ease in and out"
+			},
+			"panel": "motion"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Text alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-align",
+			"panel": "style",
+			"map": {
+				"start": "--wpek-align:start;--wpek-justify:flex-start",
+				"center": "--wpek-align:center;--wpek-justify:center",
+				"end": "--wpek-align:end;--wpek-justify:flex-end"
+			}
+		},
+		"layout": {
+			"type": "select",
+			"label": "Counter layout",
+			"default": "stack",
+			"options": {
+				"stack": "Stacked",
+				"inline": "Inline"
+			},
+			"responsive": true,
+			"css": "--wpek-direction",
+			"map": {
+				"stack": "--wpek-direction:column;--wpek-items:stretch",
+				"inline": "--wpek-direction:row;--wpek-items:baseline"
+			},
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Spacing between number and text",
+			"default": "",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-gap",
+			"responsive": true,
+			"panel": "style"
+		},
+		"valueSize": {
+			"type": "range",
+			"label": "Number font size",
+			"default": "",
+			"min": 18,
+			"max": 180,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-number-size",
+			"responsive": true,
+			"panel": "style"
+		},
+		"hover": {
+			"type": "select",
+			"label": "Hover effect",
+			"default": "none",
+			"options": {
+				"none": "None",
+				"lift": "Lift",
+				"border": "Border highlight"
+			},
+			"panel": "style"
+		},
+		"appearance": {
+			"type": "select",
+			"label": "Card style",
+			"default": "minimal",
+			"options": {
+				"minimal": "Minimal",
+				"boxed": "Boxed",
+				"accent": "Accent border"
+			},
+			"panel": "style"
+		},
+		"icon": {
+			"type": "icon",
+			"label": "Icon (optional)",
+			"default": {},
+			"panel": "icon_style"
+		},
+		"iconSize": {
+			"type": "range",
+			"label": "Icon size",
+			"default": "",
+			"min": 14,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-icon-size",
+			"responsive": true,
+			"panel": "icon_style"
+		},
+		"iconPosition": {
+			"type": "select",
+			"label": "Icon position",
+			"default": "top",
+			"options": {
+				"top": "Above number",
+				"start": "Before number"
+			},
+			"panel": "icon_style"
+		}
+	},
+	"groups": {
+		"boxPadding": {
+			"type": "spacing",
+			"label": "Card padding",
+			"prop": "padding",
+			"selector": ".wpe-counter",
+			"panel": "style"
+		},
+		"boxBackground": {
+			"type": "background",
+			"label": "Card background",
+			"selector": ".wpe-counter",
+			"panel": "style"
+		},
+		"boxBorder": {
+			"type": "border",
+			"label": "Card border and radius",
+			"selector": ".wpe-counter",
+			"panel": "style"
+		},
+		"boxShadow": {
+			"type": "shadow",
+			"label": "Card shadow",
+			"selector": ".wpe-counter",
+			"panel": "style"
+		},
+		"valueTypography": {
+			"type": "typography",
+			"label": "Number typography",
+			"selector": ".wpe-counter__digits",
+			"panel": "style"
+		},
+		"valueColor": {
+			"type": "colors",
+			"label": "Number colour",
+			"prop": "color",
+			"selector": ".wpe-counter__digits",
+			"panel": "style"
+		},
+		"valueEffects": {
+			"type": "textEffects",
+			"label": "Number text effects",
+			"selector": ".wpe-counter__digits",
+			"panel": "style"
+		},
+		"titleTypography": {
+			"type": "typography",
+			"label": "Title typography",
+			"selector": ".wpe-counter__title",
+			"panel": "style"
+		},
+		"titleColor": {
+			"type": "colors",
+			"label": "Title colour",
+			"prop": "color",
+			"selector": ".wpe-counter__title",
+			"panel": "style"
+		},
+		"descTypography": {
+			"type": "typography",
+			"label": "Description typography",
+			"selector": ".wpe-counter__description",
+			"panel": "style"
+		},
+		"descColor": {
+			"type": "colors",
+			"label": "Description colour",
+			"prop": "color",
+			"selector": ".wpe-counter__description",
+			"panel": "style"
+		},
+		"iconColor": {
+			"type": "colors",
+			"label": "Icon colour",
+			"prop": "color",
+			"selector": ".wpe-counter__icon",
+			"panel": "icon_style"
+		}
+	}
+}
