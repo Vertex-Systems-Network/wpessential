@@ -5,6 +5,10 @@ Date: **2026-10-23**
 Approval: `GOV-OWNER-CONSENT-002` (full autonomy; decision recorded instead of asked)
 Builds on: ADR-0231, ADR-0232
 
+## Update (2026-11-15)
+
+The server plugin moved, with its history, to its own repository, `Vertex-Systems-Network/wpessential-server`, at the owner's request. Free no longer contains `server/`, its tests or `tools/release/build-wpe-server.php`; the server repository has its own tests, CI and *Build ZIP* action. The Free ZIP guard `assertNoServerCode()` stays. Points 1 and 3 below describe the original location.
+
 ## Context
 
 The owner asked to copy the hi-wpessential "WPE Server" plugin into this repository, improve it, and align it with the plugin. It must run only on wpessential.org or vertexsystemsnetwork.com, and users of the WPEssential plugin must never receive it, "even through files".
