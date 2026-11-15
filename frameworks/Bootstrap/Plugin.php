@@ -81,6 +81,7 @@ use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\Demos\Import\Demos as ImportDemos;
 use WPEssential\Platform\Demos\Import\Rest as ImportRest;
 use WPEssential\Platform\Kit\Kit;
+use WPEssential\Platform\SiteTools\SiteTools;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
 use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
@@ -193,6 +194,7 @@ final class Plugin {
 		$aiConnect = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
 		ImportDemos::useLicense( $license, static fn (): bool => Shell::premiumAvailable() );
 		ImportRest::boot();
+		SiteTools::boot( $pluginUrl, defined( 'WPE_VERSION' ) ? (string) WPE_VERSION : '0' );
 		Kit::boot( $pluginRoot, $pluginUrl, defined( 'WPE_VERSION' ) ? (string) WPE_VERSION : '0', $elements );
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();

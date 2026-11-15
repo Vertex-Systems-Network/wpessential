@@ -77,3 +77,19 @@ namespace Elementor\Core\Kits {
 		public static function create_default_kit(): int { return 0; }
 	}
 }
+
+namespace {
+	/** Polylang API used by the site tools (frameworks/Platform/SiteTools), PHPStan only. */
+	/** @param array<string,mixed> $args @return mixed */
+	function pll_the_languages( array $args = array() ) { return array(); }
+	function pll_default_language( string $field = 'slug' ): string { return ''; }
+	/** @return string|false */
+	function pll_get_post_language( int $id, string $field = 'slug' ) { return false; }
+	/** @return string|false */
+	function pll_get_term_language( int $id, string $field = 'slug' ) { return false; }
+	function pll_is_translated_post_type( string $type ): bool { return false; }
+	function pll_is_translated_taxonomy( string $tax ): bool { return false; }
+	function pll_set_post_language( int $id, string $lang ): void {}
+	function pll_set_term_language( int $id, string $lang ): void {}
+	function pll_home_url( string $lang = '' ): string { return ''; }
+}
