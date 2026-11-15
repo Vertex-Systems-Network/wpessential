@@ -5,7 +5,7 @@
 **Requires at least:** 6.9\
 **Tested up to:** 7.1\
 **Requires PHP:** 8.2\
-**Stable tag:** 3.0.0\
+**Stable tag:** 3.0.1\
 **License:** GPLv3 or later\
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -102,6 +102,26 @@ Yes. Turn on "Show in REST API" for a post type to use it in the block editor, a
 
 Yes. Definitions are compiled when you save them, so normal page loads read one small compiled list.
 
+### How do I import a demo, and can I undo it?
+
+Open **WPEssential → Demo Library**, choose a demo and click **Import** for Gutenberg or Elementor. If the import stops (a timeout or a closed tab), click **Resume import**. **Remove demo** deletes the pages, posts, products, images and menus the demo added and restores your previous settings; content you created yourself is not touched.
+
+### What are the Pro elements and Pro demos?
+
+They come with WPEssential Pro. Without it they are listed with a Pro badge so you can see what is available, and they stay locked. A 30-day Pro trial can be started from your WPEssential account.
+
+### Will the SEO tags clash with my SEO plugin?
+
+No. The SEO fallbacks turn themselves off when Yoast SEO, Rank Math, SEOPress, All in One SEO or The SEO Framework is active.
+
+### Where do I add custom CSS or JavaScript?
+
+In **Appearance → Custom Code**. Snippets survive theme updates, can be limited to devices (CSS) or placed in the head or footer (JavaScript), and an administrator can open any page with `?wpe-safe-mode=1` to load it without snippets.
+
+### Which theme works best with WPEssential?
+
+Any theme works. The free **Hi WPEssential** theme is designed for it: its demos, styles and elements share one design.
+
 ### Where can I get help?
 
 Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.org support forum for this plugin. Project website: https://wpessential.org
@@ -119,6 +139,16 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 ## Changelog
 
+### 3.0.1
+
+* New: one-click demo import in the Demo Library for Gutenberg and Elementor, with progress, resume, cancel and Remove demo.
+* New: Elements, the WPEssential blocks and Elementor widgets (29 in the free plugin); Pro elements are listed as locked until Pro is active.
+* New: site tools that work with any theme: SEO fallbacks, a WPML / Polylang language switcher with the [wpe_language_switcher] shortcode, Appearance → Custom Code, and a quieter Elementor admin with the Hi WPEssential theme.
+* New: Pro licences are read from your WPEssential account, with a 30-day Pro trial (also on local and staging copies of a site).
+* Improved: screens show a loading skeleton while they open, and buttons that start a page load or a request show a spinner.
+* Improved: links and buttons no longer show a focus ring after a mouse click; keyboard focus is unchanged.
+* Fixed: locked rows in the Elements screen keep readable text contrast.
+
 ### 3.0.0
 
 - New: Custom Post Type builder with block template, template lock and a compiled arguments preview.
@@ -127,6 +157,10 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 - New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
 ## Upgrade Notice
+
+### 3.0.1
+
+Adds one-click demo import, the WPEssential elements and site tools (SEO, language switcher, custom code).
 
 ### 3.0.0
 
