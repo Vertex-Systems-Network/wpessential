@@ -1,0 +1,45 @@
+.wpe-options { max-width: 1200px; }
+.wpe-opt-tabs { display: flex; gap: 4px; margin: 16px 0 0; border-bottom: 1px solid #dcdcde; }
+.wpe-opt-tabs button { border: 0; background: none; padding: 10px 16px; font-size: 14px; font-weight: 600; color: #50575e; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.wpe-opt-tabs button[aria-pressed="true"] { color: #4f46e5; border-color: #4f46e5; }
+.wpe-opt-body { background: #fff; border: 1px solid #dcdcde; border-top: 0; border-radius: 0 0 12px 12px; padding: 20px; }
+.wpe-opt-code { display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
+.wpe-opt-code aside ul { margin: 12px 0; }
+.wpe-opt-code aside li { margin: 0 0 4px; }
+.wpe-opt-code aside li button { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid transparent; border-radius: 8px; background: none; cursor: pointer; text-align: start; }
+.wpe-opt-code aside li button:hover { background: #f6f7f7; }
+.wpe-opt-code aside li button.is-current { background: #eef0ff; border-color: #c7d2fe; }
+.wpe-opt-add { display: flex; gap: 6px; }
+.wpe-opt-type { font: 700 10px/1 monospace; padding: 4px 5px; border-radius: 4px; background: #e0f2fe; color: #0369a1; }
+.wpe-opt-type--js { background: #fef3c7; color: #92400e; }
+.wpe-opt-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wpe-opt-dot { width: 8px; height: 8px; border-radius: 50%; background: #c3c4c7; }
+.wpe-opt-dot.is-on { background: #16a34a; }
+.wpe-opt-safe { margin-top: 16px !important; }
+.wpe-opt-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.wpe-opt-row .regular-text { flex: 1; font-weight: 600; }
+.wpe-opt-editor .CodeMirror { height: 420px; border: 1px solid #dcdcde; border-radius: 8px; }
+.wpe-opt-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.wpe-opt-empty { display: grid; place-items: center; min-height: 240px; color: #646970; border: 1px dashed #dcdcde; border-radius: 12px; }
+.wpe-opt-presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+.wpe-opt-preset { display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 2px solid #dcdcde; border-radius: 12px; cursor: pointer; }
+.wpe-opt-preset.is-current { border-color: #4f46e5; box-shadow: 0 0 0 3px #e0e7ff; }
+.wpe-opt-preset input { position: absolute; opacity: 0; }
+.wpe-opt-preset span:last-child { color: #646970; font-size: 12px; }
+.wpe-opt-demo { display: flex; gap: 6px; height: 40px; align-items: flex-end; margin-bottom: 6px; }
+.wpe-opt-demo i { flex: 1; height: 100%; border-radius: 6px; background: linear-gradient(135deg, #6366f1, #a855f7); }
+.wpe-opt-demo--subtle i { animation: wpe-opt-up 2.4s ease-in-out infinite; }
+.wpe-opt-demo--editorial i { animation: wpe-opt-mask 3s cubic-bezier(.16, 1, .3, 1) infinite; }
+.wpe-opt-demo--playful i { animation: wpe-opt-pop 2s cubic-bezier(.34, 1.56, .64, 1) infinite; }
+.wpe-opt-demo--dynamic i { animation: wpe-opt-par 2s ease-in-out infinite alternate; }
+.wpe-opt-demo--none i { background: #dcdcde; }
+.wpe-opt-demo i:nth-child(2) { animation-delay: .15s; }
+.wpe-opt-demo i:nth-child(3) { animation-delay: .3s; }
+@keyframes wpe-opt-up { 0%, 20% { opacity: 0; transform: translateY(10px); } 50%, 100% { opacity: 1; transform: none; } }
+@keyframes wpe-opt-mask { 0%, 15% { clip-path: inset(100% 0 0 0); } 60%, 100% { clip-path: inset(0); } }
+@keyframes wpe-opt-pop { 0%, 15% { transform: scale(.6) rotate(-6deg); opacity: 0; } 50%, 100% { transform: none; opacity: 1; } }
+@keyframes wpe-opt-par { from { transform: translateY(-6px); } to { transform: translateY(6px); } }
+.wpe-opt-toast { position: fixed; inset-inline-end: 24px; bottom: 24px; z-index: 100000; padding: 12px 16px; border-radius: 10px; background: #1d2327; color: #fff; box-shadow: 0 10px 30px rgb(0 0 0 / 25%); }
+.wpe-opt-toast--error { background: #b32d2e; }
+@media (max-width: 900px) { .wpe-opt-code { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .wpe-opt-demo i { animation: none !important; } }
