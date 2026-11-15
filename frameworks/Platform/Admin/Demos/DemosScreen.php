@@ -14,10 +14,11 @@ use WPEssential\Platform\Admin\Ui\AdminUrl;
 use WPEssential\Platform\Admin\Ui\Badge;
 use WPEssential\Platform\Admin\Ui\Button;
 use WPEssential\Platform\Admin\Ui\Icon;
-use WPEssential\Platform\Admin\Ui\Notice;
 use WPEssential\Platform\Admin\Ui\PageHeader;
 use WPEssential\Platform\Admin\Ui\Screen;
 use WPEssential\Platform\Admin\Ui\Shell;
+use WPEssential\Platform\Demos\Import\Demos as ImportDemos;
+use WPEssential\Platform\Demos\Import\Importer;
 
 /**
  * Demo Library screen (Figma: "Demo Library"). Browses the wpessential.org demo manifest.
@@ -91,8 +92,7 @@ final class DemosScreen implements AdminScreen {
 			$html .= '</div>';
 		}
 
-		$notice = Notice::render( 'info', __( 'One-click demo import is coming in the next update. For now you can preview each demo.', 'wpessential' ) );
-		Screen::render( Shell::DEMOS_SLUG, $html, $notice, 'core', $this->appData( $data, $refresh ) );
+		Screen::render( Shell::DEMOS_SLUG, $html, '', 'core', $this->appData( $data, $refresh ) );
 	}
 
 	/**
@@ -102,8 +102,18 @@ final class DemosScreen implements AdminScreen {
 	 * @return array<string,mixed>
 	 */
 	private function appData( array $data, string $refreshHtml ): array {
-		$demos = [];
+		// What the importer can install: builders that have a package, and Pro lock state.
+		$importable = [];
+		foreach ( ImportDemos::all()['demos'] as $item ) {
+			if ( is_array( $item ) && isset( $item['id'] ) ) {
+				$importable[ (string) $item['id'] ] = $item;
+			}
+		}
+		$imported = Importer::imported();
+		$job      = Importer::current();
+		$demos    = [];
 		foreach ( $data['demos'] as $demo ) {
+			$source = $importable[ $demo['id'] ] ?? null;
 			$demos[] = [
 				'id'        => $demo['id'],
 				'title'     => $demo['title'],
@@ -118,6 +128,16 @@ final class DemosScreen implements AdminScreen {
 						'iconHtml' => Icon::render( $builder, 16 ),
 					],
 					$demo['builders']
+				),
+				'locked'     => $demo['type'] === 'pro' && ! Shell::premiumAvailable(),
+				'importable' => $source === null ? [] : array_values(
+					array_map(
+						static fn ( string $builder ): array => [
+							'key'   => $builder,
+							'label' => ucfirst( $builder ),
+						],
+						array_filter( array_map( 'strval', array_keys( (array) ( $source['builders'] ?? [] ) ) ), static fn ( string $b ): bool => in_array( $b, [ 'gutenberg', 'elementor' ], true ) )
+					)
 				),
 			];
 		}
@@ -140,6 +160,48 @@ final class DemosScreen implements AdminScreen {
 			'gridIcon'    => Icon::render( 'grid', 26 ),
 			'imageIcon'   => Icon::render( 'image', 32 ),
 			'demos'       => $demos,
+			'rest'        => [
+				'root'  => esc_url_raw( rest_url() ),
+				'nonce' => wp_create_nonce( 'wp_rest' ),
+			],
+			'upgradeUrl'  => Shell::UPGRADE_URL,
+			'imported'    => is_array( $imported ) && isset( $imported['demo'] ) ? [
+				'demo'    => (string) $imported['demo'],
+				'title'   => (string) ( $imported['title'] ?? '' ),
+				'builder' => (string) ( $imported['builder'] ?? '' ),
+			] : null,
+			'job'         => is_array( $job ) && ! empty( $job['id'] ) && in_array( $job['status'] ?? '', [ 'running', 'failed' ], true ) ? [
+				'demo'    => (string) $job['demo'],
+				'title'   => (string) $job['title'],
+				'builder' => (string) $job['builder'],
+				'status'  => (string) $job['status'],
+			] : null,
+			'importText'  => [
+				'import'         => __( 'Import', 'wpessential' ),
+				/* translators: %s: Gutenberg or Elementor. */
+				'importWith'     => __( 'Import for %s', 'wpessential' ),
+				'unlock'         => __( 'Unlock with Pro', 'wpessential' ),
+				'importing'      => __( 'Demo import', 'wpessential' ),
+				'starting'       => __( 'Preparing the import…', 'wpessential' ),
+				'progress'       => __( 'Import progress', 'wpessential' ),
+				'done'           => __( 'Import complete', 'wpessential' ),
+				'failed'         => __( 'The import stopped', 'wpessential' ),
+				'saved'          => __( 'Your progress is saved; resume to continue where it stopped.', 'wpessential' ),
+				'viewSite'       => __( 'View site', 'wpessential' ),
+				'close'          => __( 'Close', 'wpessential' ),
+				'resume'         => __( 'Resume import', 'wpessential' ),
+				'cancel'         => __( 'Cancel import', 'wpessential' ),
+				/* translators: %s: demo name. */
+				'interrupted'    => __( 'The import of %s did not finish. Your progress is saved.', 'wpessential' ),
+				/* translators: %s: demo name. */
+				'installed'      => __( '%s is installed on this site. You can remove everything it added and restore your previous settings.', 'wpessential' ),
+				'remove'         => __( 'Remove demo', 'wpessential' ),
+				/* translators: %s: demo name. */
+				'removeConfirm'  => __( 'Remove %s? Its pages, posts, products, images and menus are deleted and your previous settings restored. Content you created yourself is not touched.', 'wpessential' ),
+				/* translators: %s: demo name. */
+				'replaceConfirm' => __( '%s is already installed. It will be removed first, then the new demo is imported. Continue?', 'wpessential' ),
+				'doneNotice'     => __( 'Demo imported. Open your site to see it.', 'wpessential' ),
+			],
 		];
 	}
 

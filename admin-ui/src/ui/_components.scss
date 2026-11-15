@@ -441,3 +441,56 @@
 		animation: none;
 	}
 }
+
+// Demo import progress panel.
+.wpe-ui-import {
+	display: grid;
+	gap: var(--wpe-space-3);
+	margin: 0 0 var(--wpe-space-5);
+	padding: var(--wpe-space-5);
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius);
+	background: var(--wpe-card);
+}
+
+.wpe-ui-import__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--wpe-space-3);
+
+	h2 {
+		margin: 0;
+	}
+}
+
+.wpe-ui-import__bar {
+	width: 100%;
+	height: 0.5rem;
+}
+
+.wpe-ui-import__log {
+	margin: 0;
+	padding-left: 1.25rem;
+	font-size: 0.875rem;
+
+	.is-warning {
+		color: var(--wpe-warning);
+	}
+
+	.is-error {
+		color: var(--wpe-danger);
+	}
+}
+
+.wpe-ui-import__error {
+	margin: 0;
+	color: var(--wpe-danger);
+}
+
+.wpe-ui-import__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wpe-space-2);
+}
