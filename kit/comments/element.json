@@ -1,0 +1,141 @@
+{
+	"name": "comments",
+	"title": "Comments (WPEssential)",
+	"category": "content",
+	"description": "Public approved comments for a published WordPress post with optional core comment_form, avatars, counts and safe comment links.",
+	"icon": "admin-comments",
+	"elementor_icon": "eicon-comments",
+	"keywords": [
+		"comments",
+		"discussion",
+		"reply",
+		"post",
+		"review"
+	],
+	"panels": {
+		"query": "Post source",
+		"display": "Comment display",
+		"form": "Reply form",
+		"style": "Appearance"
+	},
+	"attributes": {
+		"title": {
+			"type": "text",
+			"label": "Section heading",
+			"default": "Comments",
+			"panel": "content"
+		},
+		"postId": {
+			"type": "text",
+			"label": "Post ID (blank = current post)",
+			"default": "",
+			"panel": "query"
+		},
+		"count": {
+			"type": "range",
+			"label": "Maximum comments",
+			"default": 8,
+			"min": 1,
+			"max": 40,
+			"step": 1,
+			"unit": "",
+			"panel": "query"
+		},
+		"sort": {
+			"type": "select",
+			"label": "Comment order",
+			"default": "DESC",
+			"options": {
+				"DESC": "Newest first",
+				"ASC": "Oldest first"
+			},
+			"panel": "query"
+		},
+		"showAvatar": {
+			"type": "toggle",
+			"label": "Show author avatar",
+			"default": true,
+			"panel": "display"
+		},
+		"showDate": {
+			"type": "toggle",
+			"label": "Show comment date",
+			"default": true,
+			"panel": "display"
+		},
+		"showCount": {
+			"type": "toggle",
+			"label": "Show total approved count",
+			"default": true,
+			"panel": "display"
+		},
+		"showPostTitle": {
+			"type": "toggle",
+			"label": "Show commented post title",
+			"default": false,
+			"panel": "display"
+		},
+		"showForm": {
+			"type": "toggle",
+			"label": "Show native WordPress comment form",
+			"default": true,
+			"panel": "form"
+		},
+		"emptyMessage": {
+			"type": "text",
+			"label": "No approved comments message",
+			"default": "No comments yet.",
+			"panel": "display"
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Maximum width",
+			"default": "",
+			"min": 280,
+			"max": 1400,
+			"step": 10,
+			"unit": "px",
+			"css": "--wpek-comments-max",
+			"responsive": true,
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Comment spacing",
+			"default": "",
+			"min": 0,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-comments-gap",
+			"responsive": true,
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"cardBackground": {
+			"type": "background",
+			"label": "Comment background",
+			"selector": ".wpe-comments__item",
+			"panel": "style"
+		},
+		"cardBorder": {
+			"type": "border",
+			"label": "Comment border",
+			"selector": ".wpe-comments__item",
+			"panel": "style"
+		},
+		"authorTypography": {
+			"type": "typography",
+			"label": "Comment author typography",
+			"selector": ".wpe-comments__author",
+			"panel": "style"
+		},
+		"textTypography": {
+			"type": "typography",
+			"label": "Comment body typography",
+			"selector": ".wpe-comments__text",
+			"panel": "style"
+		}
+	}
+}

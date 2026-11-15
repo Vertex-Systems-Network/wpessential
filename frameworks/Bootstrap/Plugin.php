@@ -78,6 +78,7 @@ use WPEssential\Platform\Events\EventBus;
 use WPEssential\Platform\Events\EventServices;
 use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
 use WPEssential\Platform\Modules\ModuleManifest;
+use WPEssential\Platform\Kit\Kit;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
 use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
@@ -188,6 +189,7 @@ final class Plugin {
 		$siteProof->register();
 		$elements  = new ElementRegistry();
 		$aiConnect = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
+		Kit::boot( $pluginRoot, $pluginUrl, defined( 'WPE_VERSION' ) ? (string) WPE_VERSION : '0', $elements );
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
 		( new CoreAjaxRoutes( $ajaxRoutes, $ajaxDispatcher, $abilities, $abilityContexts, $aiConnect, $ajaxAction ) )->register();

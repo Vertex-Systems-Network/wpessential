@@ -1,0 +1,143 @@
+{
+	"name": "svg",
+	"title": "SVG Icon Animation (WPEssential)",
+	"category": "media",
+	"description": "Safe built-in SVG illustrations with viewport-aware stroke draw, pulse or spin. Accessible labels and reduced-motion fallback.",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-star",
+	"keywords": [
+		"svg",
+		"icon",
+		"animation",
+		"draw",
+		"motion"
+	],
+	"panels": {
+		"content": "Content",
+		"motion": "Motion",
+		"style": "Style"
+	},
+	"attributes": {
+		"shape": {
+			"type": "select",
+			"label": "SVG illustration",
+			"default": "check",
+			"options": {
+				"check": "Checkmark",
+				"arrow": "Forward arrow",
+				"heart": "Heart",
+				"star": "Star",
+				"sparkle": "Sparkle"
+			},
+			"panel": "content"
+		},
+		"title": {
+			"type": "text",
+			"label": "Accessible icon name",
+			"default": "Success",
+			"panel": "content"
+		},
+		"decorative": {
+			"type": "toggle",
+			"label": "Decorative SVG",
+			"default": false,
+			"panel": "content"
+		},
+		"caption": {
+			"type": "text",
+			"label": "Caption",
+			"default": "",
+			"panel": "content"
+		},
+		"animation": {
+			"type": "select",
+			"label": "Animation",
+			"default": "draw",
+			"options": {
+				"none": "Static",
+				"draw": "Draw outline",
+				"pulse": "Pulse",
+				"spin": "Spin"
+			},
+			"panel": "motion"
+		},
+		"repeat": {
+			"type": "toggle",
+			"label": "Repeat animation",
+			"default": false,
+			"panel": "motion"
+		},
+		"duration": {
+			"type": "range",
+			"label": "Animation duration",
+			"default": 1300,
+			"min": 200,
+			"max": 6000,
+			"step": 100,
+			"unit": "ms",
+			"panel": "motion"
+		},
+		"size": {
+			"type": "range",
+			"label": "Icon size",
+			"default": "",
+			"min": 24,
+			"max": 400,
+			"step": 2,
+			"unit": "px",
+			"css": "--wpek-svg-size",
+			"responsive": true,
+			"panel": "style"
+		},
+		"strokeWidth": {
+			"type": "range",
+			"label": "Stroke thickness",
+			"default": 2,
+			"min": 1,
+			"max": 8,
+			"step": 0.5,
+			"unit": "",
+			"panel": "style"
+		},
+		"color": {
+			"type": "color",
+			"label": "Icon colour",
+			"default": "",
+			"css": "--wpek-svg-color",
+			"panel": "style"
+		},
+		"align": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "center",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-svg-align",
+			"map": {
+				"start": "--wpek-svg-align:flex-start",
+				"center": "--wpek-svg-align:center",
+				"end": "--wpek-svg-align:flex-end"
+			},
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"captionTypography": {
+			"type": "typography",
+			"label": "Caption typography",
+			"selector": ".wpe-svg__caption",
+			"panel": "style"
+		},
+		"captionColor": {
+			"type": "colors",
+			"label": "Caption colour",
+			"prop": "color",
+			"selector": ".wpe-svg__caption",
+			"panel": "style"
+		}
+	}
+}

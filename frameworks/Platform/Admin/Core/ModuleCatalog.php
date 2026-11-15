@@ -77,6 +77,7 @@ final class ModuleCatalog {
 			[ 'listings', 'Dynamic Listings', 'pro', 'frontend', 'listings', 'grid', true, null, 'Grids, lists and maps of dynamic content with filters.' ],
 			[ 'site-kit', 'Site Kit', 'pro', 'frontend', 'admin-theme', 'brush', true, 'wpessential-site-kit', 'Site-wide colours, fonts, buttons, forms, layout, dark mode, custom code and SEO basics for any theme.' ],
 			[ 'builder-widgets', 'Builder Widgets', 'pro', 'frontend', 'builder-widgets', 'brush', true, null, 'Blocks and page-builder widgets bound to WPEssential data.' ],
+			[ 'pro-elements', 'Pro elements', 'pro', 'frontend', 'builder-widgets', 'layers', true, null, 'Countdown, flip box, modal, pricing table, chart, forms, products and 10 more kit elements for Gutenberg and Elementor.' ],
 			[ 'forms-workflows', 'Forms & Workflows', 'pro', 'automation', 'forms-workflows', 'form', true, null, 'Forms with conditional logic and post-submit workflows.' ],
 			[ 'notifications', 'Notifications', 'pro', 'automation', 'notifications', 'bell', true, null, 'Event-driven notifications across email, admin and webhooks.' ],
 			[ 'emails', 'Emails', 'pro', 'automation', 'emails', 'mail', true, null, 'Email templates, delivery log and transport diagnostics.' ],

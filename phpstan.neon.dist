@@ -8,6 +8,8 @@ parameters:
         - wpessential.php
         - frameworks
     tmpDir: var/phpstan
+    scanFiles:
+        - tools/phpstan/elementor-stubs.php
     reportUnmatchedIgnoredErrors: true
     # ADR-0223: fail-closed runtime guards re-check PHPDoc-only types on untrusted WordPress input.
     treatPhpDocTypesAsCertain: false

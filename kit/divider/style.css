@@ -1,0 +1,9 @@
+.wpe-divider{--wpek-divider-width:100%;--wpek-divider-align:center;--wpek-divider-color:var(--wp--preset--color--border,#999);--wpek-divider-thickness:1px;--wpek-divider-gap:16px;--wpek-spacer-height:40px;width:var(--wpek-divider-width);max-width:100%;box-sizing:border-box;margin:16px auto;color:inherit}
+.wpe-divider.is-line{height:0;border:0;border-top:var(--wpek-divider-thickness) solid var(--wpek-divider-color)}
+.wpe-divider.is-space{width:100%;height:var(--wpek-spacer-height);margin:0;pointer-events:none}
+.wpe-divider.is-label{display:flex;align-items:center;justify-content:var(--wpek-divider-align);gap:var(--wpek-divider-gap)}
+.wpe-divider__line{border-top:var(--wpek-divider-thickness) solid var(--wpek-divider-color);flex:1 1 0;min-width:0}
+.wpe-divider__label{flex:none;max-width:80%;text-align:center;overflow-wrap:anywhere}
+.wpe-divider.is-dashed,.wpe-divider.is-dashed .wpe-divider__line{border-top-style:dashed}
+.wpe-divider.is-dotted,.wpe-divider.is-dotted .wpe-divider__line{border-top-style:dotted}
+.wpe-divider.is-double,.wpe-divider.is-double .wpe-divider__line{border-top-style:double}

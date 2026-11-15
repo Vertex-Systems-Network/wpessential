@@ -300,6 +300,8 @@ function stageFreePackage(string $root, string $stageRoot, array $freeAssets): v
     }
 
     copyTreeNormalized($root . '/frameworks', $stageRoot . '/frameworks', 'isFreeFrameworkFile');
+    // Kit elements (ADR-0238): element.json, render.php, style/script, icons and the editor script.
+    copyTreeNormalized($root . '/kit', $stageRoot . '/kit');
     foreach ($freeAssets as $relative) {
         copyFileNormalized(
             $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative),

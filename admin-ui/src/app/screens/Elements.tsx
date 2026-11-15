@@ -11,7 +11,7 @@ interface ElementType {
 	emptyIcon: Html;
 	emptyTitle: string;
 	noticeHtml: Html;
-	elements: Array< { id: string; name: string; description: string; iconHtml: Html; badgeHtml: Html; toggleHtml: Html } >;
+	elements: Array< { id: string; name: string; description: string; iconHtml: Html; badgeHtml: Html; locked?: boolean; toggleHtml: Html } >;
 }
 
 interface ElementsData extends ScreenData {
@@ -63,7 +63,7 @@ export function Elements( { data }: { data: ScreenData } ) {
 						<code className="wpe-ui-code">{ `elements.${ current.key }` }</code>
 					</summary>
 					{ current.elements.map( ( element ) => (
-						<div className="wpe-ui-option" key={ element.id }>
+						<div className={ `wpe-ui-option${ element.locked ? ' is-locked' : '' }` } key={ element.id }>
 							<div className="wpe-ui-option__copy wpe-ui-option__copy--row">
 								<Raw className="wpe-ui-icon" html={ element.iconHtml } />
 								<span>

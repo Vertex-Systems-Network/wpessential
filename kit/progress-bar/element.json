@@ -1,0 +1,279 @@
+{
+	"name": "progress-bar",
+	"title": "Progress Bar (WPEssential)",
+	"category": "content",
+	"description": "Accessible multi-item progress bars or circular rings, with goal values, responsive layout and optional reduced-motion-aware animation.",
+	"icon": "chart-bar",
+	"elementor_icon": "eicon-skill-bar",
+	"keywords": [
+		"progress",
+		"skills",
+		"percentage",
+		"goals",
+		"metrics",
+		"ring"
+	],
+	"panels": {
+		"content": "Content",
+		"layout": "Layout",
+		"style": "Style",
+		"motion": "Animation"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Progress indicators",
+			"title_field": "label",
+			"panel": "content",
+			"fields": {
+				"label": {
+					"type": "text",
+					"label": "Label",
+					"default": "Milestone"
+				},
+				"value": {
+					"type": "range",
+					"label": "Current value",
+					"unit": "",
+					"min": 0,
+					"max": 1000,
+					"step": 1,
+					"default": 75
+				},
+				"max": {
+					"type": "range",
+					"label": "Maximum value",
+					"unit": "",
+					"min": 1,
+					"max": 1000,
+					"step": 1,
+					"default": 100
+				},
+				"description": {
+					"type": "text",
+					"label": "Description (optional)",
+					"default": ""
+				}
+			},
+			"default": [
+				{
+					"label": "Design",
+					"value": 90,
+					"max": 100,
+					"description": ""
+				},
+				{
+					"label": "Development",
+					"value": 75,
+					"max": 100,
+					"description": ""
+				},
+				{
+					"label": "Performance",
+					"value": 65,
+					"max": 100,
+					"description": ""
+				}
+			]
+		},
+		"layout": {
+			"type": "select",
+			"label": "Indicator design",
+			"panel": "layout",
+			"default": "horizontal",
+			"options": {
+				"horizontal": "Horizontal progress bar",
+				"circle": "Circular progress ring"
+			}
+		},
+		"columns": {
+			"type": "range",
+			"label": "Indicators per row (circle layout)",
+			"panel": "layout",
+			"default": 3,
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"unit": "",
+			"css": "--wpek-columns"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Vertical gap",
+			"panel": "layout",
+			"default": 24,
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-gap"
+		},
+		"columnGap": {
+			"type": "range",
+			"label": "Column gap",
+			"panel": "layout",
+			"default": 24,
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-column-gap"
+		},
+		"barHeight": {
+			"type": "range",
+			"label": "Bar thickness",
+			"panel": "style",
+			"default": 12,
+			"min": 2,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-bar-height"
+		},
+		"ringSize": {
+			"type": "range",
+			"label": "Circle diameter",
+			"panel": "style",
+			"default": 160,
+			"min": 80,
+			"max": 350,
+			"step": 5,
+			"unit": "px",
+			"css": "--wpek-ring-size"
+		},
+		"ringThickness": {
+			"type": "range",
+			"label": "Ring thickness",
+			"panel": "style",
+			"default": 12,
+			"min": 2,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"css": "--wpek-ring-thickness"
+		},
+		"roundness": {
+			"type": "select",
+			"label": "Bar ends",
+			"panel": "style",
+			"default": "rounded",
+			"options": {
+				"rounded": "Rounded",
+				"square": "Square"
+			}
+		},
+		"showLabel": {
+			"type": "toggle",
+			"label": "Show label",
+			"panel": "content",
+			"default": true
+		},
+		"showValue": {
+			"type": "toggle",
+			"label": "Show value",
+			"panel": "content",
+			"default": true
+		},
+		"valueFormat": {
+			"type": "select",
+			"label": "Value display format",
+			"panel": "content",
+			"default": "percent",
+			"options": {
+				"percent": "Percentage",
+				"value": "Current value",
+				"fraction": "Current / maximum"
+			}
+		},
+		"showDescription": {
+			"type": "toggle",
+			"label": "Show description",
+			"panel": "content",
+			"default": false
+		},
+		"fillColor": {
+			"type": "color",
+			"panel": "style",
+			"label": "Progress colour (theme palette)",
+			"default": "",
+			"css": "--wpek-fill-color"
+		},
+		"trackColor": {
+			"type": "color",
+			"panel": "style",
+			"label": "Track colour (theme palette)",
+			"default": "",
+			"css": "--wpek-track-color"
+		},
+		"animate": {
+			"type": "toggle",
+			"label": "Animate on scroll",
+			"panel": "motion",
+			"default": true
+		},
+		"duration": {
+			"type": "range",
+			"label": "Animation duration",
+			"panel": "motion",
+			"default": 1100,
+			"min": 200,
+			"max": 5000,
+			"step": 100,
+			"unit": "ms",
+			"css": "--wpek-progress-duration"
+		},
+		"emptyText": {
+			"type": "text",
+			"panel": "content",
+			"label": "Editor empty-state hint",
+			"default": "Add a progress indicator."
+		}
+	},
+	"groups": {
+		"labelType": {
+			"type": "typography",
+			"label": "Label typography",
+			"selector": ".wpe-progress__label",
+			"panel": "style"
+		},
+		"labelColor": {
+			"type": "colors",
+			"label": "Label colour",
+			"prop": "color",
+			"selector": ".wpe-progress__label",
+			"panel": "style"
+		},
+		"valueType": {
+			"type": "typography",
+			"label": "Value typography",
+			"selector": ".wpe-progress__value",
+			"panel": "style"
+		},
+		"valueColor": {
+			"type": "colors",
+			"label": "Value colour",
+			"prop": "color",
+			"selector": ".wpe-progress__value",
+			"panel": "style"
+		},
+		"descriptionType": {
+			"type": "typography",
+			"label": "Description typography",
+			"selector": ".wpe-progress__description",
+			"panel": "style"
+		},
+		"descriptionColor": {
+			"type": "colors",
+			"label": "Description colour",
+			"prop": "color",
+			"selector": ".wpe-progress__description",
+			"panel": "style"
+		},
+		"trackBorder": {
+			"type": "border",
+			"label": "Track border and radius",
+			"selector": ".wpe-progress__track",
+			"panel": "style"
+		}
+	}
+}

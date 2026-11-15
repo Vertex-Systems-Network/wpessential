@@ -1,0 +1,220 @@
+{
+	"name": "gallery",
+	"title": "Gallery (WPEssential)",
+	"category": "media",
+	"description": "Responsive image grid or masonry layout with captions, custom links and keyboard-accessible lightbox. Works in Gutenberg and Elementor.",
+	"icon": "format-gallery",
+	"elementor_icon": "eicon-gallery-grid",
+	"keywords": [
+		"gallery",
+		"photos",
+		"images",
+		"masonry",
+		"portfolio",
+		"lightbox"
+	],
+	"panels": {
+		"content": "Content",
+		"layout": "Layout",
+		"media": "Images & lightbox",
+		"captions": "Captions"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Gallery images",
+			"title_field": "caption",
+			"fields": {
+				"image": {
+					"type": "image",
+					"label": "Image",
+					"default": {}
+				},
+				"alt": {
+					"type": "text",
+					"label": "Alt text (empty = media library)",
+					"default": ""
+				},
+				"caption": {
+					"type": "text",
+					"label": "Caption (optional)",
+					"default": ""
+				},
+				"link": {
+					"type": "url",
+					"label": "Custom image link (optional, overrides lightbox)",
+					"default": ""
+				}
+			},
+			"default": []
+		},
+		"layout": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Layout",
+			"default": "grid",
+			"options": {
+				"grid": "Grid",
+				"masonry": "Masonry columns"
+			}
+		},
+		"columns": {
+			"type": "range",
+			"panel": "layout",
+			"label": "Columns",
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"unit": "",
+			"default": "",
+			"css": "--wpek-cols",
+			"responsive": true
+		},
+		"gap": {
+			"type": "range",
+			"panel": "layout",
+			"label": "Space between images",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"default": "",
+			"css": "--wpek-gap",
+			"responsive": true
+		},
+		"ratio": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Grid image ratio",
+			"default": "4/3",
+			"options": {
+				"1/1": "Square",
+				"4/3": "4:3",
+				"3/2": "3:2",
+				"16/9": "16:9",
+				"3/4": "Portrait",
+				"auto": "Original"
+			},
+			"responsive": true,
+			"css": "--wpek-ratio"
+		},
+		"fit": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Image fit",
+			"default": "cover",
+			"options": {
+				"cover": "Cover",
+				"contain": "Contain"
+			},
+			"responsive": true,
+			"css": "--wpek-fit"
+		},
+		"imageSize": {
+			"type": "select",
+			"panel": "media",
+			"label": "Thumbnail quality",
+			"default": "medium_large",
+			"options": {
+				"thumbnail": "Thumbnail",
+				"medium": "Medium",
+				"medium_large": "Medium large",
+				"large": "Large",
+				"full": "Full"
+			}
+		},
+		"showCaptions": {
+			"type": "toggle",
+			"panel": "captions",
+			"label": "Display captions beneath images",
+			"default": true
+		},
+		"captionPosition": {
+			"type": "select",
+			"panel": "captions",
+			"label": "Caption position",
+			"default": "below",
+			"options": {
+				"below": "Below image",
+				"overlay": "Overlay image"
+			}
+		},
+		"lightbox": {
+			"type": "toggle",
+			"panel": "media",
+			"label": "Open images in a lightbox",
+			"default": true
+		},
+		"lightboxCaptions": {
+			"type": "toggle",
+			"panel": "media",
+			"label": "Show captions in lightbox",
+			"default": true
+		},
+		"hover": {
+			"type": "select",
+			"panel": "media",
+			"label": "Image hover",
+			"default": "zoom",
+			"options": {
+				"none": "None",
+				"zoom": "Zoom",
+				"lift": "Lift",
+				"fade": "Dim"
+			}
+		},
+		"emptyText": {
+			"type": "text",
+			"panel": "content",
+			"label": "Editor hint when empty",
+			"default": "Add images in the gallery settings."
+		}
+	},
+	"groups": {
+		"itemBorder": {
+			"type": "border",
+			"panel": "media",
+			"label": "Image border and radius",
+			"selector": ".wpe-gallery__media"
+		},
+		"itemShadow": {
+			"type": "shadow",
+			"panel": "media",
+			"label": "Image shadow",
+			"selector": ".wpe-gallery__media"
+		},
+		"imageFilters": {
+			"type": "filters",
+			"panel": "media",
+			"label": "Image filters",
+			"selector": ".wpe-gallery__media img"
+		},
+		"captionTypography": {
+			"type": "typography",
+			"panel": "captions",
+			"label": "Caption typography",
+			"selector": ".wpe-gallery__caption"
+		},
+		"captionColor": {
+			"type": "colors",
+			"panel": "captions",
+			"label": "Caption colour",
+			"prop": "color",
+			"selector": ".wpe-gallery__caption"
+		},
+		"captionBackground": {
+			"type": "colors",
+			"panel": "captions",
+			"label": "Caption background",
+			"prop": "background-color",
+			"selector": ".wpe-gallery__caption"
+		},
+		"captionPadding": {
+			"type": "spacing",
+			"panel": "captions",
+			"label": "Caption padding",
+			"prop": "padding",
+			"selector": ".wpe-gallery__caption"
+		}
+	}
+}

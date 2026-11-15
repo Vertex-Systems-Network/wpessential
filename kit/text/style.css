@@ -1,0 +1,19 @@
+/* WPEssential kit — Text. */
+.wpe-text { text-align: var(--wpek-align, inherit); }
+.wpe-text__body { max-width: var(--wpek-max, none); columns: var(--wpek-cols, 1); column-gap: var(--wpek-colgap, 40px); margin-inline: var(--wpek-mx, 0); }
+.wpe-text__body > * { margin-block: 0; }
+.wpe-text__body > * + * { margin-block-start: var(--wpek-pgap, 1em); }
+.wpe-text.is-wrap-pretty .wpe-text__body { text-wrap: pretty; }
+.wpe-text.is-wrap-balance .wpe-text__body { text-wrap: balance; }
+.wpe-text__body a { color: var(--wp--preset--color--primary, currentColor); text-underline-offset: 3px; }
+.wpe-text__body a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
+.wpe-text.has-drop-cap .wpe-text__body > p:first-of-type::first-letter { float: inline-start; font-size: 3.4em; line-height: .9; font-weight: 700; margin: .05em var(--wpek-dcgap, .12em) 0 0; font-family: var(--wp--preset--font-family--heading, inherit); color: var(--wp--preset--color--primary, currentColor); }
+.wpe-text.is-gradient .wpe-text__body { background: linear-gradient(90deg, var(--wp--preset--color--primary, #ec7d1a), var(--wp--preset--color--secondary, #2f6be0)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* Drop cap views: stacked (filled box) and framed (outline box). */
+.wpe-text.is-drop-cap-stacked .wpe-text__body > p:first-of-type::first-letter, .wpe-text.is-drop-cap-framed .wpe-text__body > p:first-of-type::first-letter { padding: var(--wpek-dcsize, .25em); line-height: 1; border-radius: 4px; }
+.wpe-text.is-drop-cap-stacked .wpe-text__body > p:first-of-type::first-letter { background: var(--wp--preset--color--primary, #ec7d1a); color: #fff; }
+.wpe-text.is-drop-cap-framed .wpe-text__body > p:first-of-type::first-letter { border: 2px solid currentColor; }
+/* Line limit with an optional read-more toggle. */
+.wpe-text.is-clamped:not(.is-open) .wpe-text__body { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--wpek-clamp, none); line-clamp: var(--wpek-clamp, none); overflow: hidden; columns: auto; }
+.wpe-text__more { margin-top: .6em; padding: 0; border: 0; background: none; color: var(--wp--preset--color--primary, currentColor); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.wpe-text__more:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

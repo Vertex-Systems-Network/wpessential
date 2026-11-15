@@ -193,13 +193,13 @@ test('Dashboard, Modules, Demo Library and Elements switch with React Router, wi
   await expect(page.getByRole('heading', { name: 'Blocks & widgets', level: 1 })).toBeVisible();
   await page.getByRole('link', { name: /Elementor/ }).first().click();
   await expect(page).toHaveURL(/type=elementor/);
-  await expect(page.getByRole('heading', { name: 'No Elementor widgets yet' })).toBeVisible();
+  await expect(page.locator('#wpe-elements-elementor .wpe-ui-option').first()).toBeVisible();
 
   await nav.getByRole('link', { name: 'Demo Library' }).click();
   await expect(page.getByRole('heading', { name: 'Start from a ready-made site', level: 1 })).toBeVisible();
 
   await page.goBack();
-  await expect(page.getByRole('heading', { name: 'No Elementor widgets yet' })).toBeVisible();
+  await expect(page.locator('#wpe-elements-elementor .wpe-ui-option').first()).toBeVisible();
   await nav.getByRole('link', { name: 'Dashboard' }).click();
   await expect(page.getByRole('heading', { name: 'Everything your WordPress site needs, in one place.' })).toBeVisible();
 

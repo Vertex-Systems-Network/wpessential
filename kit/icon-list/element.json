@@ -1,0 +1,367 @@
+{
+	"name": "icon-list",
+	"title": "Icon List (WPEssential)",
+	"category": "basic",
+	"description": "Feature and check lists with icons or numbers, inline or in a grid, with dividers and per-item links.",
+	"icon": "editor-ul",
+	"elementor_icon": "eicon-bullet-list",
+	"keywords": [
+		"list",
+		"icon list",
+		"features",
+		"checklist",
+		"bullets"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Items",
+			"title_field": "text",
+			"fields": {
+				"text": {
+					"type": "text",
+					"label": "Text",
+					"default": "List item"
+				},
+				"description": {
+					"type": "textarea",
+					"label": "Description (optional)",
+					"default": ""
+				},
+				"icon": {
+					"type": "icon",
+					"label": "Icon (empty = list icon)",
+					"default": {}
+				},
+				"link": {
+					"type": "url",
+					"label": "Link",
+					"default": ""
+				},
+				"newTab": {
+					"type": "toggle",
+					"label": "Open in new tab",
+					"default": false
+				}
+			},
+			"default": [
+				{
+					"text": "Native for Gutenberg and Elementor"
+				},
+				{
+					"text": "One-click demo import"
+				},
+				{
+					"text": "Light and dark mode"
+				}
+			]
+		},
+		"icon": {
+			"type": "icon",
+			"label": "List icon",
+			"default": {
+				"library": "wpessential",
+				"value": "check"
+			}
+		},
+		"marker": {
+			"type": "select",
+			"label": "Marker",
+			"default": "icon",
+			"options": {
+				"icon": "Icon",
+				"number": "Numbers (1, 2, 3)",
+				"none": "None"
+			}
+		},
+		"tag": {
+			"type": "select",
+			"label": "HTML tag",
+			"default": "ul",
+			"options": {
+				"ul": "ul (list)",
+				"ol": "ol (numbered list)",
+				"div": "div"
+			}
+		},
+		"layout": {
+			"type": "select",
+			"label": "Layout",
+			"default": "stack",
+			"options": {
+				"stack": "Stacked",
+				"inline": "Inline (in a row)",
+				"grid": "Grid (columns)"
+			}
+		},
+		"columns": {
+			"type": "range",
+			"label": "Columns (grid)",
+			"responsive": true,
+			"css": "--wpek-cols",
+			"unit": "",
+			"min": 1,
+			"max": 6,
+			"default": ""
+		},
+		"linkArea": {
+			"type": "select",
+			"label": "Link covers",
+			"default": "item",
+			"options": {
+				"item": "Whole item",
+				"text": "Text only"
+			}
+		},
+		"gap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space between items",
+			"responsive": true,
+			"css": "--wpek-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 80,
+			"default": ""
+		},
+		"columnGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Column gap",
+			"responsive": true,
+			"css": "--wpek-colgap",
+			"unit": "px",
+			"min": 0,
+			"max": 120,
+			"default": ""
+		},
+		"align": {
+			"type": "select",
+			"panel": "style",
+			"label": "Alignment",
+			"responsive": true,
+			"css": "--wpek-justify",
+			"default": "",
+			"options": {
+				"": "Default",
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			}
+		},
+		"divider": {
+			"type": "toggle",
+			"panel": "style",
+			"label": "Divider between items",
+			"default": false
+		},
+		"dividerStyle": {
+			"type": "select",
+			"panel": "style",
+			"label": "Divider style",
+			"css": "--wpek-div-style",
+			"default": "",
+			"options": {
+				"": "Solid",
+				"dashed": "Dashed",
+				"dotted": "Dotted",
+				"double": "Double"
+			}
+		},
+		"dividerWeight": {
+			"type": "range",
+			"panel": "style",
+			"label": "Divider weight",
+			"css": "--wpek-div-w",
+			"unit": "px",
+			"min": 1,
+			"max": 10,
+			"default": ""
+		},
+		"dividerWidth": {
+			"type": "range",
+			"panel": "style",
+			"label": "Divider width",
+			"css": "--wpek-div-len",
+			"unit": "%",
+			"min": 10,
+			"max": 100,
+			"default": ""
+		},
+		"dividerColor": {
+			"type": "color",
+			"panel": "style",
+			"label": "Divider colour",
+			"css": "--wpek-div-c",
+			"default": ""
+		},
+		"iconSize": {
+			"type": "range",
+			"panel": "style",
+			"label": "Icon size",
+			"responsive": true,
+			"css": "--wpek-icon",
+			"unit": "px",
+			"min": 8,
+			"max": 96,
+			"default": ""
+		},
+		"iconGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space after icon",
+			"responsive": true,
+			"css": "--wpek-icon-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 48,
+			"default": ""
+		},
+		"iconAlign": {
+			"type": "select",
+			"panel": "style",
+			"label": "Icon vertical position",
+			"responsive": true,
+			"css": "--wpek-icon-align",
+			"default": "",
+			"options": {
+				"": "First line",
+				"center": "Middle",
+				"end": "Bottom"
+			}
+		},
+		"iconOffset": {
+			"type": "range",
+			"panel": "style",
+			"label": "Nudge icon up/down",
+			"responsive": true,
+			"css": "--wpek-icon-y",
+			"unit": "px",
+			"min": -20,
+			"max": 20,
+			"default": ""
+		},
+		"iconShape": {
+			"type": "select",
+			"panel": "style",
+			"label": "Icon background",
+			"default": "none",
+			"options": {
+				"none": "None",
+				"circle": "Circle",
+				"rounded": "Rounded square",
+				"square": "Square",
+				"outline": "Circle outline"
+			}
+		},
+		"iconBox": {
+			"type": "range",
+			"panel": "style",
+			"label": "Icon background size",
+			"css": "--wpek-icon-box",
+			"unit": "px",
+			"min": 16,
+			"max": 120,
+			"default": ""
+		},
+		"transition": {
+			"type": "range",
+			"panel": "style",
+			"label": "Hover transition",
+			"css": "--wpek-dur",
+			"unit": "ms",
+			"min": 0,
+			"max": 1000,
+			"default": ""
+		},
+		"hover": {
+			"type": "select",
+			"panel": "style",
+			"label": "Item hover",
+			"default": "none",
+			"options": {
+				"none": "None",
+				"slide": "Slide right",
+				"icon-pop": "Icon pops",
+				"highlight": "Highlight row"
+			}
+		}
+	},
+	"groups": {
+		"itemPadding": {
+			"type": "spacing",
+			"label": "Item padding",
+			"prop": "padding",
+			"selector": ".wpe-icon-list__item",
+			"panel": "style"
+		},
+		"itemBackground": {
+			"type": "background",
+			"label": "Item background",
+			"selector": ".wpe-icon-list__item",
+			"panel": "style"
+		},
+		"itemBorder": {
+			"type": "border",
+			"label": "Item border and radius",
+			"selector": ".wpe-icon-list__item",
+			"panel": "style"
+		},
+		"itemShadow": {
+			"type": "shadow",
+			"label": "Item shadow",
+			"selector": ".wpe-icon-list__item",
+			"panel": "style"
+		},
+		"iconColor": {
+			"type": "colors",
+			"label": "Icon colour",
+			"prop": "color",
+			"selector": ".wpe-icon-list__icon",
+			"panel": "style"
+		},
+		"iconBg": {
+			"type": "colors",
+			"label": "Icon background colour",
+			"prop": "background-color",
+			"selector": ".wpe-icon-list__icon",
+			"panel": "style"
+		},
+		"textTypography": {
+			"type": "typography",
+			"label": "Text typography",
+			"selector": ".wpe-icon-list__text",
+			"panel": "style"
+		},
+		"textColor": {
+			"type": "colors",
+			"label": "Text colour",
+			"prop": "color",
+			"selector": ".wpe-icon-list__text",
+			"panel": "style"
+		},
+		"textEffects": {
+			"type": "textEffects",
+			"label": "Text shadow, stroke and blend",
+			"selector": ".wpe-icon-list__text",
+			"panel": "style"
+		},
+		"descTypography": {
+			"type": "typography",
+			"label": "Description typography",
+			"selector": ".wpe-icon-list__desc",
+			"panel": "style"
+		},
+		"descColor": {
+			"type": "colors",
+			"label": "Description colour",
+			"prop": "color",
+			"selector": ".wpe-icon-list__desc",
+			"panel": "style"
+		}
+	}
+}

@@ -470,6 +470,15 @@
 	padding: 0;
 }
 
+.wpe-ui-option.is-locked .wpe-ui-icon {
+	opacity: 0.5;
+}
+
+// Dimmed, but the text keeps AA contrast (opacity on text fails it).
+.wpe-ui-option.is-locked .wpe-ui-option__label {
+	color: var(--wpe-muted);
+}
+
 .wpe-ui-option__copy--row {
 	flex-direction: row;
 	align-items: center;

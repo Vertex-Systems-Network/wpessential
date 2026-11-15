@@ -1,0 +1,361 @@
+{
+	"name": "accordion",
+	"title": "Accordion (WPEssential)",
+	"category": "content",
+	"description": "FAQ and toggle lists on native details/summary: one or many open, FAQ schema, numbers, icons and style presets.",
+	"icon": "list-view",
+	"elementor_icon": "eicon-accordion",
+	"keywords": [
+		"accordion",
+		"faq",
+		"toggle",
+		"collapse",
+		"questions"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style",
+		"title": "Title",
+		"content_style": "Content",
+		"motion": "Icon & motion"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Items",
+			"title_field": "title",
+			"fields": {
+				"title": {
+					"type": "text",
+					"label": "Title",
+					"default": "Question"
+				},
+				"content": {
+					"type": "html",
+					"label": "Content",
+					"default": "<p>Answer.</p>"
+				},
+				"icon": {
+					"type": "icon",
+					"label": "Own icon (optional)",
+					"default": {}
+				},
+				"open": {
+					"type": "toggle",
+					"label": "Open when the page loads",
+					"default": false
+				}
+			},
+			"default": [
+				{
+					"title": "Do the demos work with Gutenberg and Elementor?",
+					"content": "<p>Yes. Every demo is built natively for both, so you can pick the builder you like.</p>",
+					"open": true
+				},
+				{
+					"title": "Can I switch between light and dark mode?",
+					"content": "<p>Yes. Visitors get a switch, and you can lock a page to light or dark in its page settings.</p>"
+				},
+				{
+					"title": "Does it work with WooCommerce?",
+					"content": "<p>Yes. Shop, product, cart and checkout pages are styled by the theme.</p>"
+				}
+			]
+		},
+		"mode": {
+			"type": "select",
+			"panel": "content",
+			"label": "Open items",
+			"default": "one",
+			"options": {
+				"one": "One at a time",
+				"many": "Several at once"
+			}
+		},
+		"start": {
+			"type": "select",
+			"panel": "content",
+			"label": "When the page loads",
+			"default": "items",
+			"options": {
+				"items": "As set per item",
+				"first": "First item open",
+				"closed": "All closed",
+				"all": "All open"
+			}
+		},
+		"tag": {
+			"type": "select",
+			"panel": "content",
+			"label": "Title tag",
+			"default": "h3",
+			"options": {
+				"h2": "H2",
+				"h3": "H3",
+				"h4": "H4",
+				"h5": "H5",
+				"h6": "H6",
+				"div": "div",
+				"span": "span"
+			}
+		},
+		"numbers": {
+			"type": "toggle",
+			"label": "Number the items (01, 02…)",
+			"default": false
+		},
+		"schema": {
+			"type": "toggle",
+			"label": "FAQ schema for search engines",
+			"default": false
+		},
+		"preset": {
+			"type": "select",
+			"panel": "style",
+			"label": "Style",
+			"default": "boxed",
+			"options": {
+				"boxed": "Boxed cards",
+				"separated": "Separated by lines",
+				"minimal": "Minimal",
+				"flush": "Flush (no border)"
+			}
+		},
+		"gap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space between items",
+			"responsive": true,
+			"css": "--wpek-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"default": ""
+		},
+		"contentGap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Distance from title to content",
+			"responsive": true,
+			"css": "--wpek-content-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"default": ""
+		},
+		"icon": {
+			"type": "icon",
+			"panel": "motion",
+			"label": "Icon",
+			"default": {
+				"library": "wpessential",
+				"value": "plus"
+			}
+		},
+		"activeIcon": {
+			"type": "icon",
+			"panel": "motion",
+			"label": "Icon when open (empty = rotate)",
+			"default": {}
+		},
+		"iconPosition": {
+			"type": "select",
+			"panel": "motion",
+			"label": "Icon position",
+			"default": "end",
+			"options": {
+				"end": "End",
+				"start": "Start"
+			}
+		},
+		"iconSize": {
+			"type": "range",
+			"panel": "motion",
+			"label": "Icon size",
+			"responsive": true,
+			"css": "--wpek-icon",
+			"unit": "px",
+			"min": 8,
+			"max": 48,
+			"step": 1,
+			"default": ""
+		},
+		"iconGap": {
+			"type": "range",
+			"panel": "motion",
+			"label": "Icon spacing",
+			"responsive": true,
+			"css": "--wpek-icon-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"default": ""
+		},
+		"iconRotate": {
+			"type": "range",
+			"panel": "motion",
+			"label": "Rotate when open",
+			"responsive": false,
+			"css": "--wpek-icon-rot",
+			"unit": "deg",
+			"min": 0,
+			"max": 360,
+			"step": 5,
+			"default": ""
+		},
+		"duration": {
+			"type": "range",
+			"panel": "motion",
+			"label": "Open / close speed",
+			"responsive": false,
+			"css": "--wpek-dur",
+			"unit": "ms",
+			"min": 0,
+			"max": 1000,
+			"step": 10,
+			"default": ""
+		},
+		"titleHover": {
+			"type": "select",
+			"panel": "motion",
+			"label": "Title hover",
+			"default": "shade",
+			"options": {
+				"none": "None",
+				"shade": "Shade",
+				"slide": "Slide"
+			}
+		}
+	},
+	"groups": {
+		"itemBorder": {
+			"type": "border",
+			"label": "Item border and radius",
+			"selector": ".wpe-accordion__item",
+			"panel": "style"
+		},
+		"itemShadow": {
+			"type": "shadow",
+			"label": "Item shadow",
+			"selector": ".wpe-accordion__item",
+			"panel": "style"
+		},
+		"itemBackground": {
+			"type": "background",
+			"label": "Item background",
+			"selector": ".wpe-accordion__item",
+			"panel": "style"
+		},
+		"openBackground": {
+			"type": "colors",
+			"label": "Open item background",
+			"prop": "background-color",
+			"selector": ".wpe-accordion__item[open]",
+			"panel": "style"
+		},
+		"openBorder": {
+			"type": "colors",
+			"label": "Open item border colour",
+			"prop": "border-color",
+			"selector": ".wpe-accordion__item[open]",
+			"panel": "style"
+		},
+		"titlePadding": {
+			"type": "spacing",
+			"label": "Title padding",
+			"prop": "padding",
+			"selector": ".wpe-accordion__title",
+			"panel": "title"
+		},
+		"titleTypography": {
+			"type": "typography",
+			"label": "Title typography",
+			"selector": ".wpe-accordion__title",
+			"panel": "title"
+		},
+		"titleColor": {
+			"type": "colors",
+			"label": "Title colour",
+			"prop": "color",
+			"selector": ".wpe-accordion__title",
+			"panel": "title"
+		},
+		"titleBg": {
+			"type": "colors",
+			"label": "Title background",
+			"prop": "background-color",
+			"selector": ".wpe-accordion__title",
+			"panel": "title"
+		},
+		"activeTitleColor": {
+			"type": "colors",
+			"label": "Open title colour",
+			"prop": "color",
+			"selector": ".wpe-accordion__item[open] > .wpe-accordion__title",
+			"panel": "title"
+		},
+		"titleEffects": {
+			"type": "textEffects",
+			"label": "Title shadow and stroke",
+			"selector": ".wpe-accordion__title",
+			"panel": "title"
+		},
+		"numberColor": {
+			"type": "colors",
+			"label": "Number colour",
+			"prop": "color",
+			"selector": ".wpe-accordion__num",
+			"panel": "title"
+		},
+		"iconColor": {
+			"type": "colors",
+			"label": "Icon colour",
+			"prop": "color",
+			"selector": ".wpe-accordion__icon",
+			"panel": "motion"
+		},
+		"activeIconColor": {
+			"type": "colors",
+			"label": "Open icon colour",
+			"prop": "color",
+			"selector": ".wpe-accordion__item[open] .wpe-accordion__icon",
+			"panel": "motion"
+		},
+		"contentPadding": {
+			"type": "spacing",
+			"label": "Content padding",
+			"prop": "padding",
+			"selector": ".wpe-accordion__body",
+			"panel": "content_style"
+		},
+		"contentTypography": {
+			"type": "typography",
+			"label": "Content typography",
+			"selector": ".wpe-accordion__body",
+			"panel": "content_style"
+		},
+		"contentColor": {
+			"type": "colors",
+			"label": "Content colour",
+			"prop": "color",
+			"selector": ".wpe-accordion__body",
+			"panel": "content_style"
+		},
+		"contentBg": {
+			"type": "colors",
+			"label": "Content background",
+			"prop": "background-color",
+			"selector": ".wpe-accordion__body",
+			"panel": "content_style"
+		},
+		"contentEffects": {
+			"type": "textEffects",
+			"label": "Content shadow",
+			"selector": ".wpe-accordion__body",
+			"panel": "content_style"
+		}
+	}
+}

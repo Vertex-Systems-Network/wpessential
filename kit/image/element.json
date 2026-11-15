@@ -1,0 +1,43 @@
+{
+	"name": "image",
+	"title": "Image (WPEssential)",
+	"category": "media",
+	"description": "Responsive image with dark-mode version, lightbox, ratio and filters.",
+	"icon": "format-image",
+	"elementor_icon": "eicon-image",
+	"keywords": ["image", "photo", "picture", "media", "figure"],
+	"panels": { "content": "Content", "style": "Style" },
+	"attributes": {
+		"image": { "type": "image", "label": "Image", "default": { } },
+		"darkImage": { "type": "image", "label": "Image in dark mode (optional)", "default": { } },
+		"size": { "type": "select", "label": "Image size", "default": "large", "options": { "thumbnail": "Thumbnail", "medium": "Medium", "medium_large": "Medium large", "large": "Large", "full": "Full"  } },
+		"alt": { "type": "text", "label": "Alt text (empty = from media library)", "default": "" },
+		"decorative": { "type": "toggle", "label": "Decorative (hidden from screen readers)", "default": false },
+		"caption": { "type": "text", "label": "Caption", "default": "" },
+		"captionSource": { "type": "select", "label": "Caption source", "default": "custom", "options": { "custom": "Text above", "attachment": "Caption from media library", "none": "None"  } },
+		"link": { "type": "url", "label": "Link", "default": "" },
+		"newTab": { "type": "toggle", "label": "Open link in new tab", "default": false },
+		"lightbox": { "type": "toggle", "label": "Open full size in a lightbox (when no link)", "default": false },
+		"loading": { "type": "select", "label": "Loading", "default": "lazy", "options": { "lazy": "Lazy (below the fold)", "eager": "Eager", "priority": "Priority (main image above the fold, LCP)"  } },
+		"align": { "type": "select", "panel": "style", "label": "Alignment", "responsive": true, "css": "--wpek-mx", "map": { "start": "--wpek-mx:0 auto 0 0", "center": "--wpek-mx:0 auto", "end": "--wpek-mx:0 0 0 auto" }, "default": "", "options": { "": "Default", "start": "Start", "center": "Center", "end": "End"  } },
+		"imgWidth": { "type": "range", "panel": "style", "label": "Image width", "responsive": true, "css": "--wpek-iw", "unit": "%", "min": 10, "max": 100, "default": "" },
+		"imgMaxWidth": { "type": "range", "panel": "style", "label": "Image max width", "responsive": true, "css": "--wpek-imax", "unit": "px", "min": 40, "max": 1920, "default": "" },
+		"imgHeight": { "type": "range", "panel": "style", "label": "Image height", "responsive": true, "css": "--wpek-ih", "unit": "px", "min": 40, "max": 1200, "default": "" },
+		"ratio": { "type": "select", "panel": "style", "label": "Aspect ratio", "responsive": true, "css": "--wpek-ratio", "default": "", "options": { "": "Original", "1/1": "1:1", "4/3": "4:3", "3/2": "3:2", "16/9": "16:9", "21/9": "21:9", "3/4": "3:4", "2/3": "2:3", "9/16": "9:16"  } },
+		"fit": { "type": "select", "panel": "style", "label": "Object fit", "responsive": true, "css": "--wpek-fit", "default": "", "options": { "": "Cover", "contain": "Contain", "fill": "Fill", "none": "None", "scale-down": "Scale down"  } },
+		"objPosition": { "type": "select", "panel": "style", "label": "Object position", "responsive": true, "css": "--wpek-opos", "default": "", "options": { "": "Center", "top": "Top", "bottom": "Bottom", "left": "Left", "right": "Right", "top left": "Top left", "top right": "Top right", "bottom left": "Bottom left", "bottom right": "Bottom right"  } },
+		"hover": { "type": "select", "panel": "style", "label": "Hover effect", "default": "none", "options": { "none": "None", "zoom": "Zoom", "grey": "Greyscale to colour", "lift": "Lift", "overlay": "Overlay"  } },
+		"captionAlign": { "type": "select", "panel": "style", "label": "Caption alignment", "css": "--wpek-capalign", "default": "", "options": { "": "Default", "left": "Left", "center": "Center", "right": "Right"  } },
+		"captionSpacing": { "type": "range", "panel": "style", "label": "Caption spacing", "responsive": true, "css": "--wpek-capgap", "unit": "px", "min": 0, "max": 80, "default": "" }
+	},
+	"groups": {
+		"overlay": { "type": "background", "label": "Overlay", "selector": ".wpe-image__media::after", "panel": "style" },
+		"border": { "type": "border", "label": "Border and radius", "selector": ".wpe-image__media", "panel": "style" },
+		"shadow": { "type": "shadow", "label": "Shadow", "selector": ".wpe-image__media", "panel": "style" },
+		"captionTypography": { "type": "typography", "label": "Caption typography", "selector": ".wpe-image__caption", "panel": "style" },
+		"captionColor": { "type": "colors", "label": "Caption colour", "prop": "color", "selector": ".wpe-image__caption", "panel": "style" },
+		"imageFilters": { "type": "filters", "label": "CSS filters and opacity", "selector": ".wpe-image__img", "panel": "style" },
+		"captionBackground": { "type": "colors", "label": "Caption background", "prop": "background-color", "selector": ".wpe-image__caption", "panel": "style" },
+		"captionEffects": { "type": "textEffects", "label": "Caption text shadow and stroke", "selector": ".wpe-image__caption", "panel": "style" }
+	}
+}

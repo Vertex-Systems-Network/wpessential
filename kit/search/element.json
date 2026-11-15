@@ -1,0 +1,150 @@
+{
+	"name": "search",
+	"title": "WordPress Search (WPEssential)",
+	"category": "content",
+	"description": "Accessible native WordPress GET search with post/page/WooCommerce scope, inline or native expandable mode and no-JS operation.",
+	"icon": "search",
+	"elementor_icon": "eicon-search",
+	"keywords": [
+		"search",
+		"site search",
+		"product search",
+		"query",
+		"form"
+	],
+	"panels": {
+		"content": "Search form",
+		"style": "Appearance"
+	},
+	"attributes": {
+		"label": {
+			"type": "text",
+			"label": "Accessible search label",
+			"default": "Search this website",
+			"panel": "content"
+		},
+		"placeholder": {
+			"type": "text",
+			"label": "Input placeholder",
+			"default": "Search...",
+			"panel": "content"
+		},
+		"buttonText": {
+			"type": "text",
+			"label": "Submit button text",
+			"default": "Search",
+			"panel": "content"
+		},
+		"buttonStyle": {
+			"type": "select",
+			"label": "Submit button mode",
+			"default": "text",
+			"options": {
+				"text": "Text button",
+				"icon": "Search icon"
+			},
+			"panel": "content"
+		},
+		"scope": {
+			"type": "select",
+			"label": "Search scope",
+			"default": "all",
+			"options": {
+				"all": "All public content",
+				"post": "Posts",
+				"page": "Pages",
+				"product": "WooCommerce products"
+			},
+			"panel": "content"
+		},
+		"mode": {
+			"type": "select",
+			"label": "Display mode",
+			"default": "inline",
+			"options": {
+				"inline": "Inline search",
+				"expand": "Expandable search"
+			},
+			"panel": "content"
+		},
+		"expandText": {
+			"type": "text",
+			"label": "Expandable search label",
+			"default": "Open search",
+			"panel": "content"
+		},
+		"showLabel": {
+			"type": "toggle",
+			"label": "Show visible input label",
+			"default": false,
+			"panel": "style"
+		},
+		"style": {
+			"type": "select",
+			"label": "Visual style",
+			"default": "boxed",
+			"options": {
+				"boxed": "Boxed",
+				"line": "Underlined",
+				"minimal": "Minimal"
+			},
+			"panel": "style"
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Form maximum width",
+			"default": "",
+			"min": 220,
+			"max": 1000,
+			"step": 10,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-search-max",
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Input/button gap",
+			"default": "",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-search-gap",
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"inputBorder": {
+			"type": "border",
+			"label": "Search input border",
+			"selector": ".wpe-search__input",
+			"panel": "style"
+		},
+		"inputBackground": {
+			"type": "background",
+			"label": "Search input background",
+			"selector": ".wpe-search__input",
+			"panel": "style"
+		},
+		"inputTypography": {
+			"type": "typography",
+			"label": "Input typography",
+			"selector": ".wpe-search__input",
+			"panel": "style"
+		},
+		"buttonBackground": {
+			"type": "background",
+			"label": "Submit button background",
+			"selector": ".wpe-search__submit",
+			"panel": "style"
+		},
+		"buttonTypography": {
+			"type": "typography",
+			"label": "Submit text typography",
+			"selector": ".wpe-search__submit",
+			"panel": "style"
+		}
+	}
+}

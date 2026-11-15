@@ -1,0 +1,223 @@
+{
+	"name": "table",
+	"title": "Data Table (WPEssential)",
+	"category": "content",
+	"description": "Accessible, sortable and searchable CSV/TSV data table with horizontal-scroll or stacked mobile layouts.",
+	"icon": "editor-table",
+	"elementor_icon": "eicon-table",
+	"keywords": [
+		"table",
+		"data",
+		"CSV",
+		"TSV",
+		"comparison",
+		"sort",
+		"search"
+	],
+	"panels": {
+		"content": "Data & controls",
+		"layout": "Responsive layout",
+		"style": "Style"
+	},
+	"attributes": {
+		"data": {
+			"type": "textarea",
+			"label": "Table data (paste CSV or TSV)",
+			"panel": "content",
+			"default": "Plan,Projects,Support,Monthly price\nStarter,3,Email,$29\nGrowth,12,Priority,$79\nEnterprise,Unlimited,Dedicated,Custom"
+		},
+		"delimiter": {
+			"type": "select",
+			"label": "Data delimiter",
+			"panel": "content",
+			"default": "comma",
+			"options": {
+				"comma": "Comma (CSV)",
+				"tab": "Tab (TSV)",
+				"semicolon": "Semicolon",
+				"pipe": "Vertical bar"
+			}
+		},
+		"headerRow": {
+			"type": "toggle",
+			"label": "First row contains headings",
+			"panel": "content",
+			"default": true
+		},
+		"caption": {
+			"type": "text",
+			"label": "Table caption",
+			"panel": "content",
+			"default": "Compare our plans"
+		},
+		"captionPosition": {
+			"type": "select",
+			"label": "Caption placement",
+			"panel": "content",
+			"default": "top",
+			"options": {
+				"top": "Above table",
+				"bottom": "Below table"
+			}
+		},
+		"sortable": {
+			"type": "toggle",
+			"label": "Allow column sorting",
+			"panel": "content",
+			"default": true
+		},
+		"searchable": {
+			"type": "toggle",
+			"label": "Show instant table search",
+			"panel": "content",
+			"default": true
+		},
+		"searchPlaceholder": {
+			"type": "text",
+			"label": "Search input placeholder",
+			"panel": "content",
+			"default": "Search this table"
+		},
+		"emptyMessage": {
+			"type": "text",
+			"label": "No matching rows message",
+			"panel": "content",
+			"default": "No matching rows."
+		},
+		"layout": {
+			"type": "select",
+			"label": "Mobile table layout",
+			"panel": "layout",
+			"default": "scroll",
+			"options": {
+				"scroll": "Horizontal scroll",
+				"stack": "Stacked rows on mobile"
+			}
+		},
+		"striped": {
+			"type": "toggle",
+			"label": "Alternate row background",
+			"panel": "style",
+			"default": true
+		},
+		"hover": {
+			"type": "toggle",
+			"label": "Highlight hovered rows",
+			"panel": "style",
+			"default": true
+		},
+		"stickyHeader": {
+			"type": "toggle",
+			"label": "Sticky heading row",
+			"panel": "style",
+			"default": false
+		},
+		"textAlign": {
+			"type": "select",
+			"label": "Cell text alignment",
+			"panel": "style",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"css": "--wpek-table-align"
+		},
+		"cellPadding": {
+			"type": "range",
+			"label": "Cell spacing",
+			"panel": "style",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-cell-padding",
+			"min": 4,
+			"max": 32,
+			"step": 1,
+			"unit": "px"
+		},
+		"minCellWidth": {
+			"type": "range",
+			"label": "Minimum column width",
+			"panel": "layout",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-cell-min",
+			"min": 60,
+			"max": 280,
+			"step": 5,
+			"unit": "px"
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Max table width",
+			"panel": "layout",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-table-max",
+			"min": 320,
+			"max": 1900,
+			"step": 10,
+			"unit": "px"
+		}
+	},
+	"groups": {
+		"tableBorder": {
+			"type": "border",
+			"label": "Table border and radius",
+			"selector": ".wpe-table__viewport",
+			"panel": "style"
+		},
+		"tableShadow": {
+			"type": "shadow",
+			"label": "Table shadow",
+			"selector": ".wpe-table__viewport",
+			"panel": "style"
+		},
+		"headBackground": {
+			"type": "background",
+			"label": "Heading background",
+			"selector": ".wpe-table__head",
+			"panel": "style"
+		},
+		"headTypography": {
+			"type": "typography",
+			"label": "Heading typography",
+			"selector": ".wpe-table thead th",
+			"panel": "style"
+		},
+		"headColor": {
+			"type": "colors",
+			"label": "Heading colour",
+			"selector": ".wpe-table thead th",
+			"prop": "color",
+			"panel": "style"
+		},
+		"bodyTypography": {
+			"type": "typography",
+			"label": "Cell typography",
+			"selector": ".wpe-table tbody td",
+			"panel": "style"
+		},
+		"bodyColor": {
+			"type": "colors",
+			"label": "Body text colour",
+			"selector": ".wpe-table tbody td",
+			"prop": "color",
+			"panel": "style"
+		},
+		"captionTypography": {
+			"type": "typography",
+			"label": "Caption typography",
+			"selector": ".wpe-table__caption",
+			"panel": "style"
+		},
+		"captionColor": {
+			"type": "colors",
+			"label": "Caption colour",
+			"selector": ".wpe-table__caption",
+			"prop": "color",
+			"panel": "style"
+		}
+	}
+}

@@ -1,0 +1,137 @@
+{
+	"name": "icon",
+	"title": "Standalone Icon (WPEssential)",
+	"category": "basic",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-icon",
+	"keywords": [
+		"icon",
+		"svg",
+		"symbol"
+	],
+	"description": "Accessible standalone library icon, optionally linked, with responsive size, shapes and theme colors.",
+	"panels": {
+		"content": "Icon",
+		"style": "Icon style"
+	},
+	"attributes": {
+		"icon": {
+			"type": "icon",
+			"label": "Icon",
+			"default": {
+				"library": "wpessential",
+				"value": "bolt"
+			},
+			"panel": "content"
+		},
+		"url": {
+			"type": "url",
+			"label": "Destination URL (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"label": {
+			"type": "text",
+			"label": "Accessible name",
+			"default": "Feature",
+			"panel": "content"
+		},
+		"newTab": {
+			"type": "toggle",
+			"label": "Open in new tab",
+			"default": false,
+			"panel": "content"
+		},
+		"decorative": {
+			"type": "toggle",
+			"label": "Decorative icon",
+			"default": false,
+			"panel": "content"
+		},
+		"view": {
+			"type": "select",
+			"label": "Icon view",
+			"default": "default",
+			"panel": "style",
+			"options": {
+				"default": "Default",
+				"stacked": "Stacked",
+				"framed": "Framed"
+			}
+		},
+		"shape": {
+			"type": "select",
+			"label": "Shape",
+			"default": "circle",
+			"panel": "style",
+			"options": {
+				"circle": "Circle",
+				"rounded": "Rounded",
+				"square": "Square"
+			}
+		},
+		"size": {
+			"type": "range",
+			"label": "Icon size",
+			"default": "",
+			"panel": "style",
+			"min": 10,
+			"max": 180,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-single-size"
+		},
+		"padding": {
+			"type": "range",
+			"label": "Shape padding",
+			"default": "",
+			"panel": "style",
+			"min": 0,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-single-pad"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "start",
+			"panel": "style",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-single-align",
+			"map": {
+				"start": "--wpek-single-align:flex-start",
+				"center": "--wpek-single-align:center",
+				"end": "--wpek-single-align:flex-end"
+			}
+		}
+	},
+	"groups": {
+		"color": {
+			"type": "colors",
+			"label": "Icon color",
+			"selector": ".wpe-icon-single__face",
+			"panel": "style",
+			"prop": "color"
+		},
+		"background": {
+			"type": "background",
+			"label": "Icon background",
+			"selector": ".wpe-icon-single__face",
+			"panel": "style"
+		},
+		"border": {
+			"type": "border",
+			"label": "Icon border",
+			"selector": ".wpe-icon-single__face",
+			"panel": "style"
+		}
+	}
+}

@@ -1,0 +1,142 @@
+{
+	"name": "site-archive-widgets",
+	"title": "Site / Archive Widgets (WPEssential)",
+	"category": "site",
+	"icon": "admin-site-alt3",
+	"elementor_icon": "eicon-post-title",
+	"keywords": [
+		"archive",
+		"breadcrumb",
+		"author",
+		"pagination",
+		"dynamic"
+	],
+	"description": "Context-aware archive title, description, breadcrumbs, post meta, author bio and native pagination.",
+	"panels": {
+		"content": "Dynamic content",
+		"style": "Appearance"
+	},
+	"attributes": {
+		"mode": {
+			"type": "select",
+			"label": "Widget type",
+			"default": "title",
+			"panel": "content",
+			"options": {
+				"title": "Archive or page title",
+				"description": "Archive description",
+				"breadcrumbs": "Breadcrumbs",
+				"meta": "Post metadata",
+				"author": "Author biography",
+				"pagination": "Archive pagination"
+			}
+		},
+		"prefix": {
+			"type": "text",
+			"label": "Title prefix",
+			"default": "",
+			"panel": "content"
+		},
+		"fallback": {
+			"type": "text",
+			"label": "Preview fallback title",
+			"default": "",
+			"panel": "content"
+		},
+		"showHome": {
+			"type": "toggle",
+			"label": "Show Home breadcrumb",
+			"default": true,
+			"panel": "content"
+		},
+		"showAuthor": {
+			"type": "toggle",
+			"label": "Show post author",
+			"default": true,
+			"panel": "content"
+		},
+		"showDate": {
+			"type": "toggle",
+			"label": "Show post date",
+			"default": true,
+			"panel": "content"
+		},
+		"tag": {
+			"type": "select",
+			"label": "Title HTML tag",
+			"default": "h1",
+			"panel": "style",
+			"options": {
+				"h1": "H1",
+				"h2": "H2",
+				"h3": "H3",
+				"p": "Paragraph",
+				"div": "Div"
+			}
+		},
+		"maxWidth": {
+			"type": "range",
+			"label": "Max width",
+			"default": "",
+			"panel": "style",
+			"min": 200,
+			"max": 1800,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-archive-max"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Item gap",
+			"default": "",
+			"panel": "style",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-archive-gap"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Align content",
+			"default": "start",
+			"panel": "style",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-archive-align"
+		}
+	},
+	"groups": {
+		"titleTypography": {
+			"type": "typography",
+			"label": "Title typography",
+			"selector": ".wpe-site-archive-widgets__title",
+			"panel": "style"
+		},
+		"bodyTypography": {
+			"type": "typography",
+			"label": "Body typography",
+			"selector": ".wpe-site-archive-widgets__body",
+			"panel": "style"
+		},
+		"background": {
+			"type": "background",
+			"label": "Background",
+			"selector": ".wpe-site-archive-widgets",
+			"panel": "style"
+		},
+		"padding": {
+			"type": "spacing",
+			"label": "Padding",
+			"selector": ".wpe-site-archive-widgets",
+			"panel": "style",
+			"prop": "padding"
+		}
+	}
+}

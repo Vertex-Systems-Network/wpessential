@@ -1,0 +1,24 @@
+/* WPEssential kit — Button. */
+.wpe-button { display: grid; justify-items: var(--wpek-justify, start); }
+.wpe-button__link { --h: 46px; display: inline-flex; align-items: center; justify-content: center; gap: var(--wpek-icon-gap, .5em); min-height: var(--h); padding: 0 22px; border-radius: 999px; border: 1.5px solid transparent; font-weight: 700; font-size: 15px; line-height: 1; text-decoration: none; cursor: pointer; background: var(--_bg); color: var(--_fg); transition: transform var(--wp--custom--hover--duration, .3s) var(--wp--custom--hover--ease, cubic-bezier(.2, .8, .2, 1)), box-shadow .3s, background .3s, color .3s, border-color .3s; }
+.wpe-button__link.is-sm { --h: 36px; font-size: 13px; }
+.wpe-button__link.is-lg { --h: 56px; font-size: 16px; }
+.wpe-button__link.is-gradient { --_bg: linear-gradient(110deg, #e8701a, #f7a23e); --_fg: var(--wp--preset--color--ink, #0b1a3d); }
+.wpe-button__link.is-primary { --_bg: var(--wp--preset--color--primary, #ec7d1a); --_fg: var(--wp--preset--color--on-primary, #fff); }
+.wpe-button__link.is-dark { --_bg: var(--wp--preset--color--ink, #0b1a3d); --_fg: #fff; }
+.wpe-button__link.is-outline { --_bg: transparent; --_fg: currentColor; border-color: currentColor; }
+.wpe-button__link.is-ghost { --_bg: rgba(255, 255, 255, .1); --_fg: #fff; border-color: rgba(255, 255, 255, .3); }
+.wpe-button__link.is-link { --_bg: transparent; --_fg: var(--wp--preset--color--primary, currentColor); padding: 0; min-height: 0; border-radius: 0; }
+.wpe-button__icon { flex: none; width: var(--wpek-icon, 16px); height: var(--wpek-icon, 16px); transition: transform .3s; }
+i.wpe-button__icon { width: auto; height: auto; font-size: var(--wpek-icon, 16px); line-height: 1; }
+img.wpe-button__icon { object-fit: contain; }
+/* Hover presets. */
+.wpe-button__link.wpe-hover-lift:is(:hover, :focus-visible) { transform: translateY(var(--wp--custom--hover--button-lift, -2px)); box-shadow: 0 10px 24px rgba(11, 26, 61, .18); }
+.wpe-button__link.wpe-hover-glow:is(:hover, :focus-visible) { box-shadow: 0 0 0 4px color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 25%, transparent), 0 10px 30px color-mix(in srgb, var(--wp--preset--color--primary, #ec7d1a) 45%, transparent); }
+.wpe-button__link.wpe-hover-fill.is-outline:is(:hover, :focus-visible) { background: currentColor; }
+.wpe-button__link.wpe-hover-fill.is-outline:is(:hover, :focus-visible) .wpe-button__text, .wpe-button__link.wpe-hover-fill.is-outline:is(:hover, :focus-visible) .wpe-button__icon { color: var(--wp--preset--color--surface, #fff); }
+.wpe-button__link.wpe-hover-invert:is(:hover, :focus-visible) { background: transparent; color: var(--wp--preset--color--text, currentColor); border-color: currentColor; }
+.wpe-button__link:is(:hover, :focus-visible) .wpe-button__icon { transform: translate(2px, -2px); }
+.wpe-button__link.is-link:is(:hover, :focus-visible) .wpe-button__text { text-decoration: underline; text-underline-offset: 4px; }
+.wpe-button__link:focus-visible { outline: 2px solid var(--wp--preset--color--primary, currentColor); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .wpe-button__link, .wpe-button__icon { transition: none; } .wpe-button__link:hover { transform: none; } }

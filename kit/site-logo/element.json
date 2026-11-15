@@ -1,0 +1,158 @@
+{
+	"name": "site-logo",
+	"title": "Site Logo / Title (WPEssential)",
+	"category": "site",
+	"description": "Dynamic WordPress custom logo, site title and tagline with safe optional override, responsive sizing and home link.",
+	"icon": "admin-home",
+	"elementor_icon": "eicon-site-logo",
+	"keywords": [
+		"site logo",
+		"branding",
+		"identity",
+		"title",
+		"tagline"
+	],
+	"panels": {
+		"content": "Identity",
+		"style": "Style"
+	},
+	"attributes": {
+		"display": {
+			"type": "select",
+			"label": "Brand display",
+			"default": "logo-title",
+			"options": {
+				"logo-title": "Logo + site title",
+				"logo": "Logo only",
+				"title": "Site title only"
+			},
+			"panel": "content"
+		},
+		"override": {
+			"type": "image",
+			"label": "Custom logo (optional)",
+			"default": {},
+			"panel": "content"
+		},
+		"siteTitle": {
+			"type": "text",
+			"label": "Override site title (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"showTagline": {
+			"type": "toggle",
+			"label": "Show site tagline",
+			"default": false,
+			"panel": "content"
+		},
+		"tagline": {
+			"type": "text",
+			"label": "Override tagline (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"url": {
+			"type": "url",
+			"label": "Custom destination (empty = home)",
+			"default": "",
+			"panel": "content"
+		},
+		"newTab": {
+			"type": "toggle",
+			"label": "Open in new tab",
+			"default": false,
+			"panel": "content"
+		},
+		"loading": {
+			"type": "select",
+			"label": "Logo image loading",
+			"default": "eager",
+			"options": {
+				"eager": "Eager",
+				"lazy": "Lazy"
+			},
+			"panel": "content"
+		},
+		"layout": {
+			"type": "select",
+			"label": "Logo layout",
+			"default": "inline",
+			"options": {
+				"inline": "Inline",
+				"stack": "Stacked"
+			},
+			"panel": "style"
+		},
+		"align": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-brand-align",
+			"map": {
+				"start": "--wpek-brand-align:flex-start",
+				"center": "--wpek-brand-align:center",
+				"end": "--wpek-brand-align:flex-end"
+			},
+			"panel": "style"
+		},
+		"logoWidth": {
+			"type": "range",
+			"label": "Logo maximum width",
+			"default": "",
+			"min": 32,
+			"max": 600,
+			"step": 4,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-brand-width",
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Spacing",
+			"default": "",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"responsive": true,
+			"css": "--wpek-brand-gap",
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"titleTypography": {
+			"type": "typography",
+			"label": "Site title typography",
+			"selector": ".wpe-site-logo__title",
+			"panel": "style"
+		},
+		"titleColor": {
+			"type": "colors",
+			"label": "Site title colour",
+			"selector": ".wpe-site-logo__title",
+			"prop": "color",
+			"panel": "style"
+		},
+		"tagTypography": {
+			"type": "typography",
+			"label": "Tagline typography",
+			"selector": ".wpe-site-logo__tagline",
+			"panel": "style"
+		},
+		"tagColor": {
+			"type": "colors",
+			"label": "Tagline colour",
+			"selector": ".wpe-site-logo__tagline",
+			"prop": "color",
+			"panel": "style"
+		}
+	}
+}

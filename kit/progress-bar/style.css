@@ -1,0 +1,28 @@
+/* WPEssential — progress indicators with no-JavaScript complete-state fallback. */
+.wpe-progress{--wpek-columns:3;--wpek-gap:24px;--wpek-column-gap:24px;--wpek-bar-height:12px;--wpek-ring-size:160px;--wpek-ring-thickness:12px;--wpek-progress-duration:1100ms;--wpek-fill-color:var(--wp--preset--color--primary,#26786b);--wpek-track-color:var(--wp--preset--color--border,#e5e7eb);width:100%;box-sizing:border-box;min-width:0}
+.wpe-progress__items{display:grid;grid-template-columns:minmax(0,1fr);row-gap:var(--wpek-gap);column-gap:var(--wpek-column-gap)}
+.wpe-progress.is-circle .wpe-progress__items{grid-template-columns:repeat(var(--wpek-columns),minmax(0,1fr))}
+.wpe-progress__item{--wpek-active-progress:var(--wpek-target-progress);min-width:0;position:relative}
+.wpe-progress__header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:9px}
+.wpe-progress__label{font-weight:650;line-height:1.4}
+.wpe-progress__value{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.wpe-progress__track{display:block;box-sizing:border-box;position:relative;width:100%;min-width:0;background:var(--wpek-track-color);height:var(--wpek-bar-height);overflow:hidden}
+.wpe-progress.is-rounded .wpe-progress__track,.wpe-progress.is-rounded .wpe-progress__fill{border-radius:999px}
+.wpe-progress__fill{display:block;height:100%;width:var(--wpek-active-progress);background:var(--wpek-fill-color);transition:width var(--wpek-progress-duration) ease-out}
+.wpe-progress__visual{position:relative}
+.wpe-progress.is-circle .wpe-progress__item{display:flex;flex-direction:column;align-items:center;text-align:center}
+.wpe-progress.is-circle .wpe-progress__visual{width:min(100%,var(--wpek-ring-size));aspect-ratio:1/1}
+.wpe-progress.is-circle .wpe-progress__track{height:100%;aspect-ratio:1/1;border-radius:50%;background:transparent;overflow:visible}
+.wpe-progress.is-circle .wpe-progress__track::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--wpek-fill-color) var(--wpek-active-progress),var(--wpek-track-color) 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - var(--wpek-ring-thickness)),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - var(--wpek-ring-thickness)),#000 0)}
+.wpe-progress__circle-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(1.1rem,2vw,2rem);max-width:80%;overflow:hidden;text-overflow:ellipsis}
+.wpe-progress.is-circle .wpe-progress__header{order:2;justify-content:center;margin:14px 0 0}
+.wpe-progress.is-circle .wpe-progress__visual{order:1}
+.wpe-progress__value-standalone{display:block;margin-top:6px}
+.wpe-progress__description{font-size:.9rem;line-height:1.5;margin:7px 0 0;color:var(--wp--preset--color--text-muted,inherit)}
+.wpe-progress.is-circle .wpe-progress__description{order:3}
+@media(max-width:1023px){.wpe-progress.is-circle .wpe-progress__items{grid-template-columns:repeat(min(2,var(--wpek-columns)),minmax(0,1fr))}}
+@media(max-width:559px){.wpe-progress.is-circle .wpe-progress__items{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.wpe-progress__fill{transition:none!important}}
+
+/* A JavaScript-controlled percentage is driven frame-by-frame, without lagging CSS transitions. */
+.wpe-progress__item--ready .wpe-progress__fill{transition:none}

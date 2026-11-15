@@ -1,0 +1,184 @@
+{
+	"name": "button",
+	"title": "Button (WPEssential)",
+	"category": "basic",
+	"description": "Link button with icon, variants, sizes and every state.",
+	"icon": "button",
+	"elementor_icon": "eicon-button",
+	"keywords": [
+		"button",
+		"cta",
+		"link"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style",
+		"motion": "Hover & motion"
+	},
+	"attributes": {
+		"text": {
+			"type": "text",
+			"label": "Text",
+			"default": "Get started"
+		},
+		"url": {
+			"type": "url",
+			"label": "Link",
+			"default": "#"
+		},
+		"newTab": {
+			"type": "toggle",
+			"label": "Open in a new tab",
+			"default": false
+		},
+		"nofollow": {
+			"type": "toggle",
+			"label": "Nofollow",
+			"default": false
+		},
+		"ariaLabel": {
+			"type": "text",
+			"label": "Screen-reader label (optional)",
+			"default": ""
+		},
+		"icon": {
+			"type": "icon",
+			"label": "Icon",
+			"default": {
+				"library": "wpessential",
+				"value": "arrow-up-right"
+			}
+		},
+		"iconFirst": {
+			"type": "toggle",
+			"label": "Icon before text",
+			"default": false
+		},
+		"variant": {
+			"type": "select",
+			"panel": "style",
+			"label": "Style",
+			"default": "gradient",
+			"options": {
+				"gradient": "Brand gradient",
+				"primary": "Primary",
+				"dark": "Dark",
+				"outline": "Outline",
+				"ghost": "Ghost (on dark)",
+				"link": "Text link"
+			}
+		},
+		"size": {
+			"type": "select",
+			"panel": "style",
+			"label": "Size",
+			"default": "md",
+			"options": {
+				"sm": "Small",
+				"md": "Medium",
+				"lg": "Large"
+			}
+		},
+		"align": {
+			"type": "select",
+			"panel": "style",
+			"label": "Alignment",
+			"responsive": true,
+			"css": "--wpek-justify",
+			"default": "",
+			"options": {
+				"": "Default",
+				"start": "Left",
+				"center": "Center",
+				"end": "Right",
+				"stretch": "Full width"
+			}
+		},
+		"hover": {
+			"type": "select",
+			"panel": "motion",
+			"label": "Hover",
+			"default": "lift",
+			"options": {
+				"none": "None",
+				"lift": "Lift",
+				"glow": "Glow",
+				"fill": "Fill",
+				"invert": "Invert to outline"
+			}
+		},
+		"iconSize": {
+			"type": "range",
+			"panel": "style",
+			"label": "Icon size",
+			"css": "--wpek-icon",
+			"unit": "px",
+			"min": 8,
+			"max": 48,
+			"default": ""
+		},
+		"iconSpacing": {
+			"type": "range",
+			"panel": "style",
+			"label": "Icon spacing",
+			"css": "--wpek-icon-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 40,
+			"default": ""
+		}
+	},
+	"groups": {
+		"typography": {
+			"type": "typography",
+			"label": "Typography",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		},
+		"textColor": {
+			"type": "colors",
+			"label": "Text colour",
+			"prop": "color",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		},
+		"background": {
+			"type": "background",
+			"label": "Background",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		},
+		"padding": {
+			"type": "spacing",
+			"label": "Padding",
+			"prop": "padding",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		},
+		"border": {
+			"type": "border",
+			"label": "Border & radius",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		},
+		"shadow": {
+			"type": "shadow",
+			"label": "Shadow",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		},
+		"iconColor": {
+			"type": "colors",
+			"label": "Icon colour",
+			"prop": "color",
+			"selector": ".wpe-button__icon",
+			"panel": "style"
+		},
+		"textEffects": {
+			"type": "textEffects",
+			"label": "Text shadow, stroke and blend",
+			"selector": ".wpe-button__link",
+			"panel": "style"
+		}
+	}
+}

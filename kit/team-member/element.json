@@ -1,0 +1,233 @@
+{
+	"name": "team-member",
+	"title": "Team Member (WPEssential)",
+	"category": "content",
+	"description": "Accessible team profile cards with WordPress image, short bio, social links and responsive orientation.",
+	"icon": "businessperson",
+	"elementor_icon": "eicon-person",
+	"keywords": [
+		"team",
+		"staff",
+		"employee",
+		"profile",
+		"bio"
+	],
+	"panels": {
+		"content": "Profile",
+		"style": "Appearance"
+	},
+	"attributes": {
+		"photo": {
+			"type": "image",
+			"label": "Team member photo",
+			"default": {},
+			"panel": "content"
+		},
+		"name": {
+			"type": "text",
+			"label": "Member name",
+			"default": "Alex Morgan",
+			"panel": "content"
+		},
+		"role": {
+			"type": "text",
+			"label": "Job title",
+			"default": "Creative Director",
+			"panel": "content"
+		},
+		"bio": {
+			"type": "textarea",
+			"label": "Short biography",
+			"default": "Helping teams create remarkable digital experiences.",
+			"panel": "content"
+		},
+		"email": {
+			"type": "text",
+			"label": "Email address (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"profileUrl": {
+			"type": "url",
+			"label": "Profile link",
+			"default": "",
+			"panel": "content"
+		},
+		"profileLabel": {
+			"type": "text",
+			"label": "Profile link label",
+			"default": "View profile",
+			"panel": "content"
+		},
+		"newTab": {
+			"type": "toggle",
+			"label": "Open profile in a new tab",
+			"default": false,
+			"panel": "content"
+		},
+		"socials": {
+			"type": "repeater",
+			"label": "Social links",
+			"title_field": "label",
+			"default": [],
+			"panel": "content",
+			"fields": {
+				"label": {
+					"type": "text",
+					"label": "Platform label",
+					"default": "LinkedIn"
+				},
+				"url": {
+					"type": "url",
+					"label": "Profile URL",
+					"default": ""
+				}
+			}
+		},
+		"showBio": {
+			"type": "toggle",
+			"label": "Show biography",
+			"default": true,
+			"panel": "style"
+		},
+		"shape": {
+			"type": "select",
+			"label": "Image shape",
+			"default": "square",
+			"options": {
+				"square": "Rounded rectangle",
+				"circle": "Circle"
+			},
+			"panel": "style"
+		},
+		"layout": {
+			"type": "select",
+			"label": "Card layout",
+			"default": "stack",
+			"options": {
+				"stack": "Stacked",
+				"side": "Photo beside text"
+			},
+			"panel": "style"
+		},
+		"imageSize": {
+			"type": "select",
+			"label": "WordPress image size",
+			"default": "medium_large",
+			"options": {
+				"medium": "Medium",
+				"medium_large": "Medium large",
+				"large": "Large",
+				"full": "Full"
+			},
+			"panel": "style"
+		},
+		"alignment": {
+			"type": "select",
+			"label": "Text alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"responsive": true,
+			"css": "--wpek-team-align",
+			"panel": "style"
+		},
+		"photoWidth": {
+			"type": "range",
+			"label": "Photo width",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-team-photo-width",
+			"min": 80,
+			"max": 520,
+			"step": 10,
+			"unit": "px",
+			"panel": "style"
+		},
+		"gap": {
+			"type": "range",
+			"label": "Content spacing",
+			"default": "",
+			"responsive": true,
+			"css": "--wpek-team-gap",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"panel": "style"
+		},
+		"appearance": {
+			"type": "select",
+			"label": "Card appearance",
+			"default": "minimal",
+			"options": {
+				"minimal": "Minimal",
+				"boxed": "Boxed",
+				"accent": "Accent edge"
+			},
+			"panel": "style"
+		}
+	},
+	"groups": {
+		"boxBackground": {
+			"type": "background",
+			"label": "Card background",
+			"selector": ".wpe-team-member",
+			"panel": "style"
+		},
+		"boxPadding": {
+			"type": "spacing",
+			"label": "Card padding",
+			"prop": "padding",
+			"selector": ".wpe-team-member",
+			"panel": "style"
+		},
+		"boxBorder": {
+			"type": "border",
+			"label": "Card border/radius",
+			"selector": ".wpe-team-member",
+			"panel": "style"
+		},
+		"boxShadow": {
+			"type": "shadow",
+			"label": "Card shadow",
+			"selector": ".wpe-team-member",
+			"panel": "style"
+		},
+		"nameTypography": {
+			"type": "typography",
+			"label": "Name typography",
+			"selector": ".wpe-team-member__name",
+			"panel": "style"
+		},
+		"nameColor": {
+			"type": "colors",
+			"label": "Name colour",
+			"selector": ".wpe-team-member__name",
+			"prop": "color",
+			"panel": "style"
+		},
+		"roleTypography": {
+			"type": "typography",
+			"label": "Role typography",
+			"selector": ".wpe-team-member__role",
+			"panel": "style"
+		},
+		"bioTypography": {
+			"type": "typography",
+			"label": "Bio typography",
+			"selector": ".wpe-team-member__bio",
+			"panel": "style"
+		},
+		"bioColor": {
+			"type": "colors",
+			"label": "Bio colour",
+			"selector": ".wpe-team-member__bio",
+			"prop": "color",
+			"panel": "style"
+		}
+	}
+}

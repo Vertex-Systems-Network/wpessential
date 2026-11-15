@@ -1,0 +1,286 @@
+{
+	"name": "testimonial",
+	"title": "Testimonial (WPEssential)",
+	"category": "content",
+	"description": "An accessible customer quote with optional star rating, image, name, role and company; responsive styles in Gutenberg and Elementor.",
+	"icon": "format-quote",
+	"elementor_icon": "eicon-testimonial",
+	"keywords": [
+		"testimonial",
+		"customer quote",
+		"review",
+		"rating",
+		"social proof"
+	],
+	"panels": {
+		"content": "Content",
+		"media": "Customer photo",
+		"style": "Style"
+	},
+	"attributes": {
+		"quote": {
+			"type": "html",
+			"panel": "content",
+			"label": "Customer quote",
+			"default": "<p>Working with this team made the entire process feel effortless. Every detail was handled with care.</p>"
+		},
+		"name": {
+			"type": "text",
+			"panel": "content",
+			"label": "Customer name",
+			"default": "Alex Morgan"
+		},
+		"role": {
+			"type": "text",
+			"panel": "content",
+			"label": "Role or title",
+			"default": "Founder"
+		},
+		"company": {
+			"type": "text",
+			"panel": "content",
+			"label": "Company",
+			"default": "Northwind"
+		},
+		"profileUrl": {
+			"type": "url",
+			"panel": "content",
+			"label": "Customer profile link (optional)",
+			"default": ""
+		},
+		"newTab": {
+			"type": "toggle",
+			"panel": "content",
+			"label": "Open profile in new tab",
+			"default": false
+		},
+		"avatar": {
+			"type": "image",
+			"panel": "media",
+			"label": "Customer photo",
+			"default": {}
+		},
+		"avatarSize": {
+			"type": "range",
+			"panel": "media",
+			"label": "Photo size",
+			"responsive": true,
+			"css": "--wpek-avatar",
+			"unit": "px",
+			"min": 32,
+			"max": 160,
+			"step": 1,
+			"default": ""
+		},
+		"avatarShape": {
+			"type": "select",
+			"panel": "media",
+			"label": "Photo shape",
+			"default": "circle",
+			"options": {
+				"circle": "Circle",
+				"rounded": "Rounded",
+				"square": "Square"
+			}
+		},
+		"showRating": {
+			"type": "toggle",
+			"panel": "content",
+			"label": "Show customer rating",
+			"default": true
+		},
+		"rating": {
+			"type": "range",
+			"panel": "content",
+			"label": "Rating (stars out of 5)",
+			"unit": "",
+			"min": 1,
+			"max": 5,
+			"step": 1,
+			"default": 5
+		},
+		"quoteMark": {
+			"type": "toggle",
+			"panel": "content",
+			"label": "Show decorative quote mark",
+			"default": true
+		},
+		"appearance": {
+			"type": "select",
+			"panel": "style",
+			"label": "Card style",
+			"default": "boxed",
+			"options": {
+				"boxed": "Boxed card",
+				"minimal": "Minimal",
+				"accent": "Accent border"
+			}
+		},
+		"align": {
+			"type": "select",
+			"panel": "style",
+			"label": "Text alignment",
+			"responsive": true,
+			"css": "--wpek-text-align",
+			"default": "",
+			"options": {
+				"": "Default",
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"map": {
+				"start": "--wpek-text-align:start;--wpek-author-justify:flex-start",
+				"center": "--wpek-text-align:center;--wpek-author-justify:center",
+				"end": "--wpek-text-align:end;--wpek-author-justify:flex-end"
+			}
+		},
+		"authorPosition": {
+			"type": "select",
+			"panel": "style",
+			"label": "Customer details position",
+			"default": "bottom",
+			"options": {
+				"bottom": "Below quote",
+				"top": "Above quote"
+			}
+		},
+		"avatarSide": {
+			"type": "select",
+			"panel": "style",
+			"label": "Photo position",
+			"default": "start",
+			"options": {
+				"start": "Before text",
+				"end": "After text"
+			}
+		},
+		"quoteSize": {
+			"type": "range",
+			"panel": "style",
+			"label": "Quote text size",
+			"responsive": true,
+			"css": "--wpek-quote-size",
+			"unit": "px",
+			"min": 14,
+			"max": 48,
+			"step": 1,
+			"default": ""
+		},
+		"gap": {
+			"type": "range",
+			"panel": "style",
+			"label": "Space between sections",
+			"responsive": true,
+			"css": "--wpek-gap",
+			"unit": "px",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"default": ""
+		},
+		"hover": {
+			"type": "select",
+			"panel": "style",
+			"label": "Hover effect",
+			"default": "none",
+			"options": {
+				"none": "None",
+				"lift": "Lift",
+				"border": "Brand border"
+			}
+		}
+	},
+	"groups": {
+		"cardPadding": {
+			"type": "spacing",
+			"panel": "style",
+			"label": "Card padding",
+			"prop": "padding",
+			"selector": ".wpe-testimonial"
+		},
+		"cardBackground": {
+			"type": "background",
+			"panel": "style",
+			"label": "Card background",
+			"selector": ".wpe-testimonial"
+		},
+		"cardBorder": {
+			"type": "border",
+			"panel": "style",
+			"label": "Card border and radius",
+			"selector": ".wpe-testimonial"
+		},
+		"cardShadow": {
+			"type": "shadow",
+			"panel": "style",
+			"label": "Card shadow",
+			"selector": ".wpe-testimonial"
+		},
+		"quoteTypography": {
+			"type": "typography",
+			"panel": "style",
+			"label": "Quote typography",
+			"selector": ".wpe-testimonial__quote"
+		},
+		"quoteColor": {
+			"type": "colors",
+			"panel": "style",
+			"label": "Quote colour",
+			"prop": "color",
+			"selector": ".wpe-testimonial__quote"
+		},
+		"quoteEffects": {
+			"type": "textEffects",
+			"panel": "style",
+			"label": "Quote effects",
+			"selector": ".wpe-testimonial__quote"
+		},
+		"ratingColor": {
+			"type": "colors",
+			"panel": "style",
+			"label": "Rating colour",
+			"prop": "color",
+			"selector": ".wpe-testimonial__stars"
+		},
+		"markColor": {
+			"type": "colors",
+			"panel": "style",
+			"label": "Quote mark colour",
+			"prop": "color",
+			"selector": ".wpe-testimonial__mark"
+		},
+		"nameTypography": {
+			"type": "typography",
+			"panel": "style",
+			"label": "Name typography",
+			"selector": ".wpe-testimonial__name"
+		},
+		"nameColor": {
+			"type": "colors",
+			"panel": "style",
+			"label": "Name colour",
+			"prop": "color",
+			"selector": ".wpe-testimonial__name"
+		},
+		"roleTypography": {
+			"type": "typography",
+			"panel": "style",
+			"label": "Role typography",
+			"selector": ".wpe-testimonial__role"
+		},
+		"roleColor": {
+			"type": "colors",
+			"panel": "style",
+			"label": "Role colour",
+			"prop": "color",
+			"selector": ".wpe-testimonial__role"
+		},
+		"photoBorder": {
+			"type": "border",
+			"panel": "media",
+			"label": "Photo border",
+			"selector": ".wpe-testimonial__avatar img"
+		}
+	}
+}

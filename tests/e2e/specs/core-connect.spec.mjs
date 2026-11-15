@@ -93,11 +93,13 @@ test('every connect screen renders in light mode without axe violations', async 
   }
 });
 
-test('Elements ships empty for Gutenberg and Elementor', async ({ page }) => {
+test('Elements lists the kit for Gutenberg and Elementor, Pro ones locked', async ({ page }) => {
   await visitCore(page, 'wpessential-elements');
-  await expect(page.getByRole('heading', { name: 'No Gutenberg blocks yet' })).toBeVisible();
+  await expect(page.locator('#wpe-elements-gutenberg .wpe-ui-option').first()).toBeVisible();
+  await expect(page.locator('#wpe-elements-gutenberg .wpe-ui-option.is-locked .wpe-ui-toggle--locked').first()).toBeVisible();
+  await expectNoAxeViolations(page);
   await page.getByRole('link', { name: /Elementor/ }).first().click();
-  await expect(page.getByRole('heading', { name: 'No Elementor widgets yet' })).toBeVisible();
+  await expect(page.locator('#wpe-elements-elementor .wpe-ui-option').first()).toBeVisible();
 });
 
 test('AI Connect is a Premium module and stays locked without Premium', async ({ page }) => {

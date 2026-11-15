@@ -1,0 +1,10 @@
+.wpe-svg{--wpek-svg-size:96px;--wpek-svg-align:center;--wpek-svg-color:var(--wp--preset--color--primary,currentColor);--wpek-svg-duration:1300ms;--wpek-svg-repeat:1;--wpek-svg-stroke:2;display:flex;align-items:center;flex-direction:column;gap:10px;margin:0;min-width:0}
+.wpe-svg__drawing{display:block;width:min(100%,var(--wpek-svg-size));height:auto;aspect-ratio:1;color:var(--wpek-svg-color);align-self:var(--wpek-svg-align)}
+.wpe-svg__caption{line-height:1.45}
+.wpe-svg.is-draw[data-visible="1"] .wpe-svg__path{stroke-dasharray:100;stroke-dashoffset:100;animation:wpe-svg-draw var(--wpek-svg-duration) ease-out forwards;animation-iteration-count:var(--wpek-svg-repeat)}
+.wpe-svg.is-pulse[data-visible="1"] .wpe-svg__drawing{animation:wpe-svg-pulse var(--wpek-svg-duration) ease-in-out;animation-iteration-count:var(--wpek-svg-repeat)}
+.wpe-svg.is-spin[data-visible="1"] .wpe-svg__drawing{animation:wpe-svg-spin var(--wpek-svg-duration) linear;animation-iteration-count:var(--wpek-svg-repeat)}
+@keyframes wpe-svg-draw{to{stroke-dashoffset:0}}
+@keyframes wpe-svg-pulse{50%{transform:scale(1.12)}}
+@keyframes wpe-svg-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.wpe-svg__drawing,.wpe-svg__path{animation:none!important;stroke-dasharray:none!important;stroke-dashoffset:0!important;transform:none!important}}
