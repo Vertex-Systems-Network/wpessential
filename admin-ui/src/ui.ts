@@ -1,6 +1,7 @@
 import './ui.scss';
 import { initAjaxForms } from './core/forms';
 import { initAjaxNav } from './core/nav';
+import { initClickLoaders } from './core/skeleton';
 import { initSiteKit } from './core/sitekit';
 
 function matches( element: HTMLElement, query: string ): boolean {
@@ -147,6 +148,7 @@ function initAccountMenu(): void {
 }
 
 initAjaxForms();
+initClickLoaders();
 initAccountMenu();
 initAjaxNav( initScreen );
 initScreen();

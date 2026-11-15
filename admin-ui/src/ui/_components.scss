@@ -494,3 +494,115 @@
 	flex-wrap: wrap;
 	gap: var(--wpe-space-2);
 }
+
+// Skeleton loading screen (in-place navigation and the dashboard app).
+.wpe-ui-skeleton {
+	display: grid;
+	gap: var(--wpe-space-5);
+	padding-block: var(--wpe-space-4);
+}
+
+.wpe-ui-skel-head {
+	display: grid;
+	gap: var(--wpe-space-3);
+	max-width: 42rem;
+}
+
+.wpe-ui-skel-bar {
+	display: flex;
+	gap: var(--wpe-space-2);
+}
+
+.wpe-ui-skel-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	gap: var(--wpe-space-4);
+}
+
+.wpe-ui-skel-card {
+	display: grid;
+	gap: var(--wpe-space-3);
+	padding: var(--wpe-space-4);
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius);
+	background: var(--wpe-card);
+}
+
+.wpe-ui-skel {
+	display: block;
+	height: 0.75rem;
+	border-radius: var(--wpe-radius-sm);
+	background: linear-gradient(90deg, var(--wpe-surface-2) 0%, var(--wpe-surface) 50%, var(--wpe-surface-2) 100%);
+	background-size: 200% 100%;
+	animation: wpe-skel 1.4s ease-in-out infinite;
+}
+
+.wpe-ui-skel--eyebrow { width: 6rem; height: 0.625rem; }
+.wpe-ui-skel--title { width: 60%; height: 1.75rem; }
+.wpe-ui-skel--pill { width: 5.5rem; height: 2rem; border-radius: 999px; }
+.wpe-ui-skel--media { height: 8rem; border-radius: var(--wpe-radius-sm); }
+.wpe-ui-skel--w50 { width: 50%; }
+.wpe-ui-skel--w60 { width: 60%; }
+.wpe-ui-skel--w80 { width: 80%; }
+
+@keyframes wpe-skel {
+	from { background-position: 100% 0; }
+	to { background-position: -100% 0; }
+}
+
+// A button or link that started a page load or a request: spinner, no second click.
+.wpe-ui .is-loading {
+	position: relative;
+	cursor: progress;
+	pointer-events: none;
+	color: transparent !important;
+
+	> * { visibility: hidden; }
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 50% auto auto 50%;
+		width: 1em;
+		height: 1em;
+		margin: -0.5em 0 0 -0.5em;
+		border: 2px solid currentColor;
+		border-color: var(--wpe-muted) var(--wpe-muted) var(--wpe-muted) transparent;
+		border-radius: 50%;
+		animation: wpe-spin 0.7s linear infinite;
+	}
+}
+
+.wpe-ui-button--primary.is-loading::after {
+	border-color: #fff #fff #fff transparent;
+}
+
+// AJAX switches and forms waiting on a response show a small spinner beside them.
+.wpe-ui form.is-busy {
+	position: relative;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 50% -1.5rem auto auto;
+		width: 0.875rem;
+		height: 0.875rem;
+		margin-top: -0.4375rem;
+		border: 2px solid var(--wpe-muted);
+		border-left-color: transparent;
+		border-radius: 50%;
+		animation: wpe-spin 0.7s linear infinite;
+	}
+}
+
+@keyframes wpe-spin {
+	to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wpe-ui-skel,
+	.wpe-ui .is-loading::after,
+	.wpe-ui form.is-busy::after {
+		animation-duration: 2.4s;
+	}
+}

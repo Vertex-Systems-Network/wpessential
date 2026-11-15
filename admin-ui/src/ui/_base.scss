@@ -87,3 +87,10 @@
 .wpe-ui-muted {
 	color: var(--wpe-muted);
 }
+
+// wp-admin draws a box-shadow ring on every focused link and button, also after a mouse click.
+// Keep it for the keyboard (focus-visible) only.
+[data-wpessential-surface] :is(a, button, summary, [role="button"], [role="tab"], .button):focus:not(:focus-visible) {
+	outline: none;
+	box-shadow: none;
+}

@@ -2,6 +2,7 @@
 // of one React tree, switched by React Router without reloading the page. React is WordPress's own
 // (script handles react / react-dom). The server-rendered screen is the first paint and the
 // no-JavaScript fallback; the app takes over its view (.wpe-ui-app-view).
+import { skeletonHtml } from '../core/skeleton';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
@@ -110,7 +111,12 @@ function App( { firstPage }: { firstPage: string } ) {
 	const [ screen, Screen ] = route;
 	// Until the new screen's data arrives, the previous screen's data must not reach it.
 	if ( ! data || data.screen !== screen || failed ) {
-		return <div className="wpe-ui-app-loading" role="status" aria-live="polite" aria-busy="true" />;
+		return (
+			<div className="wpe-ui-app-loading" role="status" aria-live="polite" aria-busy="true">
+				<span className="screen-reader-text">{ document.querySelector< HTMLElement >( '.wrap.wpe-ui' )?.dataset.loadingLabel ?? 'Loading…' }</span>
+				<div dangerouslySetInnerHTML={ { __html: skeletonHtml() } } />
+			</div>
+		);
 	}
 	return <Screen data={ data } />;
 }
