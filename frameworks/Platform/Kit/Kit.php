@@ -176,6 +176,9 @@ class Kit {
 		add_action( 'elementor/elements/categories_registered', array( __CLASS__, 'elementor_category' ) );
 		add_filter( 'block_categories_all', array( __CLASS__, 'block_category' ) );
 		add_filter( 'wpessential_elements', array( __CLASS__, 'elements' ) );
+		// The Hi WPEssential theme bundles an older copy of this kit (and its demo importer) in
+		// core/. With WPEssential active the plugin owns them, so the theme must not load its copy.
+		add_filter( 'wpessential_load_bundled_core', '__return_false' );
 	}
 
 	/**
