@@ -1,7 +1,7 @@
 name: Build ZIP
 
 # Run it from Actions → Build ZIP → Run workflow; the installable wpessential.zip is attached
-# to the run as an artifact. Pushing a tag like v3.0.1 also builds it and attaches it to a
+# to the run as an artifact. Pushing a tag like v3.1.0 also builds it and attaches it to a
 # GitHub release.
 
 on:

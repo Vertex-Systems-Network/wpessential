@@ -219,7 +219,7 @@ function assertProjectMetadata(string $root): void
 
     foreach ([
         'Plugin Name: WPEssential',
-        'Version: 3.0.1',
+        'Version: 3.1.0',
         'Requires at least: 6.9',
         'Requires PHP: 8.2',
         'License: GPL-3.0-or-later',
@@ -232,7 +232,7 @@ function assertProjectMetadata(string $root): void
     foreach ([
         'Requires at least: 6.9',
         'Requires PHP: 8.2',
-        'Stable tag: 3.0.1',
+        'Stable tag: 3.1.0',
         'License: GPLv3 or later',
     ] as $needle) {
         if (!str_contains($readme, $needle)) {
@@ -291,7 +291,7 @@ function stageFreePackage(string $root, string $stageRoot, array $freeAssets): v
     }
     try {
         $readmeTxt = wpeReadmeMarkdownToTxt($readmeSource);
-        wpeAssertReadmeTxtRules($readmeTxt, '3.0.1');
+        wpeAssertReadmeTxtRules($readmeTxt, '3.1.0');
     } catch (RuntimeException $readmeError) {
         fail('wordpress-org/readme.md: ' . $readmeError->getMessage());
     }

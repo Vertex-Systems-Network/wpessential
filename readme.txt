@@ -4,7 +4,7 @@ Tags: custom post types, custom taxonomy, cpt, post types, taxonomy
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -138,6 +138,17 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 == Changelog ==
 
+= 3.1.0 =
+
+* New: Import / Export. Download your post types, taxonomies and module settings as one file and import it on another site, with a preview of what will change.
+* New: Reset Tools. Reset WPEssential settings, post type and taxonomy definitions, or imported demo content after a preview and a typed confirmation. Posts and users are never touched.
+* New: REST API Control. Limit the REST API to signed-in users, hide the user list, switch off namespaces for visitors and rate-limit anonymous requests.
+* New: AI Connect works with Claude (claude.ai and Claude Desktop) and ChatGPT connectors through OAuth: paste the server URL, then click Allow on your site.
+* New: AI Connect activity log with details for every call and a CSV download.
+* New: Live Preview on WordPress.org through a Playground blueprint.
+* Fixed: AI Connect sign-in on WordPress 6.8 and later.
+* Fixed: a PHP warning when the theme palette has entries without a name.
+
 = 3.0.1 =
 
 * New: one-click demo import in the Demo Library for Gutenberg and Elementor, with progress, resume, cancel and Remove demo.
@@ -156,6 +167,10 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 * New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
 == Upgrade Notice ==
+
+= 3.1.0 =
+
+Adds Import / Export, Reset Tools and REST API Control, and one-click Claude and ChatGPT connections for AI Connect.
 
 = 3.0.1 =
 
