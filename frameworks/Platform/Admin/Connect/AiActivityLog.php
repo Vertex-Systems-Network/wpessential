@@ -71,23 +71,24 @@ final class AiActivityLog {
 
 	/** CSV of the newest events, header first. */
 	public function csv(): string {
-		$handle = fopen( 'php://temp', 'r+' );
-		if ( $handle === false ) {
-			return '';
-		}
-		fputcsv( $handle, self::CSV_COLUMNS, ',', '"', '' );
+		$csv = self::csvLine( self::CSV_COLUMNS );
 		foreach ( $this->recent( self::EXPORT_LIMIT ) as $event ) {
-			$details = (string) wp_json_encode( $event['details'] );
-			$line    = [ $event['time'], $event['tool'], $event['outcome'], (string) $event['user_id'], $event['user'], $event['client'], $event['reason'], $details, $event['id'] ];
-			// Neutralise spreadsheet formulas.
-			$line = array_map( static fn ( string $cell ): string => preg_match( '/^[=+\-@]/', $cell ) === 1 ? "'" . $cell : $cell, $line );
-			fputcsv( $handle, $line, ',', '"', '' );
+			$csv .= self::csvLine( [ $event['time'], $event['tool'], $event['outcome'], (string) $event['user_id'], $event['user'], $event['client'], $event['reason'], (string) wp_json_encode( $event['details'] ), $event['id'] ] );
 		}
-		rewind( $handle );
-		$csv = (string) stream_get_contents( $handle );
-		fclose( $handle );
 
 		return $csv;
+	}
+
+	/** @param list<string> $cells */
+	public static function csvLine( array $cells ): string {
+		$out = [];
+		foreach ( $cells as $cell ) {
+			// Neutralise spreadsheet formulas, then quote.
+			$cell  = preg_match( '/^[=+\-@\t\r]/', $cell ) === 1 ? "'" . $cell : $cell;
+			$out[] = '"' . str_replace( '"', '""', $cell ) . '"';
+		}
+
+		return implode( ',', $out ) . "\r\n";
 	}
 
 	private static function siteId(): int {
