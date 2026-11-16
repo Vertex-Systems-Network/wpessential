@@ -1,6 +1,6 @@
 # WPEssential — MCP / Abilities / Prompts / Resources Contract
 
-Status: **Phase 0 contract + bounded AI Connect runtime shipped (Free 3.1.0)**  
+Status: **Phase 0 contract + bounded AI Connect runtime shipped (Free 3.1.0)**
 Date: 2026-08-29 (runtime reconciliation 2026-11-16)
 
 > Reconciliation 2026-11-16: the AI Connect module ships a bounded MCP server at `wpessential/v1/mcp` (protocol 2025-06-18) that exposes only registered Abilities, runs the two-layer authorization in §9 and audits every tool call (activity log with CSV). It is opt-in, Premium-gated, off by default and read-only unless the owner allows writes. The rest of this contract still applies to it.
