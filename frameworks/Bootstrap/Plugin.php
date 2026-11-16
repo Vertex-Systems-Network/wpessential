@@ -63,7 +63,15 @@ use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Audit\InMemoryAuditLogger;
 use WPEssential\Platform\Audit\Migrations\CreateAuditEventsTableMigration;
 use WPEssential\Platform\Audit\PersistentAuditLogger;
+use WPEssential\Platform\Auth\ExecutionChannel;
+use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
+use WPEssential\Platform\Auth\Principal;
+use WPEssential\Platform\Demos\Import\Importer;
+use WPEssential\Platform\Tools\ImportExport;
+use WPEssential\Platform\Tools\Reset;
+use WPEssential\Platform\Tools\RestControl;
+use WPEssential\Platform\Tools\ToolScreen;
 use WPEssential\Platform\Cache\RequestLocalCache;
 use WPEssential\Platform\Database\Migrations\MigrationCoordinator;
 use WPEssential\Platform\Database\Migrations\MigrationRegistry;
@@ -202,7 +210,38 @@ final class Plugin {
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
 		( new AiOAuth( $aiConnect ) )->register();
 		( new CoreAjaxRoutes( $ajaxRoutes, $ajaxDispatcher, $abilities, $abilityContexts, $aiConnect, $ajaxAction ) )->register();
-		$coreAdmin = new CoreAdminController(
+		$toolRun      = static function ( string $ability, array $input ) use ( $abilities ): mixed {
+			return $abilities->execute(
+				$ability,
+				$input,
+				new ExecutionContext(
+					principal: new Principal( function_exists( 'get_current_user_id' ) ? (int) get_current_user_id() : null ),
+					siteId: function_exists( 'get_current_blog_id' ) ? max( 1, (int) get_current_blog_id() ) : 1,
+					channel: ExecutionChannel::Ui,
+				)
+			);
+		};
+		$toolOn       = static fn ( string $module ): bool => $moduleToggles->isEnabled( $module );
+		$importExport = static fn (): ImportExport => new ImportExport(
+			$toolRun,
+			static fn ( string $option ): mixed => get_option( $option, [] ),
+			static function ( string $option, mixed $value ): void {
+			update_option( $option, $value, false );
+			}
+		);
+		$reset        = static fn (): Reset => new Reset(
+			$toolRun,
+			static function ( string $option ): void {
+				delete_option( $option );
+			},
+			static function (): int {
+				$record = Importer::imported();
+				return count( (array) ( $record['posts'] ?? [] ) ) + count( (array) ( $record['terms'] ?? [] ) );
+			},
+			static fn (): int => (int) Importer::remove(),
+		);
+		( new RestControl( static fn (): bool => $moduleToggles->isEnabled( 'rest-api' ) ) )->register();
+		$coreAdmin    = new CoreAdminController(
 			self::$kernel,
 			$moduleToggles,
 			new OptionContractReader( $pluginRoot ),
@@ -213,6 +252,9 @@ final class Plugin {
 				new AiConnectScreen( $aiConnect, new AiActivityLog( $database instanceof NativeWpdbAdapter ? $database : null ) ),
 				new LicenseScreen( $license, new Account( $license, $siteProof ) ),
 				new DocsScreen(),
+				new ToolScreen( ToolScreen::IMPORT_EXPORT, $importExport, $reset, $toolOn ),
+				new ToolScreen( ToolScreen::RESET, $importExport, $reset, $toolOn ),
+				new ToolScreen( ToolScreen::REST_API, $importExport, $reset, $toolOn ),
 			]
 		);
 		Shell::configure( $activationPolicy->allows( new ModuleManifest( id: 'premium-probe', name: 'Premium probe', version: '0.0.0', edition: 'pro' ) ) );
