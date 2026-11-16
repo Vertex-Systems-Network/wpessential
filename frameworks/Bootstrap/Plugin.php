@@ -41,6 +41,7 @@ use WPEssential\Platform\Admin\Connect\Account;
 use WPEssential\Platform\Admin\Connect\AiConnect;
 use WPEssential\Platform\Admin\Connect\AiActivityLog;
 use WPEssential\Platform\Admin\Connect\AiConnectScreen;
+use WPEssential\Platform\Admin\Connect\AiOAuth;
 use WPEssential\Platform\Admin\Connect\Mcp\SettingsAbilities;
 use WPEssential\Platform\Admin\Connect\McpServer;
 use WPEssential\Platform\Admin\Connect\LicenseScreen;
@@ -199,6 +200,7 @@ final class Plugin {
 		Kit::boot( $pluginRoot, $pluginUrl, defined( 'WPE_VERSION' ) ? (string) WPE_VERSION : '0', $elements );
 		( new SettingsAbilities( $moduleToggles, $elements, $license ) )->register( $abilities );
 		( new McpServer( $abilities, $aiConnect, $audit ) )->register();
+		( new AiOAuth( $aiConnect ) )->register();
 		( new CoreAjaxRoutes( $ajaxRoutes, $ajaxDispatcher, $abilities, $abilityContexts, $aiConnect, $ajaxAction ) )->register();
 		$coreAdmin = new CoreAdminController(
 			self::$kernel,
