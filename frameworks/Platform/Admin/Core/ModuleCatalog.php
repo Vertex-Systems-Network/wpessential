@@ -17,12 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class ModuleCatalog {
 
 	/**
-	 * Modules that are not finished yet: "development" has code in progress, "soon" is not started.
-	 * Anything not listed is ready.
+	 * Modules that are not finished yet, aligned with the README 56-surface dashboard:
+	 * "development" has a bounded runtime that is not product-complete (Custom Tables, Surfaces 11-21, Roles),
+	 * "soon" has no implementation baseline (Backup, Protector, Media, Connections). Anything not listed is ready.
 	 */
 	public const STAGES = [
-		'status'          => 'development',
-		'listings'        => 'development',
+		'custom-tables'   => 'development',
 		'admin-menu'      => 'development',
 		'settings'        => 'development',
 		'roles'           => 'development',
@@ -35,7 +35,7 @@ final class ModuleCatalog {
 		'emails'          => 'development',
 		'chat'            => 'development',
 		'cron'            => 'development',
-		'backup'          => 'development',
+		'backup'          => 'soon',
 		'media'           => 'soon',
 		'protector'       => 'soon',
 		'connections'     => 'soon',
