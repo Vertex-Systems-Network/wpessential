@@ -519,7 +519,9 @@ class Kit {
 		$out = array();
 		if ( function_exists( 'wp_get_global_settings' ) ) {
 			foreach ( (array) wp_get_global_settings( array( 'color', 'palette', 'theme' ) ) as $c ) {
-				$out[ $c['slug'] ] = $c['name'];
+				if ( is_array( $c ) && isset( $c['slug'], $c['name'] ) ) {
+					$out[ $c['slug'] ] = $c['name'];
+				}
 			}
 		}
 		return $out;

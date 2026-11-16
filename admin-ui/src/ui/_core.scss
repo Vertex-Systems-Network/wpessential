@@ -672,3 +672,35 @@
 		color: var(--wpe-muted);
 	}
 }
+
+// AI activity log: the Details button opens a panel under it.
+.wpe-ui-log-details {
+	> summary {
+		list-style: none;
+		cursor: pointer;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+
+	dl {
+		margin: var(--wpe-space-2) 0 0;
+		min-width: 18rem;
+	}
+
+	dt {
+		font-weight: 600;
+	}
+
+	dd {
+		margin: 0 0 var(--wpe-space-2);
+		word-break: break-word;
+	}
+
+	pre {
+		max-height: 16rem;
+		overflow: auto;
+		white-space: pre-wrap;
+	}
+}

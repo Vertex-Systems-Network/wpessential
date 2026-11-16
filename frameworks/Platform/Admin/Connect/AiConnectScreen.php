@@ -32,7 +32,7 @@ final class AiConnectScreen implements AdminScreen {
 	public const ACTION = 'wpessential_ai_connect';
 	private const ONCE  = 'wpessential_ai_once_';
 
-	public function __construct( private readonly AiConnect $connect ) {}
+	public function __construct( private readonly AiConnect $connect, private readonly ?AiActivityLog $log = null ) {}
 
 	public function slug(): string {
 		return Shell::AI_SLUG;
@@ -58,6 +58,10 @@ final class AiConnectScreen implements AdminScreen {
 		$enabled = isset( $_POST['enabled'] ) && $_POST['enabled'] === '1';
 		$user    = get_current_user_id();
 		$notice  = 'saved';
+
+		if ( $op === 'download' ) {
+			$this->download();
+		}
 
 		switch ( $op ) {
 			case 'power':
@@ -138,6 +142,11 @@ final class AiConnectScreen implements AdminScreen {
 				. OptionGroup::render( 'wpe-ai-sessions', __( 'Connected clients', 'wpessential' ), 'Essential', 'ai.sessions', $sessions );
 			$nav[]    = [ 'wpe-ai-connect', __( 'Connect a client', 'wpessential' ), count( $connect ) ];
 			$nav[]    = [ 'wpe-ai-sessions', __( 'Connected clients', 'wpessential' ), count( $sessions ) ];
+		}
+		if ( $this->log !== null && $this->log->available() ) {
+			$events  = $this->log->recent();
+			$groups .= OptionGroup::render( 'wpe-ai-log', __( 'Activity log', 'wpessential' ), 'Essential', 'ai.log', [ $this->activity( $events ) ], true, count( $events ) );
+			$nav[]   = [ 'wpe-ai-log', __( 'Activity log', 'wpessential' ), count( $events ) ];
 		}
 		$html .= SectionNav::layout( __( 'AI Connect', 'wpessential' ), [ __( 'AI Connect', 'wpessential' ) => $nav ], $groups );
 
@@ -242,5 +251,63 @@ final class AiConnectScreen implements AdminScreen {
 		}
 
 		return $rows;
+	}
+
+	/** Sends the AI activity log as a CSV download and stops. */
+	private function download(): void {
+		$csv = $this->log !== null ? $this->log->csv() : '';
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="wpessential-ai-activity-' . gmdate( 'Y-m-d' ) . '.csv"' );
+		echo $csv; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV download, cells neutralised by AiActivityLog::csv().
+		exit;
+	}
+
+	/** @param list<array{id:string,time:string,tool:string,outcome:string,user_id:int,user:string,client:string,reason:string,details:array<string|int,mixed>}> $events */
+	private function activity( array $events ): string {
+		$intro = '<p class="wpe-ui-muted">' . esc_html(
+			sprintf(
+				/* translators: %d: number of events shown. */
+				__( 'Every tool call an AI client made on this site, newest first. The latest %d are shown here; the download has up to 5,000.', 'wpessential' ),
+				AiActivityLog::PAGE_SIZE
+			)
+		) . '</p>';
+		$download = self::form( 'download', '<button type="submit" class="' . esc_attr( Button::classes( 'secondary', true ) ) . '">' . Icon::render( 'download', 14 ) . ' ' . esc_html__( 'Download CSV', 'wpessential' ) . '</button>' );
+		$html     = '<div class="wpe-ui-option"><div class="wpe-ui-option__copy">' . $intro . '</div><div class="wpe-ui-option__meta">' . $download . '</div></div>';
+
+		if ( $events === [] ) {
+			return $html . OptionGroup::row( __( 'No AI activity yet.', 'wpessential' ), __( 'Calls appear here once a connected client uses a tool.', 'wpessential' ), '' );
+		}
+
+		$tones = [
+			'success' => [ 'running', __( 'Success', 'wpessential' ) ],
+			'denied'  => [ 'locked', __( 'Denied', 'wpessential' ) ],
+			'failed'  => [ 'waiting', __( 'Failed', 'wpessential' ) ],
+		];
+		$html .= '<div class="wpe-ui-table-wrap"><table class="widefat striped" aria-label="' . esc_attr__( 'AI activity log', 'wpessential' ) . '"><thead><tr>';
+		foreach ( [ __( 'Time', 'wpessential' ), __( 'Tool', 'wpessential' ), __( 'User', 'wpessential' ), __( 'Client', 'wpessential' ), __( 'Result', 'wpessential' ), __( 'Details', 'wpessential' ) ] as $heading ) {
+			$html .= '<th scope="col">' . esc_html( $heading ) . '</th>';
+		}
+		$html .= '</tr></thead><tbody>';
+		foreach ( $events as $event ) {
+			$time    = strtotime( $event['time'] . ' UTC' );
+			$when    = $time !== false ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $time ) : $event['time'];
+			$tone    = $tones[ $event['outcome'] ] ?? [ 'off', $event['outcome'] ];
+			$details = [
+				__( 'Event ID', 'wpessential' )   => $event['id'],
+				__( 'Time (UTC)', 'wpessential' ) => $event['time'],
+				__( 'Reason', 'wpessential' )     => $event['reason'] !== '' ? $event['reason'] : '—',
+				__( 'Data', 'wpessential' )       => (string) wp_json_encode( $event['details'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ),
+			];
+			$panel   = '';
+			foreach ( $details as $label => $value ) {
+				$panel .= '<dt>' . esc_html( (string) $label ) . '</dt><dd>' . ( $label === __( 'Data', 'wpessential' ) ? '<pre class="wpe-ui-code">' . esc_html( $value ) . '</pre>' : esc_html( $value ) ) . '</dd>';
+			}
+			$html .= '<tr><td>' . esc_html( (string) $when ) . '</td><td><code>' . esc_html( $event['tool'] ) . '</code></td><td>' . esc_html( $event['user'] !== '' ? $event['user'] : '#' . $event['user_id'] ) . '</td><td>' . esc_html( $event['client'] !== '' ? $event['client'] : '—' ) . '</td>';
+			$html .= '<td>' . StatusPill::render( $tone[0], $tone[1] ) . '</td>';
+			$html .= '<td><details class="wpe-ui-log-details"><summary class="' . esc_attr( Button::classes( 'ghost', true ) ) . '">' . esc_html__( 'Details', 'wpessential' ) . '</summary><dl>' . $panel . '</dl></details></td></tr>';
+		}
+
+		return $html . '</tbody></table></div>';
 	}
 }
