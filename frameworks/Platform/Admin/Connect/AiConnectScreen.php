@@ -212,7 +212,11 @@ final class AiConnectScreen implements AdminScreen {
 			);
 		}
 
-		$rows[] = OptionGroup::row( __( 'Server URL', 'wpessential' ), __( 'Paste this into your client.', 'wpessential' ), OptionGroup::readonly( AiConnect::endpoint() ) );
+		$rows[] = OptionGroup::row(
+			__( 'Claude and ChatGPT (recommended)', 'wpessential' ),
+			__( 'No password to copy. Claude: Customize (or Settings) → Connectors → Add custom connector, paste this URL, leave the OAuth fields empty, then Connect. ChatGPT (paid plan, web): Settings → Apps & Connectors → Advanced → Developer mode, create a connector with this URL and OAuth. Then click Allow on this site.', 'wpessential' ),
+			OptionGroup::readonly( AiConnect::endpoint() )
+		);
 		if ( ! AiConnect::secure() ) {
 			$rows[] = OptionGroup::row( __( 'HTTPS and app passwords', 'wpessential' ), '', Notice::render( 'warning', __( 'AI Connect needs HTTPS and WordPress Application Passwords on this site.', 'wpessential' ) ) );
 			return $rows;
@@ -224,7 +228,7 @@ final class AiConnectScreen implements AdminScreen {
 		}
 		$rows[] = self::form(
 			'connect',
-			OptionGroup::row( __( 'Client', 'wpessential' ), __( 'The app you are connecting.', 'wpessential' ), '<label class="screen-reader-text" for="wpe-ai-client">' . esc_html__( 'Client', 'wpessential' ) . '</label><select id="wpe-ai-client" name="client">' . $options . '</select>' )
+			OptionGroup::row( __( 'Client', 'wpessential' ), __( 'For clients that need a password or a secret link (Claude Desktop config, Cursor, VS Code, Gemini CLI), or if OAuth is blocked on your host.', 'wpessential' ), '<label class="screen-reader-text" for="wpe-ai-client">' . esc_html__( 'Client', 'wpessential' ) . '</label><select id="wpe-ai-client" name="client">' . $options . '</select>' )
 			. OptionGroup::row( __( 'Create connection', 'wpessential' ), __( 'Makes an application password for this client.', 'wpessential' ), '<button type="submit" class="' . esc_attr( Button::classes( 'primary' ) ) . '">' . esc_html__( 'Create connection', 'wpessential' ) . '</button>' ),
 			[],
 			'wpe-ui-form'

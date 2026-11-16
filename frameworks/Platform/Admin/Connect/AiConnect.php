@@ -145,7 +145,7 @@ final class AiConnect {
 	 * password. Revoking the session (or the password) disables the link.
 	 */
 	public static function link( int $userId, string $uuid, string $password ): string {
-		$key = $userId . '.' . $uuid . '.' . str_replace( ' ', '', $password );
+		$key = self::key( $userId, $uuid, $password );
 		$url = self::endpoint();
 
 		return $url . ( str_contains( $url, '?' ) ? '&' : '?' ) . self::LINK_PARAM . '=' . rawurlencode( $key );
@@ -161,8 +161,7 @@ final class AiConnect {
 	 */
 	public function authenticateLink( $userId ) {
 		self::$linkUuid = null;
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Bearer-style secret, not a form.
-		$key = isset( $_GET[ self::LINK_PARAM ] ) ? sanitize_text_field( wp_unslash( (string) $_GET[ self::LINK_PARAM ] ) ) : '';
+		$key            = self::requestKey();
 		if ( $key === '' || ! empty( $userId ) || ! $this->enabled() || ! self::secure() || ! class_exists( 'WP_Application_Passwords' ) ) {
 			return $userId;
 		}
@@ -173,19 +172,58 @@ final class AiConnect {
 		if ( ! str_contains( $route, $path ) && ! str_contains( $restRoute, $path ) ) {
 			return $userId;
 		}
+		$user = $this->verifyKey( $key );
+		if ( $user === null ) {
+			return $userId;
+		}
+		[ $id, $uuid ]  = $user;
+		self::$linkUuid = $uuid;
+		\WP_Application_Passwords::record_application_password_usage( $id, $uuid );
+
+		return $id;
+	}
+
+	/** The connector key from an OAuth bearer token or the ?wpe_key= link. */
+	private static function requestKey(): string {
+		$header = '';
+		foreach ( [ 'HTTP_AUTHORIZATION', 'REDIRECT_HTTP_AUTHORIZATION' ] as $name ) {
+			if ( isset( $_SERVER[ $name ] ) && is_string( $_SERVER[ $name ] ) ) {
+				$header = sanitize_text_field( wp_unslash( $_SERVER[ $name ] ) );
+				break;
+			}
+		}
+		if ( preg_match( '/^Bearer\s+(\S+)$/i', $header, $match ) === 1 ) {
+			return $match[1];
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Bearer-style secret, not a form.
+		return isset( $_GET[ self::LINK_PARAM ] ) ? sanitize_text_field( wp_unslash( (string) $_GET[ self::LINK_PARAM ] ) ) : '';
+	}
+
+	/**
+	 * Checks a "user.uuid.password" connector key against the user's WPEssential AI application passwords.
+	 *
+	 * @return array{0:int,1:string}|null User ID and session UUID.
+	 */
+	public function verifyKey( string $key ): ?array {
+		if ( ! class_exists( 'WP_Application_Passwords' ) ) {
+			return null;
+		}
 		$parts = explode( '.', $key, 3 );
 		if ( count( $parts ) !== 3 || ! ctype_digit( $parts[0] ) ) {
-			return $userId;
+			return null;
 		}
 		[ $user, $uuid, $password ] = $parts;
 		$item                       = \WP_Application_Passwords::get_user_application_password( (int) $user, $uuid );
 		if ( ! is_array( $item ) || ! str_starts_with( (string) ( $item['name'] ?? '' ), self::APP_NAME ) || ! self::passwordMatches( $password, (string) $item['password'], (int) $user ) ) {
-			return $userId;
+			return null;
 		}
-		self::$linkUuid = $uuid;
-		\WP_Application_Passwords::record_application_password_usage( (int) $user, $uuid );
 
-		return (int) $user;
+		return [ (int) $user, $uuid ];
+	}
+
+	/** Connector key for a new session: "user.uuid.password". */
+	public static function key( int $userId, string $uuid, string $password ): string {
+		return $userId . '.' . $uuid . '.' . str_replace( ' ', '', $password );
 	}
 
 	/** WordPress 6.8+ hashes application passwords with wp_fast_hash(); older sites use phpass. */
