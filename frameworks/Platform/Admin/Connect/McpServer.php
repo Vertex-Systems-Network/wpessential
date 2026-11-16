@@ -49,6 +49,8 @@ final class McpServer {
 	public function register(): void {
 		if ( function_exists( 'add_action' ) ) {
 			add_action( 'rest_api_init', [ $this, 'routes' ] );
+		}
+		if ( function_exists( 'add_filter' ) ) {
 			// Connector links (Claude custom connectors, ChatGPT) sign in before REST runs.
 			add_filter( 'determine_current_user', [ $this->connect, 'authenticateLink' ], 30 );
 		}
