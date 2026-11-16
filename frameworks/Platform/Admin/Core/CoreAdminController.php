@@ -445,6 +445,13 @@ final class CoreAdminController {
 
 	/** @param array{id:string,edition:string,runtime:bool} $module */
 	private function statusPill( array $module ): string {
+		$stage = ModuleCatalog::stage( $module['id'] );
+		if ( $stage === 'soon' ) {
+			return StatusPill::render( 'soon', __( 'Coming soon', 'wpessential' ) );
+		}
+		if ( $stage === 'development' ) {
+			return StatusPill::render( 'waiting', __( 'Under development', 'wpessential' ) );
+		}
 		if ( $this->isLocked( $module ) ) {
 			return StatusPill::render( 'locked', __( 'Requires Premium', 'wpessential' ) );
 		}

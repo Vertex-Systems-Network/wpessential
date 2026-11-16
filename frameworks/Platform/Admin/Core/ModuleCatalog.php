@@ -16,6 +16,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class ModuleCatalog {
 
+	/**
+	 * Modules that are not finished yet: "development" has code in progress, "soon" is not started.
+	 * Anything not listed is ready.
+	 */
+	public const STAGES = [
+		'status'          => 'development',
+		'listings'        => 'development',
+		'admin-menu'      => 'development',
+		'settings'        => 'development',
+		'roles'           => 'development',
+		'profiles'        => 'development',
+		'membership'      => 'development',
+		'dashboard'       => 'development',
+		'builder-widgets' => 'development',
+		'forms-workflows' => 'development',
+		'notifications'   => 'development',
+		'emails'          => 'development',
+		'chat'            => 'development',
+		'cron'            => 'development',
+		'backup'          => 'development',
+		'media'           => 'soon',
+		'protector'       => 'soon',
+		'connections'     => 'soon',
+	];
+
+	/** Stage of a module: ready, development or soon. */
+	public static function stage( string $id ): string {
+		return self::STAGES[ $id ] ?? 'ready';
+	}
+
 	/** @return array<string,string> */
 	public static function categories(): array {
 		return [
@@ -90,7 +120,7 @@ final class ModuleCatalog {
 			[ 'media', 'Media Manager', 'pro', 'tools', 'media', 'image', false, null, 'Folders, optimisation, replacement and usage tracking.' ],
 			[ 'protector', 'Site Protector', 'pro', 'tools', 'protector', 'shield', false, null, 'Login hardening, firewall rules and security monitoring.' ],
 			[ 'connections', 'Connections', 'pro', 'tools', 'connections', 'plug', false, null, 'External services and APIs with secure credentials.' ],
-			[ 'ai-connect', 'AI Connect', 'pro', 'ai', 'ai', 'spark', false, 'wpessential-ai', 'Let Claude, Cursor and other MCP clients read and, if you allow it, change WPEssential settings.' ],
+			[ 'ai-connect', 'AI Connect', 'pro', 'ai', 'ai', 'spark', true, 'wpessential-ai', 'Let Claude, Cursor and other MCP clients read and, if you allow it, change WPEssential settings.' ],
 		];
 	}
 }
