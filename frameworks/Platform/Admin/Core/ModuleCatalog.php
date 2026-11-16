@@ -17,28 +17,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class ModuleCatalog {
 
 	/**
-	 * Modules that are not finished yet, aligned with the README 56-surface dashboard:
-	 * "development" has a bounded runtime that is not product-complete (Custom Tables, Surfaces 11-21, Roles),
+	 * Modules that are not finished for a user yet (docs/AUDIT-2026-11-16-FREE-PRO-MARKET.md):
+	 * "development" has code but is not user-complete (no edit-screen UI or no front-end output yet),
 	 * "soon" has no implementation baseline (Backup, Protector, Media, Connections). Anything not listed is ready.
 	 */
 	public const STAGES = [
-		'custom-tables'   => 'development',
-		'admin-menu'      => 'development',
-		'settings'        => 'development',
-		'roles'           => 'development',
-		'profiles'        => 'development',
-		'membership'      => 'development',
-		'dashboard'       => 'development',
-		'builder-widgets' => 'development',
-		'forms-workflows' => 'development',
-		'notifications'   => 'development',
-		'emails'          => 'development',
-		'chat'            => 'development',
-		'cron'            => 'development',
-		'backup'          => 'soon',
-		'media'           => 'soon',
-		'protector'       => 'soon',
-		'connections'     => 'soon',
+		'custom-fields'     => 'development',
+		'relations'         => 'development',
+		'custom-tables'     => 'development',
+		'status'            => 'development',
+		'query'             => 'development',
+		'dashboard-widgets' => 'development',
+		'listings'          => 'development',
+		'admin-menu'        => 'development',
+		'settings'          => 'development',
+		'roles'             => 'development',
+		'profiles'          => 'development',
+		'membership'        => 'development',
+		'dashboard'         => 'development',
+		'builder-widgets'   => 'development',
+		'forms-workflows'   => 'development',
+		'notifications'     => 'development',
+		'emails'            => 'development',
+		'chat'              => 'development',
+		'cron'              => 'development',
+		'backup'            => 'soon',
+		'media'             => 'soon',
+		'protector'         => 'soon',
+		'connections'       => 'soon',
 	];
 
 	/** Stage of a module: ready, development or soon. */

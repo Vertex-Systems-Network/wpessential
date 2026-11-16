@@ -347,13 +347,20 @@ final class CoreAdminController {
 		$html .= '<p class="wpe-ui-muted">' . esc_html( $module['description'] ) . '</p>';
 		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Status:', 'wpessential' ) . ' ' . $this->statusPill( $module ) . '</p></div>';
 		$html .= '<div class="wpe-ui-module-head__actions">';
-		if ( $module['builder'] !== null && $this->isActive( $module ) ) {
+		if ( $module['builder'] !== null && $this->isActive( $module ) && self::pageRegistered( $module['builder'] ) ) {
 			$html .= Button::link( __( 'Open builder', 'wpessential' ), AdminUrl::page( $module['builder'] ), 'secondary' );
 		}
 		$html .= $this->toggle( $module, $page ) . '</div></div>';
 
 		if ( $this->isLocked( $module ) ) {
 			$html .= $this->upsell();
+		} elseif ( $module['builder'] !== null && $this->isActive( $module ) && ! self::pageRegistered( $module['builder'] ) ) {
+			$html .= Notice::render(
+				'warning',
+				$module['edition'] === 'pro'
+					? __( 'The builder did not load. Check that WPEssential Pro is active and up to date and that your licence is active (WPEssential → Licence). Pro stops its modules when the Free version is outside the range it supports.', 'wpessential' )
+					: __( 'The builder did not load on this request. Reload the page; if it stays, see WPEssential → System Status.', 'wpessential' )
+			);
 		}
 
 		$contract = $this->contracts->read( $module['contract'] );
@@ -443,7 +450,7 @@ final class CoreAdminController {
 		);
 	}
 
-	/** @param array{id:string,edition:string,runtime:bool} $module */
+	/** @param array{id:string,edition:string,runtime:bool,builder?:?string} $module */
 	private function statusPill( array $module ): string {
 		$stage = ModuleCatalog::stage( $module['id'] );
 		if ( $stage === 'soon' ) {
@@ -460,6 +467,10 @@ final class CoreAdminController {
 		}
 		if ( ! $module['runtime'] ) {
 			return StatusPill::render( 'soon', __( 'Coming soon', 'wpessential' ) );
+		}
+
+		if ( $module['edition'] === 'pro' && is_string( $module['builder'] ?? null ) && ! self::pageRegistered( $module['builder'] ) && did_action( 'admin_menu' ) ) {
+			return StatusPill::render( 'waiting', __( 'Not loaded', 'wpessential' ) );
 		}
 
 		return $this->kernel->modules()->state( $module['id'] ) === ModuleState::Degraded
@@ -642,6 +653,21 @@ final class CoreAdminController {
 	/** @param array{id:string,edition:string} $module */
 	private function isActive( array $module ): bool {
 		return ! $this->isLocked( $module ) && $this->toggles->isEnabled( $module['id'] );
+	}
+
+	/** True when an admin page with this slug was registered on this request (so its link will not 403). */
+	private static function pageRegistered( string $slug ): bool {
+		global $_registered_pages;
+		if ( ! is_array( $_registered_pages ?? null ) ) {
+			return true;
+		}
+		foreach ( array_keys( $_registered_pages ) as $hook ) {
+			if ( str_ends_with( (string) $hook, '_page_' . $slug ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function requireCapability(): void {
