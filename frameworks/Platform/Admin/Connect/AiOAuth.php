@@ -29,7 +29,7 @@ final class AiOAuth {
 	public function __construct( private readonly AiConnect $connect ) {}
 
 	public function register(): void {
-		if ( ! function_exists( 'add_action' ) ) {
+		if ( ! function_exists( 'add_action' ) || ! function_exists( 'add_filter' ) ) {
 			return;
 		}
 		add_action( 'init', [ $this, 'wellKnown' ], 0 );
