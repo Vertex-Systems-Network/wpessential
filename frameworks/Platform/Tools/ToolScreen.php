@@ -37,7 +37,9 @@ final class ToolScreen implements AdminScreen {
 		self::REST_API      => 'wpessential-rest-api',
 	];
 
-	private const RESULT = 'wpessential_tool_result_';
+	private const RESULT         = 'wpessential_tool_result_';
+	private const RESTORE_OPTION = 'wpessential_reset_restore_point';
+	private const HISTORY_OPTION = 'wpessential_reset_history';
 
 	/**
 	 * @param Closure(): ImportExport $importExport
@@ -138,28 +140,117 @@ final class ToolScreen implements AdminScreen {
 	}
 
 	private function handleReset(): void {
-		$parts   = isset( $_POST['parts'] ) && is_array( $_POST['parts'] ) ? array_map( 'sanitize_key', wp_unslash( $_POST['parts'] ) ) : []; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked in handle().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in handle().
+		$op   = isset( $_POST['op'] ) ? sanitize_key( wp_unslash( (string) $_POST['op'] ) ) : '';
+		$user = get_current_user_id();
+		if ( $op === 'cleanup' ) {
+			$tools = isset( $_POST['tools'] ) && is_array( $_POST['tools'] ) ? array_map( 'sanitize_key', wp_unslash( $_POST['tools'] ) ) : [];
+			$tools = array_values( array_intersect( $tools, array_keys( Cleanup::tools() ) ) );
+			if ( $tools === [] ) {
+				$this->back( 'nothing' );
+			}
+			$log     = [];
+			$cleanup = new Cleanup();
+			foreach ( $tools as $tool ) {
+				$log[] = [
+					'part'    => 'cleanup',
+					'item'    => Cleanup::tools()[ $tool ][0],
+					'ok'      => true,
+					'message' => (string) $cleanup->run( $tool ) . ' ' . __( 'items', 'wpessential' ),
+				];
+			}
+			$this->remember( $tools, $log );
+			set_transient( self::RESULT . $user, [ 'reset' => $log ], 600 );
+			$this->back( 'reset' );
+		}
+		if ( $op === 'restore' ) {
+			$point = get_option( self::RESTORE_OPTION );
+			if ( ! is_array( $point ) || ! is_array( $point['data'] ?? null ) ) {
+				$this->back( 'expired' );
+			}
+			$done = ( $this->importExport )()->import( $point['data'] );
+			$log  = array_map(
+				static fn ( array $row ): array => [
+					'part'    => 'restore',
+					'item'    => $row['slug'],
+					'ok'      => $row['error'] === '',
+					'message' => $row['action'] . ( $row['error'] !== '' ? ': ' . $row['error'] : '' ),
+				],
+				$done
+			);
+			$this->remember( [ 'restore' ], $log );
+			set_transient( self::RESULT . $user, [ 'reset' => $log ], 600 );
+			$this->back( 'reset' );
+		}
+
+		$parts   = isset( $_POST['parts'] ) && is_array( $_POST['parts'] ) ? array_map( 'sanitize_key', wp_unslash( $_POST['parts'] ) ) : [];
 		$parts   = array_values( array_intersect( $parts, Reset::PARTS ) );
-		$confirm = isset( $_POST['confirm'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['confirm'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked in handle().
+		$confirm = isset( $_POST['confirm'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['confirm'] ) ) : '';
+		// phpcs:enable
 		if ( $parts === [] ) {
 			$this->back( 'nothing' );
 		}
 		if ( strtoupper( $confirm ) !== 'RESET' ) {
 			$this->back( 'confirm' );
 		}
-		set_transient( self::RESULT . get_current_user_id(), [ 'reset' => ( $this->reset )()->run( $parts ) ], 600 );
+		if ( array_intersect( $parts, [ 'settings', 'definitions' ] ) !== [] ) {
+			// Restore point: the same file Export makes, so a reset of WPEssential data can be undone.
+			update_option(
+				self::RESTORE_OPTION,
+				[
+					'time' => time(),
+					'data' => ( $this->importExport )()->export( [ 'post_types', 'taxonomies', 'settings' ], (string) home_url() ),
+				],
+				false
+			);
+		}
+		$log = ( $this->reset )()->run( $parts );
+		$this->remember( $parts, $log );
+		set_transient( self::RESULT . $user, [ 'reset' => $log ], 600 );
 		$this->back( 'reset' );
+	}
+
+	/**
+	 * @param list<string>                     $parts
+	 * @param list<array{ok:bool}|array<string,mixed>> $log
+	 */
+	private function remember( array $parts, array $log ): void {
+		$history   = get_option( self::HISTORY_OPTION, [] );
+		$history   = is_array( $history ) ? array_values( $history ) : [];
+		$ok        = count( array_filter( $log, static fn ( array $row ): bool => (bool) ( $row['ok'] ?? false ) ) );
+		$user      = wp_get_current_user();
+		$history[] = [
+			'time'   => time(),
+			'user'   => (string) $user->user_login,
+			'parts'  => implode( ', ', $parts ),
+			'ok'     => $ok,
+			'failed' => count( $log ) - $ok,
+		];
+		update_option( self::HISTORY_OPTION, array_slice( $history, -20 ), false );
 	}
 
 	private function handleRest(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in handle().
-		$namespaces = isset( $_POST['disabled_namespaces'] ) && is_array( $_POST['disabled_namespaces'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['disabled_namespaces'] ) ) : [];
-		$settings   = RestControl::normalize(
+		$op = isset( $_POST['op'] ) ? sanitize_key( wp_unslash( (string) $_POST['op'] ) ) : '';
+		if ( $op === 'clear_log' ) {
+			delete_option( RestControl::LOG_OPTION );
+			$this->back( 'saved' );
+		}
+		$list     = static fn ( string $key ): array => isset( $_POST[ $key ] ) && is_array( $_POST[ $key ] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST[ $key ] ) ) : [];
+		$text     = static fn ( string $key ): string => isset( $_POST[ $key ] ) ? sanitize_textarea_field( wp_unslash( (string) $_POST[ $key ] ) ) : '';
+		$settings = RestControl::normalize(
 			[
 				'logged_in_only'      => isset( $_POST['logged_in_only'] ),
+				'allow_routes'        => array_merge( $list( 'allow_known' ), preg_split( '/[\r\n,]+/', $text( 'allow_routes' ) ) ?: [] ),
+				'restricted_roles'    => $list( 'restricted_roles' ),
 				'hide_users'          => isset( $_POST['hide_users'] ),
-				'disabled_namespaces' => $namespaces,
+				'disabled_namespaces' => $list( 'disabled_namespaces' ),
 				'rate_limit'          => isset( $_POST['rate_limit'] ) ? absint( $_POST['rate_limit'] ) : 0,
+				'rate_exempt_ips'     => $text( 'rate_exempt_ips' ),
+				'remove_discovery'    => isset( $_POST['remove_discovery'] ),
+				'disable_jsonp'       => isset( $_POST['disable_jsonp'] ),
+				'disable_xmlrpc'      => isset( $_POST['disable_xmlrpc'] ),
+				'log_blocked'         => isset( $_POST['log_blocked'] ),
 			]
 		);
 		// phpcs:enable
@@ -324,7 +415,7 @@ final class ToolScreen implements AdminScreen {
 		}
 		$rows[] = OptionGroup::row(
 			__( 'Confirm', 'wpessential' ),
-			__( 'This cannot be undone. Export first if you may need it.', 'wpessential' ),
+			__( 'A restore point of your WPEssential settings and definitions is saved first, so you can undo those. Demo content cannot be restored.', 'wpessential' ),
 			Field::input(
 				'wpe-reset-confirm',
 				__( 'Type RESET', 'wpessential' ),
@@ -335,12 +426,81 @@ final class ToolScreen implements AdminScreen {
 			)
 		);
 		$rows[] = OptionGroup::row( __( 'Run', 'wpessential' ), '', self::submit( __( 'Reset selected', 'wpessential' ), 'danger' ) );
-		$html   = OptionGroup::render( 'wpe-tool-reset', __( 'Reset', 'wpessential' ), '', '', [ $this->form( 'reset', implode( '', $rows ) ) ] );
+		$html   = OptionGroup::render( 'wpe-tool-reset', __( 'WPEssential data', 'wpessential' ), '', '', [ $this->form( 'reset', implode( '', $rows ) ) ] );
+
+		$counts  = ( new Cleanup() )->counts();
+		$cleanup = [];
+		foreach ( Cleanup::tools() as $id => [ $label, $help ] ) {
+			$cleanup[] = OptionGroup::row(
+				$label,
+				$help,
+				StatusPill::render( $counts[ $id ] > 0 ? 'waiting' : 'off', number_format_i18n( $counts[ $id ] ) )
+				. Check::render(
+					__( 'Clean', 'wpessential' ),
+					[
+						'name'     => 'tools[]',
+						'value'    => $id,
+						'id'       => 'wpe-clean-' . $id,
+						'disabled' => $counts[ $id ] === 0 ? 'disabled' : null,
+					]
+				)
+			);
+		}
+		$cleanup[] = OptionGroup::row(
+			__( 'Run', 'wpessential' ),
+			sprintf(
+				/* translators: %d: batch size. */
+				__( 'Removed items cannot be restored. Large tables are cleaned %d rows at a time; run again to continue.', 'wpessential' ),
+				Cleanup::BATCH
+			),
+			Check::render(
+				__( 'I understand', 'wpessential' ),
+				[
+					'name'     => 'ack',
+					'id'       => 'wpe-clean-ack',
+					'required' => 'required',
+				]
+			) . ' ' . self::submit( __( 'Clean selected', 'wpessential' ), 'danger' )
+		);
+		$html .= OptionGroup::render( 'wpe-tool-cleanup', __( 'Database cleanup', 'wpessential' ), '', '', [ $this->form( 'cleanup', implode( '', $cleanup ) ) ] );
+
+		$point = get_option( self::RESTORE_OPTION );
+		if ( is_array( $point ) && isset( $point['time'] ) ) {
+			$when  = wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $point['time'] );
+			$html .= OptionGroup::render(
+				'wpe-tool-restore',
+				__( 'Restore point', 'wpessential' ),
+				'',
+				'',
+				[
+					$this->form(
+						'restore',
+						OptionGroup::row(
+							sprintf(
+								/* translators: %s: date and time. */
+								__( 'Saved %s', 'wpessential' ),
+								(string) $when
+							),
+							__( 'Brings back the post types, taxonomies and settings as they were before the last reset.', 'wpessential' ),
+							self::submit( __( 'Restore', 'wpessential' ), 'secondary' )
+						)
+					),
+				]
+			);
+		}
 
 		$state = get_transient( self::RESULT . get_current_user_id() );
 		if ( is_array( $state ) && is_array( $state['reset'] ?? null ) ) {
 			delete_transient( self::RESULT . get_current_user_id() );
-			$html .= OptionGroup::render( 'wpe-tool-reset-log', __( 'Results', 'wpessential' ), '', '', [ self::table( [ __( 'Part', 'wpessential' ), __( 'Item', 'wpessential' ), __( 'Result', 'wpessential' ) ], array_map( static fn ( array $row ): array => [ $row['part'], $row['item'], ( $row['ok'] ? '✓ ' : '✗ ' ) . $row['message'] ], $state['reset'] ) ) ] );
+			$html .= OptionGroup::render( 'wpe-tool-reset-log', __( 'Results', 'wpessential' ), '', '', [ self::table( [ __( 'Part', 'wpessential' ), __( 'Item', 'wpessential' ), __( 'Result', 'wpessential' ) ], array_map( static fn ( array $row ): array => [ (string) $row['part'], (string) $row['item'], ( $row['ok'] ? '✓ ' : '✗ ' ) . $row['message'] ], $state['reset'] ) ) ] );
+		}
+		$history = get_option( self::HISTORY_OPTION, [] );
+		if ( is_array( $history ) && $history !== [] ) {
+			$rows  = array_map(
+				static fn ( array $row ): array => [ (string) wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $row['time'] ), (string) $row['user'], (string) $row['parts'], $row['ok'] . ' ✓ / ' . $row['failed'] . ' ✗' ],
+				array_reverse( array_values( $history ) )
+			);
+			$html .= OptionGroup::render( 'wpe-tool-history', __( 'History', 'wpessential' ), '', '', [ self::table( [ __( 'When', 'wpessential' ), __( 'User', 'wpessential' ), __( 'What', 'wpessential' ), __( 'Result', 'wpessential' ) ], $rows ) ], false );
 		}
 
 		return $html;
@@ -348,55 +508,59 @@ final class ToolScreen implements AdminScreen {
 
 	private function renderRest(): string {
 		$settings   = RestControl::settings();
-		$namespaces = [];
-		if ( function_exists( 'rest_get_server' ) ) {
-			$namespaces = array_values( array_diff( rest_get_server()->get_namespaces(), RestControl::ALWAYS_ON ) );
-		}
-		$namespaces = array_values( array_unique( array_merge( $namespaces, $settings['disabled_namespaces'] ) ) );
-		sort( $namespaces );
-		$checks = '';
-		foreach ( $namespaces as $namespace ) {
-			$checks .= Check::render(
-				$namespace,
-				[
-					'name'  => 'disabled_namespaces[]',
-					'value' => $namespace,
-					'id'    => 'wpe-ns-' . sanitize_key( $namespace ),
-				],
-				in_array( $namespace, $settings['disabled_namespaces'], true )
-			);
-		}
-		$rows = [
-			OptionGroup::row(
-				__( 'Signed-in users only', 'wpessential' ),
-				__( 'Visitors get "401" from every REST route. Headless front ends and some plugins need public REST, so test after turning this on.', 'wpessential' ),
-				Check::render(
-					__( 'On', 'wpessential' ),
+		$namespaces = function_exists( 'rest_get_server' ) ? rest_get_server()->get_namespaces() : [];
+		$others     = array_values( array_unique( array_merge( array_diff( $namespaces, RestControl::ALWAYS_ON ), $settings['disabled_namespaces'] ) ) );
+		sort( $others );
+		$checks = static function ( string $name, array $values, array $selected, string $prefix ): string {
+			$html = '';
+			foreach ( $values as $value => $label ) {
+				$html .= Check::render(
+					(string) $label,
 					[
-						'name'  => 'logged_in_only',
-						'id'    => 'wpe-rest-login',
-						'value' => '1',
+						'name'  => $name . '[]',
+						'value' => (string) $value,
+						'id'    => $prefix . sanitize_key( (string) $value ),
 					],
-					$settings['logged_in_only']
-				)
-			),
-			OptionGroup::row(
-				__( 'Hide the user list', 'wpessential' ),
-				__( 'Stops visitors listing usernames through /wp/v2/users.', 'wpessential' ),
-				Check::render(
-					__( 'On', 'wpessential' ),
-					[
-						'name'  => 'hide_users',
-						'id'    => 'wpe-rest-users',
-						'value' => '1',
-					],
-					$settings['hide_users']
-				)
-			),
-			OptionGroup::row( __( 'Switch off for visitors', 'wpessential' ), __( 'Ticked namespaces answer "404" to visitors. Editors and admins keep access so the block editor works. WPEssential and oEmbed always stay on.', 'wpessential' ), '<div class="wpe-ui-stack">' . ( $checks !== '' ? $checks : esc_html__( 'No other namespaces.', 'wpessential' ) ) . '</div>' ),
+					in_array( (string) $value, $selected, true )
+				);
+			}
+
+			return '<div class="wpe-ui-stack">' . ( $html !== '' ? $html : esc_html__( 'None found.', 'wpessential' ) ) . '</div>';
+		};
+		$known  = [];
+		foreach ( RestControl::KNOWN_PUBLIC as $namespace => $label ) {
+			if ( in_array( $namespace, $namespaces, true ) ) {
+				$known[ $namespace ] = $label . ' (' . $namespace . ')';
+			}
+		}
+		$custom = array_diff( $settings['allow_routes'], array_keys( $known ) );
+		$roles  = [];
+		foreach ( wp_roles()->get_names() as $role => $name ) {
+			if ( $role !== 'administrator' ) {
+				$roles[ $role ] = translate_user_role( $name );
+			}
+		}
+		$on     = static fn ( string $key, string $id ): string => Check::render(
+			__( 'On', 'wpessential' ),
+			[
+				'name'  => $key,
+				'id'    => $id,
+				'value' => '1',
+			],
+			(bool) $settings[ $key ]
+		);
+		$access = [
+			OptionGroup::row( __( 'Signed-in users only', 'wpessential' ), __( 'Visitors get "401" from every REST route except the exceptions below. Test your forms and checkout after turning this on.', 'wpessential' ), $on( 'logged_in_only', 'wpe-rest-login' ) ),
+			OptionGroup::row( __( 'Exceptions for plugins found', 'wpessential' ), __( 'Public routes these active plugins need (forms, cart, checkout). Ticked ones stay open to visitors.', 'wpessential' ), $checks( 'allow_known', $known, $settings['allow_routes'], 'wpe-allow-' ) ),
+			OptionGroup::row( __( 'Other exceptions', 'wpessential' ), __( 'One route or namespace per line, for example wp/v2/posts or my-plugin/v1.', 'wpessential' ), '<textarea name="allow_routes" rows="3" class="large-text code" aria-label="' . esc_attr__( 'Other exceptions', 'wpessential' ) . '">' . esc_textarea( implode( "\n", $custom ) ) . '</textarea>' ),
+			OptionGroup::row( __( 'Restricted roles', 'wpessential' ), __( 'Signed-in users who only have these roles are treated like visitors (for example Subscriber or Customer). Administrators are never restricted.', 'wpessential' ), $checks( 'restricted_roles', $roles, $settings['restricted_roles'], 'wpe-role-' ) ),
+			OptionGroup::row( __( 'Hide the user list', 'wpessential' ), __( 'Stops visitors listing usernames through /wp/v2/users.', 'wpessential' ), $on( 'hide_users', 'wpe-rest-users' ) ),
+			OptionGroup::row( __( 'Switch off for visitors', 'wpessential' ), __( 'Ticked namespaces answer "404" to visitors. Editors keep access so the block editor works. WPEssential and oEmbed always stay on.', 'wpessential' ), $checks( 'disabled_namespaces', array_combine( $others, $others ) ?: [], $settings['disabled_namespaces'], 'wpe-ns-' ) ),
+		];
+		$harden = [
 			OptionGroup::row(
 				__( 'Rate limit', 'wpessential' ),
-				__( 'Requests per minute per visitor IP. 0 turns it off.', 'wpessential' ),
+				__( 'REST requests per minute per visitor IP. 0 turns it off.', 'wpessential' ),
 				Field::input(
 					'wpe-rest-rate',
 					__( 'Per minute', 'wpessential' ),
@@ -409,10 +573,29 @@ final class ToolScreen implements AdminScreen {
 					]
 				)
 			),
+			OptionGroup::row( __( 'Never limit these IPs', 'wpessential' ), __( 'One IP per line, for your own office, uptime monitors or a headless front end.', 'wpessential' ), '<textarea name="rate_exempt_ips" rows="2" class="large-text code" aria-label="' . esc_attr__( 'Never limit these IPs', 'wpessential' ) . '">' . esc_textarea( implode( "\n", $settings['rate_exempt_ips'] ) ) . '</textarea>' ),
+			OptionGroup::row( __( 'Hide REST discovery links', 'wpessential' ), __( 'Removes the api.w.org link from page headers and HTML. The API still works for those allowed.', 'wpessential' ), $on( 'remove_discovery', 'wpe-rest-discovery' ) ),
+			OptionGroup::row( __( 'Turn off JSONP', 'wpessential' ), __( 'Old cross-site callback format nobody needs today.', 'wpessential' ), $on( 'disable_jsonp', 'wpe-rest-jsonp' ) ),
+			OptionGroup::row( __( 'Turn off XML-RPC', 'wpessential' ), __( 'Blocks xmlrpc.php, a common brute-force target. Leave on if you use the Jetpack app or old publishing apps.', 'wpessential' ), $on( 'disable_xmlrpc', 'wpe-rest-xmlrpc' ) ),
+			OptionGroup::row( __( 'Log blocked requests', 'wpessential' ), __( 'Keeps the last 100 blocked requests with a masked IP.', 'wpessential' ), $on( 'log_blocked', 'wpe-rest-log' ) ),
 			OptionGroup::row( __( 'Save', 'wpessential' ), '', self::submit( __( 'Save changes', 'wpessential' ) ) ),
 		];
+		$html   = $this->form(
+			'save',
+			OptionGroup::render( 'wpe-tool-rest', __( 'Who can use the REST API', 'wpessential' ), '', '', $access )
+			. OptionGroup::render( 'wpe-tool-harden', __( 'Hardening', 'wpessential' ), '', '', $harden )
+		);
 
-		return OptionGroup::render( 'wpe-tool-rest', __( 'REST API for visitors', 'wpessential' ), '', '', [ $this->form( 'save', implode( '', $rows ) ) ] );
+		$blocked = RestControl::blocked();
+		$rows    = array_map(
+			static fn ( array $row ): array => [ (string) wp_date( get_option( 'time_format' ) . ', ' . get_option( 'date_format' ), (int) $row['time'] ), (string) $row['method'] . ' ' . (string) $row['route'], (string) $row['status'] . ' ' . (string) $row['code'], (string) $row['ip'] ],
+			array_slice( $blocked, 0, 50 )
+		);
+		$log     = $rows === []
+			? [ OptionGroup::row( __( 'Nothing blocked yet.', 'wpessential' ), '', '' ) ]
+			: [ self::table( [ __( 'Time', 'wpessential' ), __( 'Request', 'wpessential' ), __( 'Answer', 'wpessential' ), __( 'IP', 'wpessential' ) ], $rows ), $this->form( 'clear_log', self::submit( __( 'Clear log', 'wpessential' ), 'ghost' ) ) ];
+
+		return $html . OptionGroup::render( 'wpe-tool-rest-log', __( 'Blocked requests', 'wpessential' ), '', '', $log, true, count( $blocked ) );
 	}
 
 	/**

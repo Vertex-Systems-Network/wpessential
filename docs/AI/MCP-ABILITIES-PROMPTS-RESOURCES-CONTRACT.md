@@ -1,7 +1,9 @@
 # WPEssential — MCP / Abilities / Prompts / Resources Contract
 
-Status: **Phase 0 planning / no MCP runtime authorization**  
-Date: 2026-08-29
+Status: **Phase 0 contract + bounded AI Connect runtime shipped (Free 3.1.0)**
+Date: 2026-08-29 (runtime reconciliation 2026-11-16)
+
+> Reconciliation 2026-11-16: the AI Connect module ships a bounded MCP server at `wpessential/v1/mcp` (protocol 2025-06-18) that exposes only registered Abilities, runs the two-layer authorization in §9 and audits every tool call (activity log with CSV). It is opt-in, Premium-gated, off by default and read-only unless the owner allows writes. The rest of this contract still applies to it.
 
 ## 1. Decision
 
@@ -223,6 +225,13 @@ Examples subject to future certification:
 Do not invent anonymous bearer access to privileged WPE tools.
 
 Custom transport authentication is a future adapter concern only when normal WordPress/MCP Adapter mechanisms cannot satisfy a documented requirement.
+
+Documented requirement (2026-11-16): Claude custom connectors (claude.ai, Claude Desktop) and ChatGPT developer-mode connectors accept only a server URL with OAuth or no authentication; they cannot send an Application Password header. AI Connect therefore adds, all bound to a WordPress Application Password session that the owner can revoke:
+
+- OAuth 2.1 authorization server: discovery at `/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server`, dynamic client registration (RFC 7591), authorization code with PKCE S256 only, HTTPS or loopback redirect URIs only, and a WordPress consent screen that requires `manage_options`. The access token is the approved session's key; Disconnect revokes it.
+- A secret connector link (`?wpe_key=`) as a fallback, accepted only on the MCP route, over HTTPS (or a local site) and while AI Connect is on.
+
+Neither path grants anonymous access: every token resolves to a real WordPress user and session, and Ability permission checks still apply.
 
 ## 11. MCP session and cache safety
 

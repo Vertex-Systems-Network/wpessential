@@ -169,4 +169,26 @@ final class SiteToolsModulesTest extends TestCase {
 		self::assertSame( 404, RestControl::decide( $open, '/wc/v3/products', true, false )[1] ?? 0 );
 		self::assertNotNull( RestControl::decide( $open, '/wp/v2/users', false, false ) );
 	}
+
+	public function test_rest_allow_list_roles_and_masking(): void {
+		$settings = RestControl::normalize(
+			[
+				'logged_in_only'   => true,
+				'allow_routes'     => "contact-form-7/v1\n/wp/v2/posts/\nbad route!",
+				'restricted_roles' => [ 'subscriber', 'administrator' ],
+				'rate_exempt_ips'  => "1.2.3.4\nnot-an-ip",
+			]
+		);
+		self::assertSame( [ 'contact-form-7/v1', 'wp/v2/posts' ], $settings['allow_routes'] );
+		self::assertSame( [ 'subscriber' ], $settings['restricted_roles'] );
+		self::assertSame( [ '1.2.3.4' ], $settings['rate_exempt_ips'] );
+		self::assertNull( RestControl::decide( $settings, '/contact-form-7/v1/contact-forms/5/feedback', false, false ) );
+		self::assertNull( RestControl::decide( $settings, '/wp/v2/posts/12', false, false ) );
+		self::assertSame( 401, RestControl::decide( $settings, '/wp/v2/pages', false, false )[1] ?? 0 );
+		self::assertSame( [ 'wpessential_rest_role_restricted', 403 ], RestControl::decide( $settings, '/wp/v2/pages', true, false, [ 'subscriber' ] ) );
+		self::assertNull( RestControl::decide( $settings, '/wp/v2/pages', true, true, [ 'editor' ] ) );
+		self::assertNull( RestControl::decide( $settings, '/wp/v2/pages', true, false, [ 'subscriber', 'administrator' ] ) );
+		self::assertSame( '203.0.113.0', RestControl::maskIp( '203.0.113.77' ) );
+		self::assertSame( '2001:db8:85a3::', RestControl::maskIp( '2001:db8:85a3:0:0:8a2e:370:7334' ) );
+	}
 }
