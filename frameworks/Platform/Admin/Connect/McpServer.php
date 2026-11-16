@@ -189,9 +189,14 @@ final class McpServer {
 			siteId: function_exists( 'get_current_blog_id' ) ? max( 1, (int) get_current_blog_id() ) : 1,
 			channel: ExecutionChannel::Ai,
 		);
+		$started  = microtime( true );
+		$meta     = [
+			'client'    => $this->connect->clientFor( ( $this->currentUser )(), AiConnect::linkSession() ?? ( function_exists( 'rest_get_authenticated_app_password' ) ? rest_get_authenticated_app_password() : null ) ),
+			'arguments' => $arguments,
+		];
 		$decision = $this->abilities->authorize( $descriptor->name, $context, $arguments );
 		if ( ! $decision->allowed ) {
-			$this->record( $context, $descriptor, AuditOutcome::Denied, $decision->reason );
+			$this->record( $context, $descriptor, AuditOutcome::Denied, $decision->reason, $meta );
 
 			return self::result( $id, self::content( [ 'error' => 'Not allowed: ' . $decision->reason ], true ) );
 		}
@@ -199,11 +204,11 @@ final class McpServer {
 		try {
 			$output = $this->abilities->execute( $descriptor->name, $arguments, $context );
 		} catch ( Throwable $error ) {
-			$this->record( $context, $descriptor, AuditOutcome::Failed, $error->getMessage() );
+			$this->record( $context, $descriptor, AuditOutcome::Failed, $error->getMessage(), $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
 
 			return self::result( $id, self::content( [ 'error' => $error->getMessage() ], true ) );
 		}
-		$this->record( $context, $descriptor, AuditOutcome::Success, null );
+		$this->record( $context, $descriptor, AuditOutcome::Success, null, $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
 
 		return self::result( $id, self::content( $output ) );
 	}
@@ -221,7 +226,8 @@ final class McpServer {
 		];
 	}
 
-	private function record( ExecutionContext $context, AbilityDescriptor $descriptor, AuditOutcome $outcome, ?string $reason ): void {
+	/** @param array<string,mixed> $metadata */
+	private function record( ExecutionContext $context, AbilityDescriptor $descriptor, AuditOutcome $outcome, ?string $reason, array $metadata = [] ): void {
 		if ( $this->audit === null || ! function_exists( 'wp_generate_uuid4' ) ) {
 			return;
 		}
@@ -236,6 +242,7 @@ final class McpServer {
 					resourceType: 'ability',
 					resourceId: $descriptor->name,
 					reason: $reason,
+					metadata: $metadata,
 				)
 			);
 		} catch ( Throwable ) {

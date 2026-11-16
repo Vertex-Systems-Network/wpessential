@@ -203,6 +203,20 @@ final class AiConnect {
 		return self::$linkUuid;
 	}
 
+	/** Client label of the session that made a request ('' when unknown). */
+	public function clientFor( int $userId, ?string $uuid ): string {
+		if ( $userId <= 0 || $uuid === null || $uuid === '' ) {
+			return '';
+		}
+		foreach ( $this->sessions( $userId ) as $session ) {
+			if ( $session['uuid'] === $uuid ) {
+				return $session['client'];
+			}
+		}
+
+		return '';
+	}
+
 	public function revoke( int $userId, string $uuid ): bool {
 		foreach ( $this->sessions( $userId ) as $session ) {
 			if ( $session['uuid'] === $uuid ) {

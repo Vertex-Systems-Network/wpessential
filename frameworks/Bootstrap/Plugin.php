@@ -39,6 +39,7 @@ use WPEssential\Platform\Assets\WordPressAssetLoader;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\Connect\Account;
 use WPEssential\Platform\Admin\Connect\AiConnect;
+use WPEssential\Platform\Admin\Connect\AiActivityLog;
 use WPEssential\Platform\Admin\Connect\AiConnectScreen;
 use WPEssential\Platform\Admin\Connect\Mcp\SettingsAbilities;
 use WPEssential\Platform\Admin\Connect\McpServer;
@@ -207,7 +208,7 @@ final class Plugin {
 			[
 				new DemosScreen( new DemoCatalog() ),
 				new ElementsScreen( $elements ),
-				new AiConnectScreen( $aiConnect ),
+				new AiConnectScreen( $aiConnect, new AiActivityLog( $database instanceof NativeWpdbAdapter ? $database : null ) ),
 				new LicenseScreen( $license, new Account( $license, $siteProof ) ),
 				new DocsScreen(),
 			]
