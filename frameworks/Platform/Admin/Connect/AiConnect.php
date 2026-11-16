@@ -179,13 +179,23 @@ final class AiConnect {
 		}
 		[ $user, $uuid, $password ] = $parts;
 		$item                       = \WP_Application_Passwords::get_user_application_password( (int) $user, $uuid );
-		if ( ! is_array( $item ) || ! str_starts_with( (string) ( $item['name'] ?? '' ), self::APP_NAME ) || ! wp_check_password( $password, (string) $item['password'], (int) $user ) ) {
+		if ( ! is_array( $item ) || ! str_starts_with( (string) ( $item['name'] ?? '' ), self::APP_NAME ) || ! self::passwordMatches( $password, (string) $item['password'], (int) $user ) ) {
 			return $userId;
 		}
 		self::$linkUuid = $uuid;
 		\WP_Application_Passwords::record_application_password_usage( (int) $user, $uuid );
 
 		return (int) $user;
+	}
+
+	/** WordPress 6.8+ hashes application passwords with wp_fast_hash(); older sites use phpass. */
+	private static function passwordMatches( string $password, string $hash, int $userId ): bool {
+		// @phpstan-ignore function.alreadyNarrowedType (check_password() is absent before WordPress 6.8)
+		if ( method_exists( '\WP_Application_Passwords', 'check_password' ) ) {
+			return \WP_Application_Passwords::check_password( $password, $hash );
+		}
+
+		return wp_check_password( $password, $hash, $userId );
 	}
 
 	/** UUID of the session a connector link signed in with on this request, if any. */
