@@ -147,15 +147,15 @@ final class LicenseScreen implements AdminScreen {
 	}
 
 	public function render(): void {
-		$html  = PageHeader::render( __( 'Account', 'wpessential' ), __( 'Account & subscription', 'wpessential' ), __( 'Sign in with your wpessential.org account. This site is connected to your subscription automatically.', 'wpessential' ) );
-		$site  = $this->siteRows();
-		$nav   = [ [ 'wpe-license-site', __( 'This site', 'wpessential' ), count( $site ) ] ];
-		$body  = OptionGroup::render( 'wpe-license-site', __( 'This site', 'wpessential' ), 'Essential', 'license.site', $site );
+		$html = PageHeader::render( __( 'Account', 'wpessential' ), __( 'Account & subscription', 'wpessential' ), __( 'Sign in with your wpessential.org account. This site is connected to your subscription automatically.', 'wpessential' ) );
+		$site = $this->siteRows();
+		$nav  = [ [ 'wpe-license-site', __( 'This site', 'wpessential' ), count( $site ) ] ];
+		$body = OptionGroup::render( 'wpe-license-site', __( 'This site', 'wpessential' ), 'Essential', 'license.site', $site );
 		foreach ( $this->accountGroups() as $group ) {
 			[ $id, $title, $key, $rows ] = $group;
-			$count = $group[4] ?? count( $rows );
-			$body .= OptionGroup::render( $id, $title, 'Essential', $key, $rows, true, $count );
-			$nav[] = [ $id, $title, $count ];
+			$count                       = $group[4] ?? count( $rows );
+			$body                       .= OptionGroup::render( $id, $title, 'Essential', $key, $rows, true, $count );
+			$nav[]                       = [ $id, $title, $count ];
 		}
 		$html .= SectionNav::layout( __( 'Account', 'wpessential' ), [ __( 'Account', 'wpessential' ) => $nav ], $body );
 		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'Your account token and subscription credentials are stored in this site\'s database without encryption and are never sent to the browser.', 'wpessential' ) . '</p>';
@@ -251,12 +251,12 @@ final class LicenseScreen implements AdminScreen {
 		if ( $licenses !== [] ) {
 			$rows = [];
 			foreach ( $licenses as $item ) {
-				$id     = (string) (int) ( $item['id'] ?? 0 );
-				$renew  = ! empty( $item['auto_renew'] );
-				$here   = ! empty( $item['here'] )
+				$id       = (string) (int) ( $item['id'] ?? 0 );
+				$renew    = ! empty( $item['auto_renew'] );
+				$here     = ! empty( $item['here'] )
 					? StatusPill::render( 'running', __( 'This site', 'wpessential' ) )
 					: self::form( 'use', self::submit( __( 'Use here', 'wpessential' ), 'secondary', true ), [ 'license' => $id ], 'wpe-ui-inline' );
-				$manage = self::form(
+				$manage   = self::form(
 					'manage',
 					self::submit( $renew ? __( 'Turn off auto-renew', 'wpessential' ) : __( 'Turn on auto-renew', 'wpessential' ), 'ghost', true ),
 					[
@@ -280,14 +280,14 @@ final class LicenseScreen implements AdminScreen {
 					$manage   = '';
 					$checkout = '';
 				}
-				$rows[]   = OptionGroup::row( (string) ( $item['plan'] ?? '' ), (string) ( $item['mask'] ?? '' ), $here . $manage . $checkout );
+				$rows[] = OptionGroup::row( (string) ( $item['plan'] ?? '' ), (string) ( $item['mask'] ?? '' ), $here . $manage . $checkout );
 			}
 			$groups[] = [ 'wpe-license-subscriptions', __( 'Subscriptions', 'wpessential' ), 'license.account.subscriptions', $rows ];
 		}
 
 		$plans = is_array( $me['plans'] ?? null ) ? $me['plans'] : [];
 		if ( $plans !== [] ) {
-			$rows = [];
+			$rows          = [];
 			$international = ! empty( $me['payments']['international'] );
 			foreach ( $plans as $plan ) {
 				$key   = (string) ( $plan['key'] ?? '' );

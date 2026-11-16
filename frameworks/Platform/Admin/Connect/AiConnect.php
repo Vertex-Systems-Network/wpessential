@@ -20,14 +20,25 @@ final class AiConnect {
 	public const OPTION   = 'wpessential_ai_connect';
 	public const APP_NAME = 'WPEssential AI';
 	public const CLIENTS  = [
+		'claude-ai'      => 'Claude (claude.ai / Claude Desktop connector)',
+		'chatgpt'        => 'ChatGPT',
 		'claude-code'    => 'Claude Code',
-		'claude-desktop' => 'Claude Desktop',
+		'claude-desktop' => 'Claude Desktop (config file)',
 		'cursor'         => 'Cursor',
 		'vscode'         => 'VS Code',
 		'windsurf'       => 'Windsurf',
 		'gemini'         => 'Gemini CLI',
 		'generic'        => 'Other MCP client',
 	];
+
+	/** Clients that connect with a secret connector link (they cannot send an Authorization header). */
+	public const LINK_CLIENTS = [ 'claude-ai', 'chatgpt' ];
+
+	/** Query parameter that carries a connector link's secret. */
+	public const LINK_PARAM = 'wpe_key';
+
+	/** @var string|null Application password UUID authenticated by a connector link on this request. */
+	private static ?string $linkUuid = null;
 
 	/** @var array<string,bool> Used when WordPress options are unavailable (unit tests, early boot). */
 	private array $memory = [];
@@ -129,6 +140,59 @@ final class AiConnect {
 		];
 	}
 
+	/**
+	 * Secret connector link: the endpoint with "user.uuid.password" of this session's application
+	 * password. Revoking the session (or the password) disables the link.
+	 */
+	public static function link( int $userId, string $uuid, string $password ): string {
+		$key = $userId . '.' . $uuid . '.' . str_replace( ' ', '', $password );
+		$url = self::endpoint();
+
+		return $url . ( str_contains( $url, '?' ) ? '&' : '?' ) . self::LINK_PARAM . '=' . rawurlencode( $key );
+	}
+
+	/**
+	 * Filter for determine_current_user: a request to the MCP route that carries a valid connector link signs
+	 * in as the link's user. Only that route, only over HTTPS (or a local site), only while AI
+	 * Connect is on, and only for WPEssential AI application passwords.
+	 *
+	 * @param int|false $userId Current user.
+	 * @return int|false
+	 */
+	public function authenticateLink( $userId ) {
+		self::$linkUuid = null;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Bearer-style secret, not a form.
+		$key = isset( $_GET[ self::LINK_PARAM ] ) ? sanitize_text_field( wp_unslash( (string) $_GET[ self::LINK_PARAM ] ) ) : '';
+		if ( $key === '' || ! empty( $userId ) || ! $this->enabled() || ! self::secure() || ! class_exists( 'WP_Application_Passwords' ) ) {
+			return $userId;
+		}
+		$route = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only compared.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Plain-permalink REST route.
+		$restRoute = isset( $_GET['rest_route'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['rest_route'] ) ) : '';
+		$path      = '/' . McpServer::NAMESPACE . McpServer::ROUTE;
+		if ( ! str_contains( $route, $path ) && ! str_contains( $restRoute, $path ) ) {
+			return $userId;
+		}
+		$parts = explode( '.', $key, 3 );
+		if ( count( $parts ) !== 3 || ! ctype_digit( $parts[0] ) ) {
+			return $userId;
+		}
+		[ $user, $uuid, $password ] = $parts;
+		$item                       = \WP_Application_Passwords::get_user_application_password( (int) $user, $uuid );
+		if ( ! is_array( $item ) || ! str_starts_with( (string) ( $item['name'] ?? '' ), self::APP_NAME ) || ! wp_check_password( $password, (string) $item['password'], (int) $user ) ) {
+			return $userId;
+		}
+		self::$linkUuid = $uuid;
+		\WP_Application_Passwords::record_application_password_usage( (int) $user, $uuid );
+
+		return (int) $user;
+	}
+
+	/** UUID of the session a connector link signed in with on this request, if any. */
+	public static function linkSession(): ?string {
+		return self::$linkUuid;
+	}
+
 	public function revoke( int $userId, string $uuid ): bool {
 		foreach ( $this->sessions( $userId ) as $session ) {
 			if ( $session['uuid'] === $uuid ) {
@@ -150,6 +214,37 @@ final class AiConnect {
 		$header = 'Basic ' . base64_encode( $login . ':' . str_replace( ' ', '', $password ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- HTTP Basic credentials.
 		$url    = self::endpoint();
 
+		if ( $client === 'claude-desktop' ) {
+			// Claude Desktop's config runs local (stdio) servers; mcp-remote bridges to this HTTP endpoint.
+			return (string) wp_json_encode(
+				[
+					'mcpServers' => [
+						'wpessential' => [
+							'command' => 'npx',
+							'args'    => [ '-y', 'mcp-remote', $url, '--header', 'Authorization:${WPE_AUTH}' ],
+							'env'     => [ 'WPE_AUTH' => $header ],
+						],
+					],
+				],
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+			);
+		}
+		if ( $client === 'gemini' ) {
+			return (string) wp_json_encode(
+				[
+					'mcpServers' => [
+						'wpessential' => [
+							'httpUrl' => $url,
+							'headers' => [ 'Authorization' => $header ],
+						],
+					],
+				],
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+			);
+		}
+		if ( $client === 'generic' ) {
+			return 'URL: ' . $url . "\nAuthorization: " . $header;
+		}
 		if ( $client === 'claude-code' ) {
 			return 'claude mcp add --transport http wpessential ' . $url . ' --header "Authorization: ' . $header . '"';
 		}

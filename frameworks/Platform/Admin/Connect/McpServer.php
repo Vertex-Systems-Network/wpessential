@@ -49,6 +49,8 @@ final class McpServer {
 	public function register(): void {
 		if ( function_exists( 'add_action' ) ) {
 			add_action( 'rest_api_init', [ $this, 'routes' ] );
+			// Connector links (Claude custom connectors, ChatGPT) sign in before REST runs.
+			add_filter( 'determine_current_user', [ $this->connect, 'authenticateLink' ], 30 );
 		}
 	}
 
@@ -75,7 +77,7 @@ final class McpServer {
 		if ( ! $this->connect->enabled() || ! current_user_can( 'manage_options' ) ) {
 			return false;
 		}
-		$uuid = function_exists( 'rest_get_authenticated_app_password' ) ? (string) rest_get_authenticated_app_password() : '';
+		$uuid = AiConnect::linkSession() ?? ( function_exists( 'rest_get_authenticated_app_password' ) ? (string) rest_get_authenticated_app_password() : '' );
 		foreach ( $this->connect->sessions( get_current_user_id() ) as $session ) {
 			if ( $uuid !== '' && $session['uuid'] === $uuid ) {
 				return true;

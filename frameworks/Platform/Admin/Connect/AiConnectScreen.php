@@ -77,7 +77,7 @@ final class AiConnectScreen implements AdminScreen {
 				if ( $created instanceof WP_Error ) {
 					$notice = 'insecure';
 				} else {
-					set_transient( self::ONCE . $user, [ $client, $created['password'] ], 300 );
+					set_transient( self::ONCE . $user, [ $client, $created['password'], $created['uuid'] ], 300 );
 					$notice = 'connected';
 				}
 				break;
@@ -121,7 +121,7 @@ final class AiConnectScreen implements AdminScreen {
 			'enabled'      => $this->connect->enabled(),
 			'allow_writes' => $this->connect->allowWrites(),
 		];
-		$writes = $settings['enabled']
+		$writes   = $settings['enabled']
 			? Toggle::form( self::ACTION, self::ACTION, $settings['allow_writes'], __( 'Allow AI to change settings', 'wpessential' ), [ 'op' => 'writes' ] )
 			: StatusPill::render( 'off', __( 'Off', 'wpessential' ) );
 		$switches = [
@@ -182,12 +182,23 @@ final class AiConnectScreen implements AdminScreen {
 		$rows = [];
 		$once = get_transient( self::ONCE . $user );
 		delete_transient( self::ONCE . $user );
-		if ( is_array( $once ) && count( $once ) === 2 ) {
-			$login  = function_exists( 'wp_get_current_user' ) ? (string) wp_get_current_user()->user_login : '';
-			$code   = AiConnect::snippet( (string) $once[0], $login, (string) $once[1] );
+		if ( is_array( $once ) && count( $once ) >= 2 ) {
+			$client = (string) $once[0];
+			if ( in_array( $client, AiConnect::LINK_CLIENTS, true ) && isset( $once[2] ) ) {
+				$code = AiConnect::link( $user, (string) $once[2], (string) $once[1] );
+				$help = $client === 'chatgpt'
+					? __( 'In ChatGPT (paid plan, web): Settings → Apps & Connectors → Advanced → turn on Developer mode, then create a connector: paste this link as the MCP server URL and choose "No authentication". The link contains a secret: do not share it.', 'wpessential' )
+					: __( 'In Claude (claude.ai or Claude Desktop): Customize (or Settings) → Connectors → Add custom connector: give it a name, paste this link as the remote MCP server URL and leave the OAuth fields empty. The link contains a secret: do not share it.', 'wpessential' );
+			} else {
+				$login = function_exists( 'wp_get_current_user' ) ? (string) wp_get_current_user()->user_login : '';
+				$code  = AiConnect::snippet( $client, $login, (string) $once[1] );
+				$help  = $client === 'claude-desktop'
+					? __( 'Claude Desktop: Settings → Developer → Edit Config (claude_desktop_config.json), paste this, then restart Claude. Needs Node.js. This contains a password: do not share it.', 'wpessential' )
+					: __( 'This contains a password for your account. Paste it into your client and do not share it.', 'wpessential' );
+			}
 			$rows[] = OptionGroup::row(
-				AiConnect::CLIENTS[ (string) $once[0] ] ?? __( 'Connection details', 'wpessential' ),
-				__( 'This contains a password for your account. Paste it into your client and do not share it.', 'wpessential' ),
+				AiConnect::CLIENTS[ $client ] ?? __( 'Connection details', 'wpessential' ),
+				$help,
 				StatusPill::render( 'waiting', __( 'Shown once', 'wpessential' ) ) . '<pre class="wpe-ui-code" tabindex="0"><code>' . esc_html( $code ) . '</code></pre>'
 			);
 		}
