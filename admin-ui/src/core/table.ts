@@ -1,8 +1,10 @@
 // List-table tools for builder list pages, laid out like WordPress list tables (wp-admin
 // edit.php): status views with counts ("All (12) | Published (5) | Draft (4)"), a search box with
-// a Search button, filter dropdowns with a Filter button, "N items" with « ‹ 1 of 2 › » paging
+// a Search button, filter dropdowns with a Filter button, "N items" with first / previous / "1 of 2" / next / last paging
 // above and below the table, and sortable column headers. Works on the rows the page script
 // renders and re-applies itself whenever they are re-rendered (refresh, status change).
+import { icon } from './controls';
+
 export interface TableOptions {
 	/** Rows that are data (not the empty-state row). */
 	rowSelector: string;
@@ -47,16 +49,20 @@ function el< K extends keyof HTMLElementTagNameMap >(
 	return node;
 }
 
-/** « ‹ [n] of N › » like WordPress' .tablenav-pages. */
+/** First / previous / [n] of N / next / last, like WordPress' .tablenav-pages (SVG icons, no glyphs). */
 function pagerControls( id: string, onPage: ( page: number ) => void ) {
 	const wrap = el( 'div', { class: 'wpe-ui-tablenav__pages' } );
 	const count = el( 'span', { class: 'wpe-ui-tablenav__count' } );
-	const first = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'First page' }, '«' );
-	const prev = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'Previous page' }, '‹' );
+	const first = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'First page' } );
+	first.innerHTML = icon( 'chevrons-left', 14 );
+	const prev = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'Previous page' } );
+	prev.innerHTML = icon( 'chevron-left', 14 );
 	const input = el( 'input', { type: 'number', min: '1', class: 'wpe-ui-pageinput', id, 'aria-label': 'Current page' } );
 	const total = el( 'span', { class: 'wpe-ui-tablenav__total' } );
-	const next = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'Next page' }, '›' );
-	const last = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'Last page' }, '»' );
+	const next = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'Next page' } );
+	next.innerHTML = icon( 'chevron-right', 14 );
+	const last = el( 'button', { type: 'button', class: 'wpe-ui-pagebtn', 'aria-label': 'Last page' } );
+	last.innerHTML = icon( 'chevrons-right', 14 );
 	const paging = el( 'span', { class: 'wpe-ui-tablenav__paging' } );
 	paging.append( first, prev, input, total, next, last );
 	wrap.append( count, paging );

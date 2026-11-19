@@ -250,7 +250,7 @@ final class CoreAdminController {
 		$html .= '</div></section>';
 
 		$html .= '<div class="wpe-ui-columns"><section class="wpe-ui-panel"><div class="wpe-ui-panel__head"><h2>' . esc_html__( 'Active modules', 'wpessential' ) . '</h2>';
-		$html .= '<a href="' . esc_url( AdminUrl::page( Shell::MODULES_SLUG ) ) . '">' . esc_html__( 'View all', 'wpessential' ) . ' &rarr;</a></div>';
+		$html .= '<a href="' . esc_url( AdminUrl::page( Shell::MODULES_SLUG ) ) . '">' . esc_html__( 'View all', 'wpessential' ) . ' ' . Icon::render( 'arrow', 14 ) . '</a></div>';
 		if ( $active === [] ) {
 			$html .= '<p class="wpe-ui-muted">' . esc_html__( 'No modules are active yet. Turn one on from the Modules screen.', 'wpessential' ) . '</p>';
 		} else {
@@ -426,7 +426,7 @@ final class CoreAdminController {
 		$html .= '<h3 class="wpe-ui-module__name">' . esc_html( $module['name'] ) . '</h3>';
 		$html .= '<p class="wpe-ui-module__desc">' . esc_html( $module['description'] ) . '</p>';
 		$html .= '<p class="wpe-ui-module__meta">' . esc_html( sprintf( /* translators: %d: option count. */ _n( '%d option', '%d options', $options, 'wpessential' ), $options ) ) . '</p>';
-		$html .= '<div class="wpe-ui-module__foot"><a href="' . esc_url( AdminUrl::page( self::MODULE_PREFIX . $module['id'] ) ) . '">' . esc_html__( 'Settings', 'wpessential' ) . ' &rarr;</a>';
+		$html .= '<div class="wpe-ui-module__foot"><a href="' . esc_url( AdminUrl::page( self::MODULE_PREFIX . $module['id'] ) ) . '">' . esc_html__( 'Settings', 'wpessential' ) . ' ' . Icon::render( 'arrow', 14 ) . '</a>';
 
 		return $html . $this->toggle( $module, Shell::MODULES_SLUG ) . '</div></article>';
 	}

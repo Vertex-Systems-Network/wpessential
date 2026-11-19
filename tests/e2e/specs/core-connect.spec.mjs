@@ -17,6 +17,11 @@ let playground;
 // Entrance animations fade colours in; axe must measure the settled page.
 test.use({ reducedMotion: 'reduce' });
 
+// axe must measure the settled page: wait for entrance animations (in-app navigation re-runs them).
+async function settled(page) {
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((animation) => animation.effect?.getTiming().iterations !== Infinity).map((animation) => animation.finished.catch(() => null))));
+}
+
 async function visitCore(page, slug) {
   const response = await page.goto(
     `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
@@ -80,6 +85,7 @@ const screens = [
 ];
 
 async function expectNoAxeViolations(page) {
+  await settled(page);
   const results = await new AxeBuilder({ page }).include('[data-wpessential-surface="core"]').analyze();
   expect(results.violations.map((violation) => violation.id)).toEqual([]);
 }

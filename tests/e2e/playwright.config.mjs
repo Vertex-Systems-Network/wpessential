@@ -2,6 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './specs',
+  // specs/wp-env needs a running wp-env site: playwright.wp-env.config.mjs runs it.
+  testIgnore: ['wp-env/**'],
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
