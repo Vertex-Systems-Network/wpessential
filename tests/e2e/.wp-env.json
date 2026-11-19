@@ -3,7 +3,7 @@
   "phpVersion": "8.3",
   "testsEnvironment": false,
   "plugins": [
-    ".",
+    "../..",
     "https://downloads.wordpress.org/plugin/elementor.latest-stable.zip",
     "https://downloads.wordpress.org/plugin/woocommerce.11.0.0.zip",
     "https://downloads.wordpress.org/plugin/contact-form-7.6.1.5.zip"

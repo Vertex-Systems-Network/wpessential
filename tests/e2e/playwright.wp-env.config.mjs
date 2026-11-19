@@ -2,7 +2,7 @@ import process from 'node:process';
 
 import { defineConfig } from '@playwright/test';
 
-// End-to-end audit against a real WordPress started with wp-env (see .wp-env.json).
+// End-to-end audit against a real WordPress started with wp-env (see tests/e2e/.wp-env.json).
 // WPE_E2E_SPEC_DIRS lets the Pro repository add its own spec directory.
 const extra = (process.env.WPE_E2E_SPEC_DIRS ?? '').split(',').map((dir) => dir.trim()).filter(Boolean);
 const executablePath = process.env.WPE_E2E_CHROMIUM || undefined;

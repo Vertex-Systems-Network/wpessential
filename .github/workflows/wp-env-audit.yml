@@ -39,6 +39,8 @@ jobs:
           npm run build:admin
 
       - name: Start WordPress
+        # Config lives in tests/e2e: the plugin-check job writes its own .wp-env.json at the root.
+        working-directory: tests/e2e
         run: npx --yes @wordpress/env@12.1.0 start
 
       - name: Install E2E dependencies
@@ -51,7 +53,7 @@ jobs:
         env:
           WPE_E2E_BASE_URL: http://localhost:8888
           WPE_E2E_WP_CLI: npx --yes @wordpress/env@12.1.0 run cli wp
-          WPE_E2E_WP_ENV_DIR: ${{ github.workspace }}
+          WPE_E2E_WP_ENV_DIR: ${{ github.workspace }}/tests/e2e
         run: npx playwright test -c playwright.wp-env.config.mjs
 
       - name: Report
