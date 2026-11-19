@@ -93,6 +93,10 @@ function svg( body: string, size = 14 ): string {
 // Flat line icons (24×24, stroke) used by the controls; never text glyphs.
 const ICONS: Record< string, string > = {
 	'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+	'chevron-left': '<path d="m15 18-6-6 6-6"/>',
+	'chevron-right': '<path d="m9 18 6-6-6-6"/>',
+	'chevrons-left': '<path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/>',
+	'chevrons-right': '<path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/>',
 	x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
 	minus: '<path d="M5 12h14"/>',
 	'case-upper': '<path d="m3 15 4-8 4 8"/><path d="M4 13h6"/><path d="M15 11h4.5a2 2 0 0 1 0 4H15V7h4a2 2 0 0 1 0 4"/>',

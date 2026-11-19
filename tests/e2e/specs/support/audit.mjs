@@ -115,21 +115,21 @@ const CONTROLS = 'input:not([type=hidden]):not([type=file]):not([type=search]):n
 /**
  * Sets every visible, enabled control inside `scope`: checkboxes on, selects to their last option,
  * text and number inputs to deterministic values. `overrides` maps a control id/name to a value
- * (`null` leaves the control alone); a control without id/name is keyed by its label text. Two passes, because a choice can reveal more controls.
+ * (`null` leaves the control alone, `*text` replaces the default text value); a control without id/name is keyed by `label@position`. Two passes, because a choice can reveal more controls.
  */
 export async function fillAll(scope, overrides = {}) {
   const done = new Set();
   for (let pass = 0; pass < 2; pass += 1) {
     // Read the whole form first: an editor may re-render while it is being filled.
     const infos = await scope.locator(CONTROLS).evaluateAll((elements) => elements.map((el, index) => ({
-      index, id: el.id, key: el.id || el.name || (el.closest('label')?.textContent ?? '').trim() || `#${index}`, tag: el.tagName, type: el.type,
+      index, id: el.id, name: el.name, min: Number(el.min || 0), max: Number(el.max || 0), key: el.id || el.name || `${(el.closest('label')?.textContent ?? el.getAttribute('aria-label') ?? '').trim()}@${index}`, tag: el.tagName, type: el.type,
       off: el.disabled || el.readOnly, options: el.tagName === 'SELECT' ? [...el.options].filter((o) => !o.disabled).map((o) => o.value) : [],
     })));
     for (const info of infos) {
       const control = info.id ? scope.locator(`[id="${info.id}"]`) : scope.locator(CONTROLS).nth(info.index);
       if (done.has(info.key) || info.off || !(await control.isVisible()) || !(await control.isEnabled())) continue;
       done.add(info.key);
-      const wanted = overrides[info.key];
+      const wanted = [info.key, info.name, info.key.split('@')[0]].map((k) => overrides[k]).find((v) => v !== undefined);
       if (wanted === null) continue;
       if (info.type === 'checkbox') {
         await control.setChecked(wanted ?? true);
@@ -138,8 +138,10 @@ export async function fillAll(scope, overrides = {}) {
       } else if (info.tag === 'SELECT') {
         const choice = wanted ?? info.options.filter((value) => value !== '').at(-1);
         if (choice !== undefined) await control.selectOption(choice);
+      } else if (info.type === 'range' || (info.type === 'number' && info.max > info.min)) {
+        await control.fill(String(wanted ?? Math.round((info.min + (info.max || info.min + 10)) / 2)));
       } else {
-        const fallback = { number: '3', url: 'https://example.org/e2e', email: 'e2e@example.org', color: '#336699', date: '2026-11-16' }[info.type] ?? `e2e-${done.size}`;
+        const fallback = { number: '3', url: 'https://example.org/e2e', email: 'e2e@example.org', color: '#336699', date: '2026-11-16' }[info.type] ?? overrides['*text'] ?? `e2e_${done.size}`; // underscore: also valid as a machine key
         await control.fill(String(wanted ?? fallback));
       }
     }
@@ -149,13 +151,14 @@ export async function fillAll(scope, overrides = {}) {
 /** Current value of every control inside `scope`, keyed by id/name; used to prove values survive a reload. */
 export async function snapshot(scope) {
   return scope.locator(CONTROLS).evaluateAll((elements) => Object.fromEntries(
-    elements.map((el) => [el.id || el.name || (el.closest('label')?.textContent ?? '').trim(), el]).filter(([key]) => key).map(([key, el]) => [key, el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value]),
+    elements.map((el, index) => [el.id || el.name || `${(el.closest('label')?.textContent ?? el.getAttribute('aria-label') ?? '').trim()}@${index}`, el]).filter(([key]) => key).map(([key, el]) => [key, el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value]),
   ));
 }
 
 /** Keys whose saved value differs from what was entered. */
 export function changed(entered, saved, ignore = /^$/) {
-  return Object.keys(entered).filter((key) => !ignore.test(key) && key in saved && saved[key] !== entered[key]).map((key) => `${key}: ${JSON.stringify(entered[key])} → ${JSON.stringify(saved[key])}`);
+  // A control left empty may come back with its default; that is not a lost value.
+  return Object.keys(entered).filter((key) => !ignore.test(key) && key in saved && entered[key] !== '' && saved[key] !== entered[key]).map((key) => `${key}: ${JSON.stringify(entered[key])} → ${JSON.stringify(saved[key])}`);
 }
 
 /** WP-CLI inside the test site, for seeding data the UI cannot create. WPE_E2E_WP_CLI overrides the command. */
