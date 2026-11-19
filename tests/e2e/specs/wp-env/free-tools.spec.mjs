@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { BASE, expect, openAdmin, test } from '../support/audit.mjs';
+import { BASE, HAS_PRO, expect, notBuilt, openAdmin, test } from '../support/audit.mjs';
 
 // Tool screens answer with a banner at the top of the page (no toast for admin-post forms).
 const notice = (page) => page.locator('#wpbody-content').getByText(/finished|restored|imported|saved|done|cleaned|could not|failed|error/i).first();
@@ -189,6 +189,10 @@ test('REST API Control: every option, checked logged out', async ({ page, audit,
 });
 
 test('AI Connect: switch, session, OAuth discovery, MCP, log and CSV', async ({ page, audit, anon }, testInfo) => {
+  if (!HAS_PRO) {
+    notBuilt('ai-connect', 'all options', 'Premium-gated: runs in the Pro repository suite (Free + Pro).');
+    return;
+  }
   let auth = '';
   let mcp = '';
 

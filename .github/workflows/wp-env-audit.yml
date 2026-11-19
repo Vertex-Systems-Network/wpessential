@@ -1,0 +1,67 @@
+name: WordPress E2E Audit
+
+# Every Free module and tool exercised in a real WordPress 6.9 / PHP 8.3 site (wp-env) with
+# Elementor, WooCommerce and Contact Form 7. The Pro repository runs the same suite with Pro.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wp-env-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Build plugin
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist
+          npm ci --ignore-scripts
+          npm run build:admin
+
+      - name: Start WordPress
+        run: npx --yes @wordpress/env@12.1.0 start
+
+      - name: Install E2E dependencies
+        run: |
+          npm ci --prefix tests/e2e --ignore-scripts
+          ./tests/e2e/node_modules/.bin/playwright install chromium --with-deps
+
+      - name: Run audit
+        working-directory: tests/e2e
+        env:
+          WPE_E2E_BASE_URL: http://localhost:8888
+          WPE_E2E_WP_CLI: npx --yes @wordpress/env@12.1.0 run cli wp
+          WPE_E2E_WP_ENV_DIR: ${{ github.workspace }}
+        run: npx playwright test -c playwright.wp-env.config.mjs
+
+      - name: Report
+        if: ${{ !cancelled() }}
+        working-directory: tests/e2e
+        run: node specs/support/report.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: ${{ !cancelled() }}
+        with:
+          name: wp-env-audit-${{ github.run_id }}
+          path: tests/e2e/test-results/
+          retention-days: 14
