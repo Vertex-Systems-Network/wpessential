@@ -5,6 +5,10 @@
  */
 declare(strict_types=1);
 
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', dirname( __DIR__, 2 ) . '/' );
+}
+
 $root     = dirname( __DIR__, 2 ) . '/config/product/';
 $map      = json_decode( (string) file_get_contents( $root . 'system-dependency-map.json' ), true, 512, JSON_THROW_ON_ERROR );
 $surfaces = json_decode( (string) file_get_contents( $root . 'competitor-parity-surfaces.json' ), true, 512, JSON_THROW_ON_ERROR );
