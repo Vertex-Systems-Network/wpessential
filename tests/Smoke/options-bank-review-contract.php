@@ -217,8 +217,8 @@ foreach ($bankFiles as $file) {
     }
 }
 
-if ($fieldsRecords !== 618 || ($review['record_count'] ?? null) !== $fieldsRecords) {
-    throw new RuntimeException(sprintf('Fields Bank Review V2 requires exactly 618 reviewed records; found %d.', $fieldsRecords));
+if ($fieldsRecords !== 637 || ($review['record_count'] ?? null) !== $fieldsRecords) {
+    throw new RuntimeException(sprintf('Fields Bank Review V2 requires exactly 637 reviewed records; found %d.', $fieldsRecords));
 }
 if ($unreviewed !== 0) {
     throw new RuntimeException(sprintf('Fields Bank Review V2 cannot certify %d unreviewed record(s).', $unreviewed));
@@ -272,7 +272,7 @@ foreach ($rows as $row) {
 }
 if (!is_array($fieldsProgress)
     || ($fieldsProgress['status'] ?? null) !== 'BANK_REVIEWED'
-    || ($fieldsProgress['records'] ?? null) !== 618
+    || ($fieldsProgress['records'] ?? null) !== 637
 ) {
     throw new RuntimeException('Fields Bank Review V2 and canonical progress truth disagree.');
 }

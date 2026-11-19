@@ -24818,6 +24818,87 @@
               "snapshot_date": "2026-09-01"
             }
           ]
+        },
+        {
+          "id": "fields.type.timezone_select",
+          "label": "Timezone select",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.timezone_select. Timezone select (WPE_HARD, P3_LATER).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Field Types",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.type.timezone_select",
+              "type.timezone_select",
+              "Timezone select"
+            ],
+            "help": "Timezone select (WPE_HARD, P3_LATER).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Timezone select (WPE_HARD, P3_LATER)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.type.timezone_select",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
         }
       ]
     },
@@ -36125,6 +36206,87 @@
               "snapshot_date": "2026-09-01"
             }
           ]
+        },
+        {
+          "id": "fields.developer.js_api",
+          "label": "Client-side JavaScript API (field hooks, validation, conditional logic events)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.developer.js_api. Client-side JavaScript API (field hooks, validation, conditional logic events) (EXPERT, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Developer UX",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.developer.js_api",
+              "developer.js_api",
+              "Client-side JavaScript API (field hooks, validation, conditional logic events)"
+            ],
+            "help": "Client-side JavaScript API (field hooks, validation, conditional logic events) (EXPERT, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Client-side JavaScript API (field hooks, validation, conditional logic events) (EXPERT, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Advanced Custom Fields (ACF)",
+              "capability": "fields.developer.js_api",
+              "source": "https://www.advancedcustomfields.com/resources/javascript-api/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
         }
       ]
     },
@@ -37175,6 +37337,87 @@
               "capability": "fields.market.quick_edit",
               "source": "https://acpt.io/features/",
               "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "fields.admin.bulk_edit",
+          "label": "Bulk edit field values from the list table",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.admin.bulk_edit. Bulk edit field values from the list table (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Admin Editing",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.admin.bulk_edit",
+              "admin.bulk_edit",
+              "Bulk edit field values from the list table"
+            ],
+            "help": "Bulk edit field values from the list table (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Bulk edit field values from the list table (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.admin.bulk_edit",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
             }
           ]
         }
@@ -39121,6 +39364,168 @@
               "capability": "fields.market.choice_array",
               "source": "https://acpt.io/features/",
               "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "fields.type.select_tree",
+          "label": "Select tree (hierarchical select for terms and parent posts)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.select_tree. Select tree (hierarchical select for terms and parent posts) (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Field Types",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.type.select_tree",
+              "type.select_tree",
+              "Select tree (hierarchical select for terms and parent posts)"
+            ],
+            "help": "Select tree (hierarchical select for terms and parent posts) (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Select tree (hierarchical select for terms and parent posts) (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Meta Box",
+              "capability": "fields.type.select_tree",
+              "source": "https://docs.metabox.io/fields/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.option.taxonomy_hierarchical_display",
+          "label": "Show taxonomy choices as an indented tree (radio, select, checkboxes)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.option.taxonomy_hierarchical_display. Show taxonomy choices as an indented tree (radio, select, checkboxes) (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Choice Sources",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.option.taxonomy_hierarchical_display",
+              "option.taxonomy_hierarchical_display",
+              "Show taxonomy choices as an indented tree (radio, select, checkboxes)"
+            ],
+            "help": "Show taxonomy choices as an indented tree (radio, select, checkboxes) (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Show taxonomy choices as an indented tree (radio, select, checkboxes) (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.option.taxonomy_hierarchical_display",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
             }
           ]
         }
@@ -41485,6 +41890,87 @@
               "capability": "fields.nativeaudit.meta_registration_args_provider",
               "source": "https://acpt.io/features/",
               "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "fields.native.protected_meta_key",
+          "label": "Protected meta keys (underscore prefix hidden from the core Custom Fields panel)",
+          "kind": "native_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.native.protected_meta_key. Protected meta keys (underscore prefix hidden from the core Custom Fields panel) (NATIVE_HARD, P0_NATIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wordpress_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Native Metadata",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.native.protected_meta_key",
+              "native.protected_meta_key",
+              "Protected meta keys (underscore prefix hidden from the core Custom Fields panel)"
+            ],
+            "help": "Protected meta keys (underscore prefix hidden from the core Custom Fields panel) (NATIVE_HARD, P0_NATIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Protected meta keys (underscore prefix hidden from the core Custom Fields panel) (NATIVE_HARD, P0_NATIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WordPress core",
+              "capability": "fields.native.protected_meta_key",
+              "source": "https://developer.wordpress.org/reference/functions/is_protected_meta/",
+              "snapshot_date": "2026-11-20"
             }
           ]
         }
@@ -47111,6 +47597,168 @@
               "snapshot_date": "2026-09-01"
             }
           ]
+        },
+        {
+          "id": "fields.settings.css_output",
+          "label": "Write CSS from field values to selectors (output / compiler)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.settings.css_output. Write CSS from field values to selectors (output / compiler) (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Settings Framework",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.settings.css_output",
+              "settings.css_output",
+              "Write CSS from field values to selectors (output / compiler)"
+            ],
+            "help": "Write CSS from field values to selectors (output / compiler) (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Write CSS from field values to selectors (output / compiler) (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Redux Framework",
+              "capability": "fields.settings.css_output",
+              "source": "https://devs.redux.io/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.settings.customizer_panel",
+          "label": "Show option fields in the Customizer with live preview",
+          "kind": "wpe_option",
+          "parity_status": "DEFERRED_WITH_REASON",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.settings.customizer_panel. Show option fields in the Customizer with live preview (DEFERRED, P3_LATER).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Expert",
+            "group": "Settings Framework",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.settings.customizer_panel",
+              "settings.customizer_panel",
+              "Show option fields in the Customizer with live preview"
+            ],
+            "help": "Show option fields in the Customizer with live preview (DEFERRED, P3_LATER).",
+            "danger_level": "high"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Show option fields in the Customizer with live preview (DEFERRED, P3_LATER)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "high_impact",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "expert",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Redux Framework",
+              "capability": "fields.settings.customizer_panel",
+              "source": "https://devs.redux.io/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
         }
       ]
     },
@@ -47556,6 +48204,423 @@
               "capability": "fields.longtail.cmb2_ajax_object_search",
               "source": "https://acpt.io/features/",
               "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "fields.frontend.post_form",
+          "label": "Front-end form to create or edit a post with its fields",
+          "kind": "integration",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.frontend.post_form. Front-end form to create or edit a post with its fields (COMPATIBILITY, P1_CORE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Front-end Editing",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.frontend.post_form",
+              "frontend.post_form",
+              "Front-end form to create or edit a post with its fields"
+            ],
+            "help": "Front-end form to create or edit a post with its fields (COMPATIBILITY, P1_CORE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Front-end form to create or edit a post with its fields (COMPATIBILITY, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Advanced Custom Fields (ACF)",
+              "capability": "fields.frontend.post_form",
+              "source": "https://www.advancedcustomfields.com/resources/create-a-front-end-form/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.frontend.profile_form",
+          "label": "Front-end profile form for user fields",
+          "kind": "integration",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.frontend.profile_form. Front-end profile form for user fields (COMPATIBILITY, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Front-end Editing",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.frontend.profile_form",
+              "frontend.profile_form",
+              "Front-end profile form for user fields"
+            ],
+            "help": "Front-end profile form for user fields (COMPATIBILITY, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Front-end profile form for user fields (COMPATIBILITY, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.frontend.profile_form",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.i18n.translation_mode",
+          "label": "Per-field translation mode (translate / copy / copy once / ignore)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.i18n.translation_mode. Per-field translation mode (translate / copy / copy once / ignore) (WPE_HARD, P1_CORE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Multilingual",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.i18n.translation_mode",
+              "i18n.translation_mode",
+              "Per-field translation mode (translate / copy / copy once / ignore)"
+            ],
+            "help": "Per-field translation mode (translate / copy / copy once / ignore) (WPE_HARD, P1_CORE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Per-field translation mode (translate / copy / copy once / ignore) (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Advanced Custom Fields (ACF)",
+              "capability": "fields.i18n.translation_mode",
+              "source": "https://www.advancedcustomfields.com/resources/multilingual-custom-fields/",
+              "snapshot_date": "2026-11-20"
+            },
+            {
+              "product": "JetEngine",
+              "capability": "fields.i18n.translation_mode",
+              "source": "https://crocoblock.com/knowledge-base/jetengine/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.i18n.wpml_config",
+          "label": "Generate wpml-config.xml for field groups and options pages",
+          "kind": "wpe_option",
+          "parity_status": "EXCEEDS",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.i18n.wpml_config. Generate wpml-config.xml for field groups and options pages (WPE_EXCEED, P1_EXCEED).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Multilingual",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.i18n.wpml_config",
+              "i18n.wpml_config",
+              "Generate wpml-config.xml for field groups and options pages"
+            ],
+            "help": "Generate wpml-config.xml for field groups and options pages (WPE_EXCEED, P1_EXCEED).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Generate wpml-config.xml for field groups and options pages (WPE_EXCEED, P1_EXCEED)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.i18n.wpml_config",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
+            }
+          ],
+          "wpe_exceed": {
+            "reason": "WPML reads custom-field preferences from wpml-config.xml; generating it from definitions keeps translation settings in sync.",
+            "depends_on": [
+              "Policy"
+            ]
+          }
+        },
+        {
+          "id": "fields.i18n.polylang",
+          "label": "Polylang: copy or synchronise field values between translations",
+          "kind": "integration",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.i18n.polylang. Polylang: copy or synchronise field values between translations (COMPATIBILITY, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Multilingual",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.i18n.polylang",
+              "i18n.polylang",
+              "Polylang: copy or synchronise field values between translations"
+            ],
+            "help": "Polylang: copy or synchronise field values between translations (COMPATIBILITY, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Polylang: copy or synchronise field values between translations (COMPATIBILITY, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.i18n.polylang",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
             }
           ]
         }
@@ -48966,6 +50031,249 @@
               "capability": "fields.market2.target_block",
               "source": "https://acpt.io/features/",
               "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "fields.placement.woocommerce_product_data",
+          "label": "WooCommerce product data panel (general, inventory, shipping tabs)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.placement.woocommerce_product_data. WooCommerce product data panel (general, inventory, shipping tabs) (WPE_HARD, P1_CORE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Placement Targets",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.placement.woocommerce_product_data",
+              "placement.woocommerce_product_data",
+              "WooCommerce product data panel (general, inventory, shipping tabs)"
+            ],
+            "help": "WooCommerce product data panel (general, inventory, shipping tabs) (WPE_HARD, P1_CORE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "WooCommerce product data panel (general, inventory, shipping tabs) (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine",
+              "capability": "fields.placement.woocommerce_product_data",
+              "source": "https://crocoblock.com/knowledge-base/jetengine/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.placement.woocommerce_variation",
+          "label": "Fields on each WooCommerce product variation",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.placement.woocommerce_variation. Fields on each WooCommerce product variation (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Placement Targets",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.placement.woocommerce_variation",
+              "placement.woocommerce_variation",
+              "Fields on each WooCommerce product variation"
+            ],
+            "help": "Fields on each WooCommerce product variation (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Fields on each WooCommerce product variation (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.placement.woocommerce_variation",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.placement.woocommerce_product_category",
+          "label": "Fields on WooCommerce product categories and attributes",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.placement.woocommerce_product_category. Fields on WooCommerce product categories and attributes (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Placement Targets",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.placement.woocommerce_product_category",
+              "placement.woocommerce_product_category",
+              "Fields on WooCommerce product categories and attributes"
+            ],
+            "help": "Fields on WooCommerce product categories and attributes (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Fields on WooCommerce product categories and attributes (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine",
+              "capability": "fields.placement.woocommerce_product_category",
+              "source": "https://crocoblock.com/knowledge-base/jetengine/",
+              "snapshot_date": "2026-11-20"
             }
           ]
         }
@@ -54671,6 +55979,168 @@
               "snapshot_date": "2026-09-01"
             }
           ]
+        },
+        {
+          "id": "fields.type.sorter",
+          "label": "Sorter (enable / disable and order items in columns)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.sorter. Sorter (enable / disable and order items in columns) (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Field Types",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.type.sorter",
+              "type.sorter",
+              "Sorter (enable / disable and order items in columns)"
+            ],
+            "help": "Sorter (enable / disable and order items in columns) (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Sorter (enable / disable and order items in columns) (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Redux Framework",
+              "capability": "fields.type.sorter",
+              "source": "https://devs.redux.io/core-fields/sorter.html",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "id": "fields.type.link_color",
+          "label": "Link colour (regular / hover / active / visited)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.link_color. Link colour (regular / hover / active / visited) (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Field Types",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.type.link_color",
+              "type.link_color",
+              "Link colour (regular / hover / active / visited)"
+            ],
+            "help": "Link colour (regular / hover / active / visited) (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Link colour (regular / hover / active / visited) (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Redux Framework",
+              "capability": "fields.type.link_color",
+              "source": "https://devs.redux.io/core-fields/link-color.html",
+              "snapshot_date": "2026-11-20"
+            }
+          ]
         }
       ]
     },
@@ -59916,6 +61386,87 @@
               "capability": "fields.field.escape_html",
               "source": "https://acpt.io/features/",
               "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "fields.safety.frontend_form_without_capability",
+          "label": "Front-end field forms that write without a nonce and capability check",
+          "kind": "wpe_option",
+          "parity_status": "REJECTED_UNSAFE",
+          "parity_reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.safety.frontend_form_without_capability. Front-end field forms that write without a nonce and capability check (REJECTED_UNSAFE, NOT_SCHEDULED).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress meta/register_meta() semantics where native; otherwise the WPEssential default named in the Fields Bank."
+          },
+          "ui": {
+            "tier": "System",
+            "group": "Security",
+            "control": "policy_control",
+            "search_terms": [
+              "fields.safety.frontend_form_without_capability",
+              "safety.frontend_form_without_capability",
+              "Front-end field forms that write without a nonce and capability check"
+            ],
+            "help": "Front-end field forms that write without a nonce and capability check (REJECTED_UNSAFE, NOT_SCHEDULED).",
+            "danger_level": "high"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Front-end field forms that write without a nonce and capability check (REJECTED_UNSAFE, NOT_SCHEDULED)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "fields",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 3 Fields options. The certified native Fields V1 runtime is unchanged by this contract; broader provider and full-parity capabilities require a separately accepted runtime issue.",
+            "mutation_class": "high_impact",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "prohibited",
+            "capability": null,
+            "policy_notes": "Field values are validated and sanitized server-side by type before storage and escaped by output context; field group visibility and edit rights follow Policy and object capabilities; REST/GraphQL exposure is opt-in per field and never exposes values the reader cannot otherwise read; storage keys are immutable once values exist."
+          },
+          "portability": {
+            "export": false,
+            "import": false,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Field groups are per site; network-shared definitions require explicit network scope and super-admin authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unsanitized storage or unescaped output of field values; no executable PHP/code field types.",
+              "No REST/GraphQL exposure of a field value the reader cannot otherwise read; no storage key change once values exist without a migration."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "Market",
+              "capability": "fields.safety.frontend_form_without_capability",
+              "source": "https://downloads.wordpress.org/plugin/",
+              "snapshot_date": "2026-11-20"
             }
           ]
         }
@@ -87061,7 +88612,7 @@
     "source_type": "options_bank",
     "source_surface_key": "fields",
     "source_review_version": "bank-review-v1",
-    "source_record_count": 618,
+    "source_record_count": 637,
     "entries": [
       {
         "source_id": "fields.compat.pods_import",
@@ -96938,15 +98489,319 @@
           "config/product/options-bank-audits/fields-market-ecosystem.json",
           "config/product/options-bank-audits/fields-native-wordpress.json"
         ]
+      },
+      {
+        "source_id": "fields.type.sorter",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.type.sorter"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.sorter. Sorter (enable / disable and order items in columns) (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.type.link_color",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.type.link_color"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.link_color. Link colour (regular / hover / active / visited) (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.type.select_tree",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.type.select_tree"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.select_tree. Select tree (hierarchical select for terms and parent posts) (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.type.timezone_select",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.type.timezone_select"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.type.timezone_select. Timezone select (WPE_HARD, P3_LATER).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.option.taxonomy_hierarchical_display",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.option.taxonomy_hierarchical_display"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.option.taxonomy_hierarchical_display. Show taxonomy choices as an indented tree (radio, select, checkboxes) (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.placement.woocommerce_product_data",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.placement.woocommerce_product_data"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.placement.woocommerce_product_data. WooCommerce product data panel (general, inventory, shipping tabs) (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.placement.woocommerce_variation",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.placement.woocommerce_variation"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.placement.woocommerce_variation. Fields on each WooCommerce product variation (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.placement.woocommerce_product_category",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.placement.woocommerce_product_category"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.placement.woocommerce_product_category. Fields on WooCommerce product categories and attributes (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.frontend.post_form",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.frontend.post_form"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.frontend.post_form. Front-end form to create or edit a post with its fields (COMPATIBILITY, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.frontend.profile_form",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.frontend.profile_form"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.frontend.profile_form. Front-end profile form for user fields (COMPATIBILITY, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.i18n.translation_mode",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.i18n.translation_mode"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.i18n.translation_mode. Per-field translation mode (translate / copy / copy once / ignore) (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.i18n.wpml_config",
+        "source_kind": "wpe_exceed",
+        "disposition": "WPE_EXCEED",
+        "atomic_ids": [
+          "fields.i18n.wpml_config"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.i18n.wpml_config. Generate wpml-config.xml for field groups and options pages (WPE_EXCEED, P1_EXCEED).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.i18n.polylang",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.i18n.polylang"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.i18n.polylang. Polylang: copy or synchronise field values between translations (COMPATIBILITY, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.developer.js_api",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.developer.js_api"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.developer.js_api. Client-side JavaScript API (field hooks, validation, conditional logic events) (EXPERT, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.settings.css_output",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.settings.css_output"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.settings.css_output. Write CSS from field values to selectors (output / compiler) (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.settings.customizer_panel",
+        "source_kind": "deferred",
+        "disposition": "DEFERRED",
+        "atomic_ids": [
+          "fields.settings.customizer_panel"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.settings.customizer_panel. Show option fields in the Customizer with live preview (DEFERRED, P3_LATER).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--market-longtail-v2.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.admin.bulk_edit",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.admin.bulk_edit"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.admin.bulk_edit. Bulk edit field values from the list table (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.native.protected_meta_key",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "fields.native.protected_meta_key"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.native.protected_meta_key. Protected meta keys (underscore prefix hidden from the core Custom Fields panel) (NATIVE_HARD, P0_NATIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--compatibility-ecosystems.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
+      },
+      {
+        "source_id": "fields.safety.frontend_form_without_capability",
+        "source_kind": "rejected_unsafe",
+        "disposition": "REJECTED_UNSAFE",
+        "atomic_ids": [
+          "fields.safety.frontend_form_without_capability"
+        ],
+        "owner_surface": "fields",
+        "reason": "Gap closure from the 2026-11-20 competitor docs and source audit; one-to-one projection of fields.safety.frontend_form_without_capability. Front-end field forms that write without a nonce and capability check (REJECTED_UNSAFE, NOT_SCHEDULED).",
+        "evidence_refs": [
+          "config/product/options-bank/fields--market-specialized-types.json",
+          "config/product/options-bank-reviews/fields-bank-review-v1.json",
+          "config/product/options-bank-audits/fields-market-ecosystem.json",
+          "config/product/options-bank-audits/fields-native-wordpress.json"
+        ]
       }
     ]
   },
   "coverage_summary": {
-    "atomic_options": 612,
-    "parity": 530,
-    "exceeds": 78,
-    "deferred": 1,
-    "rejected_unsafe": 3,
+    "atomic_options": 631,
+    "parity": 546,
+    "exceeds": 79,
+    "deferred": 2,
+    "rejected_unsafe": 4,
     "missing": 0,
     "unclassified": 0
   }

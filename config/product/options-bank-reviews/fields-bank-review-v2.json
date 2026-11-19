@@ -1,14 +1,29 @@
 {
   "schema_version": 1,
   "bank_version": "v1",
-  "surface": {"id": 3, "key": "fields"},
+  "surface": {
+    "id": 3,
+    "key": "fields"
+  },
   "snapshot_date": "2026-09-01",
   "decision": "BANK_REVIEWED",
-  "record_count": 618,
+  "record_count": 637,
   "required_artifacts": [
-    {"kind":"semantic_registry","path":"config/product/options-bank-semantic-relations.json","expected_status":"6 relationships / 3 aliases / 3 effective derivations"},
-    {"kind":"native_audit","path":"config/product/options-bank-audits/fields-native-wordpress.json","expected_status":"NATIVE_AUDITED"},
-    {"kind":"market_audit","path":"config/product/options-bank-audits/fields-market-ecosystem.json","expected_status":"MARKET_AUDITED"}
+    {
+      "kind": "semantic_registry",
+      "path": "config/product/options-bank-semantic-relations.json",
+      "expected_status": "6 relationships / 3 aliases / 3 effective derivations"
+    },
+    {
+      "kind": "native_audit",
+      "path": "config/product/options-bank-audits/fields-native-wordpress.json",
+      "expected_status": "NATIVE_AUDITED"
+    },
+    {
+      "kind": "market_audit",
+      "path": "config/product/options-bank-audits/fields-market-ecosystem.json",
+      "expected_status": "MARKET_AUDITED"
+    }
   ],
   "semantic_expectations": {
     "relationships": 6,
