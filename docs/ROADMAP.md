@@ -105,12 +105,21 @@ This produces a legitimately useful free plugin, validates the platform contract
 
 Build in this order:
 
-1. **Custom Fields Builder**
-2. **Relations Builder**
-3. **Custom Query Builder**
-4. **Admin Columns Builder**
-5. **Dynamic Listings / Template Builder**
-6. **Status Manager**
+Order set by the owner on 2026-11-19 after the JetEngine 3.9 audit. Every step follows
+`config/product/system-dependency-map.json`: a system is built only after the systems it `requires`,
+and a system that `attaches_from` another reuses that system's options instead of adding its own.
+`tests/Smoke/system-dependency-map-contract.php` keeps the map complete and acyclic.
+
+1. **Custom Fields Builder** (Surface 3): all field types, repeater/group, conditional logic, locations on posts, terms, users, options pages and CCT.
+2. **Custom Tables / Custom Content Types** (Surface 7): requires Fields.
+3. **REST API** (Surface 22): endpoints for CCT, fields and relations; requires Roles.
+4. **Options Pages** (Surface 12 Settings): requires Fields.
+5. **Relations Builder** (Surface 4), including hierarchical relations.
+6. **Custom Query Builder** (Surface 6): posts, terms, users, comments, SQL, CCT, REST, repeater, sub/merged query.
+7. **Admin Columns Builder** (Surface 8): columns, filters, quick and bulk edit.
+8. **Dynamic Listings / Template Builder** (Surface 9) and Builder Widgets (Surface 16): dynamic tags, macros, Bricks/Divi.
+9. **Status Manager** (Surface 5), including post expiration.
+10. **Dynamic Visibility** (Surface 35 Decision), then Data Stores (Surface 54), Map listings (Surface 42 Geo), Calendar (Surface 37), Forms and Profiles.
 
 ### Platform work completed here
 - Field Schema Registry

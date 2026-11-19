@@ -1,0 +1,680 @@
+{
+ "schema_version": 1,
+ "snapshot_date": "2026-11-19",
+ "rules": [
+  "requires is a hard dependency and must form a DAG rooted at platform",
+  "attaches lists optional systems that plug into a target; a plugged system never re-implements the target's options",
+  "every competitor capability has exactly one owner surface"
+ ],
+ "surfaces": [
+  {
+   "key": "platform",
+   "purpose": "Kernel, definitions store, abilities, entitlements, assets",
+   "requires": [],
+   "attaches_from": []
+  },
+  {
+   "key": "cpt",
+   "purpose": "Post types",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "taxonomy",
+   "purpose": "Taxonomies",
+   "requires": [
+    "platform",
+    "cpt"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "roles",
+   "purpose": "Roles and capabilities",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "fields",
+   "purpose": "Field groups and values on posts, terms, users, options, CCT",
+   "requires": [
+    "platform",
+    "cpt"
+   ],
+   "attaches_from": [
+    "tables",
+    "settings",
+    "profiles",
+    "forms-workflows",
+    "columns",
+    "listings",
+    "rest-api",
+    "geo",
+    "reservations",
+    "import-export",
+    "ai"
+   ]
+  },
+  {
+   "key": "tables",
+   "purpose": "Custom Content Types in own tables",
+   "requires": [
+    "platform",
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "relations",
+   "purpose": "Object relations",
+   "requires": [
+    "platform",
+    "cpt"
+   ],
+   "attaches_from": [
+    "fields",
+    "listings",
+    "forms-workflows",
+    "rest-api",
+    "query"
+   ]
+  },
+  {
+   "key": "status",
+   "purpose": "Custom post statuses, expiration",
+   "requires": [
+    "platform",
+    "cpt"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "settings",
+   "purpose": "Options pages",
+   "requires": [
+    "platform",
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "query",
+   "purpose": "Query builder over posts, terms, users, comments, SQL, CCT, REST, repeater",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": [
+    "tables",
+    "relations",
+    "fields",
+    "rest-api",
+    "listings",
+    "dashboard-widgets",
+    "search",
+    "user-stores",
+    "geo"
+   ]
+  },
+  {
+   "key": "rest-api",
+   "purpose": "REST endpoints for CCT, fields, relations, remote sources",
+   "requires": [
+    "platform",
+    "roles"
+   ],
+   "attaches_from": [
+    "tables",
+    "fields",
+    "relations",
+    "query",
+    "forms-workflows",
+    "ai"
+   ]
+  },
+  {
+   "key": "listings",
+   "purpose": "Listing grid, item templates, injections, map, calendar",
+   "requires": [
+    "query"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "builder-widgets",
+   "purpose": "Elementor, Gutenberg, Bricks, Divi widgets and dynamic tags",
+   "requires": [
+    "listings"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "columns",
+   "purpose": "Admin columns and filters",
+   "requires": [
+    "platform",
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "dashboard-widgets",
+   "purpose": "Admin widgets, tables and charts",
+   "requires": [
+    "query"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "admin-menu",
+   "purpose": "Admin menu",
+   "requires": [
+    "platform",
+    "roles"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "dashboard",
+   "purpose": "Plugin dashboard",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "profiles",
+   "purpose": "Account pages, frontend submission",
+   "requires": [
+    "roles",
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "membership",
+   "purpose": "Access plans",
+   "requires": [
+    "roles",
+    "profiles"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "forms-workflows",
+   "purpose": "Forms and actions",
+   "requires": [
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "cron",
+   "purpose": "Scheduled jobs",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": [
+    "status",
+    "backup",
+    "link-health",
+    "db-maintenance",
+    "sync"
+   ]
+  },
+  {
+   "key": "notifications",
+   "purpose": "Notification channels",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": [
+    "forms-workflows",
+    "status",
+    "cron",
+    "chat"
+   ]
+  },
+  {
+   "key": "emails",
+   "purpose": "Email templates",
+   "requires": [
+    "notifications"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "chat",
+   "purpose": "Private messaging",
+   "requires": [
+    "roles"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "connections",
+   "purpose": "External service credentials",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "backup",
+   "purpose": "Backups",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "reset",
+   "purpose": "Reset",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "import-export",
+   "purpose": "Definitions and data import/export, ACF/Pods migration",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "protector",
+   "purpose": "Hardening",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "media",
+   "purpose": "Media library extensions",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "xml-rpc",
+   "purpose": "XML-RPC control",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "solutions",
+   "purpose": "Bundled solution presets",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "analytics",
+   "purpose": "Analytics",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "search",
+   "purpose": "Search",
+   "requires": [
+    "query"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "decision",
+   "purpose": "Rules and conditions engine (dynamic visibility)",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": [
+    "listings",
+    "builder-widgets",
+    "membership",
+    "forms-workflows",
+    "placement",
+    "admin-menu"
+   ]
+  },
+  {
+   "key": "ledger",
+   "purpose": "Audit ledger",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "reservations",
+   "purpose": "Bookings and calendars",
+   "requires": [
+    "cpt",
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "placement",
+   "purpose": "Content placement and injections",
+   "requires": [
+    "decision"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "experiments",
+   "purpose": "A/B tests",
+   "requires": [
+    "decision"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "documents",
+   "purpose": "Documents",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "sync",
+   "purpose": "Site sync",
+   "requires": [
+    "import-export"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "geo",
+   "purpose": "Geodata, map listings",
+   "requires": [
+    "fields"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "ai",
+   "purpose": "AI, MCP",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "redirects",
+   "purpose": "Redirects",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "transform",
+   "purpose": "Data transforms, post type conversion",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "fixtures",
+   "purpose": "Demo data",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "link-health",
+   "purpose": "Broken links",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "db-maintenance",
+   "purpose": "DB cleanup",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "admin-theme",
+   "purpose": "Admin theme",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "safe-script",
+   "purpose": "Snippets",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "content-order",
+   "purpose": "Drag ordering",
+   "requires": [
+    "cpt"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "security-scanner",
+   "purpose": "Scanner",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "fonts",
+   "purpose": "Fonts",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "user-stores",
+   "purpose": "Data stores: wishlist, favorites, likes",
+   "requires": [
+    "roles"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "staging",
+   "purpose": "Staging",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  },
+  {
+   "key": "theme-workspace",
+   "purpose": "Theme workspace",
+   "requires": [
+    "platform"
+   ],
+   "attaches_from": []
+  }
+ ],
+ "jetengine_capability_owners": [
+  {
+   "capability": "Custom Post Types",
+   "owner": "cpt"
+  },
+  {
+   "capability": "Taxonomies",
+   "owner": "taxonomy"
+  },
+  {
+   "capability": "Custom fields / meta boxes",
+   "owner": "fields"
+  },
+  {
+   "capability": "Field conditional logic",
+   "owner": "fields"
+  },
+  {
+   "capability": "Repeater fields",
+   "owner": "fields"
+  },
+  {
+   "capability": "Glossaries",
+   "owner": "fields"
+  },
+  {
+   "capability": "Options pages",
+   "owner": "settings"
+  },
+  {
+   "capability": "Custom Content Types",
+   "owner": "tables"
+  },
+  {
+   "capability": "CCT expiration",
+   "owner": "tables"
+  },
+  {
+   "capability": "Relations",
+   "owner": "relations"
+  },
+  {
+   "capability": "Hierarchical relations",
+   "owner": "relations"
+  },
+  {
+   "capability": "Query Builder",
+   "owner": "query"
+  },
+  {
+   "capability": "Sub-query / merged query",
+   "owner": "query"
+  },
+  {
+   "capability": "SQL query + AI query generator",
+   "owner": "query"
+  },
+  {
+   "capability": "REST API endpoints",
+   "owner": "rest-api"
+  },
+  {
+   "capability": "REST listings / REST notifications",
+   "owner": "rest-api"
+  },
+  {
+   "capability": "Listing grid / item",
+   "owner": "listings"
+  },
+  {
+   "capability": "Listing slider and carousel",
+   "owner": "listings"
+  },
+  {
+   "capability": "Listing injections",
+   "owner": "placement"
+  },
+  {
+   "capability": "Async listing / layout switcher",
+   "owner": "listings"
+  },
+  {
+   "capability": "Calendar listing",
+   "owner": "reservations"
+  },
+  {
+   "capability": "Map listings",
+   "owner": "geo"
+  },
+  {
+   "capability": "Dynamic widgets (Elementor/Gutenberg/Bricks/Divi)",
+   "owner": "builder-widgets"
+  },
+  {
+   "capability": "Dynamic tags / dynamic function / shortcodes / macros",
+   "owner": "builder-widgets"
+  },
+  {
+   "capability": "Timber/Twig views",
+   "owner": "builder-widgets"
+  },
+  {
+   "capability": "Dynamic Visibility",
+   "owner": "decision"
+  },
+  {
+   "capability": "Data Stores",
+   "owner": "user-stores"
+  },
+  {
+   "capability": "Profile Builder",
+   "owner": "profiles"
+  },
+  {
+   "capability": "Frontend post submission",
+   "owner": "forms-workflows"
+  },
+  {
+   "capability": "Forms",
+   "owner": "forms-workflows"
+  },
+  {
+   "capability": "Tables builder / charts builder",
+   "owner": "dashboard-widgets"
+  },
+  {
+   "capability": "Admin columns / admin filters",
+   "owner": "columns"
+  },
+  {
+   "capability": "Post expiration",
+   "owner": "status"
+  },
+  {
+   "capability": "Gallery / QR code",
+   "owner": "builder-widgets"
+  },
+  {
+   "capability": "Post type conversion",
+   "owner": "transform"
+  },
+  {
+   "capability": "ACF / Pods transfer",
+   "owner": "import-export"
+  },
+  {
+   "capability": "WPML integration",
+   "owner": "fields"
+  },
+  {
+   "capability": "MCP server / AI structure builder",
+   "owner": "ai"
+  },
+  {
+   "capability": "Quick edit / bulk edit",
+   "owner": "columns"
+  }
+ ]
+}

@@ -286,7 +286,8 @@ jobs:
             tests/Smoke/compiled-registration-persistence-smoke.php \
             tests/Smoke/compiled-registration-scale-smoke.php \
             tests/Smoke/options-bank-contract.php \
-            tests/Smoke/options-bank-progress-contract.php
+            tests/Smoke/options-bank-progress-contract.php \
+            tests/Smoke/system-dependency-map-contract.php
           do
             echo "===== ${script} =====" | tee -a smoke-results.log
             php "${script}" >> smoke-results.log 2>&1
