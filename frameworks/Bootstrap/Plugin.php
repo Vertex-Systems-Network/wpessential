@@ -366,11 +366,19 @@ final class Plugin {
 
 		self::$kernel->boot();
 
-		try {
-			$manifest = $registrationCompiler->compileAndPublishIfChanged( $registrationProviders->definitions() );
-			$registrationStatus->markSuccess( $manifest );
-		} catch ( Throwable $exception ) {
-			$registrationStatus->markFailure( $exception );
+		$compile = static function () use ( $registrationCompiler, $registrationProviders, $registrationStatus ): void {
+			try {
+				$manifest = $registrationCompiler->compileAndPublishIfChanged( $registrationProviders->definitions() );
+				$registrationStatus->markSuccess( $manifest );
+			} catch ( Throwable $exception ) {
+				$registrationStatus->markFailure( $exception );
+			}
+		};
+		// Generated labels are translated, so compile on init (before the registrars at 20/21), not plugins_loaded.
+		if ( function_exists( 'add_action' ) ) {
+			add_action( 'init', $compile, 0 );
+		} else {
+			$compile();
 		}
 		$postTypeRegistrar->register();
 		$taxonomyRegistrar->register();

@@ -34,13 +34,13 @@ $entrypoint = (string) @file_get_contents($entrypointPath);
 foreach ([
     'Plugin URI: https://wpessential.org/plugins/wpessential',
     'Description: Create custom post types and taxonomies without code. Visual builder for labels, permalinks, REST API, archives, block templates and more.',
-    'Version: 3.1.0',
+    'Version: 3.1.1',
     'Requires at least: 6.9',
     'Requires PHP: 8.2',
     'Author: WPEssential',
     'Author URI: https://wpessential.org',
     'License: GPL-3.0-or-later',
-    "define('WPE_VERSION', '3.1.0')",
+    "define('WPE_VERSION', '3.1.1')",
     "define('WPE_AJAX_ACTION', 'wpessential_dispatch')",
     "define('WPE_NONCE_ACTION', 'wpessential_request')",
 ] as $requiredMarker) {
@@ -59,7 +59,7 @@ require_once $root . '/tools/release/readme-to-txt.php';
 $readmeSource = (string) @file_get_contents($root . '/wordpress-org/readme.md');
 try {
     $generatedReadme = wpeReadmeMarkdownToTxt($readmeSource);
-    wpeAssertReadmeTxtRules($generatedReadme, '3.1.0');
+    wpeAssertReadmeTxtRules($generatedReadme, '3.1.1');
     if ((string) @file_get_contents($readmePath) !== $generatedReadme) {
         $errors[] = 'readme.txt is out of date: edit wordpress-org/readme.md and run php tools/release/readme-to-txt.php.';
     }
@@ -72,7 +72,7 @@ foreach ([
     'Requires at least: 6.9',
     'Tested up to: 7.1',
     'Requires PHP: 8.2',
-    'Stable tag: 3.1.0',
+    'Stable tag: 3.1.1',
     'License: GPLv3 or later',
     'https://wpessential.org',
 ] as $requiredMarker) {

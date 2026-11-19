@@ -125,8 +125,12 @@ test('REST API Control: every option, checked logged out', async ({ page, audit,
       await form.locator('input[name=logged_in_only]').check();
       await form.locator('input[name="allow_known[]"][value="contact-form-7/v1"]').check();
     });
-    expect(await status('/contact-form-7/v1/contact-forms')).not.toBe(401);
+    // Visitors submit forms through /feedback; CF7 itself keeps its form list for signed-in users.
+    const submit = async () => (await anon.post('/wp-json/contact-form-7/v1/contact-forms/1/feedback', { multipart: { _wpcf7: '1' } })).status();
+    expect(await submit()).not.toBe(401);
     expect(await status('/wp/v2/posts')).toBe(401);
+    await save(async (form) => form.locator('input[name=logged_in_only]').check());
+    expect(await submit()).toBe(401);
   });
   await audit('rest-api', 'custom route exception', async () => {
     await save(async (form) => {

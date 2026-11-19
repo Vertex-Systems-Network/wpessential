@@ -32,9 +32,14 @@ audit calls foundation, skeleton or not started is reported here as **NOT BUILT*
 - WordPress auto-updated core to 7.1.5 in the middle of a run and showed "Briefly unavailable for scheduled maintenance". The wp-env configs now set `AUTOMATIC_UPDATER_DISABLED`.
 - Elementor bundles an old MCP Adapter copy that logs a deprecation notice; WooCommerce loads its translations early. Both filtered from the log check.
 
-## Open notice
+## Fixed in 3.1.1
 
-- `_load_textdomain_just_in_time` for the `wpessential` domain is logged while a taxonomy is saved: a string is translated before `init`. Harmless, but should be traced and moved after `init`.
+- `_load_textdomain_just_in_time` for the `wpessential` domain: generated taxonomy labels were translated while registrations compiled on `plugins_loaded`. Compilation now runs on `init` (priority 0), before the post type and taxonomy registrars.
+- Registrations were republished on every request: built entries had keys `id, revision, payload`, the store returns them sorted (`id, payload, revision`), and the change check uses `===`. Every page load wrote a new row to `wpessential_registration_generations` (2,106 rows / 11.6 MB on the test site within hours). Entries are now built in sorted key order; a unit test with a sorting store covers it. Rows already written stay (the table is an immutable history by design); they no longer grow.
+
+## WordPress 7.1
+
+The Free suite was also run on WordPress 7.1.5 with the latest WooCommerce and Contact Form 7.
 
 ## Options Bank seeding (AI-Native plan)
 
