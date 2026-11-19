@@ -29,7 +29,7 @@
       "id": 3,
       "key": "fields",
       "status": "BANK_REVIEWED",
-      "records": 618,
+      "records": 637,
       "notes": "Fields Bank Review V2 closes the original semantic, native and market blockers without adding count-only records. Six semantic relationships remain machine-canonicalized; native WordPress audit and provider-by-provider market audit both have zero unresolved items; all 618 Fields records are classified, and rejected/deferred/WPE-exceed policies are consistency-gated. Surface 3 is ready to feed downstream Atomic Option Contracts, but this does not claim runtime implementation or shipped parity."
     },
     {
@@ -384,6 +384,6 @@
     "native_audited_surfaces": 29,
     "market_audited_surfaces": 29,
     "bank_reviewed_surfaces": 29,
-    "total_bank_records": 3354
+    "total_bank_records": 3373
   }
 }
