@@ -4,7 +4,7 @@ Tags: custom post types, custom taxonomy, cpt, post types, taxonomy
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -138,6 +138,12 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 == Changelog ==
 
+= 3.1.1 =
+
+* Fixed: WPEssential wrote a new copy of its post type and taxonomy registrations on every page load. On busy sites the table grew without limit and could run PHP out of memory.
+* Fixed: a notice about translations loading too early when saving a taxonomy.
+* Changed: arrows and pager icons use the shared SVG icon set instead of text characters.
+
 = 3.1.0 =
 
 * New: Import / Export. Download your post types, taxonomies and module settings as one file and import it on another site, with a preview of what will change.
@@ -167,6 +173,10 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 * New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
 == Upgrade Notice ==
+
+= 3.1.1 =
+
+Fixes registrations being rewritten on every page load and a translation notice. Recommended for every site.
 
 = 3.1.0 =
 

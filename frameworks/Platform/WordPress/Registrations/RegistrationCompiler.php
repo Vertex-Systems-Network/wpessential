@@ -53,10 +53,12 @@ final class RegistrationCompiler {
 			if ( isset( $entries[ $kind ][ $definition->key ] ) ) {
 				throw new RuntimeException( sprintf( 'Duplicate active registration key "%s:%s".', $kind, $definition->key ) );
 			}
+			// Keys in sorted order: the store hands manifests back sorted, and compileAndPublishIfChanged()
+			// compares with ===, so any other order published a new generation on every request.
 			$entries[ $kind ][ $definition->key ] = [
 				'id'       => $definition->id,
-				'revision' => $definition->revision,
 				'payload'  => self::canonicalize( $definition->payload ),
+				'revision' => $definition->revision,
 			];
 		}
 		ksort( $entries, SORT_STRING );

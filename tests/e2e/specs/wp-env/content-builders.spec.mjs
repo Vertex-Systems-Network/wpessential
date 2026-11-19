@@ -47,6 +47,8 @@ for (const builder of [
     await audit(builder.module, 'every value survives a reload', async () => {
       await openAdmin(page, builder.list);
       await row.getByRole('button', { name: 'Edit' }).click();
+      // The editor loads the definition after the click; read it only once it is filled in.
+      await expect(page.locator(`#${builder.prefix}-name`)).toHaveValue(builder.plural);
       await page.getByRole('button', { name: 'Expert', exact: true }).click();
       expect(changed(entered, await snapshot(form), /-(id|revision|key)$/)).toEqual([]);
     });
