@@ -512,7 +512,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 - Canonical modules planned: **56 / 56**
 - README closeout dashboard: **56 / 56 modules listed**
 - Current Options Bank and Atomic Option lifecycle truth: `config/product/options-bank-progress.json` and `config/product/atomic-option-contract-progress.json`
-- Current Options Bank truth: **29 seeded / 29 NATIVE_AUDITED / 29 MARKET_AUDITED / 29 BANK_REVIEWED / 3165 records**.
+- Current Options Bank truth: **31 seeded / 29 NATIVE_AUDITED / 29 MARKET_AUDITED / 29 BANK_REVIEWED / 3354 records** (Surfaces 43 AI Connect and 49 Site Kit seeded 2026-11-20 from their shipped runtime; audits pending).
 - Product-parity targets: `config/product/competitor-parity-surfaces.json`
 - Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
 - No bounded module pass in this README implies full product parity or release readiness.

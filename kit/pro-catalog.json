@@ -25,8 +25,8 @@
 		"icon": "image-flip-horizontal"
 	},
 	"forms": {
-		"title": "WPForms Form",
-		"description": "Embed a published WPForms Lite form by ID, leaving validation, submissions and spam prevention to the form plugin.",
+		"title": "Form",
+		"description": "Embed a published WPForms Lite or Contact Form 7 form by ID, leaving validation, submissions and spam prevention to the form plugin.",
 		"icon": "feedback"
 	},
 	"image-carousel": {
