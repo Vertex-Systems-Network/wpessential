@@ -295,8 +295,9 @@
     {
       "id": 43,
       "key": "ai",
-      "status": "UNSEEDED",
-      "records": 0
+      "status": "BANK_SURFACE_SEEDED",
+      "records": 25,
+      "notes": "Discovery seed from the shipped AI Connect runtime; native and market audits pending."
     },
     {
       "id": 44,
@@ -331,8 +332,9 @@
     {
       "id": 49,
       "key": "admin-theme",
-      "status": "UNSEEDED",
-      "records": 0
+      "status": "BANK_SURFACE_SEEDED",
+      "records": 164,
+      "notes": "Discovery seed from the shipped Pro Site Kit schema (every field); native and market audits pending."
     },
     {
       "id": 50,
@@ -378,10 +380,10 @@
     }
   ],
   "truth": {
-    "seeded_surfaces": 29,
+    "seeded_surfaces": 31,
     "native_audited_surfaces": 29,
     "market_audited_surfaces": 29,
     "bank_reviewed_surfaces": 29,
-    "total_bank_records": 3165
+    "total_bank_records": 3354
   }
 }
