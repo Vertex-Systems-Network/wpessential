@@ -172,7 +172,8 @@ For Free stable release verify as one release identity:
 - SVN tag;
 - bundled changelog;
 - Tested up to / Requires fields;
-- release announcement.
+- release announcement;
+- Live Preview blueprint: SVN `assets/blueprints/blueprint.json` exists and matches `wordpress-org/assets/blueprints/blueprint.json` (validated by `tools/release/check-blueprint.php`; published and checked by `.github/workflows/wordpress-org-blueprint.yml` on every published release, which needs the `SVN_USERNAME` / `SVN_PASSWORD` secrets). Without it WordPress.org shows "Missing or invalid blueprint.json file".
 
 Mismatch blocks release.
 

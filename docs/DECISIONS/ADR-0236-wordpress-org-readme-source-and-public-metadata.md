@@ -36,7 +36,7 @@ The owner also asked for `readme.txt` to be generated from a Markdown file durin
    - Author: `WPEssential`.
    - Contributors: `wpessential`.
    - Header description: "Create custom post types and taxonomies without code. Visual builder for labels, permalinks, REST API, archives, block templates and more."
-5. **Listing assets.** Screenshots (`screenshot-N.png`), banners and icons for the WordPress.org SVN `assets/` folder live in `wordpress-org/assets/`. Their captions are the numbered `## Screenshots` list in `readme.md`.
+5. **Listing assets.** Screenshots (`screenshot-N.png`), banners and icons for the WordPress.org SVN `assets/` folder live in `wordpress-org/assets/`. Their captions are the numbered `## Screenshots` list in `readme.md`. The Live Preview blueprint lives in `wordpress-org/assets/blueprints/blueprint.json` and must also be in SVN `assets/blueprints/`; `.github/workflows/wordpress-org-blueprint.yml` validates it on PRs and publishes it on each release.
 
 ## Consequences
 
