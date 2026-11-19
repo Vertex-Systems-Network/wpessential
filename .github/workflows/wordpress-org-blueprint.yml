@@ -1,0 +1,63 @@
+name: WordPress.org Live Preview blueprint
+
+# WordPress.org reads the Live Preview blueprint from SVN assets/blueprints/blueprint.json, not from
+# the plugin zip. Without it the plugin page says "Missing or invalid blueprint.json file".
+# Every PR validates wordpress-org/assets/blueprints/blueprint.json; every published release (or a
+# manual run) copies it to SVN and checks the live file. Needs repository secrets SVN_USERNAME and
+# SVN_PASSWORD (a WordPress.org committer of the wpessential plugin).
+on:
+  pull_request:
+    paths:
+      - 'wordpress-org/assets/blueprints/**'
+      - 'tools/release/check-blueprint.php'
+      - '.github/workflows/wordpress-org-blueprint.yml'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  blueprint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Validate blueprint
+        run: php tools/release/check-blueprint.php
+
+      - name: Publish to WordPress.org SVN assets
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SVN_USERNAME}" ] || [ -z "${SVN_PASSWORD}" ]; then
+            echo "::error::Add the SVN_USERNAME and SVN_PASSWORD repository secrets so the Live Preview blueprint reaches WordPress.org."
+            exit 1
+          fi
+          svn checkout --non-interactive https://plugins.svn.wordpress.org/wpessential/assets svn-assets
+          mkdir -p svn-assets/blueprints
+          cp wordpress-org/assets/blueprints/blueprint.json svn-assets/blueprints/blueprint.json
+          svn add --force --non-interactive svn-assets/blueprints
+          if [ -n "$(svn status svn-assets)" ]; then
+            svn commit --non-interactive --no-auth-cache --username "${SVN_USERNAME}" --password "${SVN_PASSWORD}" \
+              -m "Live Preview blueprint from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}" svn-assets
+          else
+            echo "Blueprint already up to date on WordPress.org SVN."
+          fi
+
+      - name: Verify the live blueprint
+        if: ${{ github.event_name != 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://plugins.svn.wordpress.org/wpessential/assets/blueprints/blueprint.json -o live-blueprint.json
+          cmp live-blueprint.json wordpress-org/assets/blueprints/blueprint.json
+          php tools/release/check-blueprint.php live-blueprint.json
