@@ -580,6 +580,91 @@
           ],
           "description": "Endpoint maps typed inputs into the Ability input schema and output through the response schema; it cannot override the Ability permission callback with weaker policy; secret refs only when the Ability accepts them internally. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a720.",
           "parity_reason": "Endpoint maps typed inputs into the Ability input schema and output through the response schema; it cannot override the Ability permission callback with weaker policy; secret refs only when the Ability accepts them internally. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a720."
+        },
+        {
+          "id": "rest-api.presets.entity-endpoints",
+          "label": "Ready-made endpoint presets for posts, users and WooCommerce products (list, read, create, update) built on the endpoint builder",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Endpoint Presets",
+            "control": "structured",
+            "search_terms": [
+              "rest-api.presets.entity-endpoints",
+              "presets.entity-endpoints",
+              "Ready-made endpoint presets for posts, users and WooCommerce products (list, read, create, update) built on the endpoint builder"
+            ],
+            "help": "Ready-made endpoint presets for posts, users and WooCommerce products (list, read, create, update) built on the endpoint builder (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Ready-made endpoint presets for posts, users and WooCommerce products (list, read, create, update) built on the endpoint builder (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "revisioned_definition",
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Planned endpoint-definition behavior; no route registration or request execution is authorized by this contract. Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine (Crocoblock)",
+              "capability": "endpoint definition binding",
+              "source": "https://crocoblock.com/plugins/jetengine/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Custom API for WP (miniOrange)",
+              "capability": "endpoint definition binding",
+              "source": "https://wordpress.org/plugins/custom-api-for-wp/",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.presets.entity-endpoints. Ready-made endpoint presets for posts, users and WooCommerce products (list, read, create, update) built on the endpoint builder (WPE_HARD, P2_COMPETITIVE)."
         }
       ]
     },
@@ -1277,6 +1362,261 @@
           ],
           "description": "Future certified adapter only after separate security review; provider lifecycle belongs to Surface 23 Connections or a certified adapter. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a712.",
           "parity_reason": "Future certified adapter only after separate security review; provider lifecycle belongs to Surface 23 Connections or a certified adapter. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a712."
+        },
+        {
+          "id": "rest-api.auth.jwt-tokens",
+          "label": "JWT tokens: login, refresh and revoke endpoints, signing key, expiry and custom header name",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Authentication",
+            "control": "structured",
+            "search_terms": [
+              "rest-api.auth.jwt-tokens",
+              "auth.jwt-tokens",
+              "JWT tokens: login, refresh and revoke endpoints, signing key, expiry and custom header name"
+            ],
+            "help": "JWT tokens: login, refresh and revoke endpoints, signing key, expiry and custom header name (WPE_HARD, P1_CORE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "JWT tokens: login, refresh and revoke endpoints, signing key, expiry and custom header name (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "revisioned_definition",
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Planned endpoint-definition behavior; no route registration or request execution is authorized by this contract. Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine (Crocoblock)",
+              "capability": "endpoint definition binding",
+              "source": "https://crocoblock.com/plugins/jetengine/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Custom API for WP (miniOrange)",
+              "capability": "endpoint definition binding",
+              "source": "https://wordpress.org/plugins/custom-api-for-wp/",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.auth.jwt-tokens. JWT tokens: login, refresh and revoke endpoints, signing key, expiry and custom header name (WPE_HARD, P1_CORE)."
+        },
+        {
+          "id": "rest-api.auth.user-api-keys",
+          "label": "Per-user API keys (hashed, scoped, expiring, revocable) with a last-used audit",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Authentication",
+            "control": "structured",
+            "search_terms": [
+              "rest-api.auth.user-api-keys",
+              "auth.user-api-keys",
+              "Per-user API keys (hashed, scoped, expiring, revocable) with a last-used audit"
+            ],
+            "help": "Per-user API keys (hashed, scoped, expiring, revocable) with a last-used audit (WPE_HARD, P1_CORE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Per-user API keys (hashed, scoped, expiring, revocable) with a last-used audit (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "revisioned_definition",
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Planned endpoint-definition behavior; no route registration or request execution is authorized by this contract. Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine (Crocoblock)",
+              "capability": "endpoint definition binding",
+              "source": "https://crocoblock.com/plugins/jetengine/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Custom API for WP (miniOrange)",
+              "capability": "endpoint definition binding",
+              "source": "https://wordpress.org/plugins/custom-api-for-wp/",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.auth.user-api-keys. Per-user API keys (hashed, scoped, expiring, revocable) with a last-used audit (WPE_HARD, P1_CORE)."
+        },
+        {
+          "id": "rest-api.auth.external-idp-tokens",
+          "label": "Accept tokens issued by an external identity provider (JWKS validation, claim-to-user mapping, optional user creation)",
+          "kind": "wpe_option",
+          "parity_status": "DEFERRED_WITH_REASON",
+          "requiredness": "optional",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "none",
+            "notes": "Fail closed; no implicit public/authentication/permission defaults."
+          },
+          "ui": {
+            "tier": "Expert",
+            "group": "Authentication",
+            "control": "provider_reference",
+            "search_terms": [
+              "rest-api.auth.external-idp-tokens",
+              "auth.external-idp-tokens",
+              "Accept tokens issued by an external identity provider (JWKS validation, claim-to-user mapping, optional user creation)"
+            ],
+            "help": "Accept tokens issued by an external identity provider (JWKS validation, claim-to-user mapping, optional user creation) (DEFERRED, P3_LATER).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Accept tokens issued by an external identity provider (JWKS validation, claim-to-user mapping, optional user creation) (DEFERRED, P3_LATER)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "reference_only",
+            "revisioned": false
+          },
+          "runtime": {
+            "effect": "Deferred pending the named canonical owner and separate security certification; no adapter execution is authorized. Future certified adapter only after separate security review; provider lifecycle belongs to Surface 23 Connections or a certified adapter. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a712.",
+            "mutation_class": "read_only",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "provider_only",
+            "capability": null,
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. Credentials, cookies and internal proxy headers are never user-mappable."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": true,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine (Crocoblock)",
+              "capability": "request schema auth",
+              "source": "https://crocoblock.com/plugins/jetengine/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Custom API for WP (miniOrange)",
+              "capability": "request schema auth",
+              "source": "https://wordpress.org/plugins/custom-api-for-wp/",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Future certified adapter only after separate security review; provider lifecycle belongs to Surface 23 Connections or a certified adapter. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a712.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.auth.external-idp-tokens. Accept tokens issued by an external identity provider (JWKS validation, claim-to-user mapping, optional user creation) (DEFERRED, P3_LATER)."
         }
       ]
     },
@@ -1374,6 +1714,91 @@
           ],
           "description": "Every endpoint requires explicit permission_callback semantics evaluated in order: context, site boundary, capability, resource Policy, Membership, business guards; no frontend-only authorization. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a713.",
           "parity_reason": "Every endpoint requires explicit permission_callback semantics evaluated in order: context, site boundary, capability, resource Policy, Membership, business guards; no frontend-only authorization. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a713."
+        },
+        {
+          "id": "rest-api.core.access-control",
+          "label": "Site-wide REST access policy for core and third-party routes (allow all / logged-in only / per-namespace or per-route allow and deny lists, role rules)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Site REST Access",
+            "control": "structured",
+            "search_terms": [
+              "rest-api.core.access-control",
+              "core.access-control",
+              "Site-wide REST access policy for core and third-party routes (allow all / logged-in only / per-namespace or per-route allow and deny lists, role rules)"
+            ],
+            "help": "Site-wide REST access policy for core and third-party routes (allow all / logged-in only / per-namespace or per-route allow and deny lists, role rules) (WPE_HARD, P0_PARITY).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Site-wide REST access policy for core and third-party routes (allow all / logged-in only / per-namespace or per-route allow and deny lists, role rules) (WPE_HARD, P0_PARITY)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "revisioned_definition",
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Planned endpoint-definition behavior; no route registration or request execution is authorized by this contract. Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine (Crocoblock)",
+              "capability": "endpoint definition binding",
+              "source": "https://crocoblock.com/plugins/jetengine/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Custom API for WP (miniOrange)",
+              "capability": "endpoint definition binding",
+              "source": "https://wordpress.org/plugins/custom-api-for-wp/",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.core.access-control. Site-wide REST access policy for core and third-party routes (allow all / logged-in only / per-namespace or per-route allow and deny lists, role rules) (WPE_HARD, P0_PARITY)."
         }
       ]
     },
@@ -2668,6 +3093,91 @@
           ],
           "description": "Docs generated from endpoint schema with synthetic/redacted examples only; OpenAPI-like export after schema stabilizes. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a729.",
           "parity_reason": "Docs generated from endpoint schema with synthetic/redacted examples only; OpenAPI-like export after schema stabilizes. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a729."
+        },
+        {
+          "id": "rest-api.docs.postman-collection",
+          "label": "Export endpoints as a Postman collection",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Documentation",
+            "control": "structured",
+            "search_terms": [
+              "rest-api.docs.postman-collection",
+              "docs.postman-collection",
+              "Export endpoints as a Postman collection"
+            ],
+            "help": "Export endpoints as a Postman collection (WPE_HARD, P3_LATER).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Export endpoints as a Postman collection (WPE_HARD, P3_LATER)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "revisioned_definition",
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Planned endpoint-definition behavior; no route registration or request execution is authorized by this contract. Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "JetEngine (Crocoblock)",
+              "capability": "endpoint definition binding",
+              "source": "https://crocoblock.com/plugins/jetengine/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Custom API for WP (miniOrange)",
+              "capability": "endpoint definition binding",
+              "source": "https://wordpress.org/plugins/custom-api-for-wp/",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Stable generated key and required name; key never changes after publish so dependencies/import refs stay valid. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a74.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.docs.postman-collection. Export endpoints as a Postman collection (WPE_HARD, P3_LATER)."
         }
       ]
     },
@@ -4036,6 +4546,150 @@
           "competitor_evidence": [],
           "description": "Rejected. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a730.",
           "parity_reason": "Rejected. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a730."
+        },
+        {
+          "id": "rest-api.safety.account-password-basic-auth",
+          "label": "HTTP Basic auth with the account password over REST",
+          "kind": "wpe_option",
+          "parity_status": "REJECTED_UNSAFE",
+          "requiredness": "optional",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "none",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "System",
+            "group": "Security",
+            "control": "read_only",
+            "search_terms": [
+              "rest-api.safety.account-password-basic-auth",
+              "safety.account-password-basic-auth",
+              "HTTP Basic auth with the account password over REST"
+            ],
+            "help": "HTTP Basic auth with the account password over REST (REJECTED_UNSAFE, NOT_SCHEDULED).",
+            "danger_level": "critical"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "HTTP Basic auth with the account password over REST (REJECTED_UNSAFE, NOT_SCHEDULED)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "none",
+            "revisioned": false
+          },
+          "runtime": {
+            "effect": "Rejected unsafe behavior; it is not an available option and performs no action. Rejected: market no-code SQL endpoint builders are not evidence to accept raw SQL/PHP/filesystem execution or client-controlled orderby identifiers. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a71, \u00a76, \u00a717.",
+            "mutation_class": "read_only",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "prohibited",
+            "capability": null,
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": false,
+            "import": false,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [],
+          "description": "Rejected: market no-code SQL endpoint builders are not evidence to accept raw SQL/PHP/filesystem execution or client-controlled orderby identifiers. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a71, \u00a76, \u00a717.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.safety.account-password-basic-auth. HTTP Basic auth with the account password over REST (REJECTED_UNSAFE, NOT_SCHEDULED)."
+        },
+        {
+          "id": "rest-api.safety.post-only-convention",
+          "label": "Forcing every operation through POST",
+          "kind": "wpe_option",
+          "parity_status": "REJECTED_UNSAFE",
+          "requiredness": "optional",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "none",
+            "notes": "No runtime behavior is implied by this planning contract."
+          },
+          "ui": {
+            "tier": "System",
+            "group": "Security",
+            "control": "read_only",
+            "search_terms": [
+              "rest-api.safety.post-only-convention",
+              "safety.post-only-convention",
+              "Forcing every operation through POST"
+            ],
+            "help": "Forcing every operation through POST (REJECTED_UNSAFE, NOT_SCHEDULED).",
+            "danger_level": "critical"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Forcing every operation through POST (REJECTED_UNSAFE, NOT_SCHEDULED)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "rest-api",
+            "mode": "none",
+            "revisioned": false
+          },
+          "runtime": {
+            "effect": "Rejected unsafe behavior; it is not an available option and performs no action. Rejected: market no-code SQL endpoint builders are not evidence to accept raw SQL/PHP/filesystem execution or client-controlled orderby identifiers. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a71, \u00a76, \u00a717.",
+            "mutation_class": "read_only",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "prohibited",
+            "capability": null,
+            "policy_notes": "Every endpoint must use an explicit permission_callback and canonical Policy checks; public is an explicit policy decision, never an absent callback. The REST API Builder manages endpoint definitions; execution remains with canonical owners."
+          },
+          "portability": {
+            "export": false,
+            "import": false,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site-local by default; network-wide routes/definitions require explicit scope and separate network capability checks."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No unauthenticated execution, credential/header leakage, raw SQL/PHP, arbitrary callback, unbounded response, or cross-principal cache sharing."
+            ]
+          },
+          "competitor_evidence": [],
+          "description": "Rejected: market no-code SQL endpoint builders are not evidence to accept raw SQL/PHP/filesystem execution or client-controlled orderby identifiers. Evidence: docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md \u00a71, \u00a76, \u00a717.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.safety.post-only-convention. Forcing every operation through POST (REJECTED_UNSAFE, NOT_SCHEDULED)."
         }
       ]
     }
@@ -4044,7 +4698,7 @@
     "source_type": "options_bank",
     "source_surface_key": "rest-api",
     "source_review_version": "bank-review-v1",
-    "source_record_count": 46,
+    "source_record_count": 54,
     "entries": [
       {
         "source_id": "rest-api.endpoint.identity",
@@ -4781,15 +5435,143 @@
           "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
           "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
         ]
+      },
+      {
+        "source_id": "rest-api.core.access-control",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "rest-api.core.access-control"
+        ],
+        "owner_surface": "rest-api",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.core.access-control. Site-wide REST access policy for core and third-party routes (allow all / logged-in only / per-namespace or per-route allow and deny lists, role rules) (WPE_HARD, P0_PARITY).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.auth.jwt-tokens",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "rest-api.auth.jwt-tokens"
+        ],
+        "owner_surface": "rest-api",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.auth.jwt-tokens. JWT tokens: login, refresh and revoke endpoints, signing key, expiry and custom header name (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.auth.user-api-keys",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "rest-api.auth.user-api-keys"
+        ],
+        "owner_surface": "rest-api",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.auth.user-api-keys. Per-user API keys (hashed, scoped, expiring, revocable) with a last-used audit (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.auth.external-idp-tokens",
+        "source_kind": "deferred",
+        "disposition": "DEFERRED",
+        "atomic_ids": [
+          "rest-api.auth.external-idp-tokens"
+        ],
+        "owner_surface": null,
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.auth.external-idp-tokens. Accept tokens issued by an external identity provider (JWKS validation, claim-to-user mapping, optional user creation) (DEFERRED, P3_LATER).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.presets.entity-endpoints",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "rest-api.presets.entity-endpoints"
+        ],
+        "owner_surface": "rest-api",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.presets.entity-endpoints. Ready-made endpoint presets for posts, users and WooCommerce products (list, read, create, update) built on the endpoint builder (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.docs.postman-collection",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "rest-api.docs.postman-collection"
+        ],
+        "owner_surface": "rest-api",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.docs.postman-collection. Export endpoints as a Postman collection (WPE_HARD, P3_LATER).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.safety.account-password-basic-auth",
+        "source_kind": "rejected_unsafe",
+        "disposition": "REJECTED_UNSAFE",
+        "atomic_ids": [
+          "rest-api.safety.account-password-basic-auth"
+        ],
+        "owner_surface": null,
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.safety.account-password-basic-auth. HTTP Basic auth with the account password over REST (REJECTED_UNSAFE, NOT_SCHEDULED).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "rest-api.safety.post-only-convention",
+        "source_kind": "rejected_unsafe",
+        "disposition": "REJECTED_UNSAFE",
+        "atomic_ids": [
+          "rest-api.safety.post-only-convention"
+        ],
+        "owner_surface": null,
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of rest-api.safety.post-only-convention. Forcing every operation through POST (REJECTED_UNSAFE, NOT_SCHEDULED).",
+        "evidence_refs": [
+          "config/product/options-bank/rest-api.json",
+          "config/product/options-bank-audits/rest-api-market-ecosystem.json",
+          "config/product/options-bank-reviews/rest-api-bank-review-v1.json",
+          "docs/MODULES/REST-API-BUILDER-EXHAUSTIVE-SPEC.md"
+        ]
       }
     ]
   },
   "coverage_summary": {
-    "atomic_options": 46,
-    "parity": 33,
+    "atomic_options": 54,
+    "parity": 38,
     "exceeds": 2,
-    "deferred": 1,
-    "rejected_unsafe": 10,
+    "deferred": 2,
+    "rejected_unsafe": 12,
     "missing": 0,
     "unclassified": 0
   }
