@@ -51,8 +51,8 @@ foreach (glob($root . '/config/product/options-bank/taxonomy*.json') ?: [] as $f
         $records[$id] = $record;
     }
 }
-if (count($records) !== 71) {
-    throw new RuntimeException(sprintf('Taxonomy review requires the unchanged 71-record Bank; found %d.', count($records)));
+if (count($records) !== 77) {
+    throw new RuntimeException(sprintf('Taxonomy review requires the unchanged 77-record Bank; found %d.', count($records)));
 }
 
 $native = taxonomyReviewContractJson($root . '/config/product/options-bank-audits/taxonomy-native-wordpress.json');
@@ -259,7 +259,7 @@ if ($familyMappings !== 40 || $naCells !== 16 || $bankRefs !== 106) {
 $review = taxonomyReviewContractJson($root . '/config/product/options-bank-reviews/taxonomy-bank-review-v1.json');
 if (($review['schema_version'] ?? null) !== 1 || ($review['bank_version'] ?? null) !== 'v1'
     || ($review['surface']['id'] ?? null) !== 2 || ($review['surface']['key'] ?? null) !== 'taxonomy'
-    || ($review['decision'] ?? null) !== 'BANK_REVIEWED' || ($review['record_count'] ?? null) !== 71
+    || ($review['decision'] ?? null) !== 'BANK_REVIEWED' || ($review['record_count'] ?? null) !== 77
     || ($review['unresolved'] ?? null) !== 0) {
     throw new RuntimeException('Taxonomy Bank Review certificate is invalid.');
 }
@@ -323,11 +323,11 @@ if ($seenArtifacts !== $expectedArtifacts) {
 
 $handoff = file_get_contents($root . '/docs/RESEARCH/TAXONOMY-BANK-REVIEW-2026-09.md');
 if ($handoff === false || !str_contains($handoff, '## Integration Requirements')
-    || !str_contains($handoff, 'options-bank-progress.json') || !str_contains($handoff, 'record count at `71`')) {
+    || !str_contains($handoff, 'options-bank-progress.json') || !str_contains($handoff, 'record count at `77`')) {
     throw new RuntimeException('Taxonomy integration handoff is incomplete.');
 }
 
 printf(
-    "Taxonomy Bank Review V1: PASS (71 records; native %d dispositions/0 unresolved; market 7+1 providers/%d resolutions/0 unresolved; 0 semantic overlaps).\n",
+    "Taxonomy Bank Review V1: PASS (77 records; native %d dispositions/0 unresolved; market 7+1 providers/%d resolutions/0 unresolved; 0 semantic overlaps).\n",
     count($nativeSeen), count($extraSeen),
 );

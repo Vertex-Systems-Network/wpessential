@@ -15,14 +15,14 @@
       "id": 1,
       "key": "cpt",
       "status": "BANK_REVIEWED",
-      "records": 107,
+      "records": 114,
       "notes": "CPT Bank Review V1 closes the unchanged 107-record Surface 1 Bank after current WordPress native audit, five primary market providers plus Toolset specialist review, zero unresolved native/market/review items and zero CPT semantic overlaps. Rejected-unsafe, deferred and WPE-exceed policy gates are consistent. Surface 1 is ready to feed downstream Atomic Option Contracts and UX closure; this does not claim CPT runtime implementation or shipped parity."
     },
     {
       "id": 2,
       "key": "taxonomy",
       "status": "BANK_REVIEWED",
-      "records": 71,
+      "records": 77,
       "notes": "Taxonomy Bank Review V1 closes the unchanged 71-record Surface 2 Bank after current WordPress native audit, seven primary market providers plus TaxoPress specialist review, zero unresolved items and zero semantic overlaps. Surface 2 is ready to feed downstream implementation contracts; this does not claim Taxonomy runtime implementation or shipped parity."
     },
     {
@@ -43,7 +43,7 @@
       "id": 5,
       "key": "status",
       "status": "BANK_REVIEWED",
-      "records": 129,
+      "records": 131,
       "notes": "Stage D Bank Review promotion closes the 129-record Status surface after certified native and market audits, zero semantic overlaps, four explicit rejected-unsafe records, zero deferred records, and zero unresolved review gates. The synchronized MARKET_AUDITED prerequisite head db928cca648a97a76c4fb5554b2b83fd6b7456e6 passed all five applicable workflows. Surface 5 may now feed downstream UX projection and Atomic Option/implementation contracts; this does not claim runtime implementation or shipped parity."
     },
     {
@@ -148,7 +148,7 @@
       "id": 20,
       "key": "emails",
       "status": "BANK_REVIEWED",
-      "records": 16,
+      "records": 17,
       "notes": "Emails Bank Review V1 closes all 16 records with zero unresolved items, zero semantic overlaps and zero market record delta. Transport credentials remain provider/Vault-owned, protected attachment policy stays explicit and raw executable content remains rejected. Sending/runtime remains unpromoted."
     },
     {
@@ -384,6 +384,6 @@
     "native_audited_surfaces": 29,
     "market_audited_surfaces": 29,
     "bank_reviewed_surfaces": 29,
-    "total_bank_records": 3387
+    "total_bank_records": 3403
   }
 }
