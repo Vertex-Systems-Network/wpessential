@@ -133,7 +133,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		foreach ( [ 'name', 'singular_name', 'menu_name' ] as $key ) {
 			$value = trim( (string) ( $input['labels'][ $key ] ?? '' ) );
 			if ( $value !== '' ) {
-				$labels[ $key ] = mb_substr( trim( strip_tags( $value ) ), 0, 100 );
+				$labels[ $key ] = mb_substr( trim( wp_strip_all_tags( $value ) ), 0, 100 );
 			}
 		}
 		if ( $labels !== [] ) {
