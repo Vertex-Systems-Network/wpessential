@@ -192,8 +192,8 @@ final class TaxonomyAdminController {
 		echo '<div id="wpessential-taxonomy-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
 		echo '<div class="wpe-ui-builder__layout wpe-ui-builder__layout--' . esc_attr( $view ) . '">';
 		if ( $view === 'list' ) {
-			$this->renderDefinitions( $definitions );
 			$this->existing?->renderPage();
+			$this->renderDefinitions( $definitions );
 		} else {
 			$this->renderEditor( $objectTypes );
 		}
@@ -479,7 +479,9 @@ final class TaxonomyAdminController {
 		foreach ( $definitions as $definition ) {
 			$this->renderDefinitionRow( $definition );
 		}
-		if ( $definitions === [] ) {
+		// WordPress, theme and plugin ones sit in the same table, locked against deletion.
+		$this->existing?->renderRows( array_values( array_filter( array_map( static fn ( array $definition ): mixed => $definition['payload']['taxonomy_key'] ?? null, $definitions ), 'is_string' ) ) );
+		if ( $definitions === [] && $this->existing === null ) {
 			echo '<tr data-wpessential-taxonomy-empty><td colspan="8">' . esc_html__( 'No taxonomies have been created yet.', 'wpessential' ) . '</td></tr>';
 		}
 		echo '</tbody></table></section>';

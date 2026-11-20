@@ -355,8 +355,8 @@ test('CPT list trashes, restores, locks and deletes like WordPress, with our con
   await row(4).getByRole('button', { name: 'Restore' }).click();
   await expect(page.getByText('1 custom post type restored.')).toBeVisible();
   await page.locator('thead .wpe-ui-table__check input').check();
-  await page.getByRole('combobox', { name: 'Bulk actions' }).selectOption('delete');
-  await page.getByRole('button', { name: 'Apply' }).click();
+  await page.getByRole('combobox', { name: 'Bulk actions' }).first().selectOption('delete');
+  await page.getByRole('button', { name: 'Apply' }).first().click();
   await expect(dialog).toContainText('Delete 2 custom post types permanently?');
   await dialog.getByRole('button', { name: 'Delete permanently' }).click();
   await expect(page.getByText('2 custom post types deleted permanently.')).toBeVisible();
