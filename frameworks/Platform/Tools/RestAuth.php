@@ -31,9 +31,9 @@ final class RestAuth {
 	public const NAMESPACE    = 'wpessential/v1';
 	private const REFRESH_TTL = 30 * DAY_IN_SECONDS;
 
-	/** Scope of the key that signed this request in; null when no key was used. */
+	/** @var string|null Scope of the key that signed this request in; null when no key was used. */
 	private static ?string $scope = null;
-	/** A key or token was sent but did not check out. */
+	/** @var string|null A key or token was sent but did not check out. */
 	private static ?string $failure = null;
 
 	/** @param Closure(): array<string,mixed> $settings */
@@ -101,7 +101,11 @@ final class RestAuth {
 
 	/** @param array<string,mixed> $claims */
 	public static function sign( array $claims, string $secret ): string {
-		$head = self::b64( (string) wp_json_encode( [ 'alg' => 'HS256', 'typ' => 'JWT' ] ) );
+		$header = [
+			'alg' => 'HS256',
+			'typ' => 'JWT',
+		];
+		$head   = self::b64( (string) wp_json_encode( $header ) );
 		$body = self::b64( (string) wp_json_encode( $claims ) );
 
 		return $head . '.' . $body . '.' . self::b64( hash_hmac( 'sha256', $head . '.' . $body, $secret, true ) );
