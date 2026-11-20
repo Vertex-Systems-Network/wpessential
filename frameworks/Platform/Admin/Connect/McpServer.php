@@ -79,14 +79,20 @@ final class McpServer {
 		if ( ! $this->connect->enabled() || ! current_user_can( 'manage_options' ) ) {
 			return false;
 		}
-		$uuid = AiConnect::linkSession() ?? ( function_exists( 'rest_get_authenticated_app_password' ) ? (string) rest_get_authenticated_app_password() : '' );
-		foreach ( $this->connect->sessions( get_current_user_id() ) as $session ) {
-			if ( $uuid !== '' && $session['uuid'] === $uuid ) {
-				return true;
+		$link = AiConnect::linkSession();
+		if ( $link !== null ) {
+			foreach ( $this->connect->sessions( get_current_user_id() ) as $session ) {
+				if ( $session['uuid'] === $link ) {
+					return true;
+				}
 			}
+
+			return false; // A revoked connector link stays refused.
 		}
 
-		return false;
+		// Any WordPress application password of an administrator works, like the WordPress MCP Adapter
+		// (Elementor, Claude Code "Basic" headers); WordPress itself verified it before REST ran.
+		return function_exists( 'rest_get_authenticated_app_password' ) && (string) rest_get_authenticated_app_password() !== '';
 	}
 
 	public function handle( WP_REST_Request $request ): WP_REST_Response {
