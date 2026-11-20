@@ -926,8 +926,8 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 			sortable: [
 				{ column: 0 },
 				{ column: 1 },
-				{ column: 2 },
-				{ column: 3, numeric: true },
+				{ column: 3 },
+				{ column: 4, numeric: true },
 			],
 		} );
 	}
