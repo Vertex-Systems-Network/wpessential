@@ -77,6 +77,28 @@ final class CustomPostTypeModule implements ModuleInterface {
 		$services->set( 'module.custom-post-types.validation', $validation );
 
 		$this->registerAbilities( $abilities, $abilityBridge, $definitions, $projector, $validation );
+
+		$existing = new ExistingPostTypeOverrides( $definitions );
+		$services->set( 'module.custom-post-types.existing', $existing );
+		$this->registerAbility(
+			$abilities,
+			$abilityBridge,
+			new AbilityDescriptor(
+				name: ExistingPostTypeOverrides::ABILITY,
+				ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
+				capability: self::CAPABILITY,
+				mutates: true,
+				channels: [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ],
+				inputSchema: [ 'type' => 'object' ],
+				outputSchema: [ 'type' => 'object' ],
+			),
+			$existing,
+			'Edit an existing post type',
+			'Save or revert an override of a post type registered by WordPress, a theme or a plugin.',
+		);
+		if ( function_exists( 'add_filter' ) ) {
+			$existing->register();
+		}
 		$this->registerAjaxRoutes( $ajaxRoutes, $abilities, $abilityContexts );
 	}
 
@@ -105,6 +127,11 @@ final class CustomPostTypeModule implements ModuleInterface {
 		);
 		$services->set( 'module.custom-post-types.admin', $admin );
 		$admin->register();
+
+		$existing = $services->get( 'module.custom-post-types.existing' );
+		if ( $existing instanceof ExistingPostTypeOverrides && function_exists( 'add_action' ) ) {
+			$existing->registerAdmin( $abilities, $contexts, \WPEssential\Platform\Admin\PlatformAdminController::PAGE_SLUG );
+		}
 	}
 
 	private function registerAbilities(
