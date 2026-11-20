@@ -363,6 +363,12 @@ final class CoreAdminController {
 			);
 		}
 
+		if ( ! $this->isLocked( $module ) && $this->isActive( $module ) && function_exists( 'apply_filters' ) ) {
+			// Modules add their own panels here, e.g. editing what WordPress or another plugin already registers.
+			$sections = apply_filters( 'wpessential_module_page_sections', '', $module['id'] );
+			$html    .= is_string( $sections ) ? $sections : '';
+		}
+
 		$contract = $this->contracts->read( $module['contract'] );
 		if ( $contract === null || $contract['groups'] === [] ) {
 			$html .= '<div class="wpe-ui-empty"><h2>' . esc_html__( 'No options yet', 'wpessential' ) . '</h2></div>';
