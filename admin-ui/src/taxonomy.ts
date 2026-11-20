@@ -937,7 +937,10 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 	if ( ! ( rows instanceof HTMLTableSectionElement ) ) {
 		return;
 	}
+	// WordPress, theme and plugin rows come from the server; keep them after ours on every re-render.
+	const existing = Array.from( rows.querySelectorAll< HTMLTableRowElement >( '[data-wpe-existing]' ) );
 	rows.replaceChildren();
+	queueMicrotask( () => rows.append( ...existing ) );
 
 	if ( definitions.length === 0 ) {
 		const row = document.createElement( 'tr' );
@@ -1431,7 +1434,11 @@ function boot(): void {
 				run: ( action, ids ) => lifecycle( action as LifecycleAction, ids ),
 				idOf: ( row ) => row.dataset.wpeRowId ?? '',
 			},
-			filters: [ { column: 5, label: 'Runtime health' } ],
+			filters: [
+				{ column: 2, label: 'Post types', split: true },
+				{ column: 3, label: 'Status' },
+				{ column: 5, label: 'Runtime health' },
+			],
 			sortable: [
 				{ column: 0 },
 				{ column: 1 },

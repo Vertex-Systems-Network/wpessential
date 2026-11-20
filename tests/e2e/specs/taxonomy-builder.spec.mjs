@@ -117,8 +117,8 @@ test('packaged Taxonomy Builder renders searchable grouped object type linking a
 
   await visitTaxonomies(page, 'wpessential-taxonomies');
   await expect(page.getByRole('table', { name: 'Saved taxonomies' })).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'Runtime health' })).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'Dependencies' })).toBeVisible();
+  await expect(page.locator('thead').getByRole('columnheader', { name: 'Runtime health' })).toBeVisible();
+  await expect(page.locator('thead').getByRole('columnheader', { name: 'Dependencies' })).toBeVisible();
   await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Add new taxonomy' })).toBeVisible();
   expect(pageErrors, `Unexpected Taxonomy Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);

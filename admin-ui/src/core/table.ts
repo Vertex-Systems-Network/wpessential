@@ -11,7 +11,7 @@ export interface TableOptions {
 	/** Column (0-based) whose values become the status views above the table. */
 	viewsColumn?: number;
 	/** Columns (0-based) that get a filter dropdown, with its label ("All runtime health"). */
-	filters?: Array< { column: number; label: string } >;
+	filters?: Array< { column: number; label: string; split?: boolean } >;
 	/** Columns (0-based) that can be sorted; numeric columns sort as numbers. */
 	sortable?: Array< { column: number; numeric?: boolean } >;
 	/** Plural item name for the search button and counts, e.g. "Post Types". */
@@ -121,10 +121,15 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	// Row 2: filter dropdowns + Filter button (left), item count and paging (right).
 	const nav = el( 'div', { class: 'wpe-ui-tablenav' } );
 	const filterBox = el( 'div', { class: 'wpe-ui-tablenav__filters' } );
-	const selects: Array< { column: number; label: string; select: HTMLSelectElement } > = [];
+	const selects: Array< { column: number; label: string; split: boolean; select: HTMLSelectElement } > = [];
+	// "a, b" cells (several taxonomies or post types) filter on each value, not the whole text.
+	const cellValues = ( row: HTMLTableRowElement, column: number, split: boolean ): string[] => {
+		const value = text( row, column );
+		return split ? value.split( ',' ).map( ( part ) => part.trim() ).filter( Boolean ) : [ value ];
+	};
 	for ( const filter of options.filters ?? [] ) {
 		const select = el( 'select', { class: 'wpe-ui-select', 'aria-label': `Filter by ${ filter.label.toLowerCase() }` } );
-		selects.push( { column: filter.column, label: filter.label, select } );
+		selects.push( { column: filter.column, label: filter.label, split: filter.split ?? false, select } );
 		filterBox.append( select );
 	}
 	const bulkSelect = el( 'select', { class: 'wpe-ui-select', id: `${ id }-bulk`, 'aria-label': 'Bulk actions' } );
@@ -141,9 +146,14 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	};
 	const topPager = pagerControls( `${ id }-page`, goTo );
 	nav.append( ...( options.bulk ? [ bulkBox ] : [] ), filterBox, topPager.wrap );
+	// Below the table: bulk actions, count and paging again, as in WordPress list tables.
 	const bottomNav = el( 'div', { class: 'wpe-ui-tablenav wpe-ui-tablenav--bottom' } );
 	const bottomPager = pagerControls( `${ id }-page-bottom`, goTo );
-	bottomNav.append( bottomPager.wrap );
+	const bottomBulkSelect = el( 'select', { class: 'wpe-ui-select', id: `${ id }-bulk-bottom`, 'aria-label': 'Bulk actions' } );
+	const bottomBulkApply = el( 'button', { type: 'button', class: 'wpe-ui-button wpe-ui-button--secondary wpe-ui-button--sm' }, 'Apply' );
+	const bottomBulkBox = el( 'div', { class: 'wpe-ui-tablenav__bulk' } );
+	bottomBulkBox.append( bottomBulkSelect, bottomBulkApply );
+	bottomNav.append( ...( options.bulk ? [ bottomBulkBox ] : [] ), bottomPager.wrap );
 
 	table.before( top, nav );
 	table.after( bottomNav );
@@ -197,7 +207,17 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 				footRow.append( cell );
 				continue;
 			}
-			footRow.append( el( 'th', { scope: 'col' }, header.textContent?.trim() ?? '' ) );
+			const cell = el( 'th', { scope: 'col' } );
+			const sortButton = header.querySelector< HTMLButtonElement >( '.wpe-ui-sort' );
+			if ( sortButton ) {
+				// Same sort control as the header; it drives the header's state.
+				const twin = el( 'button', { type: 'button', class: 'wpe-ui-sort' }, sortButton.textContent ?? '' );
+				twin.addEventListener( 'click', () => sortButton.click() );
+				cell.append( twin );
+			} else {
+				cell.innerHTML = header.innerHTML;
+			}
+			footRow.append( cell );
 		}
 		table.createTFoot().append( footRow );
 	}
@@ -223,8 +243,7 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		views.replaceChildren(
 			...list
 				.map( ( view ) => ( { view, n: all.filter( view.match ).length } ) )
-				// Like WordPress, a view with no items is not listed (except the first, All).
-				.filter( ( { view, n }, index ) => index === 0 || n > 0 || view.key === state.view )
+				// Every view stays listed (with its count, 0 included) so Trash, Disabled and Locked are always reachable.
 				.map( ( { view, n } ) => {
 					const current = state.view === view.key;
 					const link = el( 'a', { href: '#', class: `wpe-ui-tab${ current ? ' is-active' : '' }`, 'data-wpe-view': view.key } );
@@ -247,10 +266,12 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		if ( ! options.bulk ) {
 			return;
 		}
-		const current = bulkSelect.value;
 		const actions = options.bulk.actions( state.view );
-		bulkSelect.replaceChildren( el( 'option', { value: '' }, 'Bulk actions' ), ...actions.map( ( [ value, label ] ) => el( 'option', { value }, label ) ) );
-		bulkSelect.value = actions.some( ( [ value ] ) => value === current ) ? current : '';
+		for ( const box of [ bulkSelect, bottomBulkSelect ] ) {
+			const current = box.value;
+			box.replaceChildren( el( 'option', { value: '' }, 'Bulk actions' ), ...actions.map( ( [ value, label ] ) => el( 'option', { value }, label ) ) );
+			box.value = actions.some( ( [ value ] ) => value === current ) ? current : '';
+		}
 		for ( const row of all ) {
 			if ( ! row.querySelector( ':scope > .wpe-ui-table__check' ) ) {
 				const name = text( row, 0 );
@@ -311,9 +332,9 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 	}
 
 	function renderFilterOptions( all: HTMLTableRowElement[] ): void {
-		for ( const { column, label, select } of selects ) {
+		for ( const { column, label, split, select } of selects ) {
 			const current = select.value;
-			const values = Array.from( new Set( all.map( ( row ) => text( row, column ) ).filter( Boolean ) ) ).sort();
+			const values = Array.from( new Set( all.flatMap( ( row ) => cellValues( row, column, split ) ).filter( Boolean ) ) ).sort();
 			select.replaceChildren( el( 'option', { value: '' }, `All ${ label.toLowerCase() }` ), ...values.map( ( value ) => el( 'option', { value }, value ) ) );
 			select.value = values.includes( current ) ? current : '';
 			if ( ! values.includes( state.filters.get( column ) ?? '' ) ) {
@@ -340,7 +361,8 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 				return false;
 			}
 			for ( const [ column, value ] of state.filters ) {
-				if ( value !== '' && text( row, column ) !== value ) {
+				const split = selects.find( ( item ) => item.column === column )?.split ?? false;
+				if ( value !== '' && ! cellValues( row, column, split ).includes( value ) ) {
 					return false;
 				}
 			}
@@ -352,7 +374,9 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 			matching.sort( ( a, b ) => {
 				const x = text( a, sort.column );
 				const y = text( b, sort.column );
-				return factor * ( sort.numeric ? Number( x ) - Number( y ) : x.localeCompare( y, undefined, { numeric: true, sensitivity: 'base' } ) );
+				// Non-numbers ("—") sort below every number.
+				const num = ( value: string ): number => ( Number.isNaN( Number( value ) ) || value === '' ? -Infinity : Number( value ) );
+				return factor * ( sort.numeric ? ( num( x ) === num( y ) ? 0 : num( x ) > num( y ) ? 1 : -1 ) : x.localeCompare( y, undefined, { numeric: true, sensitivity: 'base' } ) );
 			} );
 			for ( const row of matching ) {
 				body.append( row );
@@ -374,7 +398,7 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 		if ( table.tFoot ) {
 			table.tFoot.hidden = ! hasData;
 		}
-		bottomNav.hidden = ! hasData || pages <= 1;
+		bottomNav.hidden = ! hasData;
 		topPager.update( matching.length, state.page, pages );
 		bottomPager.update( matching.length, state.page, pages );
 		observer?.observe( body, { childList: true } );
@@ -414,6 +438,10 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 			}
 		} );
 	}
+	bottomBulkApply.addEventListener( 'click', () => {
+		bulkSelect.value = bottomBulkSelect.value;
+		bulkApply.click();
+	} );
 	bulkApply.addEventListener( 'click', () => {
 		const action = bulkSelect.value;
 		const ids = checkedIds();

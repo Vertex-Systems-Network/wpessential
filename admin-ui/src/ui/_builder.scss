@@ -486,6 +486,21 @@ th[aria-sort="descending"] .wpe-ui-sort::after {
 	flex-wrap: wrap;
 	gap: 6px;
 
+	// Hide / Show for WordPress, theme and plugin rows posts its own small form.
+	.wpe-ui-inline-form {
+		display: contents;
+	}
+
+	// Locked delete: the lock icon sits in the button; the wrapper keeps the tooltip on a disabled button.
+	.wpe-ui-locked-action {
+		display: inline-flex;
+		cursor: not-allowed;
+
+		svg {
+			vertical-align: -2px;
+		}
+	}
+
 	.wpe-ui-button:disabled {
 		opacity: 0.45;
 		cursor: not-allowed;

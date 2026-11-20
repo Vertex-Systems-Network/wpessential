@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use InvalidArgumentException;
+use WPEssential\Platform\Admin\Ui\Icon;
+use WPEssential\Platform\Admin\Ui\StatusPill;
 use Throwable;
 use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
@@ -194,6 +196,17 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		$existing = $this->find( $postType );
 		$revert   = ( $input['revert'] ?? false ) === true;
 		$override = $revert ? [] : self::sanitize( is_array( $input['override'] ?? null ) ? $input['override'] : [], $postType );
+		if ( is_bool( $input['hidden'] ?? null ) ) {
+			// Hide / Show from the list: keeps every other change of the stored override.
+			if ( $input['hidden'] && in_array( $postType, self::CORE_LOCKED, true ) ) {
+				throw new InvalidArgumentException( 'This core post type cannot be hidden; WordPress depends on it.' );
+			}
+			$override = (array) ( $existing?->status === DefinitionStatus::Published ? ( $existing->payload['override'] ?? [] ) : [] );
+			unset( $override['disabled'] );
+			if ( $input['hidden'] ) {
+				$override['disabled'] = true;
+			}
+		}
 		$status   = $revert || $override === [] ? DefinitionStatus::Archived : DefinitionStatus::Published;
 		$candidate = new Definition(
 			id: $existing->id ?? self::uuid(),
@@ -254,6 +267,7 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		$input    = [
 			'post_type' => $postType,
 			'revert'    => isset( $_POST['revert'] ),
+			'hidden'    => isset( $_POST['hidden'] ) ? sanitize_key( wp_unslash( (string) $_POST['hidden'] ) ) === '1' : null,
 			'override'  => is_array( $_POST['override'] ?? null ) ? wp_unslash( $_POST['override'] ) : [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize() allowlists every key.
 		];
 		$notice = 'saved';
@@ -269,11 +283,54 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		}
 		$query = [
 			'page' => self::PAGE_SLUG,
-			'existing' => $postType,
+			'existing' => isset( $_POST['hidden'] ) ? '' : $postType, // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked above.
 			'wpe_notice' => $notice,
 		];
 		wp_safe_redirect( add_query_arg( $query, admin_url( 'admin.php' ) ) );
 		exit;
+	}
+
+	/**
+	 * Rows for the builder's own list table: each post type WordPress, the theme or a plugin registers,
+	 * with Edit, Hide / Show and a locked delete (they cannot be deleted from here).
+	 *
+	 * @param list<string> $ownKeys Keys registered by our own definitions; those rows are already listed.
+	 */
+	public function renderRows( array $ownKeys ): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$overrides = $this->overrides();
+		foreach ( get_post_types( [], 'objects' ) as $type ) {
+			if ( in_array( $type->name, $ownKeys, true ) || ( ! $type->show_ui && ! isset( $overrides[ $type->name ] ) ) ) {
+				continue;
+			}
+			$hidden  = ( $overrides[ $type->name ]['disabled'] ?? false ) === true;
+			$changed = isset( $overrides[ $type->name ] );
+			$edit    = add_query_arg(
+				[
+					'page'     => self::PAGE_SLUG,
+					'existing' => $type->name,
+				],
+				admin_url( 'admin.php' )
+			);
+			echo '<tr data-wpessential-cpt-row="existing-' . esc_attr( $type->name ) . '" data-wpe-existing="1" data-wpe-status="' . ( $hidden ? 'disabled' : 'published' ) . '" data-wpe-locked="0" data-wpe-trashed="0">';
+			echo '<td><strong>' . esc_html( (string) $type->label ) . '</strong> <span class="wpe-ui-lock-badge">' . esc_html( $type->_builtin ? __( 'WordPress', 'wpessential' ) : __( 'Theme / plugin', 'wpessential' ) ) . '</span>' . ( $changed ? ' <span class="wpe-ui-muted">' . esc_html__( '(changed)', 'wpessential' ) . '</span>' : '' ) . '</td>';
+			echo '<td><code>' . esc_html( $type->name ) . '</code></td>';
+			echo '<td>' . esc_html( implode( ', ', array_map( static fn ( object $tax ): string => (string) $tax->label, get_object_taxonomies( $type->name, 'objects' ) ) ) ) . '</td>';
+			echo '<td>' . StatusPill::render( $hidden ? 'off' : 'running', $hidden ? __( 'Disabled', 'wpessential' ) : __( 'Published', 'wpessential' ) ) . '</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- StatusPill escapes.
+			echo '<td>—</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
+			echo '<td><div class="wpe-ui-row-actions"><a class="wpe-ui-button wpe-ui-button--secondary wpe-ui-button--sm" href="' . esc_url( $edit ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a>';
+			if ( ! in_array( $type->name, self::CORE_LOCKED, true ) ) {
+				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="wpe-ui-inline-form">';
+				wp_nonce_field( self::ACTION );
+				echo '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '"><input type="hidden" name="post_type" value="' . esc_attr( $type->name ) . '"><input type="hidden" name="hidden" value="' . ( $hidden ? '0' : '1' ) . '">';
+				echo '<button type="submit" class="wpe-ui-button wpe-ui-button--ghost wpe-ui-button--sm">' . esc_html( $hidden ? __( 'Show', 'wpessential' ) : __( 'Hide', 'wpessential' ) ) . '</button></form>';
+			}
+			// Delete is shown locked: these come from WordPress, the theme or a plugin and are only hidden, never deleted.
+			echo '<span class="wpe-ui-locked-action" title="' . esc_attr__( 'Registered by WordPress, the theme or a plugin. Hide it instead.', 'wpessential' ) . '"><button type="button" class="wpe-ui-button wpe-ui-button--danger wpe-ui-button--sm" disabled>' . Icon::render( 'lock', 14 ) . ' ' . esc_html__( 'Trash', 'wpessential' ) . '</button></span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Icon is static SVG.
+			echo '</div></td></tr>';
+		}
 	}
 
 	public function renderPage(): void {
@@ -283,6 +340,9 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		$types    = get_post_types( [], 'objects' );
 		$selected = isset( $_GET['existing'] ) ? sanitize_key( wp_unslash( (string) $_GET['existing'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen selection.
 		$notice   = isset( $_GET['wpe_notice'] ) ? sanitize_key( wp_unslash( (string) $_GET['wpe_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $selected === '' && $notice === '' ) {
+			return; // The rows are in the list table; this panel only holds the edit form and its notice.
+		}
 		echo '<section class="wpessential-existing" style="margin-top:2em"><h2>' . esc_html__( 'WordPress, theme and plugin post types', 'wpessential' ) . '</h2>';
 		echo '<p class="description">' . esc_html__( 'Change post types that WordPress, your theme or other plugins register. Changes are layered on top and can be reverted at any time; no content is deleted.', 'wpessential' ) . '</p>';
 		if ( $notice === 'saved' ) {
@@ -292,19 +352,6 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			echo '<div class="notice notice-error"><p>' . esc_html( $message !== '' ? $message : __( 'Not saved.', 'wpessential' ) ) . '</p></div>';
 		}
 		$overrides = $this->overrides();
-		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Post type', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th><span class="screen-reader-text">' . esc_html__( 'Actions', 'wpessential' ) . '</span></th></tr></thead><tbody>';
-		foreach ( $types as $type ) {
-			if ( ! $type->show_ui && ! isset( $overrides[ $type->name ] ) ) {
-				continue;
-			}
-			$query = [
-				'page' => self::PAGE_SLUG,
-				'existing' => $type->name,
-			];
-			$url = add_query_arg( $query, admin_url( 'admin.php' ) );
-			echo '<tr><td>' . esc_html( (string) $type->label ) . '</td><td><code>' . esc_html( $type->name ) . '</code></td><td>' . ( isset( $overrides[ $type->name ] ) ? esc_html__( 'Yes', 'wpessential' ) : '—' ) . '</td><td><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a></td></tr>';
-		}
-		echo '</tbody></table>';
 		if ( isset( $types[ $selected ] ) ) {
 			$this->renderForm( $types[ $selected ], $overrides[ $selected ] ?? [] );
 		}

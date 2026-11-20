@@ -458,7 +458,10 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 	if ( ! ( rows instanceof HTMLTableSectionElement ) ) {
 		return;
 	}
+	// WordPress, theme and plugin rows come from the server; keep them after ours on every re-render.
+	const existing = Array.from( rows.querySelectorAll< HTMLTableRowElement >( '[data-wpe-existing]' ) );
 	rows.replaceChildren();
+	queueMicrotask( () => rows.append( ...existing ) );
 
 	if ( definitions.length === 0 ) {
 		const row = document.createElement( 'tr' );
@@ -923,6 +926,10 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 				run: ( action, ids ) => lifecycle( action as LifecycleAction, ids ),
 				idOf: ( row ) => row.dataset.wpeRowId ?? '',
 			},
+			filters: [
+				{ column: 2, label: 'Taxonomies', split: true },
+				{ column: 3, label: 'Status' },
+			],
 			sortable: [
 				{ column: 0 },
 				{ column: 1 },

@@ -131,11 +131,12 @@ export const BULK_ACTIONS = ( view: string ): Array< [ LifecycleAction, string ]
 				[ 'trash', 'Move to Trash' ],
 		  ];
 
-/** List views: All (not trashed), Published, Draft, Locked, Trash. */
+/** List views: All (not trashed), Published, Draft, Disabled, Locked, Trash. */
 export const LIFECYCLE_VIEWS = [
 	{ key: 'all', label: 'All', match: ( row: HTMLElement ) => row.dataset.wpeTrashed !== '1' },
 	{ key: 'published', label: 'Published', match: ( row: HTMLElement ) => row.dataset.wpeTrashed !== '1' && row.dataset.wpeStatus === 'published' },
 	{ key: 'draft', label: 'Draft', match: ( row: HTMLElement ) => row.dataset.wpeTrashed !== '1' && row.dataset.wpeStatus === 'draft' },
+	{ key: 'disabled', label: 'Disabled', match: ( row: HTMLElement ) => row.dataset.wpeTrashed !== '1' && row.dataset.wpeStatus === 'disabled' },
 	{ key: 'locked', label: 'Locked', match: ( row: HTMLElement ) => row.dataset.wpeLocked === '1' },
 	{ key: 'trash', label: 'Trash', match: ( row: HTMLElement ) => row.dataset.wpeTrashed === '1' },
 ];

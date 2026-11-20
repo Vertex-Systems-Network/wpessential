@@ -195,8 +195,8 @@ final class CustomPostTypeAdminController {
 		echo '<div id="wpessential-cpt-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
 		echo '<div class="wpe-ui-builder__layout wpe-ui-builder__layout--' . esc_attr( $view ) . '">';
 		if ( $view === 'list' ) {
-			$this->renderDefinitions( $definitions );
 			$this->existing?->renderPage();
+			$this->renderDefinitions( $definitions );
 		} else {
 			$this->renderEditor();
 		}
@@ -584,6 +584,8 @@ final class CustomPostTypeAdminController {
 		foreach ( $definitions as $definition ) {
 			$this->renderDefinitionRow( $definition );
 		}
+		// WordPress, theme and plugin ones sit in the same table, locked against deletion.
+		$this->existing?->renderRows( array_values( array_filter( array_map( static fn ( array $definition ): mixed => $definition['payload']['post_type_key'] ?? null, $definitions ), 'is_string' ) ) );
 		if ( $definitions === [] ) {
 			echo '<tr data-wpessential-cpt-empty><td colspan="6">' . esc_html__( 'No custom post types have been created yet.', 'wpessential' ) . '</td></tr>';
 		}

@@ -258,12 +258,14 @@ test('CPT list page has WordPress-style views, search and sortable columns', asy
   await page.getByRole('button', { name: 'Refresh' }).click();
 
   const rows = page.locator('[data-wpessential-cpt-row]:visible');
+  // WordPress, theme and plugin post types are rows of the same table.
+  const existing = await page.locator('[data-wpe-existing]').count();
   await expect(rows).toHaveCount(20);
-  await expect(page.locator('.wpe-ui-tablenav__count').first()).toHaveText('25 items');
+  await expect(page.locator('.wpe-ui-tablenav__count').first()).toHaveText(`${25 + existing} items`);
 
   // Status views with counts, like WordPress list tables.
   const views = page.getByRole('navigation', { name: 'Filter by status' });
-  await expect(views).toContainText('All25');
+  await expect(views).toContainText(`All${25 + existing}`);
   await views.getByRole('link', { name: /^Draft/ }).click();
   await expect(rows).toHaveCount(8);
   await views.getByRole('link', { name: /^All/ }).click();
@@ -278,7 +280,7 @@ test('CPT list page has WordPress-style views, search and sortable columns', asy
 
   // Paging: 20 per page with « ‹ n of N › » controls.
   await page.getByRole('button', { name: 'Next page' }).first().click();
-  await expect(rows).toHaveCount(5);
+  await expect(rows).toHaveCount(5 + existing);
   await page.getByRole('button', { name: 'First page' }).first().click();
 
   // Sortable columns.
@@ -329,7 +331,7 @@ test('CPT list trashes, restores, locks and deletes like WordPress, with our con
   await page.getByRole('button', { name: 'Refresh' }).click();
 
   const views = page.locator('.wpe-ui-views');
-  await expect(views).toContainText('All2');
+  await expect(views).toContainText(`All${2 + (await page.locator('[data-wpe-existing]').count())}`);
   await expect(views).toContainText('Locked1');
   await expect(views).toContainText('Trash2');
   const row = (index) => page.locator(`tr[data-wpessential-cpt-row="${make(index).id}"]`);
@@ -355,8 +357,8 @@ test('CPT list trashes, restores, locks and deletes like WordPress, with our con
   await row(4).getByRole('button', { name: 'Restore' }).click();
   await expect(page.getByText('1 custom post type restored.')).toBeVisible();
   await page.locator('thead .wpe-ui-table__check input').check();
-  await page.getByRole('combobox', { name: 'Bulk actions' }).selectOption('delete');
-  await page.getByRole('button', { name: 'Apply' }).click();
+  await page.getByRole('combobox', { name: 'Bulk actions' }).first().selectOption('delete');
+  await page.getByRole('button', { name: 'Apply' }).first().click();
   await expect(dialog).toContainText('Delete 2 custom post types permanently?');
   await dialog.getByRole('button', { name: 'Delete permanently' }).click();
   await expect(page.getByText('2 custom post types deleted permanently.')).toBeVisible();
