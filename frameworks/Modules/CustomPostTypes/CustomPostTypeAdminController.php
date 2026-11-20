@@ -576,17 +576,45 @@ final class CustomPostTypeAdminController {
 		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-panel--flush wpe-ui-builder__list" aria-labelledby="wpessential-cpt-list-title">';
 		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-cpt-list-title">' . esc_html__( 'Saved custom post types', 'wpessential' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo Button::button( __( 'Refresh', 'wpessential' ), 'ghost', [ 'id' => 'wpessential-cpt-refresh' ], true, 'refresh' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
-		echo '<table class="widefat striped" id="wpessential-cpt-table" aria-label="' . esc_attr__( 'Saved custom post types', 'wpessential' ) . '">';
-		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
+		echo '<table class="widefat striped" id="wpessential-cpt-table" aria-label="' . esc_attr__( 'Saved custom post types', 'wpessential' ) . '" data-wpessential-cpt-taxonomies="' . esc_attr( (string) wp_json_encode( self::taxonomyLabels( $definitions ) ) ) . '">';
+		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Taxonomies', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
 		echo '<tbody id="wpessential-cpt-rows">';
 		foreach ( $definitions as $definition ) {
 			$this->renderDefinitionRow( $definition );
 		}
 		if ( $definitions === [] ) {
-			echo '<tr data-wpessential-cpt-empty><td colspan="5">' . esc_html__( 'No custom post types have been created yet.', 'wpessential' ) . '</td></tr>';
+			echo '<tr data-wpessential-cpt-empty><td colspan="6">' . esc_html__( 'No custom post types have been created yet.', 'wpessential' ) . '</td></tr>';
 		}
 		echo '</tbody></table>';
 		echo '</section>';
+	}
+
+	/**
+	 * Post type key => comma-separated labels of the taxonomies attached to it at runtime.
+	 *
+	 * @param list<array<string,mixed>> $definitions
+	 * @return array<string,string>
+	 */
+	public static function taxonomyLabels( array $definitions ): array {
+		$out = [];
+		foreach ( $definitions as $definition ) {
+			$payload = is_array( $definition['payload'] ?? null ) ? $definition['payload'] : [];
+			$key     = is_string( $payload['post_type_key'] ?? null ) ? $payload['post_type_key'] : '';
+			if ( $key === '' ) {
+				continue;
+			}
+			$labels = [];
+			if ( function_exists( 'get_object_taxonomies' ) ) {
+				foreach ( get_object_taxonomies( $key, 'objects' ) as $taxonomy ) {
+					$labels[] = is_object( $taxonomy ) && isset( $taxonomy->label ) ? (string) $taxonomy->label : '';
+				}
+			} else {
+				$labels = is_array( $payload['taxonomies'] ?? null ) ? array_filter( $payload['taxonomies'], 'is_string' ) : [];
+			}
+			$out[ $key ] = implode( ', ', array_filter( $labels ) );
+		}
+
+		return $out;
 	}
 
 	public static function statusPill( string $status ): string {
@@ -612,6 +640,7 @@ final class CustomPostTypeAdminController {
 		echo '<tr data-wpessential-cpt-row="' . esc_attr( $id ) . '">';
 		echo '<td><strong>' . esc_html( $name ) . '</strong></td>';
 		echo '<td><code>' . esc_html( $key ) . '</code></td>';
+		echo '<td>' . esc_html( self::taxonomyLabels( [ $definition ] )[ $key ] ?? '' ) . '</td>';
 		echo '<td>' . self::statusPill( $status ) . '</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- StatusPill escapes.
 		echo '<td>' . esc_html( (string) $revision ) . '</td>';
 		echo '<td><button type="button" class="button button-small" data-wpessential-cpt-edit="' . esc_attr( $id ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</button> ';

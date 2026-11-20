@@ -471,8 +471,8 @@ final class TaxonomyAdminController {
 		echo '<section class="wpessential-cpt-panel wpe-ui-panel wpe-ui-panel--flush wpe-ui-builder__list" aria-labelledby="wpessential-taxonomy-list-title">';
 		echo '<div class="wpessential-cpt-list-heading wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'layers', 20 ) . '</span><h2 id="wpessential-taxonomy-list-title">' . esc_html__( 'Saved taxonomies', 'wpessential' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
 		echo Button::button( __( 'Refresh', 'wpessential' ), 'ghost', [ 'id' => 'wpessential-taxonomy-refresh' ], true, 'refresh' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- toolkit components escape their own output.
-		echo '<table class="widefat striped" id="wpessential-taxonomy-table" aria-label="' . esc_attr__( 'Saved taxonomies', 'wpessential' ) . '">';
-		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Object types', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Runtime health', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Dependencies', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
+		echo '<table class="widefat striped" id="wpessential-taxonomy-table" aria-label="' . esc_attr__( 'Saved taxonomies', 'wpessential' ) . '" data-wpessential-post-type-labels="' . esc_attr( (string) wp_json_encode( self::postTypeLabels() ) ) . '">';
+		echo '<thead><tr><th scope="col">' . esc_html__( 'Name', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Key', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Post types', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Status', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Revision', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Runtime health', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Dependencies', 'wpessential' ) . '</th><th scope="col">' . esc_html__( 'Actions', 'wpessential' ) . '</th></tr></thead>';
 		echo '<tbody id="wpessential-taxonomy-rows">';
 		foreach ( $definitions as $definition ) {
 			$this->renderDefinitionRow( $definition );
@@ -483,6 +483,19 @@ final class TaxonomyAdminController {
 		echo '</tbody></table></section>';
 	}
 
+	/** @return array<string,string> Post type key => label. */
+	private static function postTypeLabels(): array {
+		static $labels = null;
+		if ( $labels === null ) {
+			$labels = [];
+			foreach ( function_exists( 'get_post_types' ) ? get_post_types( [], 'objects' ) : [] as $key => $type ) {
+				$labels[ (string) $key ] = is_object( $type ) && isset( $type->label ) ? (string) $type->label : (string) $key;
+			}
+		}
+
+		return $labels;
+	}
+
 	/** @param array<string,mixed> $definition */
 	private function renderDefinitionRow( array $definition ): void {
 		$payload         = is_array( $definition['payload'] ?? null ) ? $definition['payload'] : [];
@@ -490,7 +503,7 @@ final class TaxonomyAdminController {
 		$name            = is_string( $payload['name'] ?? null ) ? $payload['name'] : '';
 		$key             = is_string( $payload['taxonomy_key'] ?? null ) ? $payload['taxonomy_key'] : '';
 		$objectTypes     = is_array( $payload['object_types'] ?? null )
-			? implode( ', ', array_filter( $payload['object_types'], 'is_string' ) )
+			? implode( ', ', array_map( static fn ( string $type ): string => self::postTypeLabels()[ $type ] ?? $type, array_filter( $payload['object_types'], 'is_string' ) ) )
 			: '';
 		$status          = is_string( $definition['status'] ?? null ) ? $definition['status'] : '';
 		$revision        = is_int( $definition['revision'] ?? null ) ? $definition['revision'] : 0;
