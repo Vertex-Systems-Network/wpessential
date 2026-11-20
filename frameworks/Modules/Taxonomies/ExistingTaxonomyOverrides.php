@@ -105,7 +105,10 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		}
 		if ( isset( $override['rewrite_slug'] ) ) {
 			$rewrite         = is_array( $args['rewrite'] ?? null ) ? $args['rewrite'] : [];
-			$args['rewrite'] = [ ...$rewrite, 'slug' => $override['rewrite_slug'] ];
+			$args['rewrite'] = [
+				...$rewrite,
+				'slug' => $override['rewrite_slug'],
+			];
 		}
 		if ( ( $override['disabled'] ?? false ) === true && ! in_array( $taxonomy, self::CORE_LOCKED, true ) ) {
 			// Hidden everywhere, terms and relationships kept: nothing is deleted or unregistered.
@@ -188,7 +191,10 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			schemaVersion: 1,
 			ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
 			status: $status,
-			payload: [ 'taxonomy' => $taxonomyKey, 'override' => $override ],
+			payload: [
+				'taxonomy' => $taxonomyKey,
+				'override' => $override,
+			],
 			revision: ( $existing?->revision ?? 0 ) + 1,
 		);
 		$this->definitions->save( new Definition( $candidate->id, $candidate->slug, $candidate->type, 1, $candidate->ownerSurfaceId, $status, $candidate->payload, $candidate->revision, [], $candidate->computedChecksum() ) );
@@ -197,7 +203,11 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			delete_option( 'rewrite_rules' ); // WordPress rebuilds the rules on the next request, after the new args apply.
 		}
 
-		return [ 'taxonomy' => $taxonomyKey, 'status' => $status->value, 'override' => $override ];
+		return [
+			'taxonomy' => $taxonomyKey,
+			'status' => $status->value,
+			'override' => $override,
+		];
 	}
 
 	/** @return array<string,array<string,mixed>> */
@@ -246,7 +256,12 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			$notice = 'error';
 			set_transient( 'wpessential_existing_tax_error_' . get_current_user_id(), $error->getMessage(), 60 );
 		}
-		wp_safe_redirect( add_query_arg( [ 'page' => self::PAGE_SLUG, 'taxonomy' => $taxonomyKey, 'wpe_notice' => $notice ], admin_url( 'admin.php' ) ) );
+		$query = [
+			'page' => self::PAGE_SLUG,
+			'taxonomy' => $taxonomyKey,
+			'wpe_notice' => $notice,
+		];
+		wp_safe_redirect( add_query_arg( $query, admin_url( 'admin.php' ) ) );
 		exit;
 	}
 
@@ -271,7 +286,11 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			if ( ! $taxonomy->show_ui && ! isset( $overrides[ $taxonomy->name ] ) ) {
 				continue;
 			}
-			$url = add_query_arg( [ 'page' => self::PAGE_SLUG, 'taxonomy' => $taxonomy->name ], admin_url( 'admin.php' ) );
+			$query = [
+				'page' => self::PAGE_SLUG,
+				'taxonomy' => $taxonomy->name,
+			];
+			$url = add_query_arg( $query, admin_url( 'admin.php' ) );
 			echo '<tr><td>' . esc_html( (string) $taxonomy->label ) . '</td><td><code>' . esc_html( $taxonomy->name ) . '</code></td><td>' . esc_html( implode( ', ', (array) $taxonomy->object_type ) ) . '</td><td>' . ( isset( $overrides[ $taxonomy->name ] ) ? esc_html__( 'Yes', 'wpessential' ) : '—' ) . '</td><td><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a></td></tr>';
 		}
 		echo '</tbody></table>';
@@ -299,14 +318,23 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		foreach ( self::FLAGS as $flag ) {
 			$current = array_key_exists( $flag, $override ) ? ( $override[ $flag ] ? '1' : '0' ) : '';
 			echo '<tr><th scope="row"><label for="wpe-flag-' . esc_attr( $flag ) . '">' . esc_html( ucfirst( str_replace( '_', ' ', $flag ) ) ) . '</label></th><td><select id="wpe-flag-' . esc_attr( $flag ) . '" name="override[flags][' . esc_attr( $flag ) . ']">';
-			foreach ( [ '' => sprintf( /* translators: %s: Yes or No */ __( 'Keep original (%s)', 'wpessential' ), ! empty( $taxonomy->$flag ) ? __( 'Yes', 'wpessential' ) : __( 'No', 'wpessential' ) ), '1' => __( 'Yes', 'wpessential' ), '0' => __( 'No', 'wpessential' ) ] as $value => $text ) {
+			$options = [
+				'' => sprintf( /* translators: %s: Yes or No */ __( 'Keep original (%s)', 'wpessential' ), ! empty( $taxonomy->$flag ) ? __( 'Yes', 'wpessential' ) : __( 'No', 'wpessential' ) ),
+				'1' => __( 'Yes', 'wpessential' ),
+				'0' => __( 'No', 'wpessential' ),
+			];
+			foreach ( $options as $value => $text ) {
 				echo '<option value="' . esc_attr( (string) $value ) . '"' . selected( $current, (string) $value, false ) . '>' . esc_html( $text ) . '</option>';
 			}
 			echo '</select></td></tr>';
 		}
 		if ( ! $locked ) {
 			$attached = (array) $taxonomy->object_type;
-			foreach ( [ 'attach' => __( 'Also use on', 'wpessential' ), 'detach' => __( 'Remove from', 'wpessential' ) ] as $key => $legend ) {
+			$options = [
+				'attach' => __( 'Also use on', 'wpessential' ),
+				'detach' => __( 'Remove from', 'wpessential' ),
+			];
+			foreach ( $options as $key => $legend ) {
 				echo '<tr><th scope="row">' . esc_html( $legend ) . '</th><td><fieldset>';
 				foreach ( get_post_types( [ 'show_ui' => true ], 'objects' ) as $type ) {
 					$isOn = in_array( $type->name, $attached, true );

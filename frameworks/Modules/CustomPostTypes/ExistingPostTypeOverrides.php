@@ -110,7 +110,10 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		}
 		if ( isset( $override['rewrite_slug'] ) ) {
 			$rewrite         = is_array( $args['rewrite'] ?? null ) ? $args['rewrite'] : [];
-			$args['rewrite'] = [ ...$rewrite, 'slug' => $override['rewrite_slug'] ];
+			$args['rewrite'] = [
+				...$rewrite,
+				'slug' => $override['rewrite_slug'],
+			];
 		}
 		if ( ( $override['disabled'] ?? false ) === true && ! in_array( $postType, self::CORE_LOCKED, true ) ) {
 			// Hidden everywhere, content kept: nothing is deleted or unregistered.
@@ -204,7 +207,10 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			schemaVersion: 1,
 			ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
 			status: $status,
-			payload: [ 'post_type' => $postType, 'override' => $override ],
+			payload: [
+				'post_type' => $postType,
+				'override' => $override,
+			],
 			revision: ( $existing?->revision ?? 0 ) + 1,
 		);
 		$this->definitions->save( new Definition( $candidate->id, $candidate->slug, $candidate->type, 1, $candidate->ownerSurfaceId, $status, $candidate->payload, $candidate->revision, [], $candidate->computedChecksum() ) );
@@ -213,7 +219,11 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			delete_option( 'rewrite_rules' ); // WordPress rebuilds the rules on the next request, after the new args apply.
 		}
 
-		return [ 'post_type' => $postType, 'status' => $status->value, 'override' => $override ];
+		return [
+			'post_type' => $postType,
+			'status' => $status->value,
+			'override' => $override,
+		];
 	}
 
 	/** @return array<string,array<string,mixed>> */
@@ -262,7 +272,12 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			$notice = 'error';
 			set_transient( 'wpessential_existing_cpt_error_' . get_current_user_id(), $error->getMessage(), 60 );
 		}
-		wp_safe_redirect( add_query_arg( [ 'page' => self::PAGE_SLUG, 'post_type' => $postType, 'wpe_notice' => $notice ], admin_url( 'admin.php' ) ) );
+		$query = [
+			'page' => self::PAGE_SLUG,
+			'post_type' => $postType,
+			'wpe_notice' => $notice,
+		];
+		wp_safe_redirect( add_query_arg( $query, admin_url( 'admin.php' ) ) );
 		exit;
 	}
 
@@ -287,7 +302,11 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			if ( ! $type->show_ui && ! isset( $overrides[ $type->name ] ) ) {
 				continue;
 			}
-			$url = add_query_arg( [ 'page' => self::PAGE_SLUG, 'post_type' => $type->name ], admin_url( 'admin.php' ) );
+			$query = [
+				'page' => self::PAGE_SLUG,
+				'post_type' => $type->name,
+			];
+			$url = add_query_arg( $query, admin_url( 'admin.php' ) );
 			echo '<tr><td>' . esc_html( (string) $type->label ) . '</td><td><code>' . esc_html( $type->name ) . '</code></td><td>' . ( isset( $overrides[ $type->name ] ) ? esc_html__( 'Yes', 'wpessential' ) : '—' ) . '</td><td><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a></td></tr>';
 		}
 		echo '</tbody></table>';
@@ -316,12 +335,21 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		foreach ( self::FLAGS as $flag ) {
 			$current = array_key_exists( $flag, $override ) ? ( $override[ $flag ] ? '1' : '0' ) : '';
 			echo '<tr><th scope="row"><label for="wpe-flag-' . esc_attr( $flag ) . '">' . esc_html( ucfirst( str_replace( '_', ' ', $flag ) ) ) . '</label></th><td><select id="wpe-flag-' . esc_attr( $flag ) . '" name="override[flags][' . esc_attr( $flag ) . ']">';
-			foreach ( [ '' => sprintf( /* translators: %s: Yes or No */ __( 'Keep original (%s)', 'wpessential' ), ! empty( $type->$flag ) ? __( 'Yes', 'wpessential' ) : __( 'No', 'wpessential' ) ), '1' => __( 'Yes', 'wpessential' ), '0' => __( 'No', 'wpessential' ) ] as $value => $text ) {
+			$options = [
+				'' => sprintf( /* translators: %s: Yes or No */ __( 'Keep original (%s)', 'wpessential' ), ! empty( $type->$flag ) ? __( 'Yes', 'wpessential' ) : __( 'No', 'wpessential' ) ),
+				'1' => __( 'Yes', 'wpessential' ),
+				'0' => __( 'No', 'wpessential' ),
+			];
+			foreach ( $options as $value => $text ) {
 				echo '<option value="' . esc_attr( (string) $value ) . '"' . selected( $current, (string) $value, false ) . '>' . esc_html( $text ) . '</option>';
 			}
 			echo '</select></td></tr>';
 		}
-		foreach ( [ 'supports_add' => __( 'Add features', 'wpessential' ), 'supports_remove' => __( 'Remove features', 'wpessential' ) ] as $key => $legend ) {
+		$options = [
+			'supports_add' => __( 'Add features', 'wpessential' ),
+			'supports_remove' => __( 'Remove features', 'wpessential' ),
+		];
+		foreach ( $options as $key => $legend ) {
 			echo '<tr><th scope="row">' . esc_html( $legend ) . '</th><td><fieldset>';
 			foreach ( self::SUPPORTS as $feature ) {
 				$has = post_type_supports( $type->name, $feature );
