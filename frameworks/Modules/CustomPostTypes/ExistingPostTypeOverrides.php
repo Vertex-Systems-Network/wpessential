@@ -314,7 +314,7 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 				],
 				admin_url( 'admin.php' )
 			);
-			echo '<tr data-wpessential-cpt-row="existing-' . esc_attr( $type->name ) . '" data-wpe-existing="1" data-wpe-status="' . ( $hidden ? 'disabled' : 'published' ) . '" data-wpe-locked="1" data-wpe-trashed="0">';
+			echo '<tr data-wpessential-cpt-row="existing-' . esc_attr( $type->name ) . '" data-wpe-existing="1" data-wpe-status="' . ( $hidden ? 'disabled' : 'published' ) . '" data-wpe-locked="0" data-wpe-trashed="0">';
 			echo '<td><strong>' . esc_html( (string) $type->label ) . '</strong> <span class="wpe-ui-lock-badge">' . esc_html( $type->_builtin ? __( 'WordPress', 'wpessential' ) : __( 'Theme / plugin', 'wpessential' ) ) . '</span>' . ( $changed ? ' <span class="wpe-ui-muted">' . esc_html__( '(changed)', 'wpessential' ) . '</span>' : '' ) . '</td>';
 			echo '<td><code>' . esc_html( $type->name ) . '</code></td>';
 			echo '<td>' . esc_html( implode( ', ', array_map( static fn ( object $tax ): string => (string) $tax->label, get_object_taxonomies( $type->name, 'objects' ) ) ) ) . '</td>';

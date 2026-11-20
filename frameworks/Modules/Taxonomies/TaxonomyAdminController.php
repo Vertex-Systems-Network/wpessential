@@ -481,7 +481,7 @@ final class TaxonomyAdminController {
 		}
 		// WordPress, theme and plugin ones sit in the same table, locked against deletion.
 		$this->existing?->renderRows( array_values( array_filter( array_map( static fn ( array $definition ): mixed => $definition['payload']['taxonomy_key'] ?? null, $definitions ), 'is_string' ) ) );
-		if ( $definitions === [] && $this->existing === null ) {
+		if ( $definitions === [] ) {
 			echo '<tr data-wpessential-taxonomy-empty><td colspan="8">' . esc_html__( 'No taxonomies have been created yet.', 'wpessential' ) . '</td></tr>';
 		}
 		echo '</tbody></table></section>';

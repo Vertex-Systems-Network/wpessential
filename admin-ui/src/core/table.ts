@@ -374,7 +374,9 @@ export function enhanceTable( table: HTMLTableElement, options: TableOptions ): 
 			matching.sort( ( a, b ) => {
 				const x = text( a, sort.column );
 				const y = text( b, sort.column );
-				return factor * ( sort.numeric ? Number( x ) - Number( y ) : x.localeCompare( y, undefined, { numeric: true, sensitivity: 'base' } ) );
+				// Non-numbers ("—") sort below every number.
+				const num = ( value: string ): number => ( Number.isNaN( Number( value ) ) || value === '' ? -Infinity : Number( value ) );
+				return factor * ( sort.numeric ? ( num( x ) === num( y ) ? 0 : num( x ) > num( y ) ? 1 : -1 ) : x.localeCompare( y, undefined, { numeric: true, sensitivity: 'base' } ) );
 			} );
 			for ( const row of matching ) {
 				body.append( row );

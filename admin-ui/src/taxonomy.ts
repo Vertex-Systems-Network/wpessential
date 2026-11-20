@@ -942,9 +942,6 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 	rows.replaceChildren();
 	queueMicrotask( () => rows.append( ...existing ) );
 
-	if ( definitions.length === 0 && existing.length > 0 ) {
-		return;
-	}
 	if ( definitions.length === 0 ) {
 		const row = document.createElement( 'tr' );
 		row.dataset.wpessentialTaxonomyEmpty = '';

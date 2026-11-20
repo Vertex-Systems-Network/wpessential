@@ -298,7 +298,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 				],
 				admin_url( 'admin.php' )
 			);
-			echo '<tr data-wpessential-taxonomy-row="existing-' . esc_attr( $type->name ) . '" data-wpe-existing="1" data-wpe-status="' . ( $hidden ? 'disabled' : 'published' ) . '" data-wpe-locked="1" data-wpe-trashed="0">';
+			echo '<tr data-wpessential-taxonomy-row="existing-' . esc_attr( $type->name ) . '" data-wpe-existing="1" data-wpe-status="' . ( $hidden ? 'disabled' : 'published' ) . '" data-wpe-locked="0" data-wpe-trashed="0">';
 			echo '<td><strong>' . esc_html( (string) $type->label ) . '</strong> <span class="wpe-ui-lock-badge">' . esc_html( $type->_builtin ? __( 'WordPress', 'wpessential' ) : __( 'Theme / plugin', 'wpessential' ) ) . '</span>' . ( $changed ? ' <span class="wpe-ui-muted">' . esc_html__( '(changed)', 'wpessential' ) . '</span>' : '' ) . '</td>';
 			echo '<td><code>' . esc_html( $type->name ) . '</code></td>';
 			echo '<td>' . esc_html( implode( ', ', array_map( static fn ( string $key ): string => (string) ( get_post_type_object( $key )->label ?? $key ), (array) $type->object_type ) ) ) . '</td>';
