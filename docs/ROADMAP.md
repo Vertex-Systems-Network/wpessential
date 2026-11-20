@@ -112,7 +112,7 @@ and a system that `attaches_from` another reuses that system's options instead o
 
 1. **Custom Fields Builder** (Surface 3): all field types, repeater/group, conditional logic, locations on posts, terms, users, options pages and CCT.
 2. **Custom Tables / Custom Content Types** (Surface 7): requires Fields.
-3. **REST API** (Surface 22): endpoints for CCT, fields and relations; requires Roles.
+3. **REST API** (Surface 22) and Connections (Surface 23): site REST access rules, per-user API keys and JWT, the endpoint builder with presets for posts, users, products and CCT, then outbound requests and API to Posts. Detail: `docs/RESEARCH/REST-PLUGINS-SOURCE-AUDIT-2026-11.md`.
 4. **Options Pages** (Surface 12 Settings): requires Fields.
 5. **Relations Builder** (Surface 4), including hierarchical relations.
 6. **Custom Query Builder** (Surface 6): posts, terms, users, comments, SQL, CCT, REST, repeater, sub/merged query.

@@ -162,14 +162,14 @@
       "id": 22,
       "key": "rest-api",
       "status": "BANK_REVIEWED",
-      "records": 46,
+      "records": 54,
       "notes": "REST API Bank Review V1 closes 46 normalized Surface 22 records seeded from the REST API Builder exhaustive spec and #601 readiness evidence after a zero-unresolved WordPress native audit and market audit (JetEngine, Custom API for WP, WPGraphQL, WP REST Cache, HTTP/OpenAPI/CORS standards), zero semantic overlaps and zero post-market record delta. Explicit permission Policy is mandatory, public mutation is never a default, 10 unsafe patterns (raw SQL/PHP, missing permission callback, credential header mapping, wildcard CORS, unbounded output, sensitive logging) stay rejected and third-party auth adapters are deferred. This promotes planning/Bank truth only; endpoint registration and runtime remain unpromoted."
     },
     {
       "id": 23,
       "key": "connections",
       "status": "BANK_REVIEWED",
-      "records": 65,
+      "records": 71,
       "notes": "Connections/Webhooks Bank Review V1 closes 65 normalized Surface 23 records seeded from the Webhooks & Connections exhaustive spec and #602 readiness evidence after a zero-unresolved WordPress native audit and market audit (WP Webhooks, Uncanny Automator, n8n, Zapier Webhooks; WooCommerce, Stripe, GitHub, Standard Webhooks, OWASP SSRF and OAuth RFC specialists), zero semantic overlaps and zero post-market record delta. Secrets are Vault references only, Safe HTTP SSRF/redirect/TLS policy and raw-body webhook signature verification are mandatory, 16 unsafe patterns (plaintext secrets, ignore-TLS, private/metadata destinations, cross-host auth redirects, unsigned webhooks, weak algorithms, replay re-runs, credential logging, AI credential access) stay rejected and provider signing adapters plus private-network allowlists are deferred. This promotes planning/Bank truth only; network, OAuth and webhook execution remain unpromoted."
     },
     {
@@ -384,6 +384,6 @@
     "native_audited_surfaces": 29,
     "market_audited_surfaces": 29,
     "bank_reviewed_surfaces": 29,
-    "total_bank_records": 3373
+    "total_bank_records": 3387
   }
 }

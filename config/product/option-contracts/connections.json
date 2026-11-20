@@ -3076,6 +3076,600 @@
           ],
           "description": "Delivery ID, profile, caller, method + safe host/path, status, attempts, timing, bytes, error category, correlation ID; never Authorization, cookies or secrets. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §22.",
           "parity_reason": "BANK_REVIEWED one-to-one projection of connections.outbound.delivery-logs. Surface 23 owns connection/transport lifecycle; shared consumers and primitives are explicitly delegated in the contract and UX re-review. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface. Delivery ID, profile, caller, method + safe host/path, status, attempts, timing, bytes, error category, correlation ID; never Authorization, cookies or secrets. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §22."
+        },
+        {
+          "id": "connections.output.display",
+          "label": "Show a request's result with a shortcode, template tag or block (field selection, formatting, fallback text)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Planning only; no runtime behavior or network side effect is authorized by this contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Display Remote Data",
+            "control": "policy_control",
+            "search_terms": [
+              "connections.output.display",
+              "output.display",
+              "Show a request's result with a shortcode, template tag or block (field selection, formatting, fallback text)"
+            ],
+            "help": "Show a request's result with a shortcode, template tag or block (field selection, formatting, fallback text) (WPE_HARD, P1_CORE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Show a request's result with a shortcode, template tag or block (field selection, formatting, fallback text) (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "No runtime effect is implemented or authorized by this planning contract. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "normal",
+            "capability": "manage_options",
+            "policy_notes": "Canonical Policy and owner Ability checks are required for any future implementation. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site/network scope and Vault isolation require explicit Policy checks; super-admin presentation never implies cross-site authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No credential disclosure, arbitrary network destination, TLS bypass, raw-body parse-before-signature check, replayed business mutation, unbounded payload/log retention or unapproved route/provider side effect."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WP Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/wp-webhooks/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Uncanny Automator",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/uncanny-automator/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "n8n (Credentials, HTTP Request and Webhook nodes)",
+              "capability": "connection definition auth",
+              "source": "https://docs.n8n.io/credentials/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Zapier Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://zapier.com/apps/webhook/integrations",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Required name and stable generated key; changing provider type after use creates a new Connection instead of reinterpreting existing secrets/settings. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §4.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.output.display. Show a request's result with a shortcode, template tag or block (field selection, formatting, fallback text) (WPE_HARD, P1_CORE)."
+        },
+        {
+          "id": "connections.outbound.response-format",
+          "label": "Result format (JSON, PHP array, HTML formatted, XML) and nested data path selection",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Planning only; no runtime behavior or network side effect is authorized by this contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Outbound Requests",
+            "control": "policy_control",
+            "search_terms": [
+              "connections.outbound.response-format",
+              "outbound.response-format",
+              "Result format (JSON, PHP array, HTML formatted, XML) and nested data path selection"
+            ],
+            "help": "Result format (JSON, PHP array, HTML formatted, XML) and nested data path selection (WPE_HARD, P1_CORE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Result format (JSON, PHP array, HTML formatted, XML) and nested data path selection (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "No runtime effect is implemented or authorized by this planning contract. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "normal",
+            "capability": "manage_options",
+            "policy_notes": "Canonical Policy and owner Ability checks are required for any future implementation. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site/network scope and Vault isolation require explicit Policy checks; super-admin presentation never implies cross-site authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No credential disclosure, arbitrary network destination, TLS bypass, raw-body parse-before-signature check, replayed business mutation, unbounded payload/log retention or unapproved route/provider side effect."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WP Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/wp-webhooks/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Uncanny Automator",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/uncanny-automator/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "n8n (Credentials, HTTP Request and Webhook nodes)",
+              "capability": "connection definition auth",
+              "source": "https://docs.n8n.io/credentials/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Zapier Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://zapier.com/apps/webhook/integrations",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Required name and stable generated key; changing provider type after use creates a new Connection instead of reinterpreting existing secrets/settings. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §4.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.response-format. Result format (JSON, PHP array, HTML formatted, XML) and nested data path selection (WPE_HARD, P1_CORE)."
+        },
+        {
+          "id": "connections.outbound.cache",
+          "label": "Response cache per request profile (TTL, key dimensions, manual purge)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Planning only; no runtime behavior or network side effect is authorized by this contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Outbound Requests",
+            "control": "policy_control",
+            "search_terms": [
+              "connections.outbound.cache",
+              "outbound.cache",
+              "Response cache per request profile (TTL, key dimensions, manual purge)"
+            ],
+            "help": "Response cache per request profile (TTL, key dimensions, manual purge) (WPE_HARD, P1_CORE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Response cache per request profile (TTL, key dimensions, manual purge) (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "No runtime effect is implemented or authorized by this planning contract. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "normal",
+            "capability": "manage_options",
+            "policy_notes": "Canonical Policy and owner Ability checks are required for any future implementation. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site/network scope and Vault isolation require explicit Policy checks; super-admin presentation never implies cross-site authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No credential disclosure, arbitrary network destination, TLS bypass, raw-body parse-before-signature check, replayed business mutation, unbounded payload/log retention or unapproved route/provider side effect."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WP Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/wp-webhooks/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Uncanny Automator",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/uncanny-automator/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "n8n (Credentials, HTTP Request and Webhook nodes)",
+              "capability": "connection definition auth",
+              "source": "https://docs.n8n.io/credentials/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Zapier Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://zapier.com/apps/webhook/integrations",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Required name and stable generated key; changing provider type after use creates a new Connection instead of reinterpreting existing secrets/settings. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §4.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.cache. Response cache per request profile (TTL, key dimensions, manual purge) (WPE_HARD, P1_CORE)."
+        },
+        {
+          "id": "connections.outbound.chaining",
+          "label": "Chain requests: feed values from one response into the next request",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Planning only; no runtime behavior or network side effect is authorized by this contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Outbound Requests",
+            "control": "policy_control",
+            "search_terms": [
+              "connections.outbound.chaining",
+              "outbound.chaining",
+              "Chain requests: feed values from one response into the next request"
+            ],
+            "help": "Chain requests: feed values from one response into the next request (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Chain requests: feed values from one response into the next request (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "No runtime effect is implemented or authorized by this planning contract. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "normal",
+            "capability": "manage_options",
+            "policy_notes": "Canonical Policy and owner Ability checks are required for any future implementation. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site/network scope and Vault isolation require explicit Policy checks; super-admin presentation never implies cross-site authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No credential disclosure, arbitrary network destination, TLS bypass, raw-body parse-before-signature check, replayed business mutation, unbounded payload/log retention or unapproved route/provider side effect."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WP Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/wp-webhooks/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Uncanny Automator",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/uncanny-automator/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "n8n (Credentials, HTTP Request and Webhook nodes)",
+              "capability": "connection definition auth",
+              "source": "https://docs.n8n.io/credentials/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Zapier Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://zapier.com/apps/webhook/integrations",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Required name and stable generated key; changing provider type after use creates a new Connection instead of reinterpreting existing secrets/settings. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §4.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.chaining. Chain requests: feed values from one response into the next request (WPE_HARD, P2_COMPETITIVE)."
+        },
+        {
+          "id": "connections.outbound.event-triggers",
+          "label": "Send a request when a site event happens (user registers, form submitted, order placed, post published)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Planning only; no runtime behavior or network side effect is authorized by this contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Outbound Requests",
+            "control": "policy_control",
+            "search_terms": [
+              "connections.outbound.event-triggers",
+              "outbound.event-triggers",
+              "Send a request when a site event happens (user registers, form submitted, order placed, post published)"
+            ],
+            "help": "Send a request when a site event happens (user registers, form submitted, order placed, post published) (WPE_HARD, P1_CORE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Send a request when a site event happens (user registers, form submitted, order placed, post published) (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "No runtime effect is implemented or authorized by this planning contract. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "normal",
+            "capability": "manage_options",
+            "policy_notes": "Canonical Policy and owner Ability checks are required for any future implementation. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site/network scope and Vault isolation require explicit Policy checks; super-admin presentation never implies cross-site authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No credential disclosure, arbitrary network destination, TLS bypass, raw-body parse-before-signature check, replayed business mutation, unbounded payload/log retention or unapproved route/provider side effect."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WP Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/wp-webhooks/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Uncanny Automator",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/uncanny-automator/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "n8n (Credentials, HTTP Request and Webhook nodes)",
+              "capability": "connection definition auth",
+              "source": "https://docs.n8n.io/credentials/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Zapier Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://zapier.com/apps/webhook/integrations",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Required name and stable generated key; changing provider type after use creates a new Connection instead of reinterpreting existing secrets/settings. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §4.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.event-triggers. Send a request when a site event happens (user registers, form submitted, order placed, post published) (WPE_HARD, P1_CORE)."
+        },
+        {
+          "id": "connections.import.api-to-posts",
+          "label": "Import API items as posts, products or CCT items with field mapping and scheduled sync",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "requiredness": "required_create",
+          "value_type": "object",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Planning only; no runtime behavior or network side effect is authorized by this contract."
+          },
+          "ui": {
+            "tier": "Essential",
+            "group": "Import and Sync",
+            "control": "policy_control",
+            "search_terms": [
+              "connections.import.api-to-posts",
+              "import.api-to-posts",
+              "Import API items as posts, products or CCT items with field mapping and scheduled sync"
+            ],
+            "help": "Import API items as posts, products or CCT items with field mapping and scheduled sync (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "low"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Import API items as posts, products or CCT items with field mapping and scheduled sync (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "connections",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "No runtime effect is implemented or authorized by this planning contract. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "normal",
+            "capability": "manage_options",
+            "policy_notes": "Canonical Policy and owner Ability checks are required for any future implementation. Surface 23 owns connection and transport policy; consumer business semantics remain with their canonical surface."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Site/network scope and Vault isolation require explicit Policy checks; super-admin presentation never implies cross-site authorization."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No credential disclosure, arbitrary network destination, TLS bypass, raw-body parse-before-signature check, replayed business mutation, unbounded payload/log retention or unapproved route/provider side effect."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "WP Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/wp-webhooks/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Uncanny Automator",
+              "capability": "connection definition auth",
+              "source": "https://wordpress.org/plugins/uncanny-automator/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "n8n (Credentials, HTTP Request and Webhook nodes)",
+              "capability": "connection definition auth",
+              "source": "https://docs.n8n.io/credentials/",
+              "snapshot_date": "2026-10-19"
+            },
+            {
+              "product": "Zapier Webhooks",
+              "capability": "connection definition auth",
+              "source": "https://zapier.com/apps/webhook/integrations",
+              "snapshot_date": "2026-10-19"
+            }
+          ],
+          "description": "Required name and stable generated key; changing provider type after use creates a new Connection instead of reinterpreting existing secrets/settings. Evidence: docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md §4.",
+          "parity_reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.import.api-to-posts. Import API items as posts, products or CCT items with field mapping and scheduled sync (WPE_HARD, P2_COMPETITIVE)."
         }
       ]
     },
@@ -5979,7 +6573,7 @@
     "source_type": "options_bank",
     "source_surface_key": "connections",
     "source_review_version": "bank-review-v1",
-    "source_record_count": 65,
+    "source_record_count": 71,
     "entries": [
       {
         "source_id": "connections.connection.identity",
@@ -7150,12 +7744,120 @@
           "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
           "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
         ]
+      },
+      {
+        "source_id": "connections.output.display",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "connections.output.display"
+        ],
+        "owner_surface": "connections",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.output.display. Show a request's result with a shortcode, template tag or block (field selection, formatting, fallback text) (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/connections.json",
+          "config/product/options-bank-reviews/connections-bank-review-v1.json",
+          "config/product/options-bank-audits/connections-market-ecosystem.json",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
+          "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "connections.outbound.response-format",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "connections.outbound.response-format"
+        ],
+        "owner_surface": "connections",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.response-format. Result format (JSON, PHP array, HTML formatted, XML) and nested data path selection (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/connections.json",
+          "config/product/options-bank-reviews/connections-bank-review-v1.json",
+          "config/product/options-bank-audits/connections-market-ecosystem.json",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
+          "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "connections.outbound.cache",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "connections.outbound.cache"
+        ],
+        "owner_surface": "connections",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.cache. Response cache per request profile (TTL, key dimensions, manual purge) (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/connections.json",
+          "config/product/options-bank-reviews/connections-bank-review-v1.json",
+          "config/product/options-bank-audits/connections-market-ecosystem.json",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
+          "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "connections.outbound.chaining",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "connections.outbound.chaining"
+        ],
+        "owner_surface": "connections",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.chaining. Chain requests: feed values from one response into the next request (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/connections.json",
+          "config/product/options-bank-reviews/connections-bank-review-v1.json",
+          "config/product/options-bank-audits/connections-market-ecosystem.json",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
+          "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "connections.outbound.event-triggers",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "connections.outbound.event-triggers"
+        ],
+        "owner_surface": "connections",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.outbound.event-triggers. Send a request when a site event happens (user registers, form submitted, order placed, post published) (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/connections.json",
+          "config/product/options-bank-reviews/connections-bank-review-v1.json",
+          "config/product/options-bank-audits/connections-market-ecosystem.json",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
+          "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
+        ]
+      },
+      {
+        "source_id": "connections.import.api-to-posts",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "connections.import.api-to-posts"
+        ],
+        "owner_surface": "connections",
+        "reason": "Gap closure from the 2026-11-20 REST plugin source audit; one-to-one projection of connections.import.api-to-posts. Import API items as posts, products or CCT items with field mapping and scheduled sync (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/connections.json",
+          "config/product/options-bank-reviews/connections-bank-review-v1.json",
+          "config/product/options-bank-audits/connections-market-ecosystem.json",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-NATIVE-WORDPRESS-AUDIT-V1.md",
+          "docs/PRODUCT/CONNECTIONS-WEBHOOKS-MARKET-AUDIT-V1.md",
+          "docs/MODULES/WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md"
+        ]
       }
     ]
   },
   "coverage_summary": {
-    "atomic_options": 65,
-    "parity": 43,
+    "atomic_options": 71,
+    "parity": 49,
     "exceeds": 4,
     "deferred": 2,
     "rejected_unsafe": 16,
