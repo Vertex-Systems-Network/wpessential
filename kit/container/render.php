@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Template-local variables included inside Kit::template().
 
-$wpe_tag     = in_array( $a['tag'], array( 'div', 'section', 'article', 'aside' ), true ) ? $a['tag'] : 'div';
+$wpe_tag     = in_array( $a['tag'], array( 'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav' ), true ) ? $a['tag'] : 'div';
 $wpe_label   = trim( (string) $a['ariaLabel'] );
 $wpe_content = '' !== trim( (string) $content ) ? $content : wp_kses_post( (string) $a['content'] );
 $wpe_classes = array(
