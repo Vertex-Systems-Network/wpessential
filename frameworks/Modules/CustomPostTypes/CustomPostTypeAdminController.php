@@ -606,7 +606,7 @@ final class CustomPostTypeAdminController {
 			$labels = [];
 			if ( function_exists( 'get_object_taxonomies' ) ) {
 				foreach ( get_object_taxonomies( $key, 'objects' ) as $taxonomy ) {
-					$labels[] = is_object( $taxonomy ) && isset( $taxonomy->label ) ? (string) $taxonomy->label : '';
+					$labels[] = $taxonomy->label;
 				}
 			} else {
 				$labels = is_array( $payload['taxonomies'] ?? null ) ? array_filter( $payload['taxonomies'], 'is_string' ) : [];

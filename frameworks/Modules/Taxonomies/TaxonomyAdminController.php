@@ -489,7 +489,7 @@ final class TaxonomyAdminController {
 		if ( $labels === null ) {
 			$labels = [];
 			foreach ( function_exists( 'get_post_types' ) ? get_post_types( [], 'objects' ) : [] as $key => $type ) {
-				$labels[ (string) $key ] = is_object( $type ) && isset( $type->label ) ? (string) $type->label : (string) $key;
+				$labels[ (string) $key ] = $type->label;
 			}
 		}
 
