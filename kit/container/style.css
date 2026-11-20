@@ -31,14 +31,14 @@
 	column-gap:var(--wpek-gap);
 	row-gap:var(--wpek-row-gap);
 }
-.wpe-container.is-grid .wpe-container__inner {
+.wpe-container.is-grid > .wpe-container__inner {
 	display:grid;
 	grid-template-columns:repeat(var(--wpek-cols),minmax(0,1fr));
 	align-content:start;
 }
-.wpe-container.is-content-full .wpe-container__inner {max-width:none}
-.wpe-container.is-equal.is-flex .wpe-container__inner > * {flex:1 1 0;min-width:0}
-.wpe-container.is-grid .wpe-container__inner > * {min-width:0}
+.wpe-container.is-content-full > .wpe-container__inner {max-width:none}
+.wpe-container.is-equal.is-flex > .wpe-container__inner > * {flex:1 1 0;min-width:0}
+.wpe-container.is-grid > .wpe-container__inner > * {min-width:0}
 .wpe-container.is-overflow-hidden {overflow:hidden}
 .wpe-container.is-overflow-auto {overflow:auto}
 @media(hover:hover) {
@@ -55,7 +55,7 @@
 	display:block;
 	min-height:48px;
 }
-.block-editor-block-list__block.wpe-container .wpe-container__inner > .block-editor-inner-blocks > .block-editor-block-list__layout {
+.block-editor-block-list__block.wpe-container > .wpe-container__inner > .block-editor-inner-blocks > .block-editor-block-list__layout {
 	display:flex;
 	flex-wrap:var(--wpek-wrap);
 	flex-direction:var(--wpek-direction);
@@ -64,11 +64,13 @@
 	gap:var(--wpek-row-gap) var(--wpek-gap);
 	min-height:48px;
 }
-.block-editor-block-list__block.wpe-container.is-grid .wpe-container__inner > .block-editor-inner-blocks > .block-editor-block-list__layout {
+.block-editor-block-list__block.wpe-container.is-grid > .wpe-container__inner > .block-editor-inner-blocks > .block-editor-block-list__layout {
 	display:grid;
 	grid-template-columns:repeat(var(--wpek-cols),minmax(0,1fr));
 }
-.block-editor-block-list__block.wpe-container.is-equal.is-flex .wpe-container__inner > .block-editor-inner-blocks > .block-editor-block-list__layout > .block-editor-block-list__block {
+.block-editor-block-list__block.wpe-container.is-equal.is-flex > .wpe-container__inner > .block-editor-inner-blocks > .block-editor-block-list__layout > .block-editor-block-list__block {
 	flex:1 1 0;
 	min-width:0;
 }
+/* A container's layout variables stop at its own children: elements inside read their own defaults (text columns, list gaps…), while their own settings (#id rules) still apply. */
+.wpe-container__inner > :not(.wpe-container) {--wpek-direction:initial;--wpek-wrap:initial;--wpek-cols:initial;--wpek-gap:initial;--wpek-row-gap:initial;--wpek-justify:initial;--wpek-align-items:initial;--wpek-max:initial;--wpek-min-height:initial;--wpek-container-align:initial}
