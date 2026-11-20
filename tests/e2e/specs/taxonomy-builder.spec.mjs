@@ -189,7 +189,7 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
 
   await showTaxonomiesInList(page, playground.serverUrl, [await saved]);
   const row = page.getByRole('row', {
-    name: /Genres library_genre post, external_book Draft 1 Inactive 2/,
+    name: /Genres library_genre Posts, external_book Draft 1 Inactive 2/,
   });
   await expect(row).toBeVisible();
   await expect(row.locator('[data-wpessential-taxonomy-runtime-health="inactive"]')).toHaveText('Inactive');
