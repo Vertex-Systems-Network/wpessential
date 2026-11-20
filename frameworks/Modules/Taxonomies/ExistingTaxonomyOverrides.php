@@ -56,7 +56,9 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		$this->contexts  = $contexts;
 		add_action(
 			'admin_menu',
-			fn () => add_submenu_page( $parentSlug, __( 'Existing taxonomies', 'wpessential' ), __( 'Existing taxonomies', 'wpessential' ), 'manage_options', self::PAGE_SLUG, [ $this, 'renderPage' ] ),
+			function () use ( $parentSlug ): void {
+				add_submenu_page( $parentSlug, __( 'Existing taxonomies', 'wpessential' ), __( 'Existing taxonomies', 'wpessential' ), 'manage_options', self::PAGE_SLUG, [ $this, 'renderPage' ] );
+			},
 			20,
 		);
 		add_action( 'admin_post_' . self::ACTION, [ $this, 'handleForm' ] );
@@ -185,7 +187,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		$override = $revert ? [] : self::sanitize( is_array( $input['override'] ?? null ) ? $input['override'] : [], $taxonomyKey );
 		$status   = $revert || $override === [] ? DefinitionStatus::Archived : DefinitionStatus::Published;
 		$candidate = new Definition(
-			id: $existing?->id ?? self::uuid(),
+			id: $existing->id ?? self::uuid(),
 			slug: 'taxonomy-existing-' . str_replace( '_', '-', $taxonomyKey ),
 			type: self::DEFINITION_TYPE,
 			schemaVersion: 1,
@@ -195,11 +197,11 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 				'taxonomy' => $taxonomyKey,
 				'override' => $override,
 			],
-			revision: ( $existing?->revision ?? 0 ) + 1,
+			revision: ( $existing->revision ?? 0 ) + 1,
 		);
 		$this->definitions->save( new Definition( $candidate->id, $candidate->slug, $candidate->type, 1, $candidate->ownerSurfaceId, $status, $candidate->payload, $candidate->revision, [], $candidate->computedChecksum() ) );
 		$this->cache = null;
-		if ( function_exists( 'delete_option' ) && array_key_exists( 'rewrite_slug', $override + (array) ( $existing?->payload['override'] ?? [] ) ) ) {
+		if ( function_exists( 'delete_option' ) && array_key_exists( 'rewrite_slug', $override + (array) ( $existing->payload['override'] ?? [] ) ) ) {
 			delete_option( 'rewrite_rules' ); // WordPress rebuilds the rules on the next request, after the new args apply.
 		}
 
