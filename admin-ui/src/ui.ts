@@ -3,6 +3,12 @@ import { initAjaxForms } from './core/forms';
 import { initAjaxNav } from './core/nav';
 import { initClickLoaders } from './core/skeleton';
 import { initSiteKit } from './core/sitekit';
+import { enhanceTable } from './core/table';
+import { BULK_ACTIONS, LIFECYCLE_VIEWS, markRow, rowActions, runLifecycle } from './core/lifecycle';
+import { statusCell } from './core/status-pill';
+
+// The list-table toolkit for Pro builder screens, so their lists look and behave like the CPT list.
+( window as unknown as { wpessentialUi: unknown } ).wpessentialUi = { enhanceTable, rowActions, markRow, runLifecycle, statusCell, BULK_ACTIONS, LIFECYCLE_VIEWS };
 
 function matches( element: HTMLElement, query: string ): boolean {
 	return query === '' || ( element.dataset.search ?? '' ).includes( query );
