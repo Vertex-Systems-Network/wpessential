@@ -301,7 +301,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			echo '<tr data-wpessential-taxonomy-row="existing-' . esc_attr( $type->name ) . '" data-wpe-existing="1" data-wpe-status="' . ( $hidden ? 'disabled' : 'published' ) . '" data-wpe-locked="1" data-wpe-trashed="0">';
 			echo '<td><strong>' . esc_html( (string) $type->label ) . '</strong> <span class="wpe-ui-lock-badge">' . esc_html( $type->_builtin ? __( 'WordPress', 'wpessential' ) : __( 'Theme / plugin', 'wpessential' ) ) . '</span>' . ( $changed ? ' <span class="wpe-ui-muted">' . esc_html__( '(changed)', 'wpessential' ) . '</span>' : '' ) . '</td>';
 			echo '<td><code>' . esc_html( $type->name ) . '</code></td>';
-			echo '<td>' . esc_html( implode( ', ', array_map( static fn ( string $key ): string => (string) ( get_post_type_object( $key )?->label ?? $key ), (array) $type->object_type ) ) ) . '</td>';
+			echo '<td>' . esc_html( implode( ', ', array_map( static fn ( string $key ): string => (string) ( get_post_type_object( $key )->label ?? $key ), (array) $type->object_type ) ) ) . '</td>';
 			echo '<td>' . StatusPill::render( $hidden ? 'off' : 'running', $hidden ? __( 'Disabled', 'wpessential' ) : __( 'Published', 'wpessential' ) ) . '</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- StatusPill escapes.
 			echo '<td>—</td><td>' . esc_html__( 'Active', 'wpessential' ) . '</td><td>—</td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
 			echo '<td><div class="wpe-ui-row-actions"><a class="wpe-ui-button wpe-ui-button--secondary wpe-ui-button--sm" href="' . esc_url( $edit ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a>';
