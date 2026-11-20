@@ -439,6 +439,20 @@ function createCell( text: string ): HTMLTableCellElement {
 	return cell;
 }
 
+/** Post type key => attached taxonomy labels, printed by the PHP list. */
+function cptTaxonomyLabels(): Record< string, string > {
+	const raw = document.getElementById( 'wpessential-cpt-table' )?.dataset
+		.wpessentialCptTaxonomies;
+	try {
+		const parsed: unknown = raw ? JSON.parse( raw ) : {};
+		return parsed && typeof parsed === 'object' && ! Array.isArray( parsed )
+			? ( parsed as Record< string, string > )
+			: {};
+	} catch {
+		return {};
+	}
+}
+
 function renderCptRows( definitions: CptDefinition[] ): void {
 	const rows = document.getElementById( 'wpessential-cpt-rows' );
 	if ( ! ( rows instanceof HTMLTableSectionElement ) ) {
@@ -452,7 +466,7 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 		const cell = createCell(
 			'No custom post types have been created yet.'
 		);
-		cell.colSpan = 5;
+		cell.colSpan = 6;
 		row.append( cell );
 		rows.append( row );
 		return;
@@ -481,6 +495,7 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 		row.append(
 			nameCell,
 			createCell( key ),
+			createCell( cptTaxonomyLabels()[ key ] ?? '' ),
 			statusCell( definition.status ),
 			createCell( String( definition.revision ) )
 		);
@@ -911,8 +926,8 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 			sortable: [
 				{ column: 0 },
 				{ column: 1 },
-				{ column: 2 },
-				{ column: 3, numeric: true },
+				{ column: 3 },
+				{ column: 4, numeric: true },
 			],
 		} );
 	}

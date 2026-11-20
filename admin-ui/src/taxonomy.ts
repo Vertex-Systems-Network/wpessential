@@ -965,6 +965,7 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 					.filter(
 						( value ): value is string => typeof value === 'string'
 					)
+					.map( ( value ) => postTypeLabels()[ value ] ?? value )
 					.join( ', ' )
 			: '';
 		const runtimeState = definition.read_model.runtime_health.state;
@@ -1476,4 +1477,18 @@ if ( document.readyState === 'loading' ) {
 	document.addEventListener( 'DOMContentLoaded', boot, { once: true } );
 } else {
 	boot();
+}
+
+/** Post type key => label map printed by the PHP list. */
+function postTypeLabels(): Record< string, string > {
+	const raw = document.getElementById( 'wpessential-taxonomy-table' )?.dataset
+		.wpessentialPostTypeLabels;
+	try {
+		const parsed: unknown = raw ? JSON.parse( raw ) : {};
+		return parsed && typeof parsed === 'object' && ! Array.isArray( parsed )
+			? ( parsed as Record< string, string > )
+			: {};
+	} catch {
+		return {};
+	}
 }
