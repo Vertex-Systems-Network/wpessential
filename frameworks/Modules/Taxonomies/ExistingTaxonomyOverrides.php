@@ -276,7 +276,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			echo '<div class="notice notice-error"><p>' . esc_html( $message !== '' ? $message : __( 'Not saved.', 'wpessential' ) ) . '</p></div>';
 		}
 		$overrides = $this->overrides();
-		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Taxonomy', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Post types', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th></th></tr></thead><tbody>';
+		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Taxonomy', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Post types', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th><span class="screen-reader-text">' . esc_html__( 'Actions', 'wpessential' ) . '</span></th></tr></thead><tbody>';
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( ! $taxonomy->show_ui && ! isset( $overrides[ $taxonomy->name ] ) ) {
 				continue;

@@ -292,7 +292,7 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			echo '<div class="notice notice-error"><p>' . esc_html( $message !== '' ? $message : __( 'Not saved.', 'wpessential' ) ) . '</p></div>';
 		}
 		$overrides = $this->overrides();
-		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Post type', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th></th></tr></thead><tbody>';
+		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Post type', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th><span class="screen-reader-text">' . esc_html__( 'Actions', 'wpessential' ) . '</span></th></tr></thead><tbody>';
 		foreach ( $types as $type ) {
 			if ( ! $type->show_ui && ! isset( $overrides[ $type->name ] ) ) {
 				continue;
