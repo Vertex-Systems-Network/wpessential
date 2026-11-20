@@ -41,6 +41,7 @@ final class CustomPostTypeAdminController {
 		private readonly AjaxDispatcher $ajax,
 		private readonly AdminAssetManifest $assets,
 		private readonly string $ajaxAction,
+		private readonly ?ExistingPostTypeOverrides $existing = null,
 	) {
 		if ( trim( $this->ajaxAction ) === '' ) {
 			throw new InvalidArgumentException( 'CPT admin AJAX action cannot be blank.' );
@@ -195,6 +196,7 @@ final class CustomPostTypeAdminController {
 		echo '<div class="wpe-ui-builder__layout wpe-ui-builder__layout--' . esc_attr( $view ) . '">';
 		if ( $view === 'list' ) {
 			$this->renderDefinitions( $definitions );
+			$this->existing?->renderPage();
 		} else {
 			$this->renderEditor();
 		}

@@ -44,6 +44,7 @@ final class TaxonomyAdminController {
 		private readonly TaxonomyObjectTypeCatalog $objectTypes,
 		private readonly TaxonomyRuntimeProviderRegistry $runtimeProviders,
 		private readonly string $ajaxAction,
+		private readonly ?ExistingTaxonomyOverrides $existing = null,
 	) {
 		if ( trim( $this->ajaxAction ) === '' ) {
 			throw new InvalidArgumentException( 'Taxonomy admin AJAX action cannot be blank.' );
@@ -192,6 +193,7 @@ final class TaxonomyAdminController {
 		echo '<div class="wpe-ui-builder__layout wpe-ui-builder__layout--' . esc_attr( $view ) . '">';
 		if ( $view === 'list' ) {
 			$this->renderDefinitions( $definitions );
+			$this->existing?->renderPage();
 		} else {
 			$this->renderEditor( $objectTypes );
 		}
