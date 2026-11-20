@@ -94,7 +94,7 @@ The source branch also carried no Taxonomy Bank count expansion: the current can
 The Taxonomy worker does not modify global/shared truth. After this candidate head is reviewed and exact-head validation is accepted, the integrator must:
 
 1. Update `config/product/options-bank-progress.json` Surface 2 from `BANK_SURFACE_SEEDED` to `BANK_REVIEWED`.
-2. Keep Surface 2 record count at `71`.
+2. Keep Surface 2 record count at `77` (71 reviewed in 2026-09 plus 6 existing-object records added 2026-11-20).
 3. Recompute the shared lifecycle truth counters exactly from repository state.
 4. Run the global `options-bank-progress-contract.php` and the full applicable exact-head CI suite on the integrated SHA.
 5. Do not add Taxonomy semantic relationships unless a later independent duplicate/derived authored control is actually introduced.

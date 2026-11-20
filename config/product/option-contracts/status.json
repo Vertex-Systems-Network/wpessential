@@ -6022,6 +6022,192 @@
               "snapshot_date": "2026-09-01"
             }
           ]
+        },
+        {
+          "id": "status.existing.core-labels",
+          "label": "Rename core statuses (Draft, Pending, Private, Scheduled) in the editor and list views",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure 2026-11-20 for existing WordPress, theme and plugin objects; one-to-one projection of status.existing.core-labels. Rename core statuses (Draft, Pending, Private, Scheduled) in the editor and list views (WPE_HARD, P1_CORE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress register_post_status() where native; otherwise the WPEssential default named in the Status Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Existing Statuses",
+            "control": "policy_control",
+            "search_terms": [
+              "status.existing.core-labels",
+              "existing.core-labels",
+              "Rename core statuses (Draft, Pending, Private, Scheduled) in the editor and list views"
+            ],
+            "help": "Rename core statuses (Draft, Pending, Private, Scheduled) in the editor and list views (WPE_HARD, P1_CORE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Rename core statuses (Draft, Pending, Private, Scheduled) in the editor and list views (WPE_HARD, P1_CORE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "status",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 5 Status options. The certified bounded Status Manager V1 runtime is unchanged by this contract; any capability beyond that bounded scope requires a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Status registration and transitions are server-authoritative and enforce current Policy and post-type capabilities; built-in WordPress statuses are never redefined or removed; status keys are immutable once content uses them; deleting a status requires reassignment of affected content."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Status definitions are per site; network-wide propagation is explicit and never implied."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No redefinition or removal of built-in WordPress statuses.",
+              "No status deletion without content reassignment; no transition that bypasses Policy or post-type capabilities."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "PublishPress Statuses",
+              "capability": "status.editor.block_editor",
+              "source": "https://publishpress.com/statuses/",
+              "snapshot_date": "2026-09-01"
+            },
+            {
+              "product": "Extended Post Status",
+              "capability": "status.editor.block_editor",
+              "source": "https://wordpress.org/plugins/extended-post-status/",
+              "snapshot_date": "2026-09-01"
+            },
+            {
+              "product": "Edit Flow",
+              "capability": "status.editor.block_editor",
+              "source": "https://wordpress.org/plugins/edit-flow/",
+              "snapshot_date": "2026-09-01"
+            }
+          ]
+        },
+        {
+          "id": "status.existing.hide-core",
+          "label": "Hide a core status from editors on chosen post types (for example no Pending on Pages)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "parity_reason": "Gap closure 2026-11-20 for existing WordPress, theme and plugin objects; one-to-one projection of status.existing.hide-core. Hide a core status from editors on chosen post types (for example no Pending on Pages) (WPE_HARD, P2_COMPETITIVE).",
+          "requiredness": "optional",
+          "value_type": "policy",
+          "default_behavior": {
+            "mode": "wpe_default",
+            "notes": "Defaults follow WordPress register_post_status() where native; otherwise the WPEssential default named in the Status Bank."
+          },
+          "ui": {
+            "tier": "Advanced",
+            "group": "Existing Statuses",
+            "control": "policy_control",
+            "search_terms": [
+              "status.existing.hide-core",
+              "existing.hide-core",
+              "Hide a core status from editors on chosen post types (for example no Pending on Pages)"
+            ],
+            "help": "Hide a core status from editors on chosen post types (for example no Pending on Pages) (WPE_HARD, P2_COMPETITIVE).",
+            "danger_level": "medium"
+          },
+          "validation": {
+            "server_authoritative": true,
+            "rules": [
+              "Hide a core status from editors on chosen post types (for example no Pending on Pages) (WPE_HARD, P2_COMPETITIVE)."
+            ],
+            "collision_checks": []
+          },
+          "storage": {
+            "owner": "status",
+            "mode": "revisioned_definition",
+            "omit_when_default": false,
+            "indexing": null,
+            "revisioned": true
+          },
+          "runtime": {
+            "effect": "Contract for Surface 5 Status options. The certified bounded Status Manager V1 runtime is unchanged by this contract; any capability beyond that bounded scope requires a separately accepted runtime issue.",
+            "mutation_class": "reversible",
+            "side_effects": [],
+            "performance_class": "not_applicable"
+          },
+          "security": {
+            "class": "privileged",
+            "capability": "manage_options",
+            "policy_notes": "Status registration and transitions are server-authoritative and enforce current Policy and post-type capabilities; built-in WordPress statuses are never redefined or removed; status keys are immutable once content uses them; deleting a status requires reassignment of affected content."
+          },
+          "portability": {
+            "export": true,
+            "import": true,
+            "environment_sensitive": false,
+            "secret": false,
+            "migration_adapter": null
+          },
+          "multisite": {
+            "scope": "site",
+            "network_override": false,
+            "notes": "Status definitions are per site; network-wide propagation is explicit and never implied."
+          },
+          "testing": {
+            "required_evidence": [
+              "unit",
+              "security",
+              "compatibility"
+            ],
+            "must_not": [
+              "No redefinition or removal of built-in WordPress statuses.",
+              "No status deletion without content reassignment; no transition that bypasses Policy or post-type capabilities."
+            ]
+          },
+          "competitor_evidence": [
+            {
+              "product": "PublishPress Statuses",
+              "capability": "status.editor.block_editor",
+              "source": "https://publishpress.com/statuses/",
+              "snapshot_date": "2026-09-01"
+            },
+            {
+              "product": "Extended Post Status",
+              "capability": "status.editor.block_editor",
+              "source": "https://wordpress.org/plugins/extended-post-status/",
+              "snapshot_date": "2026-09-01"
+            },
+            {
+              "product": "Edit Flow",
+              "capability": "status.editor.block_editor",
+              "source": "https://wordpress.org/plugins/edit-flow/",
+              "snapshot_date": "2026-09-01"
+            }
+          ]
         }
       ]
     },
@@ -12074,7 +12260,7 @@
     "source_type": "options_bank",
     "source_surface_key": "status",
     "source_review_version": "bank-review-v1",
-    "source_record_count": 129,
+    "source_record_count": 131,
     "entries": [
       {
         "source_id": "status.editor.block_editor",
@@ -14139,12 +14325,38 @@
           "config/product/options-bank-audits/status-market-ecosystem.json",
           "config/product/options-bank-audits/status-native-wordpress.json"
         ]
+      },
+      {
+        "source_id": "status.existing.core-labels",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "status.existing.core-labels"
+        ],
+        "owner_surface": "status",
+        "reason": "Gap closure 2026-11-20 for existing WordPress, theme and plugin objects; one-to-one projection of status.existing.core-labels. Rename core statuses (Draft, Pending, Private, Scheduled) in the editor and list views (WPE_HARD, P1_CORE).",
+        "evidence_refs": [
+          "config/product/options-bank/status--existing-objects-2026-11.json"
+        ]
+      },
+      {
+        "source_id": "status.existing.hide-core",
+        "source_kind": "authored_option",
+        "disposition": "AUTHORED_ATOMIC",
+        "atomic_ids": [
+          "status.existing.hide-core"
+        ],
+        "owner_surface": "status",
+        "reason": "Gap closure 2026-11-20 for existing WordPress, theme and plugin objects; one-to-one projection of status.existing.hide-core. Hide a core status from editors on chosen post types (for example no Pending on Pages) (WPE_HARD, P2_COMPETITIVE).",
+        "evidence_refs": [
+          "config/product/options-bank/status--existing-objects-2026-11.json"
+        ]
       }
     ]
   },
   "coverage_summary": {
-    "atomic_options": 129,
-    "parity": 96,
+    "atomic_options": 131,
+    "parity": 98,
     "exceeds": 29,
     "deferred": 0,
     "rejected_unsafe": 4,

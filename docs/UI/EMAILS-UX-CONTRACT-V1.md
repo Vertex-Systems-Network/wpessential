@@ -48,6 +48,7 @@ Raw PHP, script and untrusted executable HTML are prohibited. Sender credentials
 - `emails.preview.diagnostics` — Preview & Diagnostics → non-dispatching preview/test/preflight diagnostics.
 - `emails.portability.performance` — Portability & Performance → secret-free import/export, revision conflict and bounded compile-cache policy.
 - `emails.safety.raw-executable` — Safety → prohibited raw PHP/script/untrusted executable markup evidence; never an authored control.
+- `emails.existing.core-templates` — Existing Emails → per core WordPress email (new user, password reset, email/password change, comment notices): subject/body/template override, revert to core text, and an off switch that stays locked for security emails such as password reset.
 
 ## Interaction and persistence
 

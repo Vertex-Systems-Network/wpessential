@@ -78,8 +78,8 @@ foreach (glob($root . '/config/product/options-bank/status*.json') ?: [] as $fil
         $optionPaths[$optionPath] = true;
     }
 }
-if (count($statusRecords) !== 129) {
-    throw new RuntimeException(sprintf('Status market audit candidate requires exactly 129 local Bank records; found %d.', count($statusRecords)));
+if (count($statusRecords) !== 131) {
+    throw new RuntimeException(sprintf('Status market audit candidate requires exactly 131 local Bank records; found %d.', count($statusRecords)));
 }
 
 $audit = readStatusMarketAuditJson($root . '/config/product/options-bank-audits/status-market-ecosystem.json');

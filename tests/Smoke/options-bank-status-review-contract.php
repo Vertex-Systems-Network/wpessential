@@ -52,7 +52,7 @@ if (($review['schema_version'] ?? null) !== 1
     || ($review['bank_version'] ?? null) !== 'v1'
     || ($review['surface']['id'] ?? null) !== 5
     || ($review['surface']['key'] ?? null) !== 'status'
-    || ($review['record_count'] ?? null) !== 129) {
+    || ($review['record_count'] ?? null) !== 131) {
     throw new RuntimeException('Status Bank Review certificate identity/count is invalid.');
 }
 
@@ -100,9 +100,9 @@ foreach ($bankFiles as $file) {
         $optionPaths[$optionPath] = true;
     }
 }
-if (count($records) !== 129 || count($optionPaths) !== 129) {
+if (count($records) !== 131 || count($optionPaths) !== 131) {
     throw new RuntimeException(sprintf(
-        'Status Bank Review requires 129 unique records/paths; found %d records and %d paths.',
+        'Status Bank Review requires 131 unique records/paths; found %d records and %d paths.',
         count($records),
         count($optionPaths),
     ));
@@ -317,8 +317,8 @@ if ($progressStatus === 'UNSEEDED') {
     if ($progressRecords !== 0) {
         throw new RuntimeException('UNSEEDED Status progress must declare zero records.');
     }
-} elseif ($progressRecords !== 129) {
-    throw new RuntimeException('Seeded-or-later Status progress must declare exactly 129 records.');
+} elseif ($progressRecords !== 131) {
+    throw new RuntimeException('Seeded-or-later Status progress must declare exactly 131 records.');
 }
 if ($rank[$progressStatus] >= $rank['NATIVE_AUDITED'] && ($native['status'] ?? null) !== 'NATIVE_AUDITED') {
     throw new RuntimeException('Status canonical progress must not outrun native certification.');
@@ -340,7 +340,7 @@ if ($decision === 'BANK_REVIEWED') {
         || ($market['status'] ?? null) !== 'MARKET_AUDITED'
         || $reviewUnresolved !== 0
         || $progressStatus !== 'BANK_REVIEWED'
-        || $progressRecords !== 129) {
+        || $progressRecords !== 131) {
         throw new RuntimeException('Status BANK_REVIEWED promotion lacks certified native/market/progress prerequisites.');
     }
 } else {
@@ -350,13 +350,13 @@ if ($decision === 'BANK_REVIEWED') {
     if (($native['status'] ?? null) === 'NATIVE_AUDITED'
         && ($market['status'] ?? null) === 'MARKET_AUDITED'
         && $progressStatus === 'BANK_REVIEWED'
-        && $progressRecords === 129) {
+        && $progressRecords === 131) {
         throw new RuntimeException('Status Review is blocked despite all canonical promotion prerequisites being complete.');
     }
 }
 
 printf(
-    "Status Bank Review V1 contract: PASS (%s; 129 records/paths, 0 semantic overlaps, 4 rejected, 0 deferred, %d future/exceed records, native/market 0 unresolved).\n",
+    "Status Bank Review V1 contract: PASS (%s; 131 records/paths, 0 semantic overlaps, 4 rejected, 0 deferred, %d future/exceed records, native/market 0 unresolved).\n",
     $decision,
     $wpeExceed,
 );

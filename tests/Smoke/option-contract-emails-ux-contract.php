@@ -31,8 +31,8 @@ foreach (($contract['feature_groups'] ?? []) as $group) {
         $ids[$id] = true;
     }
 }
-if (count($ids) !== 16) {
-    throw new RuntimeException('Emails UX certification expects 16 Atomic Options.');
+if (count($ids) !== 17) {
+    throw new RuntimeException('Emails UX certification expects 17 Atomic Options.');
 }
 $headings = ['## Lifecycle preconditions','## Canonical route and information architecture','## UX state classes','## Atomic Option → UX map','## Interaction and persistence','## Loading, empty, validation, conflict and recovery','## Security and ownership','## Accessibility','## Multisite and scope','## Portability and reference remapping','## Performance and scale','## Degraded/provider states','## UX lifecycle exit criteria','## Non-certifications'];
 foreach ($headings as $heading) {

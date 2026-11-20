@@ -103,8 +103,8 @@ foreach ($bankFiles as $file) {
         $optionPaths[$optionPath] = true;
     }
 }
-if (count($statusRecords) !== 129) {
-    throw new RuntimeException(sprintf('Status native audit candidate requires exactly 129 local Bank records; found %d.', count($statusRecords)));
+if (count($statusRecords) !== 131) {
+    throw new RuntimeException(sprintf('Status native audit candidate requires exactly 131 local Bank records; found %d.', count($statusRecords)));
 }
 
 $audit = readStatusNativeAuditJson($auditPath);
