@@ -232,6 +232,19 @@ final class ToolScreen implements AdminScreen {
 	private function handleRest(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in handle().
 		$op = isset( $_POST['op'] ) ? sanitize_key( wp_unslash( (string) $_POST['op'] ) ) : '';
+		if ( $op === 'create_key' ) {
+			$name    = isset( $_POST['key_name'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['key_name'] ) ) : '';
+			$scope   = isset( $_POST['key_scope'] ) && sanitize_key( wp_unslash( (string) $_POST['key_scope'] ) ) === 'write' ? 'write' : 'read';
+			$days    = isset( $_POST['key_days'] ) ? min( 3650, absint( $_POST['key_days'] ) ) : 0;
+			$created = RestAuth::createKey( get_current_user_id(), $name, $scope, $days );
+			// Shown once on the next screen, then gone.
+			set_transient( 'wpessential_new_api_key_' . get_current_user_id(), $created['key'], 5 * MINUTE_IN_SECONDS );
+			$this->back( 'key' );
+		}
+		if ( $op === 'revoke_key' ) {
+			RestAuth::revokeKey( get_current_user_id(), isset( $_POST['key_id'] ) ? sanitize_key( wp_unslash( (string) $_POST['key_id'] ) ) : '' );
+			$this->back( 'saved' );
+		}
 		if ( $op === 'clear_log' ) {
 			delete_option( RestControl::LOG_OPTION );
 			$this->back( 'saved' );
@@ -251,6 +264,9 @@ final class ToolScreen implements AdminScreen {
 				'disable_jsonp'       => isset( $_POST['disable_jsonp'] ),
 				'disable_xmlrpc'      => isset( $_POST['disable_xmlrpc'] ),
 				'log_blocked'         => isset( $_POST['log_blocked'] ),
+				'api_keys'            => isset( $_POST['api_keys'] ),
+				'jwt'                 => isset( $_POST['jwt'] ),
+				'jwt_ttl'             => isset( $_POST['jwt_ttl_minutes'] ) ? absint( $_POST['jwt_ttl_minutes'] ) * 60 : 3600,
 			]
 		);
 		// phpcs:enable
@@ -295,6 +311,7 @@ final class ToolScreen implements AdminScreen {
 
 		$messages = [
 			'saved'    => [ 'success', __( 'Saved.', 'wpessential' ) ],
+			'key'      => [ 'success', __( 'API key created.', 'wpessential' ) ],
 			'preview'  => [ 'info', __( 'Check what will change, then import.', 'wpessential' ) ],
 			'imported' => [ 'success', __( 'Import finished. See the results below.', 'wpessential' ) ],
 			'reset'    => [ 'success', __( 'Reset finished. See the results below.', 'wpessential' ) ],
@@ -580,11 +597,31 @@ final class ToolScreen implements AdminScreen {
 			OptionGroup::row( __( 'Log blocked requests', 'wpessential' ), __( 'Keeps the last 100 blocked requests with a masked IP.', 'wpessential' ), $on( 'log_blocked', 'wpe-rest-log' ) ),
 			OptionGroup::row( __( 'Save', 'wpessential' ), '', self::submit( __( 'Save changes', 'wpessential' ) ) ),
 		];
+		$auth   = [
+			OptionGroup::row( __( 'API keys', 'wpessential' ), __( 'Users can create keys for apps and scripts: send "Authorization: Bearer wpek_…" or "X-WPE-API-Key". A key acts as its user; read-only keys can only read.', 'wpessential' ), $on( 'api_keys', 'wpe-rest-keys' ) ),
+			OptionGroup::row( __( 'JWT tokens', 'wpessential' ), __( 'POST username and password to /wp-json/wpessential/v1/token for a short-lived access token and a refresh token (/token/refresh, /token/revoke). HTTPS only.', 'wpessential' ), $on( 'jwt', 'wpe-rest-jwt' ) ),
+			OptionGroup::row(
+				__( 'Access token lifetime', 'wpessential' ),
+				__( 'Minutes, from 5 to 1440. Refresh tokens last 30 days and work once.', 'wpessential' ),
+				Field::input(
+					'wpe-rest-jwt-ttl',
+					__( 'Minutes', 'wpessential' ),
+					[
+						'type'  => 'number',
+						'name'  => 'jwt_ttl_minutes',
+						'min'   => '5',
+						'max'   => '1440',
+						'value' => (string) intdiv( $settings['jwt_ttl'], 60 ),
+					]
+				)
+			),
+		];
 		$html   = $this->form(
 			'save',
 			OptionGroup::render( 'wpe-tool-rest', __( 'Who can use the REST API', 'wpessential' ), '', '', $access )
+			. OptionGroup::render( 'wpe-tool-auth', __( 'Authentication', 'wpessential' ), '', '', $auth )
 			. OptionGroup::render( 'wpe-tool-harden', __( 'Hardening', 'wpessential' ), '', '', $harden )
-		);
+		) . $this->renderKeys( $settings['api_keys'] );
 
 		$blocked = RestControl::blocked();
 		$rows    = array_map(
@@ -596,6 +633,88 @@ final class ToolScreen implements AdminScreen {
 			: [ self::table( [ __( 'Time', 'wpessential' ), __( 'Request', 'wpessential' ), __( 'Answer', 'wpessential' ), __( 'IP', 'wpessential' ) ], $rows ), $this->form( 'clear_log', self::submit( __( 'Clear log', 'wpessential' ), 'ghost' ) ) ];
 
 		return $html . OptionGroup::render( 'wpe-tool-rest-log', __( 'Blocked requests', 'wpessential' ), '', '', $log, true, count( $blocked ) );
+	}
+
+	/** The signed-in user's API keys: create, list, revoke; a new key is shown once. */
+	private function renderKeys( bool $enabled ): string {
+		$userId = get_current_user_id();
+		$new    = (string) get_transient( 'wpessential_new_api_key_' . $userId );
+		delete_transient( 'wpessential_new_api_key_' . $userId );
+		$rows = [];
+		if ( ! $enabled ) {
+			$rows[] = Notice::render( 'info', __( 'Turn on "API keys" above and save to use your keys.', 'wpessential' ) );
+		}
+		if ( $new !== '' ) {
+			$rows[] = Notice::render( 'success', __( 'Copy your new key now. It will not be shown again.', 'wpessential' ) )
+				. Field::input(
+					'wpe-new-api-key',
+					__( 'New API key', 'wpessential' ),
+					[
+						'type'     => 'text',
+						'value'    => $new,
+						'readonly' => 'readonly',
+						'class'    => 'code large-text',
+					]
+				);
+		}
+		$format = (string) get_option( 'date_format' );
+		$list   = [];
+		foreach ( RestAuth::keys( $userId ) as $id => $key ) {
+			$list[] = [
+				(string) $key['name'],
+				'wpek_' . $id . '_…',
+				$key['scope'] === 'write' ? __( 'Read and write', 'wpessential' ) : __( 'Read only', 'wpessential' ),
+				$key['last_used'] > 0 ? (string) wp_date( $format, $key['last_used'] ) : __( 'Never', 'wpessential' ),
+				$key['expires'] > 0 ? (string) wp_date( $format, $key['expires'] ) : __( 'Never', 'wpessential' ),
+				(string) $id,
+			];
+		}
+		if ( $list !== [] ) {
+			$table = '<div class="wpe-ui-table-wrap"><table class="widefat striped"><thead><tr>';
+			foreach ( [ __( 'Name', 'wpessential' ), __( 'Key', 'wpessential' ), __( 'Access', 'wpessential' ), __( 'Last used', 'wpessential' ), __( 'Expires', 'wpessential' ) ] as $heading ) {
+				$table .= '<th scope="col">' . esc_html( $heading ) . '</th>';
+			}
+			$table .= '<th scope="col"><span class="screen-reader-text">' . esc_html__( 'Actions', 'wpessential' ) . '</span></th></tr></thead><tbody>';
+			foreach ( $list as $row ) {
+				$id     = (string) array_pop( $row );
+				$table .= '<tr>';
+				foreach ( $row as $cell ) {
+					$table .= '<td>' . esc_html( $cell ) . '</td>';
+				}
+				$table .= '<td>' . $this->form( 'revoke_key', '<input type="hidden" name="key_id" value="' . esc_attr( $id ) . '">' . self::submit( __( 'Revoke', 'wpessential' ), 'danger' ) ) . '</td></tr>';
+			}
+			$rows[] = $table . '</tbody></table></div>';
+		}
+		$create = OptionGroup::row(
+			__( 'New key', 'wpessential' ),
+			__( 'Give it a name you will recognise, such as the app that uses it.', 'wpessential' ),
+			'<div class="wpe-ui-stack">'
+			. Field::input(
+				'wpe-key-name',
+				__( 'Name', 'wpessential' ),
+				[
+					'type'      => 'text',
+					'name'      => 'key_name',
+					'maxlength' => '80',
+				]
+			)
+			. '<label for="wpe-key-scope">' . esc_html__( 'Access', 'wpessential' ) . '</label><select id="wpe-key-scope" name="key_scope" class="wpe-ui-select"><option value="read">' . esc_html__( 'Read only', 'wpessential' ) . '</option><option value="write">' . esc_html__( 'Read and write', 'wpessential' ) . '</option></select>'
+			. Field::input(
+				'wpe-key-days',
+				__( 'Expires after (days, 0 = never)', 'wpessential' ),
+				[
+					'type'  => 'number',
+					'name'  => 'key_days',
+					'min'   => '0',
+					'max'   => '3650',
+					'value' => '90',
+				]
+			)
+			. self::submit( __( 'Create key', 'wpessential' ) ) . '</div>'
+		);
+		$rows[] = $this->form( 'create_key', $create );
+
+		return OptionGroup::render( 'wpe-tool-keys', __( 'Your API keys', 'wpessential' ), '', '', $rows, true, count( $list ) );
 	}
 
 	/**

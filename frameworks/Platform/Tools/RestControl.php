@@ -49,13 +49,16 @@ final class RestControl {
 		'disable_jsonp'       => true,
 		'disable_xmlrpc'      => false,
 		'log_blocked'         => true,
+		'api_keys'            => false,
+		'jwt'                 => false,
+		'jwt_ttl'             => 3600,
 	];
 
 	/** @param Closure(): bool $enabled */
 	public function __construct( private readonly Closure $enabled ) {}
 
 	/**
-	 * @return array{logged_in_only:bool,allow_routes:list<string>,restricted_roles:list<string>,hide_users:bool,disabled_namespaces:list<string>,rate_limit:int,rate_exempt_ips:list<string>,remove_discovery:bool,disable_jsonp:bool,disable_xmlrpc:bool,log_blocked:bool}
+	 * @return array{logged_in_only:bool,allow_routes:list<string>,restricted_roles:list<string>,hide_users:bool,disabled_namespaces:list<string>,rate_limit:int,rate_exempt_ips:list<string>,remove_discovery:bool,disable_jsonp:bool,disable_xmlrpc:bool,log_blocked:bool,api_keys:bool,jwt:bool,jwt_ttl:int}
 	 */
 	public static function settings(): array {
 		$saved = function_exists( 'get_option' ) ? get_option( self::OPTION, [] ) : [];
@@ -65,7 +68,7 @@ final class RestControl {
 
 	/**
 	 * @param array<string,mixed> $input
-	 * @return array{logged_in_only:bool,allow_routes:list<string>,restricted_roles:list<string>,hide_users:bool,disabled_namespaces:list<string>,rate_limit:int,rate_exempt_ips:list<string>,remove_discovery:bool,disable_jsonp:bool,disable_xmlrpc:bool,log_blocked:bool}
+	 * @return array{logged_in_only:bool,allow_routes:list<string>,restricted_roles:list<string>,hide_users:bool,disabled_namespaces:list<string>,rate_limit:int,rate_exempt_ips:list<string>,remove_discovery:bool,disable_jsonp:bool,disable_xmlrpc:bool,log_blocked:bool,api_keys:bool,jwt:bool,jwt_ttl:int}
 	 */
 	public static function normalize( array $input ): array {
 		$bool  = static fn ( string $key ): bool => (bool) ( $input[ $key ] ?? self::DEFAULTS[ $key ] );
@@ -95,6 +98,9 @@ final class RestControl {
 			'disable_jsonp'       => $bool( 'disable_jsonp' ),
 			'disable_xmlrpc'      => $bool( 'disable_xmlrpc' ),
 			'log_blocked'         => $bool( 'log_blocked' ),
+			'api_keys'            => $bool( 'api_keys' ),
+			'jwt'                 => $bool( 'jwt' ),
+			'jwt_ttl'             => max( 300, min( 86400, (int) ( $input['jwt_ttl'] ?? 3600 ) ) ),
 		];
 	}
 
@@ -192,7 +198,7 @@ final class RestControl {
 	/**
 	 * Pure decision for one request: [error code, HTTP status], or null to let it through.
 	 *
-	 * @param array{logged_in_only:bool,allow_routes:list<string>,restricted_roles:list<string>,hide_users:bool,disabled_namespaces:list<string>,rate_limit:int,rate_exempt_ips:list<string>,remove_discovery:bool,disable_jsonp:bool,disable_xmlrpc:bool,log_blocked:bool} $settings
+	 * @param array{logged_in_only:bool,allow_routes:list<string>,restricted_roles:list<string>,hide_users:bool,disabled_namespaces:list<string>,rate_limit:int,rate_exempt_ips:list<string>,remove_discovery:bool,disable_jsonp:bool,disable_xmlrpc:bool,log_blocked:bool,api_keys:bool,jwt:bool,jwt_ttl:int} $settings
 	 * @param list<string> $roles The current user's roles.
 	 * @return array{0:string,1:int}|null
 	 */
