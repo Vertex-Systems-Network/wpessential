@@ -102,6 +102,28 @@ final class TaxonomyModule implements ModuleInterface {
 			$keyMigrationPreview,
 			$rewriteRefresh,
 		);
+
+		$existing = new ExistingTaxonomyOverrides( $definitions );
+		$services->set( 'module.taxonomies.existing', $existing );
+		$this->registerAbility(
+			$abilities,
+			$abilityBridge,
+			new AbilityDescriptor(
+				name: ExistingTaxonomyOverrides::ABILITY,
+				ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+				capability: 'manage_options',
+				mutates: true,
+				channels: [ ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest ],
+				inputSchema: [ 'type' => 'object' ],
+				outputSchema: [ 'type' => 'object' ],
+			),
+			$existing,
+			'Edit an existing taxonomy',
+			'Save or revert an override of a taxonomy registered by WordPress, a theme or a plugin.',
+		);
+		if ( function_exists( 'add_filter' ) ) {
+			$existing->register();
+		}
 		$this->registerAjaxRoutes( $ajaxRoutes, $abilities, $abilityContexts );
 	}
 
@@ -143,6 +165,11 @@ final class TaxonomyModule implements ModuleInterface {
 		$services->set( 'module.taxonomies.admin', $admin );
 		$services->set( 'module.taxonomies.cptui-preview-admin', $previewBridge );
 		$admin->register();
+
+		$existing = $services->get( 'module.taxonomies.existing' );
+		if ( $existing instanceof ExistingTaxonomyOverrides && function_exists( 'add_action' ) ) {
+			$existing->registerAdmin( $abilities, $contexts, \WPEssential\Platform\Admin\PlatformAdminController::PAGE_SLUG );
+		}
 		$previewBridge->register();
 	}
 
