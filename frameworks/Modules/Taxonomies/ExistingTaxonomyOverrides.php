@@ -29,7 +29,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 
 	public const DEFINITION_TYPE = 'taxonomy-existing-override';
 	public const ABILITY         = 'wpessential/taxonomy/existing-override';
-	private const PAGE_SLUG      = 'wpessential-existing-taxonomies';
+	private const PAGE_SLUG      = 'wpessential-taxonomies'; // Shown inside the list page of the builder.
 	private const ACTION         = 'wpessential_existing_taxonomy';
 
 	/** Taxonomies core itself depends on; they can be renamed but never hidden or moved. */
@@ -51,16 +51,9 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		add_action( 'init', [ $this, 'applyObjectTypes' ], 100 );
 	}
 
-	public function registerAdmin( AbilityRegistry $abilities, WordPressExecutionContextFactory $contexts, string $parentSlug ): void {
+	public function registerAdmin( AbilityRegistry $abilities, WordPressExecutionContextFactory $contexts ): void {
 		$this->abilities = $abilities;
 		$this->contexts  = $contexts;
-		add_action(
-			'admin_menu',
-			function () use ( $parentSlug ): void {
-				add_submenu_page( $parentSlug, __( 'Existing taxonomies', 'wpessential' ), __( 'Existing taxonomies', 'wpessential' ), 'manage_options', self::PAGE_SLUG, [ $this, 'renderPage' ] );
-			},
-			20,
-		);
 		add_action( 'admin_post_' . self::ACTION, [ $this, 'handleForm' ] );
 	}
 
@@ -272,9 +265,9 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			return;
 		}
 		$taxonomies = get_taxonomies( [], 'objects' );
-		$selected   = isset( $_GET['taxonomy'] ) ? sanitize_key( wp_unslash( (string) $_GET['taxonomy'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen selection.
+		$selected   = isset( $_GET['existing'] ) ? sanitize_key( wp_unslash( (string) $_GET['existing'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen selection.
 		$notice     = isset( $_GET['wpe_notice'] ) ? sanitize_key( wp_unslash( (string) $_GET['wpe_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		echo '<div class="wrap"><h1>' . esc_html__( 'Existing taxonomies', 'wpessential' ) . '</h1>';
+		echo '<section class="wpessential-existing" style="margin-top:2em"><h2>' . esc_html__( 'WordPress, theme and plugin taxonomies', 'wpessential' ) . '</h2>';
 		echo '<p class="description">' . esc_html__( 'Change taxonomies that WordPress, your theme or other plugins register. Changes are layered on top and can be reverted at any time; no terms are deleted.', 'wpessential' ) . '</p>';
 		if ( $notice === 'saved' ) {
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Saved.', 'wpessential' ) . '</p></div>';
@@ -283,14 +276,14 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 			echo '<div class="notice notice-error"><p>' . esc_html( $message !== '' ? $message : __( 'Not saved.', 'wpessential' ) ) . '</p></div>';
 		}
 		$overrides = $this->overrides();
-		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Taxonomy', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Post types', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th></th></tr></thead><tbody>';
+		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Taxonomy', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Post types', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th><span class="screen-reader-text">' . esc_html__( 'Actions', 'wpessential' ) . '</span></th></tr></thead><tbody>';
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( ! $taxonomy->show_ui && ! isset( $overrides[ $taxonomy->name ] ) ) {
 				continue;
 			}
 			$query = [
 				'page' => self::PAGE_SLUG,
-				'taxonomy' => $taxonomy->name,
+				'existing' => $taxonomy->name,
 			];
 			$url = add_query_arg( $query, admin_url( 'admin.php' ) );
 			echo '<tr><td>' . esc_html( (string) $taxonomy->label ) . '</td><td><code>' . esc_html( $taxonomy->name ) . '</code></td><td>' . esc_html( implode( ', ', (array) $taxonomy->object_type ) ) . '</td><td>' . ( isset( $overrides[ $taxonomy->name ] ) ? esc_html__( 'Yes', 'wpessential' ) : '—' ) . '</td><td><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a></td></tr>';
@@ -299,7 +292,7 @@ final class ExistingTaxonomyOverrides implements AbilityHandlerInterface {
 		if ( isset( $taxonomies[ $selected ] ) ) {
 			$this->renderForm( $taxonomies[ $selected ], $overrides[ $selected ] ?? [] );
 		}
-		echo '</div>';
+		echo '</section>';
 	}
 
 	/** @param array<string,mixed> $override */

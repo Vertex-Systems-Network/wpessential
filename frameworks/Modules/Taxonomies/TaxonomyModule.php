@@ -160,6 +160,7 @@ final class TaxonomyModule implements ModuleInterface {
 			objectTypes: $objectTypes,
 			runtimeProviders: $taxonomyRegistrar->providers(),
 			ajaxAction: $gateway->action(),
+			existing: $services->has( 'module.taxonomies.existing' ) && $services->get( 'module.taxonomies.existing' ) instanceof ExistingTaxonomyOverrides ? $services->get( 'module.taxonomies.existing' ) : null,
 		);
 		$previewBridge = new TaxonomyCptUiImportPreviewAdminBridge( $ajax );
 		$services->set( 'module.taxonomies.admin', $admin );
@@ -168,7 +169,7 @@ final class TaxonomyModule implements ModuleInterface {
 
 		$existing = $services->get( 'module.taxonomies.existing' );
 		if ( $existing instanceof ExistingTaxonomyOverrides && function_exists( 'add_action' ) ) {
-			$existing->registerAdmin( $abilities, $contexts, \WPEssential\Platform\Admin\PlatformAdminController::PAGE_SLUG );
+			$existing->registerAdmin( $abilities, $contexts );
 		}
 		$previewBridge->register();
 	}

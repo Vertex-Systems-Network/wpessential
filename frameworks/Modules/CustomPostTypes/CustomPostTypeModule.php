@@ -124,13 +124,14 @@ final class CustomPostTypeModule implements ModuleInterface {
 			ajax: $ajax,
 			assets: $assets,
 			ajaxAction: $gateway->action(),
+			existing: $services->has( 'module.custom-post-types.existing' ) && $services->get( 'module.custom-post-types.existing' ) instanceof ExistingPostTypeOverrides ? $services->get( 'module.custom-post-types.existing' ) : null,
 		);
 		$services->set( 'module.custom-post-types.admin', $admin );
 		$admin->register();
 
 		$existing = $services->get( 'module.custom-post-types.existing' );
 		if ( $existing instanceof ExistingPostTypeOverrides && function_exists( 'add_action' ) ) {
-			$existing->registerAdmin( $abilities, $contexts, \WPEssential\Platform\Admin\PlatformAdminController::PAGE_SLUG );
+			$existing->registerAdmin( $abilities, $contexts );
 		}
 	}
 

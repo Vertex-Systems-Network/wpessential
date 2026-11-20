@@ -29,7 +29,7 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 
 	public const DEFINITION_TYPE = 'cpt-existing-override';
 	public const ABILITY         = 'wpessential/cpt/existing-override';
-	private const PAGE_SLUG      = 'wpessential-existing-post-types';
+	private const PAGE_SLUG      = 'wpessential-post-types'; // Shown inside the list page of the builder.
 	private const ACTION         = 'wpessential_existing_post_type';
 
 	/** Core types that core itself depends on; they can be renamed but never hidden. */
@@ -53,16 +53,9 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		add_action( 'init', [ $this, 'applySupports' ], 100 );
 	}
 
-	public function registerAdmin( AbilityRegistry $abilities, WordPressExecutionContextFactory $contexts, string $parentSlug ): void {
+	public function registerAdmin( AbilityRegistry $abilities, WordPressExecutionContextFactory $contexts ): void {
 		$this->abilities = $abilities;
 		$this->contexts  = $contexts;
-		add_action(
-			'admin_menu',
-			function () use ( $parentSlug ): void {
-				add_submenu_page( $parentSlug, __( 'Existing post types', 'wpessential' ), __( 'Existing post types', 'wpessential' ), 'manage_options', self::PAGE_SLUG, [ $this, 'renderPage' ] );
-			},
-			20,
-		);
 		add_action( 'admin_post_' . self::ACTION, [ $this, 'handleForm' ] );
 	}
 
@@ -276,7 +269,7 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		}
 		$query = [
 			'page' => self::PAGE_SLUG,
-			'post_type' => $postType,
+			'existing' => $postType,
 			'wpe_notice' => $notice,
 		];
 		wp_safe_redirect( add_query_arg( $query, admin_url( 'admin.php' ) ) );
@@ -288,9 +281,9 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			return;
 		}
 		$types    = get_post_types( [], 'objects' );
-		$selected = isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( (string) $_GET['post_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen selection.
+		$selected = isset( $_GET['existing'] ) ? sanitize_key( wp_unslash( (string) $_GET['existing'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen selection.
 		$notice   = isset( $_GET['wpe_notice'] ) ? sanitize_key( wp_unslash( (string) $_GET['wpe_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		echo '<div class="wrap"><h1>' . esc_html__( 'Existing post types', 'wpessential' ) . '</h1>';
+		echo '<section class="wpessential-existing" style="margin-top:2em"><h2>' . esc_html__( 'WordPress, theme and plugin post types', 'wpessential' ) . '</h2>';
 		echo '<p class="description">' . esc_html__( 'Change post types that WordPress, your theme or other plugins register. Changes are layered on top and can be reverted at any time; no content is deleted.', 'wpessential' ) . '</p>';
 		if ( $notice === 'saved' ) {
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Saved.', 'wpessential' ) . '</p></div>';
@@ -299,14 +292,14 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 			echo '<div class="notice notice-error"><p>' . esc_html( $message !== '' ? $message : __( 'Not saved.', 'wpessential' ) ) . '</p></div>';
 		}
 		$overrides = $this->overrides();
-		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Post type', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th></th></tr></thead><tbody>';
+		echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Post type', 'wpessential' ) . '</th><th>' . esc_html__( 'Key', 'wpessential' ) . '</th><th>' . esc_html__( 'Changed', 'wpessential' ) . '</th><th><span class="screen-reader-text">' . esc_html__( 'Actions', 'wpessential' ) . '</span></th></tr></thead><tbody>';
 		foreach ( $types as $type ) {
 			if ( ! $type->show_ui && ! isset( $overrides[ $type->name ] ) ) {
 				continue;
 			}
 			$query = [
 				'page' => self::PAGE_SLUG,
-				'post_type' => $type->name,
+				'existing' => $type->name,
 			];
 			$url = add_query_arg( $query, admin_url( 'admin.php' ) );
 			echo '<tr><td>' . esc_html( (string) $type->label ) . '</td><td><code>' . esc_html( $type->name ) . '</code></td><td>' . ( isset( $overrides[ $type->name ] ) ? esc_html__( 'Yes', 'wpessential' ) : '—' ) . '</td><td><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Edit', 'wpessential' ) . '</a></td></tr>';
@@ -315,7 +308,7 @@ final class ExistingPostTypeOverrides implements AbilityHandlerInterface {
 		if ( isset( $types[ $selected ] ) ) {
 			$this->renderForm( $types[ $selected ], $overrides[ $selected ] ?? [] );
 		}
-		echo '</div>';
+		echo '</section>';
 	}
 
 	/** @param array<string,mixed> $override */
