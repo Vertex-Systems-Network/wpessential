@@ -168,6 +168,22 @@
 			"panel": "content",
 			"label": "Editor hint when empty",
 			"default": "Add images in the gallery settings."
+		},
+		"swipe": {
+			"type": "select",
+			"panel": "layout",
+			"label": "Swipe layout",
+			"default": "",
+			"options": {
+				"": "Inherit",
+				"off": "Grid",
+				"carousel": "Carousel",
+				"slider": "Slider (one per view)",
+				"cards": "Swipe cards",
+				"stack": "Card stack"
+			},
+			"responsive": true,
+			"css": "--wpek-sw"
 		}
 	},
 	"groups": {
