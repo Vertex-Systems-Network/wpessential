@@ -1461,6 +1461,14 @@ class Importer {
 	 * @param array $woo Woo settings.
 	 */
 	private function woocommerce( array $woo ) {
+		// Demo pages built from kit elements become the shop's cart, checkout, my account… pages (set before create_pages so Woo skips them).
+		foreach ( (array) ( $woo['pages'] ?? array() ) as $name => $key ) {
+			if ( isset( $this->job['map']['posts'][ $key ] ) ) {
+				$option = 'woocommerce_' . sanitize_key( $name ) . '_page_id';
+				$this->track( 'option', $option );
+				update_option( $option, (int) $this->job['map']['posts'][ $key ] );
+			}
+		}
 		if ( class_exists( 'WC_Install' ) ) {
 			\WC_Install::create_pages();
 		}
