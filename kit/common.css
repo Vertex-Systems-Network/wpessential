@@ -235,3 +235,15 @@
 	box-shadow:var(--wpek-elev-focus,var(--wpek-elev-hover,var(--wpek-elev-rest,none)));
 }
 @media (prefers-reduced-motion:reduce) { .wpek-elevation { transition:none!important; } }
+
+/* Swipe layout (per element, per device): grids become carousels, sliders, swipe cards or a card stack.
+   shortcut: needs CSS style queries; browsers without them keep the normal grid. */
+:where(.wpe-container__inner)>*{--wpek-sw:off}
+@container style(--wpek-sw: carousel) or style(--wpek-sw: slider) or style(--wpek-sw: cards){
+:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid){display:grid!important;grid-auto-flow:column!important;grid-template-columns:none!important;grid-auto-columns:var(--wpek-sw-w,80%)!important;flex-wrap:nowrap!important;columns:auto!important;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:thin}
+:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid)>*{scroll-snap-align:start;min-width:0}
+}
+@container style(--wpek-sw: slider){:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid){--wpek-sw-w:100%}}
+@container style(--wpek-sw: cards){:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid){--wpek-sw-w:84%;padding-inline:8%;scroll-padding-inline:8%}:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid)>*{scroll-snap-align:center}}
+@container style(--wpek-sw: stack){:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid){display:grid!important;grid-template-columns:minmax(0,1fr)!important;columns:auto!important}:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid)>*{position:sticky;top:var(--wpek-sw-top,88px);background:var(--wp--preset--color--surface,#fff)}}
+@media (prefers-reduced-motion:no-preference){:is(.wpe-container__inner,.wpe-gallery__items,.wpe-posts-grid__items,.wpe-products__grid,.wpe-woo-grid,.wpe-price-list__items,.wpe-social-feed__grid){scroll-behavior:smooth}}
