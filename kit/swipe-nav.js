@@ -44,7 +44,7 @@
 			}
 			const n = items().length;
 			if ( dots.children.length !== n ) {
-				dots.innerHTML = '';
+				dots.replaceChildren();
 				for ( let i = 0; i < n; i++ ) {
 					const b = document.createElement( 'button' );
 					b.type = 'button';
