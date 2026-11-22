@@ -297,6 +297,7 @@
 		var def = kit.elements[ name ];
 		var panels = def.panels || { content: __( 'Content', 'wpessential' ) };
 		var isContainer = 'container' === name;
+		var hasInner = isContainer || !! def.innerBlocks;
 		wp.blocks.registerBlockType( 'wpessential/' + name, {
 			apiVersion: 3,
 			title: def.title,
@@ -412,11 +413,13 @@
 								el( be.InnerBlocks, { renderAppender: be.InnerBlocks.ButtonBlockAppender } )
 							)
 						) :
+						def.innerBlocks ?
+						el( 'div', blockProps, el( 'p', { className: 'wpe-inner-label' }, def.title ), el( be.InnerBlocks, { renderAppender: be.InnerBlocks.ButtonBlockAppender } ) ) :
 						el( 'div', blockProps, el( ServerSideRender, { block: 'wpessential/' + name, attributes: a, skipBlockSupportAttributes: true } ) )
 				);
 			},
 			save: function () {
-				return isContainer ? el( be.InnerBlocks.Content ) : null;
+				return hasInner ? el( be.InnerBlocks.Content ) : null;
 			},
 		} );
 	} );

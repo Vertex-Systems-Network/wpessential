@@ -493,7 +493,7 @@ class Kit {
 				)
 			);
 			$editor[ $name ] = array_merge(
-				array_intersect_key( $def, array_flip( array( 'name', 'title', 'icon' ) ) ),
+				array_intersect_key( $def, array_flip( array( 'name', 'title', 'icon', 'innerBlocks' ) ) ),
 				array(
 					'attributes' => self::attributes( $def ),
 					'groups'     => self::groups( $def ),

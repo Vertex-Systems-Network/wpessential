@@ -1,0 +1,60 @@
+{
+	"name": "off-canvas",
+	"title": "Off-Canvas (WPEssential)",
+	"category": "layout",
+	"description": "Button that opens a side panel (menu, filters, cart, contact) with any blocks inside; closes on Escape, backdrop click or the close button.",
+	"icon": "menu-alt3",
+	"elementor_icon": "eicon-sidebar",
+	"keywords": [
+		"off canvas",
+		"drawer",
+		"side panel",
+		"mobile menu"
+	],
+	"innerBlocks": true,
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"label": {
+			"type": "text",
+			"label": "Button label",
+			"default": "Menu",
+			"panel": "content"
+		},
+		"title": {
+			"type": "text",
+			"label": "Panel title",
+			"default": "",
+			"panel": "content"
+		},
+		"content": {
+			"type": "html",
+			"label": "Content (Elementor)",
+			"default": "<p>Panel content.</p>",
+			"panel": "content"
+		},
+		"side": {
+			"type": "select",
+			"label": "Side",
+			"default": "right",
+			"options": {
+				"right": "Right",
+				"left": "Left"
+			},
+			"panel": "style"
+		},
+		"width": {
+			"type": "range",
+			"label": "Panel width (px)",
+			"default": 360,
+			"min": 240,
+			"max": 640,
+			"step": 10,
+			"unit": "px",
+			"panel": "style",
+			"css": "--wpek-oc-width"
+		}
+	}
+}
