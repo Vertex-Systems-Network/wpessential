@@ -13,11 +13,21 @@ if ( '' === $wpe_url ) {
 	return;
 }
 $wpe_corner = 'bottom-left' === $a['corner'] ? 'bottom-left' : 'bottom-right';
-$wpe_player = preg_match( '/\.(mp4|webm|ogv)(\?|$)/i', $wpe_url )
-	? '<video src="' . esc_url( $wpe_url ) . '" controls playsinline preload="metadata"></video>'
-	: wp_oembed_get( $wpe_url );
-if ( ! $wpe_player ) {
-	return;
+$wpe_path   = (string) wp_parse_url( $wpe_url, PHP_URL_PATH );
+if ( preg_match( '/\.(mp4|webm|ogv)$/i', $wpe_path ) ) {
+	$wpe_player = '<video src="' . esc_url( $wpe_url ) . '" controls playsinline preload="metadata"></video>';
+} else {
+	// Core's trusted provider list only (no discovery): no requests to arbitrary hosts, no untrusted markup.
+	$wpe_key    = 'wpe_sv_' . md5( $wpe_url );
+	$wpe_player = get_transient( $wpe_key );
+	if ( false === $wpe_player ) {
+		$wpe_player = (string) wp_oembed_get( $wpe_url, array( 'discover' => false ) );
+		set_transient( $wpe_key, $wpe_player, '' === $wpe_player ? HOUR_IN_SECONDS : DAY_IN_SECONDS );
+	}
+	if ( '' === $wpe_player ) {
+		echo '<p class="wpe-sv__fallback"><a href="' . esc_url( $wpe_url ) . '" rel="noopener">' . esc_html__( 'Watch the video', 'wpessential' ) . '</a></p>';
+		return;
+	}
 }
 ?>
 <figure id="<?php echo esc_attr( $id ); ?>" class="wpe-sv is-<?php echo esc_attr( $wpe_corner ); ?>">
