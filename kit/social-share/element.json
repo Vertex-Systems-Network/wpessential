@@ -1,0 +1,68 @@
+{
+	"name": "social-share",
+	"title": "Social Share (WPEssential)",
+	"category": "content",
+	"description": "Share buttons for the current page (X, Facebook, LinkedIn, WhatsApp, email, copy link) without tracking scripts.",
+	"icon": "share",
+	"elementor_icon": "eicon-share",
+	"keywords": [
+		"share",
+		"social",
+		"copy link",
+		"whatsapp"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"net_x": {
+			"type": "toggle",
+			"label": "X",
+			"default": true,
+			"panel": "content"
+		},
+		"net_facebook": {
+			"type": "toggle",
+			"label": "Facebook",
+			"default": true,
+			"panel": "content"
+		},
+		"net_linkedin": {
+			"type": "toggle",
+			"label": "LinkedIn",
+			"default": true,
+			"panel": "content"
+		},
+		"net_whatsapp": {
+			"type": "toggle",
+			"label": "WhatsApp",
+			"default": true,
+			"panel": "content"
+		},
+		"net_email": {
+			"type": "toggle",
+			"label": "Email",
+			"default": true,
+			"panel": "content"
+		},
+		"net_copy": {
+			"type": "toggle",
+			"label": "Copy link",
+			"default": true,
+			"panel": "content"
+		},
+		"label": {
+			"type": "text",
+			"label": "Label",
+			"default": "Share",
+			"panel": "content"
+		},
+		"showNames": {
+			"type": "toggle",
+			"label": "Show network names",
+			"default": false,
+			"panel": "style"
+		}
+	}
+}

@@ -9,6 +9,8 @@
 		} );
 	};
 	addEventListener( 'scroll', update, { passive: true } );
+	addEventListener( 'resize', update );
+	addEventListener( 'load', update );
 	update();
 	document.addEventListener( 'click', ( e ) => {
 		if ( ! e.target.closest?.( '.wpe-btt__btn' ) ) {

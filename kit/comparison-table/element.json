@@ -1,0 +1,75 @@
+{
+	"name": "comparison-table",
+	"title": "Comparison Table (WPEssential)",
+	"category": "content",
+	"description": "Feature comparison across plans or products: yes/no marks, a highlighted column, and a sticky first column on phones.",
+	"icon": "editor-table",
+	"elementor_icon": "eicon-table",
+	"keywords": [
+		"comparison",
+		"compare",
+		"features",
+		"plans",
+		"vs"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"columns": {
+			"type": "text",
+			"label": "Columns (separate with |)",
+			"default": "Starter | Pro | Agency",
+			"panel": "content"
+		},
+		"rows": {
+			"type": "repeater",
+			"label": "Features",
+			"title_field": "feature",
+			"panel": "content",
+			"fields": {
+				"feature": {
+					"type": "text",
+					"label": "Feature",
+					"default": "Feature"
+				},
+				"values": {
+					"type": "text",
+					"label": "Values (separate with |; yes / no / text)",
+					"default": "yes | yes | yes"
+				}
+			},
+			"default": [
+				{
+					"feature": "Themes",
+					"values": "1 | All | All"
+				},
+				{
+					"feature": "Priority support",
+					"values": "no | yes | yes"
+				},
+				{
+					"feature": "White label",
+					"values": "no | no | yes"
+				}
+			]
+		},
+		"highlight": {
+			"type": "range",
+			"label": "Highlighted column (0 = none)",
+			"default": 2,
+			"min": 0,
+			"max": 8,
+			"step": 1,
+			"unit": "",
+			"panel": "style"
+		},
+		"caption": {
+			"type": "text",
+			"label": "Caption (screen readers)",
+			"default": "Plan comparison",
+			"panel": "content"
+		}
+	}
+}
