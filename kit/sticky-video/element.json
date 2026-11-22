@@ -1,0 +1,53 @@
+{
+	"name": "sticky-video",
+	"title": "Sticky Video (WPEssential)",
+	"category": "media",
+	"description": "Video (file, YouTube or Vimeo) that keeps playing in a small corner player when scrolled out of view.",
+	"icon": "format-video",
+	"elementor_icon": "eicon-youtube",
+	"keywords": [
+		"video",
+		"sticky",
+		"floating",
+		"picture in picture"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"url": {
+			"type": "url",
+			"label": "Video URL (mp4, YouTube or Vimeo)",
+			"default": "",
+			"panel": "content"
+		},
+		"caption": {
+			"type": "text",
+			"label": "Caption",
+			"default": "",
+			"panel": "content"
+		},
+		"corner": {
+			"type": "select",
+			"label": "Floating corner",
+			"default": "bottom-right",
+			"options": {
+				"bottom-right": "Bottom right",
+				"bottom-left": "Bottom left"
+			},
+			"panel": "style"
+		},
+		"width": {
+			"type": "range",
+			"label": "Floating width (px)",
+			"default": 320,
+			"min": 200,
+			"max": 480,
+			"step": 10,
+			"unit": "px",
+			"panel": "style",
+			"css": "--wpek-sv-width"
+		}
+	}
+}
