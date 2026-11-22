@@ -2,7 +2,7 @@
 	"name": "animated-headline",
 	"title": "Animated Headline (WPEssential)",
 	"category": "content",
-	"description": "Heading with a rotating word (typing or fade); static text for reduced motion and screen readers.",
+	"description": "Heading with a rotating word (fade); static text for reduced motion and screen readers.",
 	"icon": "star-filled",
 	"elementor_icon": "eicon-star",
 	"keywords": [

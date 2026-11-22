@@ -2,7 +2,7 @@
 	"name": "hotspots",
 	"title": "Hotspots (WPEssential)",
 	"category": "content",
-	"description": "Image with numbered points; each opens a short note on click or focus (product tours, room features, diagrams).",
+	"description": "Image with numbered points; each opens a short note when clicked or activated with the keyboard (product tours, room features, diagrams).",
 	"icon": "star-filled",
 	"elementor_icon": "eicon-star",
 	"keywords": [
