@@ -1,0 +1,5 @@
+.wpe-btt__bar{position:fixed;inset:0 0 auto;height:3px;z-index:9999;background:var(--wp--preset--color--primary,#2f6be0);transform-origin:0 50%;transform:scaleX(var(--wpek-btt-p,0))}
+.wpe-btt__btn{position:fixed;bottom:20px;z-index:9998;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--wp--preset--color--ink,#111);color:#fff;text-decoration:none;box-shadow:0 6px 18px rgb(0 0 0/.2);opacity:0;pointer-events:none;transition:opacity .2s}
+.wpe-btt.is-right .wpe-btt__btn{right:20px}.wpe-btt.is-left .wpe-btt__btn{left:20px}
+.wpe-btt.is-shown .wpe-btt__btn{opacity:1;pointer-events:auto}
+.wpe-btt__btn:focus-visible{outline:2px solid var(--wp--preset--color--primary,#2f6be0);outline-offset:3px;opacity:1}

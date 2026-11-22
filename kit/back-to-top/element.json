@@ -1,0 +1,42 @@
+{
+	"name": "back-to-top",
+	"title": "Back to Top (WPEssential)",
+	"category": "content",
+	"description": "Floating back-to-top button with optional reading-progress bar at the top of the page.",
+	"icon": "arrow-up",
+	"elementor_icon": "eicon-arrow-up",
+	"keywords": [
+		"back to top",
+		"scroll to top",
+		"reading progress",
+		"progress bar"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"label": {
+			"type": "text",
+			"label": "Accessible label",
+			"default": "Back to top",
+			"panel": "content"
+		},
+		"progress": {
+			"type": "toggle",
+			"label": "Reading progress bar",
+			"default": true,
+			"panel": "content"
+		},
+		"position": {
+			"type": "select",
+			"label": "Button position",
+			"default": "right",
+			"options": {
+				"right": "Bottom right",
+				"left": "Bottom left"
+			},
+			"panel": "style"
+		}
+	}
+}

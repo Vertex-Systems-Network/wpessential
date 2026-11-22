@@ -1,0 +1,51 @@
+{
+	"name": "breadcrumbs",
+	"title": "Breadcrumbs (WPEssential)",
+	"category": "site",
+	"description": "Automatic trail (home, parents, archive, current) with schema.org BreadcrumbList markup.",
+	"icon": "arrow-right",
+	"elementor_icon": "eicon-navigation-horizontal",
+	"keywords": [
+		"breadcrumbs",
+		"trail",
+		"navigation",
+		"seo"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"homeLabel": {
+			"type": "text",
+			"label": "Home label",
+			"default": "Home",
+			"panel": "content"
+		},
+		"separator": {
+			"type": "text",
+			"label": "Separator",
+			"default": "/",
+			"panel": "content"
+		},
+		"showCurrent": {
+			"type": "toggle",
+			"label": "Show current page",
+			"default": true,
+			"panel": "content"
+		},
+		"align": {
+			"type": "select",
+			"label": "Alignment",
+			"default": "start",
+			"options": {
+				"start": "Start",
+				"center": "Center",
+				"end": "End"
+			},
+			"panel": "style",
+			"responsive": true,
+			"css": "--wpek-bc-justify"
+		}
+	}
+}

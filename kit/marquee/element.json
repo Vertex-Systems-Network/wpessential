@@ -1,0 +1,70 @@
+{
+	"name": "marquee",
+	"title": "Marquee (WPEssential)",
+	"category": "content",
+	"description": "Endless scrolling strip of words or logos-as-text; pauses on hover and stops for reduced motion.",
+	"icon": "controls-repeat",
+	"elementor_icon": "eicon-animation-text",
+	"keywords": [
+		"marquee",
+		"ticker",
+		"scrolling text",
+		"logo strip"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Items",
+			"title_field": "text",
+			"panel": "content",
+			"fields": {
+				"text": {
+					"type": "text",
+					"label": "Text",
+					"default": "Item"
+				}
+			},
+			"default": [
+				{
+					"text": "Gutenberg"
+				},
+				{
+					"text": "Elementor"
+				},
+				{
+					"text": "WooCommerce"
+				},
+				{
+					"text": "One-click demos"
+				}
+			]
+		},
+		"separator": {
+			"type": "text",
+			"label": "Separator",
+			"default": "✦",
+			"panel": "content"
+		},
+		"speed": {
+			"type": "range",
+			"label": "Seconds per loop",
+			"default": 30,
+			"min": 5,
+			"max": 120,
+			"step": 1,
+			"unit": "s",
+			"panel": "style",
+			"css": "--wpek-mq-speed"
+		},
+		"reverse": {
+			"type": "toggle",
+			"label": "Reverse direction",
+			"default": false,
+			"panel": "style"
+		}
+	}
+}
