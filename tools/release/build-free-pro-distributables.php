@@ -291,7 +291,7 @@ function stageFreePackage(string $root, string $stageRoot, array $freeAssets): v
     }
     try {
         $readmeTxt = wpeReadmeMarkdownToTxt($readmeSource);
-        wpeAssertReadmeTxtRules($readmeTxt, '3.1.1');
+        wpeAssertReadmeTxtRules($readmeTxt, '3.2.0');
     } catch (RuntimeException $readmeError) {
         fail('wordpress-org/readme.md: ' . $readmeError->getMessage());
     }
