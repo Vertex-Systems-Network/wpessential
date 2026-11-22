@@ -8,3 +8,4 @@
 .wpe-login .wpe-switcher__tabs{display:inline-flex;padding:4px;border-radius:999px;background:var(--wp--preset--color--surface-alt,#f1f1f1);margin-bottom:20px}
 .wpe-login .wpe-switcher__tabs [role=tab]{border:0;background:none;padding:8px 18px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;color:inherit}
 .wpe-login .wpe-switcher__tabs [aria-selected=true]{background:var(--wp--preset--color--primary,#2f6be0);color:var(--wp--preset--color--on-primary,#fff)}
+.wpe-login a.wpe-login__submit{display:block;text-align:center;text-decoration:none;box-sizing:border-box}

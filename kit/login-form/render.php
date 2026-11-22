@@ -8,8 +8,12 @@
 defined( 'ABSPATH' ) || exit;
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Included in Kit template scope.
 
-// Only same-site redirects; anything else falls back to the current page.
-$wpe_here     = home_url( '/' . ltrim( (string) ( $GLOBALS['wp']->request ?? '' ), '/' ) );
+// Visitor-specific output (signed-in greeting): keep shared page caches away.
+if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+	define( 'DONOTCACHEPAGE', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Standard WordPress cache bypass constant.
+}
+// Current URL with its query string; only same-site redirects are accepted.
+$wpe_here     = wp_validate_redirect( esc_url_raw( set_url_scheme( '//' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ?? '' ) ) . wp_unslash( $_SERVER['REQUEST_URI'] ?? '/' ) ) ), home_url( '/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- esc_url_raw + wp_validate_redirect.
 $wpe_redirect = wp_validate_redirect( (string) $a['redirect'], $wpe_here );
 
 if ( is_user_logged_in() && ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) :
@@ -23,7 +27,8 @@ if ( is_user_logged_in() && ! is_admin() && ! ( defined( 'REST_REQUEST' ) && RES
 	return;
 endif;
 
-$wpe_register = ! empty( $a['showRegister'] ) && get_option( 'users_can_register' );
+$wpe_multi    = is_multisite();
+$wpe_register = ! empty( $a['showRegister'] ) && ( $wpe_multi ? in_array( get_site_option( 'registration' ), array( 'user', 'all' ), true ) : get_option( 'users_can_register' ) );
 ?>
 <div id="<?php echo esc_attr( $id ); ?>" class="wpe-login">
 	<?php if ( $wpe_register ) : ?>
@@ -51,13 +56,18 @@ $wpe_register = ! empty( $a['showRegister'] ) && get_option( 'users_can_register
 	</div>
 	<?php if ( $wpe_register ) : ?>
 		<div class="wpe-switcher__panel" role="tabpanel" id="<?php echo esc_attr( $id ); ?>-b" aria-labelledby="<?php echo esc_attr( $id ); ?>-tb">
+			<?php if ( $wpe_multi ) : ?>
+				<p><a class="wpe-login__submit" href="<?php echo esc_url( wp_registration_url() ); ?>"><?php echo esc_html( (string) $a['registerLabel'] ); ?></a></p>
+			<?php else : ?>
 			<form class="wpe-login__register" action="<?php echo esc_url( site_url( 'wp-login.php?action=register', 'login_post' ) ); ?>" method="post">
 				<p><label for="<?php echo esc_attr( $id ); ?>-rl"><?php esc_html_e( 'Username', 'wpessential' ); ?></label><input type="text" name="user_login" id="<?php echo esc_attr( $id ); ?>-rl" autocomplete="username" required></p>
 				<p><label for="<?php echo esc_attr( $id ); ?>-re"><?php esc_html_e( 'Email', 'wpessential' ); ?></label><input type="email" name="user_email" id="<?php echo esc_attr( $id ); ?>-re" autocomplete="email" required></p>
 				<p class="wpe-login__note"><?php esc_html_e( 'A link to set your password will be emailed to you.', 'wpessential' ); ?></p>
+				<?php do_action( 'register_form' ); // Lets CAPTCHA and custom-field plugins add their fields. ?>
 				<input type="hidden" name="redirect_to" value="<?php echo esc_url( $wpe_redirect ); ?>">
 				<p><button type="submit" class="wpe-login__submit"><?php echo esc_html( (string) $a['registerLabel'] ); ?></button></p>
 			</form>
+			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 </div>
