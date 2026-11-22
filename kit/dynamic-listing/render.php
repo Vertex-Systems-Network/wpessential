@@ -10,8 +10,8 @@ defined( 'ABSPATH' ) || exit;
 
 $wpe_type = sanitize_key( (string) $a['post_type'] );
 $wpe_pto  = get_post_type_object( $wpe_type );
-if ( ! $wpe_pto || ! $wpe_pto->public ) {
-	return; // Only public post types may be listed.
+if ( ! $wpe_pto || ! $wpe_pto->public || ! is_post_type_viewable( $wpe_pto ) ) {
+	return; // Only post types visitors can already view may be listed.
 }
 $wpe_args = array(
 	'post_type'           => $wpe_type,
@@ -21,6 +21,7 @@ $wpe_args = array(
 	'order'               => 'title' === $a['orderby'] || 'menu_order' === $a['orderby'] ? 'ASC' : 'DESC',
 	'ignore_sticky_posts' => true,
 	'no_found_rows'       => true,
+	'has_password'        => false, // Password-protected posts stay hidden.
 );
 $wpe_tax  = sanitize_key( (string) $a['taxonomy'] );
 $wpe_term = sanitize_title( (string) $a['term'] );
