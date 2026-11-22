@@ -22,22 +22,23 @@ if ( ! $wpe_cats ) {
 $wpe_q = new WP_Query(
 	array(
 		'post_type'           => $wpe_post->post_type,
-		'posts_per_page'      => max( 1, min( 12, (int) $a['count'] ) ),
-		'post__not_in'        => array( $wpe_post->ID ),
+		'posts_per_page'      => max( 1, min( 12, (int) $a['count'] ) ) + 1,
 		'category__in'        => $wpe_cats,
 		'post_status'         => 'publish',
 		'ignore_sticky_posts' => true,
 		'no_found_rows'       => true,
 	)
 );
-if ( ! $wpe_q->have_posts() ) {
+// One extra row instead of post__not_in (slow on large sites); drop the current post here.
+$wpe_list = array_slice( array_values( array_filter( $wpe_q->posts, static fn( $p ) => $p->ID !== $wpe_post->ID ) ), 0, max( 1, min( 12, (int) $a['count'] ) ) );
+if ( ! $wpe_list ) {
 	return;
 }
 ?>
 <section id="<?php echo esc_attr( $id ); ?>" class="wpe-related">
 	<?php if ( '' !== trim( (string) $a['heading'] ) ) : ?><h2 class="wpe-related__title"><?php echo esc_html( (string) $a['heading'] ); ?></h2><?php endif; ?>
 	<ul class="wpe-related__list">
-		<?php foreach ( $wpe_q->posts as $wpe_rel ) : ?>
+		<?php foreach ( $wpe_list as $wpe_rel ) : ?>
 			<li><a href="<?php echo esc_url( (string) get_permalink( $wpe_rel ) ); ?>"><?php echo get_the_post_thumbnail( $wpe_rel, 'medium_large', array( 'loading' => 'lazy' ) ); ?><span><?php echo esc_html( get_the_title( $wpe_rel ) ); ?></span></a></li>
 		<?php endforeach; ?>
 	</ul>
