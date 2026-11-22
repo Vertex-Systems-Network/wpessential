@@ -1,0 +1,4 @@
+.wpe-notice-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 48px;position:relative;background:var(--wp--preset--color--ink,#111);color:#fff;text-align:center;font-size:.9em}
+.wpe-notice-bar[hidden]{display:none}.wpe-notice-bar p{margin:0}.wpe-notice-bar a{color:inherit;font-weight:600}
+.wpe-notice-bar__close{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:none;color:inherit;font-size:20px;cursor:pointer}
+.wpe-notice-bar :focus-visible{outline:2px solid currentColor;outline-offset:2px}

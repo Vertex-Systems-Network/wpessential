@@ -1,0 +1,7 @@
+.wpe-hotspots{position:relative;line-height:0}.wpe-hotspots img{width:100%;height:auto;border-radius:12px}
+.wpe-hotspots__spot{position:absolute;transform:translate(-50%,-50%);line-height:1.4}
+.wpe-hotspots__spot summary{list-style:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--wp--preset--color--primary,#2f6be0);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 0 0 6px rgb(255 255 255/.5)}
+.wpe-hotspots__spot summary::-webkit-details-marker{display:none}
+.wpe-hotspots__spot summary:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.wpe-hotspots__note{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:min(240px,70vw);padding:12px;border-radius:10px;background:var(--wp--preset--color--surface,#fff);color:var(--wp--preset--color--text,#111);box-shadow:0 10px 30px rgb(0 0 0/.2);z-index:2}
+.wpe-hotspots__note p{margin:4px 0 0}
