@@ -1,0 +1,26 @@
+{
+	"name": "post-navigation",
+	"title": "Post Navigation (WPEssential)",
+	"category": "site",
+	"description": "Previous and next post links (optionally within the same category).",
+	"icon": "admin-post",
+	"elementor_icon": "eicon-post-info",
+	"keywords": [
+		"post navigation",
+		"previous",
+		"next",
+		"pagination"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"sameTerm": {
+			"type": "toggle",
+			"label": "Same category only",
+			"default": false,
+			"panel": "content"
+		}
+	}
+}

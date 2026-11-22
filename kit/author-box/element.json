@@ -1,0 +1,32 @@
+{
+	"name": "author-box",
+	"title": "Author Box (WPEssential)",
+	"category": "site",
+	"description": "Avatar, name, bio and posts link of the current post author.",
+	"icon": "admin-post",
+	"elementor_icon": "eicon-post-info",
+	"keywords": [
+		"author",
+		"bio",
+		"byline",
+		"avatar"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"bio": {
+			"type": "toggle",
+			"label": "Bio",
+			"default": true,
+			"panel": "content"
+		},
+		"link": {
+			"type": "toggle",
+			"label": "Link to all posts",
+			"default": true,
+			"panel": "content"
+		}
+	}
+}
