@@ -24,7 +24,7 @@ final class KitTest extends TestCase
     public function testFreeShipsTheBasicElementsWithAWidgetEach(): void
     {
         $defs = Kit::defs();
-        self::assertCount( 41, $defs );
+        self::assertCount( 46, $defs );
         foreach ( $defs as $name => $def ) {
             self::assertSame( 'free', $def['edition'], $name );
             self::assertFileExists( $def['dir'] . '/render.php', $name );
@@ -49,7 +49,7 @@ final class KitTest extends TestCase
         foreach ( Kit::elements( [] ) as $element ) {
             $byKey[ $element['type'] . ':' . $element['id'] ] = $element['edition'];
         }
-        self::assertCount( 2 * ( 41 + 17 ), $byKey, 'One Gutenberg block and one Elementor widget per element.' );
+        self::assertCount( 2 * ( 46 + 17 ), $byKey, 'One Gutenberg block and one Elementor widget per element.' );
         self::assertSame( 'free', $byKey['gutenberg:accordion'] );
         self::assertSame( 'pro', $byKey['elementor:countdown'] );
     }

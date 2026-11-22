@@ -1,0 +1,37 @@
+{
+	"name": "table-of-contents",
+	"title": "Table of Contents (WPEssential)",
+	"category": "site",
+	"description": "Auto-built list of the page headings (H2–H3) with jump links; collapsible.",
+	"icon": "admin-post",
+	"elementor_icon": "eicon-post-info",
+	"keywords": [
+		"table of contents",
+		"toc",
+		"headings",
+		"jump links"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"heading": {
+			"type": "text",
+			"label": "Heading",
+			"default": "On this page",
+			"panel": "content"
+		},
+		"levels": {
+			"type": "select",
+			"label": "Headings",
+			"default": "h2,h3",
+			"options": {
+				"h2": "H2",
+				"h2,h3": "H2 and H3",
+				"h2,h3,h4": "H2 to H4"
+			},
+			"panel": "content"
+		}
+	}
+}
