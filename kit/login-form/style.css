@@ -1,0 +1,11 @@
+.wpe-login{max-width:420px}
+.wpe-login form p{display:grid;gap:6px;margin:0 0 14px}
+.wpe-login input[type=text],.wpe-login input[type=password],.wpe-login input[type=email]{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid var(--wp--preset--color--border,#ccc);border-radius:10px;font:inherit}
+.wpe-login .login-remember label{display:flex;gap:8px;align-items:center}
+.wpe-login input[type=submit],.wpe-login__submit{width:100%;padding:12px 18px;border:0;border-radius:999px;background:var(--wp--preset--color--primary,#2f6be0);color:var(--wp--preset--color--on-primary,#fff);font:inherit;font-weight:600;cursor:pointer}
+.wpe-login :is(input,button):focus-visible{outline:2px solid var(--wp--preset--color--primary,#2f6be0);outline-offset:2px}
+.wpe-login__lost,.wpe-login__note{font-size:.9em;opacity:.8}
+.wpe-login .wpe-switcher__tabs{display:inline-flex;padding:4px;border-radius:999px;background:var(--wp--preset--color--surface-alt,#f1f1f1);margin-bottom:20px}
+.wpe-login .wpe-switcher__tabs [role=tab]{border:0;background:none;padding:8px 18px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;color:inherit}
+.wpe-login .wpe-switcher__tabs [aria-selected=true]{background:var(--wp--preset--color--primary,#2f6be0);color:var(--wp--preset--color--on-primary,#fff)}
+.wpe-login a.wpe-login__submit{display:block;text-align:center;text-decoration:none;box-sizing:border-box}
