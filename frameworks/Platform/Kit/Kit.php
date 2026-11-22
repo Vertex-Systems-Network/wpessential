@@ -492,10 +492,14 @@ class Kit {
 					},
 				)
 			);
+			$editor_attrs = self::attributes( $def );
+			if ( ! empty( $def['innerBlocks'] ) ) {
+				unset( $editor_attrs['content'] ); // Elementor-only fallback; the block editor uses inner blocks.
+			}
 			$editor[ $name ] = array_merge(
 				array_intersect_key( $def, array_flip( array( 'name', 'title', 'icon', 'innerBlocks' ) ) ),
 				array(
-					'attributes' => self::attributes( $def ),
+					'attributes' => $editor_attrs,
 					'groups'     => self::groups( $def ),
 					'panels'     => ( $def['panels'] ?? array( 'content' => __( 'Content', 'wpessential' ) ) ) + array( 'advanced' => __( 'Layout & effects', 'wpessential' ) ),
 				)
