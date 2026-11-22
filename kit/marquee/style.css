@@ -1,0 +1,9 @@
+.wpe-marquee{display:flex;overflow:hidden;gap:0;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.wpe-marquee__row{display:flex;flex:none;min-width:100%;justify-content:space-around;gap:32px;padding:0 16px;margin:0;list-style:none;white-space:nowrap;animation:wpe-marquee var(--wpek-mq-speed,30s) linear infinite}
+.wpe-marquee.is-reverse .wpe-marquee__row{animation-direction:reverse}
+.wpe-marquee:hover .wpe-marquee__row,.wpe-marquee:focus-within .wpe-marquee__row{animation-play-state:paused}
+.wpe-marquee__sep{opacity:.4}
+/* each copy is at least the strip width, so two copies always cover it */
+.wpe-marquee:focus-visible{outline:2px solid var(--wp--preset--color--primary,#2f6be0);outline-offset:2px}
+@keyframes wpe-marquee{to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.wpe-marquee{flex-wrap:wrap;mask-image:none}.wpe-marquee__row{animation:none;white-space:normal;flex-wrap:wrap}.wpe-marquee__row[aria-hidden]{display:none}}

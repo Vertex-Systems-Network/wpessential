@@ -1,0 +1,64 @@
+{
+	"name": "steps",
+	"title": "Steps (WPEssential)",
+	"category": "content",
+	"description": "Numbered process steps, horizontal or vertical, with connector line.",
+	"icon": "list-ol",
+	"elementor_icon": "eicon-number-field",
+	"keywords": [
+		"steps",
+		"process",
+		"how it works",
+		"numbered"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"items": {
+			"type": "repeater",
+			"label": "Items",
+			"title_field": "title",
+			"panel": "content",
+			"fields": {
+				"title": {
+					"type": "text",
+					"label": "Title",
+					"default": "Step"
+				},
+				"text": {
+					"type": "textarea",
+					"label": "Text",
+					"default": ""
+				}
+			},
+			"default": [
+				{
+					"title": "Choose a demo",
+					"text": "Pick the design that fits your business."
+				},
+				{
+					"title": "Import in one click",
+					"text": "Pages, media and settings arrive together."
+				},
+				{
+					"title": "Make it yours",
+					"text": "Edit text, colors and images, then launch."
+				}
+			]
+		},
+		"titleTag": {
+			"type": "select",
+			"label": "Title tag",
+			"default": "h3",
+			"options": {
+				"h2": "H2",
+				"h3": "H3",
+				"h4": "H4",
+				"p": "Paragraph"
+			},
+			"panel": "content"
+		}
+	}
+}

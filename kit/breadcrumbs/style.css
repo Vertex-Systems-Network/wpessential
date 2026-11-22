@@ -1,0 +1,4 @@
+.wpe-breadcrumbs ol{display:flex;flex-wrap:wrap;gap:6px;justify-content:var(--wpek-bc-justify,flex-start);margin:0;padding:0;list-style:none;font-size:.9em}
+.wpe-breadcrumbs li{display:inline-flex;gap:6px;align-items:center;min-width:0}
+.wpe-breadcrumbs a{color:inherit;opacity:.75;text-decoration:none}.wpe-breadcrumbs a:hover{opacity:1;text-decoration:underline}
+.wpe-breadcrumbs [aria-current]{font-weight:600;overflow-wrap:anywhere}.wpe-breadcrumbs__sep{opacity:.45}
