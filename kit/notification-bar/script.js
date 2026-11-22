@@ -4,7 +4,11 @@ document.addEventListener( 'click', ( e ) => {
 		return;
 	}
 	const box = btn.closest( '[data-wpe-key]' );
-	box.hidden = true;
+	document.querySelectorAll( '[data-wpe-key]' ).forEach( ( b ) => {
+		if ( b.dataset.wpeKey === box.dataset.wpeKey ) {
+			b.hidden = true;
+		}
+	} );
 	try {
 		localStorage.setItem( box.dataset.wpeKey, btn.dataset.wpeDismiss || '1' );
 	} catch ( err ) {}
