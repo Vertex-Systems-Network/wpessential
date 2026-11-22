@@ -1,0 +1,54 @@
+{
+	"name": "content-switcher",
+	"title": "Content Switcher (WPEssential)",
+	"category": "content",
+	"description": "Toggle between two content panels (e.g. Monthly / Yearly, Agencies / Freelancers) with an accessible switch.",
+	"icon": "controls-repeat",
+	"elementor_icon": "eicon-dual-button",
+	"keywords": [
+		"switcher",
+		"toggle",
+		"monthly yearly",
+		"pricing toggle"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"labelA": {
+			"type": "text",
+			"label": "First label",
+			"default": "Monthly",
+			"panel": "content"
+		},
+		"contentA": {
+			"type": "html",
+			"label": "First content",
+			"default": "<p>First panel.</p>",
+			"panel": "content"
+		},
+		"labelB": {
+			"type": "text",
+			"label": "Second label",
+			"default": "Yearly",
+			"panel": "content"
+		},
+		"contentB": {
+			"type": "html",
+			"label": "Second content",
+			"default": "<p>Second panel.</p>",
+			"panel": "content"
+		},
+		"start": {
+			"type": "select",
+			"label": "Shown first",
+			"default": "a",
+			"options": {
+				"a": "First",
+				"b": "Second"
+			},
+			"panel": "content"
+		}
+	}
+}
