@@ -1,0 +1,53 @@
+{
+	"name": "feed-grid",
+	"title": "Feed Grid (WPEssential)",
+	"category": "content",
+	"description": "Grid of the latest items from any RSS or Atom feed (blog, podcast, YouTube channel, news), with image, date and excerpt.",
+	"icon": "rss",
+	"elementor_icon": "eicon-rss",
+	"keywords": [
+		"rss",
+		"feed",
+		"atom",
+		"news",
+		"podcast"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"url": {
+			"type": "url",
+			"label": "Feed URL",
+			"default": "",
+			"panel": "content"
+		},
+		"count": {
+			"type": "range",
+			"label": "Items",
+			"default": 6,
+			"min": 1,
+			"max": 24,
+			"step": 1,
+			"panel": "content"
+		},
+		"excerpt": {
+			"type": "toggle",
+			"label": "Show excerpt",
+			"default": true,
+			"panel": "content"
+		},
+		"columns": {
+			"type": "range",
+			"label": "Columns",
+			"default": 3,
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"panel": "style",
+			"css": "--wpek-fg-cols",
+			"unit": ""
+		}
+	}
+}
