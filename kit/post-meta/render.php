@@ -23,7 +23,7 @@ if ( ! empty( $a['date'] ) ) {
 	$wpe_items[] = '<time datetime="' . esc_attr( get_the_date( 'c', $wpe_post ) ) . '">' . esc_html( get_the_date( '', $wpe_post ) ) . '</time>';
 }
 if ( ! empty( $a['reading'] ) ) {
-	$wpe_min     = max( 1, (int) ceil( str_word_count( wp_strip_all_tags( (string) $wpe_post->post_content ) ) / 200 ) );
+	$wpe_min     = max( 1, (int) ceil( count( preg_split( '/[\s\p{P}]+/u', wp_strip_all_tags( (string) $wpe_post->post_content ), -1, PREG_SPLIT_NO_EMPTY ) ?: array() ) / 200 ) );
 	/* translators: %d: minutes. */
 	$wpe_items[] = esc_html( sprintf( _n( '%d min read', '%d min read', $wpe_min, 'wpessential' ), $wpe_min ) );
 }

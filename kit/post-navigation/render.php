@@ -15,6 +15,9 @@ if ( ! $wpe_post instanceof WP_Post ) {
 	}
 	return;
 }
+if ( ! empty( $a['sameTerm'] ) && ! wp_get_post_categories( $wpe_post->ID ) ) {
+	return;
+}
 $wpe_prev = get_previous_post( ! empty( $a['sameTerm'] ) );
 $wpe_next = get_next_post( ! empty( $a['sameTerm'] ) );
 if ( ! $wpe_prev && ! $wpe_next ) {

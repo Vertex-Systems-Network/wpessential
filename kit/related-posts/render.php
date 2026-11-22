@@ -15,12 +15,17 @@ if ( ! $wpe_post instanceof WP_Post ) {
 	}
 	return;
 }
+$wpe_cats = wp_get_post_categories( $wpe_post->ID );
+if ( ! $wpe_cats ) {
+	return;
+}
 $wpe_q = new WP_Query(
 	array(
 		'post_type'           => $wpe_post->post_type,
 		'posts_per_page'      => max( 1, min( 12, (int) $a['count'] ) ),
 		'post__not_in'        => array( $wpe_post->ID ),
-		'category__in'        => wp_get_post_categories( $wpe_post->ID ),
+		'category__in'        => $wpe_cats,
+		'post_status'         => 'publish',
 		'ignore_sticky_posts' => true,
 		'no_found_rows'       => true,
 	)
