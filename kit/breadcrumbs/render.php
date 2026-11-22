@@ -25,13 +25,13 @@ if ( is_singular() ) {
 	}
 } elseif ( is_search() ) {
 	/* translators: %s: search terms. */
-	$wpe_trail[] = array( sprintf( __( 'Search: %s', 'wpessential' ), get_search_query() ), '' );
+	$wpe_trail[] = array( sprintf( __( 'Search: %s', 'wpessential' ), get_search_query( false ) ), '' );
 } elseif ( is_404() ) {
 	$wpe_trail[] = array( __( 'Page not found', 'wpessential' ), '' );
 } elseif ( is_archive() ) {
 	$wpe_trail[] = array( wp_strip_all_tags( get_the_archive_title() ), '' );
 } elseif ( is_home() && ! is_front_page() ) {
-	$wpe_trail[] = array( single_post_title( '', false ), '' );
+	$wpe_trail[] = array( get_option( 'page_for_posts' ) ? get_the_title( (int) get_option( 'page_for_posts' ) ) : __( 'Blog', 'wpessential' ), '' );
 } elseif ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 	$wpe_trail[] = array( __( 'Current page', 'wpessential' ), '' );
 }

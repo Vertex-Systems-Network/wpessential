@@ -8,7 +8,10 @@
 defined( 'ABSPATH' ) || exit;
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Included in Kit template scope.
 
-$wpe_items = array_values( array_filter( array_map( static fn( $i ) => trim( (string) ( $i['text'] ?? '' ) ), (array) $a['items'] ) ) );
+$wpe_items = array_values( array_filter( array_map( static fn( $i ) => trim( (string) ( $i['text'] ?? '' ) ), (array) $a['items'] ), static fn( $t ) => '' !== $t ) );
+if ( ! $wpe_items ) {
+	return;
+}
 $wpe_sep   = (string) $a['separator'];
 $wpe_row   = static function ( $hidden ) use ( $wpe_items, $wpe_sep ) {
 	echo '<ul class="wpe-marquee__row"' . ( $hidden ? ' aria-hidden="true"' : '' ) . '>';
@@ -18,7 +21,7 @@ $wpe_row   = static function ( $hidden ) use ( $wpe_items, $wpe_sep ) {
 	echo '</ul>';
 };
 ?>
-<div id="<?php echo esc_attr( $id ); ?>" class="wpe-marquee<?php echo ! empty( $a['reverse'] ) ? ' is-reverse' : ''; ?>">
+<div id="<?php echo esc_attr( $id ); ?>" class="wpe-marquee<?php echo ! empty( $a['reverse'] ) ? ' is-reverse' : ''; ?>" tabindex="0" role="region" aria-label="<?php esc_attr_e( 'Scrolling text, focus to pause', 'wpessential' ); ?>">
 	<?php $wpe_row( false ); ?>
 	<?php $wpe_row( true ); ?>
 </div>

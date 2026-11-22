@@ -27,11 +27,6 @@
 					"label": "Title",
 					"default": "Step"
 				},
-				"meta": {
-					"type": "text",
-					"label": "Label / date",
-					"default": ""
-				},
 				"text": {
 					"type": "textarea",
 					"label": "Text",
@@ -52,19 +47,6 @@
 					"text": "Edit text, colors and images, then launch."
 				}
 			]
-		},
-		"direction": {
-			"type": "select",
-			"label": "Direction",
-			"default": "",
-			"options": {
-				"": "Auto (vertical on phones)",
-				"row": "Horizontal",
-				"column": "Vertical"
-			},
-			"panel": "style",
-			"responsive": true,
-			"css": "--wpek-steps-dir"
 		},
 		"titleTag": {
 			"type": "select",
