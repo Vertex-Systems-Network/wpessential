@@ -1,0 +1,44 @@
+{
+	"name": "notification-bar",
+	"title": "Notification Bar (WPEssential)",
+	"category": "content",
+	"description": "Dismissible announcement strip (sale, launch, notice) with an optional link; stays closed for the visitor once dismissed.",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-star",
+	"keywords": [
+		"notification",
+		"announcement",
+		"top bar",
+		"banner"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"text": {
+			"type": "text",
+			"label": "Message",
+			"default": "New demos are live — 20% off this week.",
+			"panel": "content"
+		},
+		"linkText": {
+			"type": "text",
+			"label": "Link text",
+			"default": "Browse demos",
+			"panel": "content"
+		},
+		"link": {
+			"type": "url",
+			"label": "Link",
+			"default": "",
+			"panel": "content"
+		},
+		"key": {
+			"type": "text",
+			"label": "Version (change to show again)",
+			"default": "1",
+			"panel": "content"
+		}
+	}
+}

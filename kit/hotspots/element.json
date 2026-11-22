@@ -1,0 +1,82 @@
+{
+	"name": "hotspots",
+	"title": "Hotspots (WPEssential)",
+	"category": "content",
+	"description": "Image with numbered points; each opens a short note when clicked or activated with the keyboard (product tours, room features, diagrams).",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-star",
+	"keywords": [
+		"hotspots",
+		"image map",
+		"tooltip",
+		"points"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"image": {
+			"type": "image",
+			"label": "Image",
+			"default": {},
+			"panel": "content"
+		},
+		"alt": {
+			"type": "text",
+			"label": "Image alt text",
+			"default": "",
+			"panel": "content"
+		},
+		"spots": {
+			"type": "repeater",
+			"label": "Points",
+			"title_field": "title",
+			"panel": "content",
+			"fields": {
+				"title": {
+					"type": "text",
+					"label": "Title",
+					"default": "Point"
+				},
+				"text": {
+					"type": "textarea",
+					"label": "Note",
+					"default": ""
+				},
+				"x": {
+					"type": "range",
+					"label": "Left (%)",
+					"default": 50,
+					"min": 0,
+					"max": 100,
+					"step": 1,
+					"unit": ""
+				},
+				"y": {
+					"type": "range",
+					"label": "Top (%)",
+					"default": 50,
+					"min": 0,
+					"max": 100,
+					"step": 1,
+					"unit": ""
+				}
+			},
+			"default": [
+				{
+					"title": "Feature one",
+					"text": "Short note.",
+					"x": 30,
+					"y": 40
+				},
+				{
+					"title": "Feature two",
+					"text": "Short note.",
+					"x": 70,
+					"y": 60
+				}
+			]
+		}
+	}
+}

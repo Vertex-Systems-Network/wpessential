@@ -1,0 +1,44 @@
+{
+	"name": "cookie-notice",
+	"title": "Cookie Notice (WPEssential)",
+	"category": "content",
+	"description": "Simple cookie/privacy notice with Accept and Decline; remembers the choice in the browser and exposes it as data-wpe-consent on <html>.",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-star",
+	"keywords": [
+		"cookie",
+		"consent",
+		"gdpr",
+		"privacy"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"text": {
+			"type": "text",
+			"label": "Message",
+			"default": "We use cookies to improve your experience.",
+			"panel": "content"
+		},
+		"accept": {
+			"type": "text",
+			"label": "Accept label",
+			"default": "Accept",
+			"panel": "content"
+		},
+		"decline": {
+			"type": "text",
+			"label": "Decline label",
+			"default": "Decline",
+			"panel": "content"
+		},
+		"policy": {
+			"type": "url",
+			"label": "Privacy policy link",
+			"default": "",
+			"panel": "content"
+		}
+	}
+}

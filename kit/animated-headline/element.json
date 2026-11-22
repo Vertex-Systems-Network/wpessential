@@ -1,0 +1,50 @@
+{
+	"name": "animated-headline",
+	"title": "Animated Headline (WPEssential)",
+	"category": "content",
+	"description": "Heading with a rotating word (fade); static text for reduced motion and screen readers.",
+	"icon": "star-filled",
+	"elementor_icon": "eicon-star",
+	"keywords": [
+		"animated headline",
+		"rotating text",
+		"typing",
+		"typewriter"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"before": {
+			"type": "text",
+			"label": "Before",
+			"default": "Build websites",
+			"panel": "content"
+		},
+		"words": {
+			"type": "text",
+			"label": "Rotating words (separate with |)",
+			"default": "faster | smarter | better",
+			"panel": "content"
+		},
+		"after": {
+			"type": "text",
+			"label": "After",
+			"default": "",
+			"panel": "content"
+		},
+		"tag": {
+			"type": "select",
+			"label": "Tag",
+			"default": "h2",
+			"options": {
+				"h1": "H1",
+				"h2": "H2",
+				"h3": "H3",
+				"p": "Paragraph"
+			},
+			"panel": "content"
+		}
+	}
+}
