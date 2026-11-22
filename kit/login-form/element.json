@@ -1,0 +1,44 @@
+{
+	"name": "login-form",
+	"title": "Login / Register (WPEssential)",
+	"category": "site",
+	"description": "Sign-in form with optional register tab and lost-password link, using WordPress's own login and registration. Shows a greeting and log-out link to signed-in users.",
+	"icon": "admin-users",
+	"elementor_icon": "eicon-lock-user",
+	"keywords": [
+		"login",
+		"register",
+		"sign in",
+		"account"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"showRegister": {
+			"type": "toggle",
+			"label": "Register tab (when registration is open)",
+			"default": true,
+			"panel": "content"
+		},
+		"redirect": {
+			"type": "url",
+			"label": "After sign-in go to (empty = same page)",
+			"default": "",
+			"panel": "content"
+		},
+		"loginLabel": {
+			"type": "text",
+			"label": "Sign-in tab label",
+			"default": "Sign in",
+			"panel": "content"
+		},
+		"registerLabel": {
+			"type": "text",
+			"label": "Register tab label",
+			"default": "Create account",
+			"panel": "content"
+		}
+	}
+}
