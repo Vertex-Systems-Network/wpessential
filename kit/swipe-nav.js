@@ -5,7 +5,18 @@
 		const nav = document.createElement( 'div' );
 		nav.className = 'wpe-swnav';
 		nav.hidden = true;
-		nav.innerHTML = '<button type="button" class="wpe-swnav__btn" data-d="-1" aria-label="' + label( 'Previous' ) + '">‹</button><div class="wpe-swnav__dots"></div><button type="button" class="wpe-swnav__btn" data-d="1" aria-label="' + label( 'Next' ) + '">›</button>';
+		const btn = ( d, text, name ) => {
+			const b = document.createElement( 'button' );
+			b.type = 'button';
+			b.className = 'wpe-swnav__btn';
+			b.dataset.d = d;
+			b.textContent = text;
+			b.setAttribute( 'aria-label', label( name ) );
+			return b;
+		};
+		const dotsWrap = document.createElement( 'div' );
+		dotsWrap.className = 'wpe-swnav__dots';
+		nav.append( btn( '-1', '‹', 'Previous' ), dotsWrap, btn( '1', '›', 'Next' ) );
 		track.after( nav );
 		const dots = nav.querySelector( '.wpe-swnav__dots' );
 		const [ prev, next ] = nav.querySelectorAll( '.wpe-swnav__btn' );
