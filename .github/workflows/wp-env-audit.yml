@@ -4,6 +4,19 @@ name: WordPress E2E Audit
 # Elementor, WooCommerce and Contact Form 7. The Pro repository runs the same suite with Pro.
 on:
   pull_request:
+    paths:
+      - 'frameworks/**'
+      - 'kit/**'
+      - 'admin-ui/**'
+      - 'assets/**'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tests/e2e/**'
+      - '.wp-env.json'
+      - 'wpessential.php'
+      - '.github/workflows/wp-env-audit.yml'
   workflow_dispatch:
 
 permissions:

@@ -57,6 +57,10 @@ on:
       - '.github/workflows/**'
   workflow_dispatch:
 
+concurrency:
+  group: architecture-guards-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
