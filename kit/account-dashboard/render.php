@@ -8,10 +8,8 @@
 defined( 'ABSPATH' ) || exit;
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Included in Kit template scope.
 
-if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-	define( 'DONOTCACHEPAGE', true ); // Per-user output.
-}
-$wpe_here = home_url( add_query_arg( array() ) );
+// Current URL with its query string; only same-site redirects are accepted.
+$wpe_here = wp_validate_redirect( esc_url_raw( set_url_scheme( '//' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ?? '' ) ) . wp_unslash( $_SERVER['REQUEST_URI'] ?? '/' ) ) ), home_url( '/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- esc_url_raw + wp_validate_redirect.
 if ( ! is_user_logged_in() ) {
 	?>
 	<div id="<?php echo esc_attr( $id ); ?>" class="wpe-ad is-guest">
@@ -20,6 +18,9 @@ if ( ! is_user_logged_in() ) {
 	</div>
 	<?php
 	return;
+}
+if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+	define( 'DONOTCACHEPAGE', true ); // Per-user output; guest output stays cacheable.
 }
 $wpe_user  = wp_get_current_user();
 $wpe_links = array();
@@ -36,7 +37,7 @@ if ( function_exists( 'wc_get_account_menu_items' ) ) {
 		$wpe_links[ admin_url() ]            = __( 'Dashboard', 'wpessential' );
 	}
 }
-$wpe_greeting = str_contains( (string) $a['greeting'], '%s' ) ? sprintf( (string) $a['greeting'], $wpe_user->display_name ) : (string) $a['greeting'];
+$wpe_greeting = str_replace( '%s', $wpe_user->display_name, (string) $a['greeting'] );
 ?>
 <div id="<?php echo esc_attr( $id ); ?>" class="wpe-ad">
 	<div class="wpe-ad__head">
