@@ -8,6 +8,8 @@ on:
       - 'frameworks/**'
       - 'kit/**'
       - 'tools/admin/**'
+      - 'tsconfig.json'
+      - 'config/product/option-contracts/**'
       - 'admin-ui/**'
       - 'assets/**'
       - 'composer.json'

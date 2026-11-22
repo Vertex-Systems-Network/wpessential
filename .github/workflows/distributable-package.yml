@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: distributable-package-${{ github.ref }}
+  group: distributable-package-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
