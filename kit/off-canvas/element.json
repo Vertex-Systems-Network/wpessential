@@ -32,7 +32,7 @@
 		"content": {
 			"type": "html",
 			"label": "Content (Elementor)",
-			"default": "<p>Panel content.</p>",
+			"default": "",
 			"panel": "content"
 		},
 		"side": {
