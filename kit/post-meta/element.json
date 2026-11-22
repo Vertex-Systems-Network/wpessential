@@ -1,0 +1,50 @@
+{
+	"name": "post-meta",
+	"title": "Post Meta (WPEssential)",
+	"category": "site",
+	"description": "Author, date, reading time, categories and comment count of the current post.",
+	"icon": "admin-post",
+	"elementor_icon": "eicon-post-info",
+	"keywords": [
+		"post meta",
+		"byline",
+		"date",
+		"reading time"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"author": {
+			"type": "toggle",
+			"label": "Author",
+			"default": true,
+			"panel": "content"
+		},
+		"date": {
+			"type": "toggle",
+			"label": "Date",
+			"default": true,
+			"panel": "content"
+		},
+		"reading": {
+			"type": "toggle",
+			"label": "Reading time",
+			"default": true,
+			"panel": "content"
+		},
+		"terms": {
+			"type": "toggle",
+			"label": "Categories",
+			"default": true,
+			"panel": "content"
+		},
+		"comments": {
+			"type": "toggle",
+			"label": "Comment count",
+			"default": false,
+			"panel": "content"
+		}
+	}
+}
