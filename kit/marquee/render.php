@@ -10,6 +10,10 @@ defined( 'ABSPATH' ) || exit;
 
 $wpe_items = array_values( array_filter( array_map( static fn( $i ) => trim( (string) ( $i['text'] ?? '' ) ), (array) $a['items'] ), static fn( $t ) => '' !== $t ) );
 if ( ! $wpe_items ) {
+	// Front end shows nothing; the editor shows why the element is empty.
+	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		echo '<p id="' . esc_attr( $id ) . '" class="wpe-marquee__empty">' . esc_html__( 'Add items to show the marquee.', 'wpessential' ) . '</p>';
+	}
 	return;
 }
 $wpe_sep   = (string) $a['separator'];
