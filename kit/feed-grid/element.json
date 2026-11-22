@@ -46,7 +46,8 @@
 			"max": 6,
 			"step": 1,
 			"panel": "style",
-			"css": "--wpek-fg-cols"
+			"css": "--wpek-fg-cols",
+			"unit": ""
 		},
 		"swipe": {
 			"type": "select",

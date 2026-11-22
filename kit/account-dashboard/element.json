@@ -37,7 +37,8 @@
 			"max": 4,
 			"step": 1,
 			"panel": "style",
-			"css": "--wpek-ad-cols"
+			"css": "--wpek-ad-cols",
+			"unit": ""
 		}
 	}
 }
