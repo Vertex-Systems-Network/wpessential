@@ -5,7 +5,7 @@
 **Requires at least:** 6.9\
 **Tested up to:** 7.1\
 **Requires PHP:** 8.2\
-**Stable tag:** 3.1.1\
+**Stable tag:** 3.2.0\
 **License:** GPLv3 or later\
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -139,6 +139,16 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 ## Changelog
 
+### 3.2.0
+
+- New: 17 elements for Gutenberg and Elementor: Breadcrumbs, Steps, Marquee, Back to Top, Social Share, Content Switcher, Comparison Table, Login / Register, Notification Bar, Cookie Notice, Animated Headline, Hotspots, Post Meta, Post Navigation, Author Box, Related Posts and Table of Contents.
+- New: Swipe layout per device for grids (carousel, slider, swipe cards, card stack) to cut scrolling on phones.
+- New: Container can use the header, footer, main and nav HTML tags.
+- New: REST API keys and JWT sign-in for apps, and AI Connect works with application passwords.
+- New: post type, taxonomy and field lists gain Trash and Disabled views, column filters and a select with search.
+- Fixed: elements enabled only for Elementor now load their styles and scripts.
+- Fixed: demo import can use the demo's own cart, checkout and account pages.
+
 ### 3.1.1
 
 * Fixed: WPEssential wrote a new copy of its post type and taxonomy registrations on every page load. On busy sites the table grew without limit and could run PHP out of memory.
@@ -174,6 +184,10 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 - New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
 ## Upgrade Notice
+
+### 3.2.0
+
+17 new elements, a per-device Swipe layout for grids, REST API keys and fixes. Recommended for every site.
 
 ### 3.1.1
 
