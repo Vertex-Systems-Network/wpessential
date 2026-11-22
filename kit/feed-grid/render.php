@@ -27,6 +27,9 @@ $wpe_items = $wpe_feed->get_items( 0, max( 1, min( 24, (int) $a['count'] ) ) );
 	foreach ( $wpe_items as $wpe_item ) :
 		$wpe_enc = $wpe_item->get_enclosure();
 		$wpe_img = $wpe_enc ? ( $wpe_enc->get_thumbnail() ?: ( str_starts_with( (string) $wpe_enc->get_type(), 'image/' ) ? $wpe_enc->get_link() : '' ) ) : '';
+		if ( ! $wpe_img && preg_match( '/<img[^>]+src=["\']([^"\']+)/i', (string) $wpe_item->get_content(), $wpe_m ) ) {
+			$wpe_img = $wpe_m[1]; // First image in the item body.
+		}
 		?>
 		<article class="wpe-fg__item">
 			<?php if ( $wpe_img ) : ?>
