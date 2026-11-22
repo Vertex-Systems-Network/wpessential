@@ -1,0 +1,76 @@
+{
+	"name": "dynamic-listing",
+	"title": "Dynamic Listing (WPEssential)",
+	"category": "content",
+	"description": "Cards for any post type (listings, events, properties, courses, services) showing chosen custom fields, with optional taxonomy-term filter.",
+	"icon": "list-view",
+	"elementor_icon": "eicon-post-list",
+	"keywords": [
+		"listing",
+		"custom post type",
+		"directory",
+		"custom fields",
+		"query"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"post_type": {
+			"type": "text",
+			"label": "Post type slug",
+			"default": "post",
+			"panel": "content"
+		},
+		"fields": {
+			"type": "text",
+			"label": "Custom field keys (comma separated)",
+			"default": "",
+			"panel": "content"
+		},
+		"taxonomy": {
+			"type": "text",
+			"label": "Filter taxonomy slug (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"term": {
+			"type": "text",
+			"label": "Filter term slug (optional)",
+			"default": "",
+			"panel": "content"
+		},
+		"count": {
+			"type": "range",
+			"label": "Items",
+			"default": 6,
+			"min": 1,
+			"max": 24,
+			"step": 1,
+			"panel": "content"
+		},
+		"orderby": {
+			"type": "select",
+			"label": "Order by",
+			"default": "date",
+			"options": {
+				"date": "Newest",
+				"title": "Title",
+				"menu_order": "Menu order",
+				"rand": "Random"
+			},
+			"panel": "content"
+		},
+		"columns": {
+			"type": "range",
+			"label": "Columns",
+			"default": 3,
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"panel": "style",
+			"css": "--wpek-dl-cols"
+		}
+	}
+}
