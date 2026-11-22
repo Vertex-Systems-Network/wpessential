@@ -443,6 +443,13 @@ class Kit {
 		wp_register_script( 'wpessential-kit-motion', self::url( 'kit/motion.js' ), array(), self::$version, true );
 		wp_register_script( 'wpessential-kit-motion-layout', self::url( 'kit/motion-layout.js' ), array(), self::$version, true );
 		wp_register_style( 'wpessential-kit-common', self::url( 'kit/common.css' ), array(), self::$version );
+		// Elementor-only elements need their front-end assets too; blocks register theirs below.
+		foreach ( self::enabled_defs( 'elementor' ) as $name => $def ) {
+			wp_register_style( 'wpessential-kit-' . $name, $def['url'] . '/style.css', array( 'wpessential-kit-common' ), self::$version );
+			if ( file_exists( $def['dir'] . '/script.js' ) ) {
+				wp_register_script( 'wpessential-kit-' . $name, $def['url'] . '/script.js', array(), self::$version, true );
+			}
+		}
 		$editor = array();
 		foreach ( self::enabled_defs( 'gutenberg' ) as $name => $def ) {
 			$handle = 'wpessential-kit-' . $name;
