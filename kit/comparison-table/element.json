@@ -19,8 +19,8 @@
 	"attributes": {
 		"columns": {
 			"type": "text",
-			"label": "Columns (comma separated)",
-			"default": "Starter, Pro, Agency",
+			"label": "Columns (separate with |)",
+			"default": "Starter | Pro | Agency",
 			"panel": "content"
 		},
 		"rows": {
@@ -36,22 +36,22 @@
 				},
 				"values": {
 					"type": "text",
-					"label": "Values (comma separated; yes / no / text)",
-					"default": "yes, yes, yes"
+					"label": "Values (separate with |; yes / no / text)",
+					"default": "yes | yes | yes"
 				}
 			},
 			"default": [
 				{
 					"feature": "Themes",
-					"values": "1, All, All"
+					"values": "1 | All | All"
 				},
 				{
 					"feature": "Priority support",
-					"values": "no, yes, yes"
+					"values": "no | yes | yes"
 				},
 				{
 					"feature": "White label",
-					"values": "no, no, yes"
+					"values": "no | no | yes"
 				}
 			]
 		},

@@ -20,3 +20,5 @@ function select( tab ) {
 		document.getElementById( t.getAttribute( 'aria-controls' ) ).hidden = ! on;
 	} );
 }
+// Panels stay visible without JavaScript; hide the inactive one once this runs.
+document.querySelectorAll( '.wpe-switcher [role=tab][aria-selected=true]' ).forEach( select );

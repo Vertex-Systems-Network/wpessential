@@ -4,10 +4,20 @@ document.addEventListener( 'click', ( e ) => {
 		return;
 	}
 	const status = btn.parentElement.querySelector( '.wpe-share__status' );
-	navigator.clipboard?.writeText( btn.dataset.url ).then( () => {
+	const say = ( text ) => {
 		if ( status ) {
-			status.textContent = btn.dataset.done;
+			status.textContent = text;
 		}
-		btn.classList.add( 'is-done' );
-	} );
+	};
+	if ( ! navigator.clipboard?.writeText ) {
+		say( btn.dataset.fail );
+		return;
+	}
+	navigator.clipboard.writeText( btn.dataset.url ).then(
+		() => {
+			say( btn.dataset.done );
+			btn.classList.add( 'is-done' );
+		},
+		() => say( btn.dataset.fail )
+	);
 } );
