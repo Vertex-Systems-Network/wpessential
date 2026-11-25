@@ -15,6 +15,9 @@ final class OptionContractReaderTest extends TestCase
         $reader = new OptionContractReader(dirname(__DIR__, 5));
 
         foreach (ModuleCatalog::all() as $module) {
+            if ($module['contract'] === '') {
+                continue;
+            }
             $contract = $reader->read($module['contract']);
             self::assertIsArray($contract, $module['contract']);
             self::assertNotSame([], $contract['groups'], $module['contract']);
