@@ -81,6 +81,7 @@ export function Demos( { data }: { data: ScreenData } ) {
 	const [ query, setQuery ] = useState( '' );
 	const [ type, setType ] = useState( '' );
 	const [ builder, setBuilder ] = useState( '' );
+	const [ sort, setSort ] = useState( 'asc' );
 	const q = query.trim().toLowerCase();
 	const demos = d.demos.filter(
 		( demo ) =>
@@ -88,7 +89,7 @@ export function Demos( { data }: { data: ScreenData } ) {
 			( type === '' || demo.type === type ) &&
 			( builder === '' || demo.builders.some( ( b ) => b.label === builder ) ) &&
 			( q === '' || `${ demo.title } ${ demo.tagline } ${ demo.niche.join( ' ' ) }`.toLowerCase().includes( q ) )
-	);
+	).sort( ( a, b ) => ( sort === 'desc' ? -1 : 1 ) * a.title.localeCompare( b.title ) );
 	const builderNames = [ ...new Set( d.demos.flatMap( ( demo ) => demo.builders.map( ( b ) => b.label ) ) ) ];
 	const filtered = niche !== '' || type !== '' || builder !== '' || q !== '';
 	const tab = ( key: string, label: string, count: number ) => {
@@ -101,15 +102,18 @@ export function Demos( { data }: { data: ScreenData } ) {
 			</li>
 		);
 	};
-	const radios = ( name: string, value: string, set: ( v: string ) => void, options: Array< [ string, string ] > ) => (
-		<div className="wpe-ui-demo-filter__radios" role="radiogroup">
-			{ options.map( ( [ key, label ] ) => (
-				<label key={ key } className={ value === key ? 'is-active' : '' }>
-					<input type="radio" name={ name } checked={ value === key } onChange={ () => set( key ) } />
-					{ label }
-				</label>
-			) ) }
-		</div>
+	const count = ( test: ( demo: Demo ) => boolean ) => d.demos.filter( test ).length;
+	const select = ( label: string, value: string, set: ( v: string ) => void, options: Array< [ string, string ] > ) => (
+		<label className="wpe-ui-demo-topbar__select">
+			<span>{ label }</span>
+			<select value={ value } onChange={ ( e ) => set( e.target.value ) }>
+				{ options.map( ( [ key, text ] ) => (
+					<option key={ key } value={ key }>
+						{ text }
+					</option>
+				) ) }
+			</select>
+		</label>
 	);
 
 	return (
@@ -144,16 +148,6 @@ export function Demos( { data }: { data: ScreenData } ) {
 						<span className="screen-reader-text">{ t.search }</span>
 						<input type="search" value={ query } placeholder={ t.search } onChange={ ( e ) => setQuery( e.target.value ) } />
 					</label>
-					<div className="wpe-ui-demo-filter__group">
-						<h2>{ t.type }</h2>
-						{ radios( 'wpe-demo-type', type, setType, [ [ '', t.all ?? '' ], [ 'free', t.free ?? '' ], [ 'pro', t.premium ?? '' ] ] ) }
-					</div>
-					{ builderNames.length > 1 ? (
-						<div className="wpe-ui-demo-filter__group">
-							<h2>{ t.builder }</h2>
-							{ radios( 'wpe-demo-builder', builder, setBuilder, [ [ '', t.all ?? '' ], ...builderNames.map( ( b ): [ string, string ] => [ b, b ] ) ] ) }
-						</div>
-					) : null }
 					{ niches.size > 0 ? (
 						<nav className="wpe-ui-demo-filter__group" aria-label={ t.categories }>
 							<h2>{ t.categories }</h2>
@@ -170,7 +164,16 @@ export function Demos( { data }: { data: ScreenData } ) {
 					) : null }
 				</aside>
 				<div className="wpe-ui-demo-results">
-					<p className="wpe-ui-muted" aria-live="polite">{ ( t.showing ?? '%d' ).replace( '%d', String( demos.length ) ) }</p>
+					<div className="wpe-ui-demo-topbar">
+						<p className="wpe-ui-demo-topbar__count" aria-live="polite">{ ( t.showing ?? '%d' ).replace( '%d', String( demos.length ) ) }</p>
+						<div className="wpe-ui-demo-topbar__controls">
+							{ select( t.type ?? '', type, setType, [ [ '', `${ t.allTypes } (${ d.demos.length })` ], [ 'free', `${ t.free } (${ count( ( x ) => x.type === 'free' ) })` ], [ 'pro', `${ t.premium } (${ count( ( x ) => x.type === 'pro' ) })` ] ] ) }
+							{ builderNames.length > 1
+								? select( t.builder ?? '', builder, setBuilder, [ [ '', `${ t.allBuilders } (${ d.demos.length })` ], ...builderNames.map( ( b ): [ string, string ] => [ b, `${ b } (${ count( ( x ) => x.builders.some( ( y ) => y.label === b ) ) })` ] ) ] )
+								: null }
+							{ select( t.sort ?? '', sort, setSort, [ [ 'asc', t.sortAsc ?? '' ], [ 'desc', t.sortDesc ?? '' ] ] ) }
+						</div>
+					</div>
 			{ demos.length === 0 ? (
 				<div className="wpe-ui-empty wpe-ui-empty--dashed">
 					<Raw className="wpe-ui-icon wpe-ui-icon--lg" html={ d.gridIcon } />
