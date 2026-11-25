@@ -202,7 +202,7 @@ final class BuilderTools {
 			);
 		}
 		$base = 'wp_template' === $type ? '/wp/v2/templates/' : '/wp/v2/template-parts/';
-		return Mcp::tool_rest(
+		return SiteTools::tool_rest(
 			array(
 				'method' => 'POST',
 				'path'   => $base . $tpl->id,
@@ -417,7 +417,7 @@ final class BuilderTools {
 			if ( is_wp_error( $saved ) ) {
 				return $saved;
 			}
-			if ( class_exists( '\WP_Theme_JSON_Resolver' ) && method_exists( '\WP_Theme_JSON_Resolver', 'clean_cached_data' ) ) {
+			if ( class_exists( '\WP_Theme_JSON_Resolver' ) ) {
 				\WP_Theme_JSON_Resolver::clean_cached_data();
 			}
 		}

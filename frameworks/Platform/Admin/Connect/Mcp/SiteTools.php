@@ -197,7 +197,7 @@ final class SiteTools {
 	 * Internal REST request.
 	 *
 	 * @param array $a Arguments.
-	 * @return array|\WP_Error
+	 * @return array
 	 */
 	public static function tool_rest( array $a ) {
 		$path  = '/' . ltrim( (string) ( $a['path'] ?? '' ), '/' );
