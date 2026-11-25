@@ -1463,6 +1463,34 @@ class Importer {
 	}
 
 	/**
+	 * The demo's cart / checkout / account page takes the plain slug ("cart", not "cart-2") from the
+	 * store page it replaces; that page is kept, renamed "<slug>-previous".
+	 *
+	 * @param int $old Current store page.
+	 * @param int $new Demo page.
+	 */
+	private function take_slug( int $old, int $new ): void {
+		$old_post = $old && $old !== $new ? get_post( $old ) : null;
+		$new_post = get_post( $new );
+		if ( ! $old_post || ! $new_post || $old_post->post_name !== preg_replace( '/-\d+$/', '', $new_post->post_name ) ) {
+			return;
+		}
+		$slug = $old_post->post_name;
+		wp_update_post(
+			array(
+				'ID'        => $old,
+				'post_name' => $slug . '-previous',
+			)
+		);
+		wp_update_post(
+			array(
+				'ID'        => $new,
+				'post_name' => $slug,
+			)
+		);
+	}
+
+	/**
 	 * Store pages and shipping.
 	 *
 	 * @param array $woo Woo settings.
@@ -1473,6 +1501,7 @@ class Importer {
 			if ( isset( $this->job['map']['posts'][ $key ] ) ) {
 				$option = 'woocommerce_' . sanitize_key( $name ) . '_page_id';
 				$this->track( 'option', $option );
+				$this->take_slug( (int) get_option( $option ), (int) $this->job['map']['posts'][ $key ] );
 				update_option( $option, (int) $this->job['map']['posts'][ $key ] );
 			}
 		}
