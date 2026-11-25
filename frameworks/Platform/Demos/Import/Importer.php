@@ -103,6 +103,7 @@ class Importer {
 			return new \WP_Error( 'wpe_license', __( 'This is a Pro demo. Activate your license on the License tab to import it.', 'wpessential' ) );
 		}
 
+		delete_option( Rest::AUTOSTART );
 		$skip = array_map( 'sanitize_key', (array) ( $options['skip'] ?? array() ) );
 		unset( $options['skip'] );
 		$options = wp_parse_args(
@@ -645,7 +646,7 @@ class Importer {
 		$demo = Demos::get( $this->job['demo'] );
 		$dir  = Demos::package_dir( $demo, $this->job['builder'] );
 		if ( is_wp_error( $dir ) ) {
-			$hint = 'bundled' === $demo['source'] ? __( 'Upload a fresh copy of the theme, then press Resume.', 'wpessential' ) : __( 'Check your internet connection and press Resume.', 'wpessential' );
+			$hint = 'wpe_license' === $dir->get_error_code() ? __( 'Activate your licence key on the License screen, then press Resume.', 'wpessential' ) : ( 'bundled' === $demo['source'] ? __( 'Upload a fresh copy of the theme, then press Resume.', 'wpessential' ) : __( 'Check your internet connection and press Resume.', 'wpessential' ) );
 			return new \WP_Error( $dir->get_error_code(), $dir->get_error_message(), $hint );
 		}
 		$this->job['dir'] = $dir;

@@ -25,6 +25,53 @@ class Rest {
 	 */
 	public static function boot() {
 		add_action( 'rest_api_init', array( new self(), 'routes' ) );
+		add_action( 'after_switch_theme', array( __CLASS__, 'queue_default' ) );
+		add_action( 'admin_init', array( __CLASS__, 'open_default' ) );
+		// A demo set WPForms up already: keep its first-run setup wizard from taking over the admin.
+		add_action(
+			'init',
+			static function () {
+				add_filter(
+					'wpforms_setup_wizard_setup_wizard_is_disabled',
+					static function ( $off ) {
+						return $off || (bool) Importer::imported();
+					}
+				);
+			}
+		);
+	}
+
+	const AUTOSTART = 'wpessential_core_autostart';
+
+	/**
+	 * Theme activated: queue its default demo (theme filter) when the site has none yet.
+	 */
+	public static function queue_default() {
+		$demo = (string) apply_filters( 'wpessential_core_default_demo', '' );
+		$job  = Importer::current();
+		if ( '' === $demo || Importer::imported() || ( ! empty( $job['status'] ) && 'running' === $job['status'] ) ) {
+			return;
+		}
+		$auto = array(
+			'demo'     => sanitize_key( $demo ),
+			'builder'  => 'gutenberg',
+			'redirect' => true,
+		);
+		update_option( self::AUTOSTART, $auto, false );
+	}
+
+	/**
+	 * Send the admin to the Demo Library once, where the queued import starts with visible progress.
+	 */
+	public static function open_default() {
+		$auto = get_option( self::AUTOSTART );
+		if ( ! is_array( $auto ) || empty( $auto['redirect'] ) || wp_doing_ajax() || ! current_user_can( 'manage_options' ) || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag.
+			return;
+		}
+		$auto['redirect'] = false;
+		update_option( self::AUTOSTART, $auto, false );
+		wp_safe_redirect( admin_url( 'admin.php?page=wpessential-demos' ) );
+		exit;
 	}
 
 	/**

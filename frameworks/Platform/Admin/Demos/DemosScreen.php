@@ -120,6 +120,7 @@ final class DemosScreen implements AdminScreen {
 				'tagline'   => $demo['tagline'],
 				'niche'     => $demo['niche'],
 				'badgeHtml' => Badge::edition( $demo['type'] === 'pro' ? 'pro' : 'free' ),
+				'type'      => $demo['type'] === 'pro' ? 'pro' : 'free',
 				'thumbnail' => $demo['thumbnail'],
 				'preview'   => $demo['preview'],
 				'builders'  => array_map(
@@ -155,6 +156,16 @@ final class DemosScreen implements AdminScreen {
 				'emptyTitle' => $data['offline'] ? __( 'The demo library is unreachable', 'wpessential' ) : __( 'No demos yet', 'wpessential' ),
 				'emptyText'  => $data['offline'] ? __( 'WPEssential could not reach wpessential.org. Check the connection and refresh the library.', 'wpessential' ) : __( 'New demos appear here as they are published on wpessential.org.', 'wpessential' ),
 				'newTab'     => __( '(opens in a new tab)', 'wpessential' ),
+				'filters'    => __( 'Demo filters', 'wpessential' ),
+				'search'     => __( 'Search demos…', 'wpessential' ),
+				'type'       => __( 'Type', 'wpessential' ),
+				'free'       => __( 'Free', 'wpessential' ),
+				'premium'    => __( 'Premium', 'wpessential' ),
+				'builder'    => __( 'Builder', 'wpessential' ),
+				'reset'      => __( 'Clear filters', 'wpessential' ),
+				/* translators: %d: number of demos. */
+				'showing'    => __( '%d demos', 'wpessential' ),
+				'noMatch'    => __( 'No demos match these filters.', 'wpessential' ),
 			],
 			'refreshHtml' => $refreshHtml,
 			'gridIcon'    => Icon::render( 'grid', 26 ),
@@ -176,6 +187,16 @@ final class DemosScreen implements AdminScreen {
 				'builder' => (string) $job['builder'],
 				'status'  => (string) $job['status'],
 			] : null,
+			'autostart'   => ( static function () use ( $imported, $job ) {
+				$auto = get_option( \WPEssential\Platform\Demos\Import\Rest::AUTOSTART );
+				if ( ! is_array( $auto ) || empty( $auto['demo'] ) || $imported || ( is_array( $job ) && ! empty( $job['id'] ) && 'running' === ( $job['status'] ?? '' ) ) ) {
+					return null;
+				}
+				return [
+					'demo'    => (string) $auto['demo'],
+					'builder' => (string) $auto['builder'],
+				];
+			} )(),
 			'importText'  => [
 				'import'         => __( 'Import', 'wpessential' ),
 				/* translators: %s: Gutenberg or Elementor. */
@@ -201,6 +222,45 @@ final class DemosScreen implements AdminScreen {
 				/* translators: %s: demo name. */
 				'replaceConfirm' => __( '%s is already installed. It will be removed first, then the new demo is imported. Continue?', 'wpessential' ),
 				'doneNotice'     => __( 'Demo imported. Open your site to see it.', 'wpessential' ),
+				'active'         => __( 'Active', 'wpessential' ),
+				'reimport'       => __( 'Import again', 'wpessential' ),
+				'wizardSub'      => __( 'One-click demo import', 'wpessential' ),
+				'stepBuilder'    => __( 'Builder', 'wpessential' ),
+				'stepPlugins'    => __( 'Plugins', 'wpessential' ),
+				'stepContent'    => __( 'Content', 'wpessential' ),
+				'stepImport'     => __( 'Import', 'wpessential' ),
+				'stepDone'       => __( 'Done', 'wpessential' ),
+				'builderTitle'   => __( 'Choose your builder', 'wpessential' ),
+				'builderText'    => __( 'Pages are built for the editor you pick. You can import the other version later.', 'wpessential' ),
+				'pluginsTitle'   => __( 'Plugins this demo uses', 'wpessential' ),
+				'pluginsText'    => __( 'We install, activate or switch off plugins so the demo works exactly like the preview.', 'wpessential' ),
+				'noPlugins'      => __( 'This demo needs no extra plugins.', 'wpessential' ),
+				'required'       => __( 'Required', 'wpessential' ),
+				'recommended'    => __( 'Recommended', 'wpessential' ),
+				'conflicts'      => __( 'Conflicts with this demo', 'wpessential' ),
+				'plgActive'      => __( 'Active', 'wpessential' ),
+				'plgInstall'     => __( 'Will install', 'wpessential' ),
+				'plgActivate'    => __( 'Will activate', 'wpessential' ),
+				'plgDeactivate'  => __( 'Will switch off', 'wpessential' ),
+				'contentTitle'   => __( 'What to import', 'wpessential' ),
+				'contentText'    => __( 'Untick anything you do not need. Everything imported can be removed later in one click.', 'wpessential' ),
+				'optContent'     => __( 'Pages, posts and menus', 'wpessential' ),
+				'optMedia'       => __( 'Images and media', 'wpessential' ),
+				'optProducts'    => __( 'Shop products', 'wpessential' ),
+				'optSettings'    => __( 'Site settings, logo and homepage', 'wpessential' ),
+				/* translators: %s: demo name. */
+				'replaceTitle'   => __( '%s will be replaced', 'wpessential' ),
+				'replaceRemove'  => __( 'Its pages, posts, products, images and menus are deleted.', 'wpessential' ),
+				'replaceRestore' => __( 'The settings it changed are restored to what you had before.', 'wpessential' ),
+				'replaceKeep'    => __( 'Content you created yourself is not touched.', 'wpessential' ),
+				/* translators: %s: demo name. */
+				'replaceAgree'   => __( 'I understand. Remove %s and import the new demo.', 'wpessential' ),
+				'importTitle'    => __( 'Importing your demo', 'wpessential' ),
+				'doneTitle'      => __( 'Your site is ready', 'wpessential' ),
+				'back'           => __( 'Back', 'wpessential' ),
+				'next'           => __( 'Continue', 'wpessential' ),
+				'startImport'    => __( 'Start import', 'wpessential' ),
+				'safe'           => __( 'Safe import: every change can be undone.', 'wpessential' ),
 			],
 		];
 	}
