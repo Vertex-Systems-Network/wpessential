@@ -131,10 +131,12 @@ test('WordPress sidebar lists Dashboard and modules; product pages live in the t
   await visitCore(page, 'wpessential');
 
   const submenu = page.locator('#toplevel_page_wpessential .wp-submenu');
-  for (const name of ['Modules', 'Demo Library', 'Elements', 'Docs', 'AI Connect', 'Account', 'System Status']) {
+  for (const name of ['Modules', 'Demo Library', 'Elements', 'Docs', 'Account', 'System Status']) {
     await expect(submenu.getByRole('link', { name, exact: true }), `${name} must not be in the WordPress sidebar`).toHaveCount(0);
   }
   await expect(submenu.getByRole('link', { name: 'Dashboard', exact: true })).toHaveCount(1);
+  // AI Connect is a free module: it sits in the sidebar while it is switched on.
+  await expect(submenu.getByRole('link', { name: 'AI Connect', exact: true })).toHaveCount(1);
   await expect(submenu.getByRole('link', { name: 'Post Types', exact: true })).toHaveCount(1);
   await expect(submenu.getByRole('link', { name: 'Taxonomies', exact: true })).toHaveCount(1);
 
