@@ -84,7 +84,7 @@ test('packaged Runtime Observatory renders and progressively enhances', async ({
   await expect(page.getByRole('navigation', { name: 'Runtime observatory' })).toBeVisible();
 
   const runtime = root.locator('#wpe-status-runtime');
-  await expect(runtime).toContainText(/Framework version.*3\.3\.1/);
+  await expect(runtime).toContainText(/Framework version.*3\.2\.1/);
   await expect(runtime).toContainText(/WordPress core version\.\s*7\.1/);
   await expect(runtime).toContainText(/Server PHP version\.\s*8\.2/);
   await expect(runtime).toContainText(/Kernel booted\s*.*yes/);
