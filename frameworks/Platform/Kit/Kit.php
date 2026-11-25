@@ -442,6 +442,18 @@ class Kit {
 		wp_register_script( 'wpessential-kit-editor', self::url( 'kit/editor/editor.js' ), array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render', 'wp-i18n', 'wp-data' ), self::$version, true );
 		wp_register_script( 'wpessential-kit-motion', self::url( 'kit/motion.js' ), array(), self::$version, true );
 		wp_register_script( 'wpessential-kit-motion-layout', self::url( 'kit/motion-layout.js' ), array(), self::$version, true );
+		wp_register_script( 'wpessential-kit-swipe-nav', self::url( 'kit/swipe-nav.js' ), array(), self::$version, true );
+		wp_add_inline_script(
+			'wpessential-kit-swipe-nav',
+			'window.wpeSwipeL10n=' . wp_json_encode(
+				array(
+					'Previous'   => esc_attr__( 'Previous', 'wpessential' ),
+					'Next'       => esc_attr__( 'Next', 'wpessential' ),
+					'Go to item' => esc_attr__( 'Go to item', 'wpessential' ),
+				)
+			) . ';',
+			'before'
+		);
 		wp_register_style( 'wpessential-kit-common', self::url( 'kit/common.css' ), array(), self::$version );
 		// Elementor-only elements need their front-end assets too; blocks register theirs below.
 		foreach ( self::enabled_defs( 'elementor' ) as $name => $def ) {
@@ -591,6 +603,10 @@ class Kit {
 		}
 		if ( ! empty( $a['parallaxEnabled'] ) || ( ! empty( $a['stickyEnabled'] ) && ! empty( $a['stickyStopId'] ) ) ) {
 			wp_enqueue_script( 'wpessential-kit-motion-layout' );
+		}
+		$swipe = $a['swipe'] ?? '';
+		if ( is_array( $swipe ) ? array_filter( $swipe, static fn( $v ) => is_string( $v ) && '' !== $v && 'off' !== $v ) : ( '' !== $swipe && 'off' !== $swipe ) ) {
+			wp_enqueue_script( 'wpessential-kit-swipe-nav' );
 		}
 		// The block "HTML anchor" becomes the element id so in-page links (#anchor) and tabs can target it.
 		$anchor = sanitize_html_class( (string) ( $attributes['anchor'] ?? '' ) );
