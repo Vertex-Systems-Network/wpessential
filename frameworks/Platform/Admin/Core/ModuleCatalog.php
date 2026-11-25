@@ -122,6 +122,7 @@ final class ModuleCatalog {
 			[ 'import-export', 'Import / Export', 'free', 'tools', 'import-export', 'download', true, 'wpessential-import-export', 'Portable export and import of definitions and content.' ],
 			[ 'reset', 'Reset Tools', 'free', 'tools', 'reset', 'refresh', true, 'wpessential-reset', 'Guarded, previewable reset of selected site data.' ],
 			[ 'rest-api', 'REST API Control', 'free', 'tools', 'rest-api', 'code', true, 'wpessential-rest-api', 'REST route exposure, authentication and rate limits.' ],
+			[ 'coming-soon', 'Coming Soon & Maintenance', 'free', 'tools', 'coming-soon', 'clock', true, 'wpessential-coming-soon', 'Show visitors a coming soon or maintenance page; staff keep the real site.' ],
 			[ 'backup', 'Backup', 'pro', 'tools', 'backup', 'shield', false, null, 'Scheduled backups with remote destinations and verified restore.' ],
 			[ 'media', 'Media Manager', 'pro', 'tools', 'media', 'image', false, null, 'Folders, optimisation, replacement and usage tracking.' ],
 			[ 'protector', 'Site Protector', 'pro', 'tools', 'protector', 'shield', false, null, 'Login hardening, firewall rules and security monitoring.' ],

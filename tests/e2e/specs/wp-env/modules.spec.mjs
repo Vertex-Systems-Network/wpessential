@@ -5,7 +5,7 @@ const MODULES = [
   'custom-post-types', 'taxonomies', 'custom-fields', 'relations', 'custom-tables', 'status', 'query',
   'admin-columns', 'admin-menu', 'dashboard-widgets', 'settings', 'roles', 'profiles', 'membership',
   'dashboard', 'listings', 'site-kit', 'builder-widgets', 'pro-elements', 'forms-workflows',
-  'notifications', 'emails', 'chat', 'cron', 'import-export', 'reset', 'rest-api', 'backup', 'media',
+  'notifications', 'emails', 'chat', 'cron', 'import-export', 'reset', 'rest-api', 'coming-soon', 'backup', 'media',
   'protector', 'connections', 'ai-connect',
 ];
 

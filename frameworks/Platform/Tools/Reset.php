@@ -22,6 +22,8 @@ final class Reset {
 	/** WPEssential options restored to defaults by the "settings" part. */
 	public const SETTINGS = [
 		'wpessential_module_toggles',
+		'wpessential_module_optins',
+		'wpessential_coming_soon',
 		'wpessential_elements_state',
 		'wpessential_ai_connect',
 	];

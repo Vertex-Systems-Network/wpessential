@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "surface_id": 50,
+  "surface_key": "coming-soon",
+  "status": "UX_CONTRACT_COMPLETE",
+  "feature_groups": [
+    {
+      "id": "coming-soon",
+      "label": "Coming soon page",
+      "options": [
+        {
+          "id": "coming-soon.mode",
+          "label": "Mode: coming soon or maintenance (503)",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "choice"
+          }
+        },
+        {
+          "id": "coming-soon.template",
+          "label": "Page shown: WPEssential template or own page/post",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "choice"
+          }
+        },
+        {
+          "id": "coming-soon.page",
+          "label": "Own page, post or listing item",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "select"
+          }
+        },
+        {
+          "id": "coming-soon.heading",
+          "label": "Template heading",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "text"
+          }
+        },
+        {
+          "id": "coming-soon.message",
+          "label": "Template message",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "text"
+          }
+        },
+        {
+          "id": "coming-soon.staff-bypass",
+          "label": "Staff who can edit posts see the real site",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "policy"
+          }
+        },
+        {
+          "id": "coming-soon.admin-alert",
+          "label": "Admin bar alert while on",
+          "kind": "wpe_option",
+          "parity_status": "PARITY",
+          "ui": {
+            "group": "Coming soon page",
+            "tier": "Essential",
+            "control": "policy"
+          }
+        }
+      ]
+    }
+  ],
+  "coverage_summary": {
+    "atomic_options": 7,
+    "parity": 7,
+    "exceeds": 0,
+    "deferred": 0,
+    "rejected_unsafe": 0,
+    "missing": 0,
+    "unclassified": 0
+  }
+}

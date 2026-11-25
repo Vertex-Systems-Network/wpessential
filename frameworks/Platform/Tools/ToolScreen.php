@@ -30,11 +30,13 @@ final class ToolScreen implements AdminScreen {
 	public const IMPORT_EXPORT = 'import-export';
 	public const RESET         = 'reset';
 	public const REST_API      = 'rest-api';
+	public const COMING_SOON   = 'coming-soon';
 
 	public const SLUGS = [
 		self::IMPORT_EXPORT => 'wpessential-import-export',
 		self::RESET         => 'wpessential-reset',
 		self::REST_API      => 'wpessential-rest-api',
+		self::COMING_SOON   => ComingSoon::SLUG,
 	];
 
 	private const RESULT         = 'wpessential_tool_result_';
@@ -61,6 +63,7 @@ final class ToolScreen implements AdminScreen {
 		return match ( $this->module ) {
 			self::IMPORT_EXPORT => __( 'Import / Export', 'wpessential' ),
 			self::RESET         => __( 'Reset Tools', 'wpessential' ),
+			self::COMING_SOON   => __( 'Coming Soon & Maintenance', 'wpessential' ),
 			default             => __( 'REST API Control', 'wpessential' ),
 		};
 	}
@@ -80,7 +83,8 @@ final class ToolScreen implements AdminScreen {
 			wp_die( esc_html__( 'You are not allowed to manage WPEssential.', 'wpessential' ), 'WPEssential', [ 'response' => 403 ] );
 		}
 		check_admin_referer( $this->action() );
-		if ( ! ( $this->moduleOn )( $this->module ) ) {
+		// Coming soon is set up while off, so switching it on shows the finished page.
+		if ( $this->module !== self::COMING_SOON && ! ( $this->moduleOn )( $this->module ) ) {
 			$this->back( 'off' );
 		}
 		$op = isset( $_POST['op'] ) ? sanitize_key( wp_unslash( (string) $_POST['op'] ) ) : '';
@@ -88,6 +92,7 @@ final class ToolScreen implements AdminScreen {
 		match ( $this->module ) {
 			self::IMPORT_EXPORT => $this->handleImportExport( $op ),
 			self::RESET         => $this->handleReset(),
+			self::COMING_SOON   => $this->handleComingSoon(),
 			default             => $this->handleRest(),
 		};
 	}
@@ -274,6 +279,121 @@ final class ToolScreen implements AdminScreen {
 		$this->back( 'saved' );
 	}
 
+	private function handleComingSoon(): void {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in handle().
+		$settings = ComingSoon::normalize(
+			[
+				'mode'     => isset( $_POST['mode'] ) ? sanitize_key( wp_unslash( (string) $_POST['mode'] ) ) : '',
+				'template' => isset( $_POST['template'] ) ? sanitize_key( wp_unslash( (string) $_POST['template'] ) ) : '',
+				'page_id'  => isset( $_POST['page_id'] ) ? absint( $_POST['page_id'] ) : 0,
+				'heading'  => isset( $_POST['heading'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['heading'] ) ) : '',
+				'message'  => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( (string) $_POST['message'] ) ) : '',
+			]
+		);
+		// phpcs:enable
+		update_option( ComingSoon::OPTION, $settings, false );
+		$this->back( 'saved' );
+	}
+
+	/** Published pages, posts and listing post types visitors can be sent to, grouped by type. */
+	private static function pageOptions( int $selected ): string {
+		$html  = '<option value="0">' . esc_html__( 'Choose a page or post', 'wpessential' ) . '</option>';
+		$types = get_post_types(
+			[
+				'public'  => true,
+				'show_ui' => true,
+			],
+			'objects'
+		);
+		foreach ( $types as $type ) {
+			if ( $type->name === 'attachment' ) {
+				continue;
+			}
+			$posts = get_posts(
+				[
+					'post_type'        => $type->name,
+					'post_status'      => 'publish',
+					'numberposts'      => 200,
+					'orderby'          => 'title',
+					'order'            => 'ASC',
+					'suppress_filters' => false,
+				]
+			);
+			if ( $posts === [] ) {
+				continue;
+			}
+			$html .= '<optgroup label="' . esc_attr( (string) $type->labels->name ) . '">';
+			foreach ( $posts as $post ) {
+				$title = get_the_title( $post );
+				$html .= '<option value="' . esc_attr( (string) $post->ID ) . '"' . selected( $selected, $post->ID, false ) . '>' . esc_html( $title !== '' ? $title : '#' . $post->ID ) . '</option>';
+			}
+			$html .= '</optgroup>';
+		}
+
+		return $html;
+	}
+
+	private function renderComingSoon(): string {
+		$settings = ComingSoon::settings();
+		$on       = ( $this->moduleOn )( $this->module );
+		$radio    = static function ( string $name, array $choices, string $current ): string {
+			$html = '';
+			foreach ( $choices as $value => $label ) {
+				$html .= '<label class="wpe-ui-check"><input type="radio" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . checked( $current, $value, false ) . '> <span>' . esc_html( (string) $label ) . '</span></label>';
+			}
+
+			return '<div class="wpe-ui-stack" role="radiogroup">' . $html . '</div>';
+		};
+		$status   = $on
+			? Notice::render( 'warning', __( 'Coming soon is ON: visitors see this page now. Switch the module off under WPEssential → Modules when the site is ready.', 'wpessential' ) )
+			: Notice::render( 'info', __( 'Coming soon is off: visitors see the normal site. Set it up here, then switch the module on under WPEssential → Modules.', 'wpessential' ) )
+				. '<p>' . Button::link( __( 'Open Modules', 'wpessential' ), AdminUrl::page( Shell::MODULES_SLUG ), 'secondary' ) . '</p>';
+		$rows     = [
+			OptionGroup::row(
+				__( 'Mode', 'wpessential' ),
+				__( 'Maintenance answers "503 Service unavailable" so search engines keep your rankings. Coming soon is for a site that is not launched yet.', 'wpessential' ),
+				$radio(
+					'mode',
+					[
+						'coming_soon' => __( 'Coming soon', 'wpessential' ),
+						'maintenance' => __( 'Maintenance', 'wpessential' ),
+					],
+					$settings['mode']
+				)
+			),
+			OptionGroup::row(
+				__( 'Page shown', 'wpessential' ),
+				__( 'Use the WPEssential template, or send visitors to a page, post or listing item you built yourself.', 'wpessential' ),
+				$radio(
+					'template',
+					[
+						'default' => __( 'WPEssential template', 'wpessential' ),
+						'custom'  => __( 'My own page or post', 'wpessential' ),
+					],
+					$settings['template']
+				)
+			),
+			OptionGroup::row( __( 'Your page or post', 'wpessential' ), __( 'Used when "My own page or post" is chosen. Only published items are listed.', 'wpessential' ), '<select name="page_id" id="wpe-cs-page" aria-label="' . esc_attr__( 'Your page or post', 'wpessential' ) . '">' . self::pageOptions( $settings['page_id'] ) . '</select>' ),
+			OptionGroup::row(
+				__( 'Heading', 'wpessential' ),
+				__( 'Template only. Leave empty for the default text.', 'wpessential' ),
+				Field::input(
+					'wpe-cs-heading',
+					__( 'Heading', 'wpessential' ),
+					[
+						'type'  => 'text',
+						'name'  => 'heading',
+						'value' => $settings['heading'],
+					]
+				)
+			),
+			OptionGroup::row( __( 'Message', 'wpessential' ), __( 'Template only. Leave empty for the default text.', 'wpessential' ), '<textarea name="message" rows="3" class="large-text" aria-label="' . esc_attr__( 'Message', 'wpessential' ) . '">' . esc_textarea( $settings['message'] ) . '</textarea>' ),
+			OptionGroup::row( __( 'Save', 'wpessential' ), '', self::submit( __( 'Save changes', 'wpessential' ) ) . ' ' . Button::link( __( 'Preview template', 'wpessential' ), add_query_arg( 'wpe-coming-soon-preview', '1', home_url( '/' ) ), 'ghost', false, true ) ),
+		];
+
+		return $status . $this->form( 'save', OptionGroup::render( 'wpe-tool-coming-soon', __( 'Coming soon page', 'wpessential' ), '', '', $rows ) );
+	}
+
 	private function back( string $notice ): never {
 		wp_safe_redirect( AdminUrl::page( $this->slug(), $notice !== '' ? [ 'wpe-notice' => $notice ] : [] ) );
 		exit;
@@ -296,7 +416,7 @@ final class ToolScreen implements AdminScreen {
 		$notice = isset( $_GET['wpe-notice'] ) ? sanitize_key( wp_unslash( (string) $_GET['wpe-notice'] ) ) : '';
 		$html   = PageHeader::render( $this->title(), __( 'Site tools', 'wpessential' ), $this->intro() );
 
-		if ( ! ( $this->moduleOn )( $this->module ) ) {
+		if ( $this->module !== self::COMING_SOON && ! ( $this->moduleOn )( $this->module ) ) {
 			$html .= Notice::render( 'info', __( 'This module is switched off. Turn it on under WPEssential → Modules.', 'wpessential' ) )
 				. '<p>' . Button::link( __( 'Open Modules', 'wpessential' ), AdminUrl::page( Shell::MODULES_SLUG ), 'secondary' ) . '</p>';
 			Screen::render( $this->slug(), $html );
@@ -306,6 +426,7 @@ final class ToolScreen implements AdminScreen {
 		$html .= match ( $this->module ) {
 			self::IMPORT_EXPORT => $this->renderImportExport(),
 			self::RESET         => $this->renderReset(),
+			self::COMING_SOON   => $this->renderComingSoon(),
 			default             => $this->renderRest(),
 		};
 
@@ -330,6 +451,7 @@ final class ToolScreen implements AdminScreen {
 		return match ( $this->module ) {
 			self::IMPORT_EXPORT => __( 'Move your post types, taxonomies and WPEssential settings between sites as one JSON file.', 'wpessential' ),
 			self::RESET         => __( 'Start over safely. Only WPEssential data is touched, and you see what will go first.', 'wpessential' ),
+			self::COMING_SOON   => __( 'Show visitors a coming soon or maintenance page while you work. Signed-in staff keep seeing the real site.', 'wpessential' ),
 			default             => __( 'Choose what the REST API shows to visitors who are not signed in.', 'wpessential' ),
 		};
 	}
