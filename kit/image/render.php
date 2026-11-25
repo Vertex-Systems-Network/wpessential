@@ -62,6 +62,10 @@ $wpe_class = array( 'wpe-image', 'wpe-image--' . sanitize_key( $a['hover'] ) );
 if ( $wpe_dark ) {
 	$wpe_class[] = 'has-dark';
 }
+// Only a chosen ratio overrides the image's own width/height ratio (lazy images need it for their placeholder size).
+if ( array_filter( (array) $a['ratio'], static fn( $v ) => is_string( $v ) && '' !== $v && 'auto' !== $v ) ) {
+	$wpe_class[] = 'has-ratio';
+}
 $wpe_caption = '';
 if ( 'attachment' === $a['captionSource'] && ! empty( $a['image']['id'] ) ) {
 	$wpe_caption = trim( (string) wp_get_attachment_caption( (int) $a['image']['id'] ) );
