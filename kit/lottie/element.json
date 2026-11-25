@@ -1,0 +1,60 @@
+{
+	"name": "lottie",
+	"title": "Lottie Animation (WPEssential)",
+	"category": "media",
+	"description": "Lightweight vector animation from a Lottie JSON file; plays on load, on hover or when scrolled into view.",
+	"icon": "controls-play",
+	"elementor_icon": "eicon-lottie",
+	"keywords": [
+		"lottie",
+		"animation",
+		"bodymovin",
+		"json"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"url": {
+			"type": "url",
+			"label": "Lottie JSON URL",
+			"default": "",
+			"panel": "content"
+		},
+		"label": {
+			"type": "text",
+			"label": "Accessible description",
+			"default": "",
+			"panel": "content"
+		},
+		"trigger": {
+			"type": "select",
+			"label": "Play",
+			"default": "view",
+			"options": {
+				"view": "When in view",
+				"load": "On load",
+				"hover": "On hover"
+			},
+			"panel": "content"
+		},
+		"loop": {
+			"type": "toggle",
+			"label": "Loop",
+			"default": true,
+			"panel": "content"
+		},
+		"width": {
+			"type": "range",
+			"label": "Max width (px)",
+			"default": 400,
+			"min": 40,
+			"max": 1200,
+			"step": 10,
+			"unit": "px",
+			"panel": "style",
+			"css": "--wpek-lt-width"
+		}
+	}
+}

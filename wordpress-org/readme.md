@@ -56,6 +56,10 @@ The builders and core screens work locally and need no account or licence. Only 
 
 Custom fields, relationships between posts, admin columns and more are in the separate **WPEssential Pro** add-on, sold and delivered from [wpessential.org](https://wpessential.org/pricing/). The free plugin never downloads or installs Pro.
 
+### Third-party libraries
+
+The Lottie element bundles [lottie-web](https://github.com/airbnb/lottie-web) 5.12.2 (MIT), light build. Unminified source: https://github.com/airbnb/lottie-web/tree/v5.12.2/player
+
 ## External services
 
 The free plugin talks to the WPEssential service at wpessential.org only in these cases:
