@@ -72,6 +72,22 @@
 			"panel": "style",
 			"css": "--wpek-dl-cols",
 			"unit": ""
+		},
+		"swipe": {
+			"type": "select",
+			"panel": "style",
+			"label": "Swipe layout",
+			"default": "",
+			"options": {
+				"": "Inherit",
+				"off": "Grid",
+				"carousel": "Carousel",
+				"slider": "Slider (one per view)",
+				"cards": "Swipe cards",
+				"stack": "Card stack"
+			},
+			"responsive": true,
+			"css": "--wpek-sw"
 		}
 	}
 }
