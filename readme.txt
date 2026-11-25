@@ -4,7 +4,7 @@ Tags: custom post types, custom taxonomy, cpt, post types, taxonomy
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 3.2.0
+Stable tag: 3.3.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -142,6 +142,17 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 == Changelog ==
 
+= 3.3.0 =
+
+* New: Coming Soon & Maintenance module (free, off by default). Visitors see a ready-made template or a page, post or listing item you choose; signed-in staff see the real site with an admin bar alert. Maintenance mode answers 503.
+* New: Demo import wizard: builder, plugins, content choices, progress and done steps in one guided window.
+* New: Demo Library shows an Active badge on the installed demo, a filter sidebar with search and categories, and a top bar with type and builder filters, counts and A–Z / Z–A sorting.
+* New: importing over an installed demo asks for consent and explains what is removed and restored.
+* New: the theme's default demo can import on theme activation.
+* Fixed: import progress messages were blank.
+* Fixed: a Pro demo without an activated licence key now stops before anything is changed, and the previous demo is only removed after the new one has downloaded.
+* Fixed: the WPForms setup wizard no longer takes over the admin after a demo import.
+
 = 3.2.0 =
 
 * New: 17 elements for Gutenberg and Elementor: Breadcrumbs, Steps, Marquee, Back to Top, Social Share, Content Switcher, Comparison Table, Login / Register, Notification Bar, Cookie Notice, Animated Headline, Hotspots, Post Meta, Post Navigation, Author Box, Related Posts and Table of Contents.
@@ -187,6 +198,10 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 * New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
 == Upgrade Notice ==
+
+= 3.3.0 =
+
+New Coming Soon & Maintenance module, a guided demo import wizard and safer demo replacement. Recommended for every site.
 
 = 3.2.0 =
 
