@@ -3,7 +3,7 @@
  * Plugin Name: WPEssential
  * Plugin URI: https://wpessential.org/plugins/wpessential
  * Description: Create custom post types and taxonomies without code. Visual builder for labels, permalinks, REST API, archives, block templates and more.
- * Version: 3.2.1
+ * Version: 3.3.1
  * Requires at least: 6.9
  * Requires PHP: 8.2
  * Author: WPEssential
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'WPE_VERSION' ) ) {
-	define( 'WPE_VERSION', '3.2.1' );
+	define( 'WPE_VERSION', '3.3.1' );
 }
 
 if ( ! defined( 'WPE_PLATFORM_API_VERSION' ) ) {
