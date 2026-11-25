@@ -1,0 +1,44 @@
+{
+	"name": "account-dashboard",
+	"title": "Account Dashboard (WPEssential)",
+	"category": "site",
+	"description": "Greeting, avatar and quick links for the signed-in visitor (WooCommerce account pages when active, else profile and posts); a sign-in link for guests.",
+	"icon": "admin-users",
+	"elementor_icon": "eicon-person",
+	"keywords": [
+		"account",
+		"dashboard",
+		"profile",
+		"my account",
+		"user"
+	],
+	"panels": {
+		"content": "Content",
+		"style": "Style"
+	},
+	"attributes": {
+		"greeting": {
+			"type": "text",
+			"label": "Greeting",
+			"default": "Hello, %s",
+			"panel": "content"
+		},
+		"guest": {
+			"type": "text",
+			"label": "Guest text",
+			"default": "Sign in to see your account.",
+			"panel": "content"
+		},
+		"columns": {
+			"type": "range",
+			"label": "Link columns",
+			"default": 3,
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"panel": "style",
+			"css": "--wpek-ad-cols",
+			"unit": ""
+		}
+	}
+}
