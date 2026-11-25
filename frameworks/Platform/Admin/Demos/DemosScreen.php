@@ -163,6 +163,11 @@ final class DemosScreen implements AdminScreen {
 				'premium'    => __( 'Premium', 'wpessential' ),
 				'builder'    => __( 'Builder', 'wpessential' ),
 				'reset'      => __( 'Clear filters', 'wpessential' ),
+				'allTypes'   => __( 'All types', 'wpessential' ),
+				'allBuilders' => __( 'All builders', 'wpessential' ),
+				'sort'       => __( 'Sort', 'wpessential' ),
+				'sortAsc'    => __( 'Name A–Z', 'wpessential' ),
+				'sortDesc'   => __( 'Name Z–A', 'wpessential' ),
 				/* translators: %d: number of demos. */
 				'showing'    => __( '%d demos', 'wpessential' ),
 				'noMatch'    => __( 'No demos match these filters.', 'wpessential' ),
@@ -260,6 +265,7 @@ final class DemosScreen implements AdminScreen {
 				'back'           => __( 'Back', 'wpessential' ),
 				'next'           => __( 'Continue', 'wpessential' ),
 				'startImport'    => __( 'Start import', 'wpessential' ),
+				'loading'        => __( 'Loading…', 'wpessential' ),
 				'safe'           => __( 'Safe import: every change can be undone.', 'wpessential' ),
 			],
 		];

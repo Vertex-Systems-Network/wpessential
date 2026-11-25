@@ -45,7 +45,10 @@ final class ModuleCatalogTest extends TestCase
             self::assertSame($id, $module['id']);
             self::assertArrayHasKey($module['category'], $categories);
             self::assertContains($module['edition'], ['free', 'pro']);
-            self::assertFileExists($root . '/config/product/option-contracts/' . $module['contract'] . '.json');
+            // Site tools outside the 56-surface parity registry ship without an option contract.
+            if ($module['contract'] !== '') {
+                self::assertFileExists($root . '/config/product/option-contracts/' . $module['contract'] . '.json');
+            }
         }
 
         self::assertNull(ModuleCatalog::find('unknown-module'));

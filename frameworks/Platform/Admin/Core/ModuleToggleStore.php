@@ -12,11 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Persists the owner's on/off choice per module.
  *
  * Only switched-off module ids are stored, so every module is on by default and new modules
- * appear switched on. Edition and entitlement gates are applied separately.
+ * appear switched on. Modules in OFF_BY_DEFAULT change the site for visitors, so they start off and
+ * store an opt-in instead. Edition and entitlement gates are applied separately.
  */
 final class ModuleToggleStore {
 
 	public const OPTION = 'wpessential_module_toggles';
+
+	public const OPTIN_OPTION = 'wpessential_module_optins';
+
+	public const OFF_BY_DEFAULT = [ 'coming-soon' ];
 
 	private const ID_PATTERN = '/^[a-z0-9][a-z0-9-]*$/';
 
@@ -24,11 +29,28 @@ final class ModuleToggleStore {
 	private ?array $disabled = null;
 
 	public function isEnabled( string $moduleId ): bool {
+		if ( in_array( $moduleId, self::OFF_BY_DEFAULT, true ) ) {
+			$optins = function_exists( 'get_option' ) ? get_option( self::OPTIN_OPTION, [] ) : [];
+			return is_array( $optins ) && in_array( $moduleId, $optins, true );
+		}
+
 		return ! isset( $this->disabled()[ $moduleId ] );
 	}
 
 	public function set( string $moduleId, bool $enabled ): void {
 		if ( preg_match( self::ID_PATTERN, $moduleId ) !== 1 ) {
+			return;
+		}
+
+		if ( in_array( $moduleId, self::OFF_BY_DEFAULT, true ) ) {
+			$optins = function_exists( 'get_option' ) ? get_option( self::OPTIN_OPTION, [] ) : [];
+			$optins = array_values( array_diff( is_array( $optins ) ? $optins : [], [ $moduleId ] ) );
+			if ( $enabled ) {
+				$optins[] = $moduleId;
+			}
+			if ( function_exists( 'update_option' ) ) {
+				update_option( self::OPTIN_OPTION, $optins, false );
+			}
 			return;
 		}
 

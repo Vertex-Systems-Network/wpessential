@@ -307,7 +307,17 @@ export function ImportWizard( {
 							<>
 								<p className="wpe-ui-muted">{ text.pluginsText }</p>
 								{ plugins === null ? (
-									<p className="wpe-ui-muted">{ text.starting }</p>
+									<ul className="wpe-ui-demowiz__list" aria-busy="true" aria-label={ text.loading }>
+										{ [ 0, 1 ].map( ( i ) => (
+											<li key={ i }>
+												<span className="wpe-ui-demowiz__icon wpe-ui-skel" aria-hidden="true" />
+												<span className="wpe-ui-demowiz__name">
+													<span className="wpe-ui-skel wpe-ui-skel--w60" />
+													<span className="wpe-ui-skel wpe-ui-skel--w40" />
+												</span>
+											</li>
+										) ) }
+									</ul>
 								) : plugins.length === 0 ? (
 									<p className="wpe-ui-muted">{ text.noPlugins }</p>
 								) : (
@@ -371,8 +381,9 @@ export function ImportWizard( {
 							) }
 							<button
 								type="button"
-								className={ buttonClass( 'primary' ) }
-								disabled={ step === 2 && imported !== null && ! consent }
+								className={ `${ buttonClass( 'primary' ) }${ step === 1 && plugins === null ? ' is-loading' : '' }` }
+								disabled={ ( step === 1 && plugins === null ) || ( step === 2 && imported !== null && ! consent ) }
+								aria-busy={ step === 1 && plugins === null }
 								onClick={ () => setStep( step + 1 ) }
 							>
 								{ step === 2 ? text.startImport : text.next } →

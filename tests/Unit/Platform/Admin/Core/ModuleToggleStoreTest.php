@@ -23,6 +23,15 @@ final class ModuleToggleStoreTest extends TestCase
         self::assertTrue($store->isEnabled('relations'));
     }
 
+    public function testVisitorFacingModulesStartSwitchedOff(): void
+    {
+        $store = new ModuleToggleStore();
+
+        foreach (ModuleToggleStore::OFF_BY_DEFAULT as $id) {
+            self::assertFalse($store->isEnabled($id), $id);
+        }
+    }
+
     public function testInvalidModuleIdsAreIgnored(): void
     {
         $store = new ModuleToggleStore();

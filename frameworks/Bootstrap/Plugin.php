@@ -71,6 +71,7 @@ use WPEssential\Platform\Demos\Import\Importer;
 use WPEssential\Platform\Tools\ImportExport;
 use WPEssential\Platform\Tools\Reset;
 use WPEssential\Platform\Tools\RestAuth;
+use WPEssential\Platform\Tools\ComingSoon;
 use WPEssential\Platform\Tools\RestControl;
 use WPEssential\Platform\Tools\ToolScreen;
 use WPEssential\Platform\Cache\RequestLocalCache;
@@ -242,6 +243,7 @@ final class Plugin {
 			static fn (): int => (int) Importer::remove(),
 		);
 		( new RestControl( static fn (): bool => $moduleToggles->isEnabled( 'rest-api' ) ) )->register();
+		( new ComingSoon( static fn (): bool => $moduleToggles->isEnabled( 'coming-soon' ) ) )->register();
 		if ( function_exists( 'add_filter' ) ) {
 			// API keys and JWT: only while REST API Control is on and the switches are on.
 			( new RestAuth( static fn (): array => $moduleToggles->isEnabled( 'rest-api' ) ? RestControl::settings() : [] ) )->register();
@@ -260,6 +262,7 @@ final class Plugin {
 				new ToolScreen( ToolScreen::IMPORT_EXPORT, $importExport, $reset, $toolOn ),
 				new ToolScreen( ToolScreen::RESET, $importExport, $reset, $toolOn ),
 				new ToolScreen( ToolScreen::REST_API, $importExport, $reset, $toolOn ),
+				new ToolScreen( ToolScreen::COMING_SOON, $importExport, $reset, $toolOn ),
 			]
 		);
 		Shell::configure( $activationPolicy->allows( new ModuleManifest( id: 'premium-probe', name: 'Premium probe', version: '0.0.0', edition: 'pro' ) ) );
