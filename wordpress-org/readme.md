@@ -5,7 +5,7 @@
 **Requires at least:** 6.9\
 **Tested up to:** 7.1\
 **Requires PHP:** 8.2\
-**Stable tag:** 3.3.0\
+**Stable tag:** 3.3.1\
 **License:** GPLv3 or later\
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,12 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 
 ## Changelog
 
+### 3.3.1
+
+* Fixed: AI Connect is free again and every MCP client can connect (Claude, ChatGPT, Cursor, VS Code, Gemini, Windsurf). It needed Premium before, so the server stayed off on most sites.
+* New: AI Connect site and builder tools: site info, any REST route, list, read and save pages and posts, install plugins, WPForms forms, demo import, block templates and patterns, Elementor documents and Kit, global styles, WooCommerce products and pages, page render check. Tools that change the site work only while "Allow AI to change settings" is on.
+* Fixed: a switched-off AI Connect now tells the client why; tool results always follow the MCP format.
+
 ### 3.3.0
 
 * New: Coming Soon & Maintenance module (free, off by default). Visitors see a ready-made template or a page, post or listing item you choose; signed-in staff see the real site with an admin bar alert. Maintenance mode answers 503.
@@ -199,6 +205,10 @@ Read the [documentation](https://wpessential.org/docs/) or ask on the WordPress.
 - New: optional WPEssential account, Pro licence connection and AI Connect (off by default).
 
 ## Upgrade Notice
+
+### 3.3.1
+
+AI Connect works on every site again, with the full set of site and builder tools.
 
 ### 3.3.0
 
