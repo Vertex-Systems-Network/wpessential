@@ -86,11 +86,11 @@ final class Cleanup {
 				wp_cache_flush();
 				return $done;
 			case 'revisions':
-				return $this->eachPost( "post_type = 'revision'", static fn ( int $id ): bool => (bool) wp_delete_post_revision( $id ) );
+				return $this->eachPost( 'post_type', 'revision', static fn ( int $id ): bool => (bool) wp_delete_post_revision( $id ) );
 			case 'auto_drafts':
-				return $this->eachPost( "post_status = 'auto-draft'", static fn ( int $id ): bool => (bool) wp_delete_post( $id, true ) );
+				return $this->eachPost( 'post_status', 'auto-draft', static fn ( int $id ): bool => (bool) wp_delete_post( $id, true ) );
 			case 'trashed_posts':
-				return $this->eachPost( "post_status = 'trash'", static fn ( int $id ): bool => (bool) wp_delete_post( $id, true ) );
+				return $this->eachPost( 'post_status', 'trash', static fn ( int $id ): bool => (bool) wp_delete_post( $id, true ) );
 			case 'spam_comments':
 				$ids  = $wpdb->get_col( $wpdb->prepare( "SELECT comment_ID FROM {$wpdb->comments} WHERE comment_approved IN (%s, %s) LIMIT %d", 'spam', 'trash', self::BATCH ) );
 				$done = 0;
@@ -113,10 +113,11 @@ final class Cleanup {
 	}
 
 	/** @param callable(int): bool $delete */
-	private function eachPost( string $where, callable $delete ): int {
+	private function eachPost( string $column, string $value, callable $delete ): int {
+		$column = 'post_type' === $column ? 'post_type' : 'post_status';
 		global $wpdb;
 		// The WHERE clauses are fixed strings from run(), never user input.
-		$ids  = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE {$where} LIMIT %d", self::BATCH ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$ids  = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE {$column} = %s LIMIT %d", $value, self::BATCH ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$done = 0;
 		foreach ( $ids as $id ) {
 			$done += (int) $delete( (int) $id );
