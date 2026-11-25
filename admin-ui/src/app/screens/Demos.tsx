@@ -145,18 +145,18 @@ export function Demos( { data }: { data: ScreenData } ) {
 						<input type="search" value={ query } placeholder={ t.search } onChange={ ( e ) => setQuery( e.target.value ) } />
 					</label>
 					<div className="wpe-ui-demo-filter__group">
-						<h3>{ t.type }</h3>
+						<h2>{ t.type }</h2>
 						{ radios( 'wpe-demo-type', type, setType, [ [ '', t.all ?? '' ], [ 'free', t.free ?? '' ], [ 'pro', t.premium ?? '' ] ] ) }
 					</div>
 					{ builderNames.length > 1 ? (
 						<div className="wpe-ui-demo-filter__group">
-							<h3>{ t.builder }</h3>
+							<h2>{ t.builder }</h2>
 							{ radios( 'wpe-demo-builder', builder, setBuilder, [ [ '', t.all ?? '' ], ...builderNames.map( ( b ): [ string, string ] => [ b, b ] ) ] ) }
 						</div>
 					) : null }
 					{ niches.size > 0 ? (
 						<nav className="wpe-ui-demo-filter__group" aria-label={ t.categories }>
-							<h3>{ t.categories }</h3>
+							<h2>{ t.categories }</h2>
 							<ul>
 								{ tab( '', t.all ?? '', d.demos.length ) }
 								{ [ ...niches ].sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) ).map( ( [ key, count ] ) => tab( key, key.charAt( 0 ).toUpperCase() + key.slice( 1 ), count ) ) }
