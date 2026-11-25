@@ -163,9 +163,9 @@ final class AiConnectScreen implements AdminScreen {
 		Screen::render( Shell::AI_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '' );
 	}
 
-	/** AI Connect is a Premium module: locked without Premium, or switched off in Modules. */
+	/** AI Connect is free; this shows only while the module is switched off in Modules. */
 	private function unavailable(): string {
-		$locked = ! Shell::premiumAvailable();
+		$locked = false;
 		$html   = '<div class="wpe-ui-empty wpe-ui-empty--dashed"><span class="wpe-ui-icon wpe-ui-icon--lg">' . Icon::render( $locked ? 'lock' : 'spark', 26 ) . '</span>';
 		$html  .= '<h2>' . esc_html( $locked ? __( 'AI Connect is a Premium module', 'wpessential' ) : __( 'AI Connect is switched off', 'wpessential' ) ) . '</h2>';
 		$html  .= '<p>' . esc_html( $locked ? __( 'Activate a Premium subscription to connect AI assistants to WPEssential.', 'wpessential' ) : __( 'Switch the AI Connect module on to use the WPEssential MCP server. While it is off, no AI client can connect.', 'wpessential' ) ) . '</p>';
