@@ -11,6 +11,7 @@ interface Demo {
 	tagline: string;
 	niche: string[];
 	badgeHtml: Html;
+	type: string;
 	thumbnail: string;
 	preview: string;
 	builders: Array< { label: string; iconHtml: Html } >;
@@ -77,15 +78,39 @@ export function Demos( { data }: { data: ScreenData } ) {
 			setNotice( ( e as Error ).message );
 		}
 	};
-	const demos = d.demos.filter( ( demo ) => niche === '' || demo.niche.includes( niche ) );
+	const [ query, setQuery ] = useState( '' );
+	const [ type, setType ] = useState( '' );
+	const [ builder, setBuilder ] = useState( '' );
+	const q = query.trim().toLowerCase();
+	const demos = d.demos.filter(
+		( demo ) =>
+			( niche === '' || demo.niche.includes( niche ) ) &&
+			( type === '' || demo.type === type ) &&
+			( builder === '' || demo.builders.some( ( b ) => b.label === builder ) ) &&
+			( q === '' || `${ demo.title } ${ demo.tagline } ${ demo.niche.join( ' ' ) }`.toLowerCase().includes( q ) )
+	);
+	const builderNames = [ ...new Set( d.demos.flatMap( ( demo ) => demo.builders.map( ( b ) => b.label ) ) ) ];
+	const filtered = niche !== '' || type !== '' || builder !== '' || q !== '';
 	const tab = ( key: string, label: string, count: number ) => {
 		const active = key === niche;
 		return (
-			<Link className={ `wpe-ui-tab${ active ? ' is-active' : '' }` } to={ to( DEMOS, key === '' ? {} : { niche: key } ) } aria-current={ active ? 'page' : undefined } key={ key }>
-				{ label } <Count n={ count } />
-			</Link>
+			<li key={ key }>
+				<Link className={ `wpe-ui-demo-filter__item${ active ? ' is-active' : '' }` } to={ to( DEMOS, key === '' ? {} : { niche: key } ) } aria-current={ active ? 'page' : undefined }>
+					<span>{ label }</span> <Count n={ count } />
+				</Link>
+			</li>
 		);
 	};
+	const radios = ( name: string, value: string, set: ( v: string ) => void, options: Array< [ string, string ] > ) => (
+		<div className="wpe-ui-demo-filter__radios" role="radiogroup">
+			{ options.map( ( [ key, label ] ) => (
+				<label key={ key } className={ value === key ? 'is-active' : '' }>
+					<input type="radio" name={ name } checked={ value === key } onChange={ () => set( key ) } />
+					{ label }
+				</label>
+			) ) }
+		</div>
+	);
 
 	return (
 		<>
@@ -113,19 +138,44 @@ export function Demos( { data }: { data: ScreenData } ) {
 					</button>
 				</div>
 			) : null }
-			{ niches.size > 0 ? (
-				<div className="wpe-ui-toolbar">
-					<nav className="wpe-ui-tabs" aria-label={ t.categories }>
-						{ tab( '', t.all ?? '', d.demos.length ) }
-						{ [ ...niches ].map( ( [ key, count ] ) => tab( key, key.charAt( 0 ).toUpperCase() + key.slice( 1 ), count ) ) }
-					</nav>
-				</div>
-			) : null }
+			<div className="wpe-ui-demo-layout">
+				<aside className="wpe-ui-demo-filter" aria-label={ t.filters }>
+					<label className="wpe-ui-demo-filter__search">
+						<span className="screen-reader-text">{ t.search }</span>
+						<input type="search" value={ query } placeholder={ t.search } onChange={ ( e ) => setQuery( e.target.value ) } />
+					</label>
+					<div className="wpe-ui-demo-filter__group">
+						<h3>{ t.type }</h3>
+						{ radios( 'wpe-demo-type', type, setType, [ [ '', t.all ?? '' ], [ 'free', t.free ?? '' ], [ 'pro', t.premium ?? '' ] ] ) }
+					</div>
+					{ builderNames.length > 1 ? (
+						<div className="wpe-ui-demo-filter__group">
+							<h3>{ t.builder }</h3>
+							{ radios( 'wpe-demo-builder', builder, setBuilder, [ [ '', t.all ?? '' ], ...builderNames.map( ( b ): [ string, string ] => [ b, b ] ) ] ) }
+						</div>
+					) : null }
+					{ niches.size > 0 ? (
+						<nav className="wpe-ui-demo-filter__group" aria-label={ t.categories }>
+							<h3>{ t.categories }</h3>
+							<ul>
+								{ tab( '', t.all ?? '', d.demos.length ) }
+								{ [ ...niches ].sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) ).map( ( [ key, count ] ) => tab( key, key.charAt( 0 ).toUpperCase() + key.slice( 1 ), count ) ) }
+							</ul>
+						</nav>
+					) : null }
+					{ filtered ? (
+						<Link className={ buttonClass( 'ghost', true ) } to={ to( DEMOS, {} ) } onClick={ () => { setQuery( '' ); setType( '' ); setBuilder( '' ); } }>
+							{ t.reset }
+						</Link>
+					) : null }
+				</aside>
+				<div className="wpe-ui-demo-results">
+					<p className="wpe-ui-muted" aria-live="polite">{ ( t.showing ?? '%d' ).replace( '%d', String( demos.length ) ) }</p>
 			{ demos.length === 0 ? (
 				<div className="wpe-ui-empty wpe-ui-empty--dashed">
 					<Raw className="wpe-ui-icon wpe-ui-icon--lg" html={ d.gridIcon } />
-					<h2>{ t.emptyTitle }</h2>
-					<p>{ t.emptyText }</p>
+					<h2>{ filtered ? t.noMatch : t.emptyTitle }</h2>
+					{ filtered ? null : <p>{ t.emptyText }</p> }
 				</div>
 			) : (
 				<div className="wpe-ui-demo-grid">
@@ -181,6 +231,8 @@ export function Demos( { data }: { data: ScreenData } ) {
 					) ) }
 				</div>
 			) }
+				</div>
+			</div>
 		</>
 	);
 }

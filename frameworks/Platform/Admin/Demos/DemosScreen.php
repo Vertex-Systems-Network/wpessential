@@ -120,6 +120,7 @@ final class DemosScreen implements AdminScreen {
 				'tagline'   => $demo['tagline'],
 				'niche'     => $demo['niche'],
 				'badgeHtml' => Badge::edition( $demo['type'] === 'pro' ? 'pro' : 'free' ),
+				'type'      => $demo['type'] === 'pro' ? 'pro' : 'free',
 				'thumbnail' => $demo['thumbnail'],
 				'preview'   => $demo['preview'],
 				'builders'  => array_map(
@@ -155,6 +156,16 @@ final class DemosScreen implements AdminScreen {
 				'emptyTitle' => $data['offline'] ? __( 'The demo library is unreachable', 'wpessential' ) : __( 'No demos yet', 'wpessential' ),
 				'emptyText'  => $data['offline'] ? __( 'WPEssential could not reach wpessential.org. Check the connection and refresh the library.', 'wpessential' ) : __( 'New demos appear here as they are published on wpessential.org.', 'wpessential' ),
 				'newTab'     => __( '(opens in a new tab)', 'wpessential' ),
+				'filters'    => __( 'Demo filters', 'wpessential' ),
+				'search'     => __( 'Search demos…', 'wpessential' ),
+				'type'       => __( 'Type', 'wpessential' ),
+				'free'       => __( 'Free', 'wpessential' ),
+				'premium'    => __( 'Premium', 'wpessential' ),
+				'builder'    => __( 'Builder', 'wpessential' ),
+				'reset'      => __( 'Clear filters', 'wpessential' ),
+				/* translators: %d: number of demos. */
+				'showing'    => __( '%d demos', 'wpessential' ),
+				'noMatch'    => __( 'No demos match these filters.', 'wpessential' ),
 			],
 			'refreshHtml' => $refreshHtml,
 			'gridIcon'    => Icon::render( 'grid', 26 ),
@@ -178,7 +189,13 @@ final class DemosScreen implements AdminScreen {
 			] : null,
 			'autostart'   => ( static function () use ( $imported, $job ) {
 				$auto = get_option( \WPEssential\Platform\Demos\Import\Rest::AUTOSTART );
-				return is_array( $auto ) && ! empty( $auto['demo'] ) && ! $imported && ! ( is_array( $job ) && ! empty( $job['id'] ) && 'running' === ( $job['status'] ?? '' ) ) ? [ 'demo' => (string) $auto['demo'], 'builder' => (string) $auto['builder'] ] : null;
+				if ( ! is_array( $auto ) || empty( $auto['demo'] ) || $imported || ( is_array( $job ) && ! empty( $job['id'] ) && 'running' === ( $job['status'] ?? '' ) ) ) {
+					return null;
+				}
+				return [
+					'demo'    => (string) $auto['demo'],
+					'builder' => (string) $auto['builder'],
+				];
 			} )(),
 			'importText'  => [
 				'import'         => __( 'Import', 'wpessential' ),

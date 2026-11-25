@@ -948,3 +948,118 @@
 		padding: var(--wpe-space-3) var(--wpe-space-4);
 	}
 }
+
+// Demo Library: filter sidebar.
+.wpe-ui-demo-layout {
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr);
+	gap: var(--wpe-space-6);
+	align-items: start;
+
+	@media (max-width: 960px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.wpe-ui-demo-filter {
+	position: sticky;
+	top: 48px;
+	display: grid;
+	gap: var(--wpe-space-5);
+	padding: var(--wpe-space-5);
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-lg);
+	background: var(--wpe-card);
+
+	@media (max-width: 960px) {
+		position: static;
+	}
+
+	h3 {
+		margin: 0 0 var(--wpe-space-2);
+		color: var(--wpe-muted);
+		font-family: var(--wpe-font-mono);
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	ul {
+		display: grid;
+		gap: 2px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	li {
+		margin: 0;
+	}
+}
+
+.wpe-ui-demo-filter__search input {
+	width: 100%;
+	min-height: 40px;
+	padding: 0 var(--wpe-space-3);
+	border: 1px solid var(--wpe-line);
+	border-radius: var(--wpe-radius-sm);
+	background: var(--wpe-surface);
+	color: var(--wpe-text);
+}
+
+.wpe-ui-demo-filter__item {
+	display: flex;
+	justify-content: space-between;
+	padding: 6px var(--wpe-space-3);
+	border-radius: var(--wpe-radius-sm);
+	color: var(--wpe-text-2);
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--wpe-surface);
+		color: var(--wpe-text);
+	}
+
+	&.is-active {
+		background: var(--wpe-indigo-tint);
+		color: var(--wpe-indigo);
+		font-weight: 600;
+	}
+}
+
+.wpe-ui-demo-filter__radios {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wpe-space-2);
+
+	label {
+		padding: 4px 12px;
+		border: 1px solid var(--wpe-line);
+		border-radius: 999px;
+		cursor: pointer;
+
+		&.is-active {
+			border-color: var(--wpe-indigo);
+			background: var(--wpe-indigo-tint);
+			color: var(--wpe-indigo);
+			font-weight: 600;
+		}
+
+		&:focus-within {
+			outline: 2px solid var(--wpe-blue);
+			outline-offset: 1px;
+		}
+	}
+
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+}
+
+.wpe-ui-demo-results > p {
+	margin: 0 0 var(--wpe-space-3);
+}

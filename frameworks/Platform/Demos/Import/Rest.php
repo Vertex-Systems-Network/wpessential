@@ -28,7 +28,12 @@ class Rest {
 		add_action( 'after_switch_theme', array( __CLASS__, 'queue_default' ) );
 		add_action( 'admin_init', array( __CLASS__, 'open_default' ) );
 		// A demo set WPForms up already: keep its first-run setup wizard from taking over the admin.
-		add_filter( 'wpforms_setup_wizard_setup_wizard_is_disabled', static fn( $off ) => $off || (bool) Importer::imported() );
+		add_filter(
+			'wpforms_setup_wizard_setup_wizard_is_disabled',
+			static function ( $off ) {
+				return $off || (bool) Importer::imported();
+			}
+		);
 	}
 
 	const AUTOSTART = 'wpessential_core_autostart';
@@ -42,7 +47,12 @@ class Rest {
 		if ( '' === $demo || Importer::imported() || ( ! empty( $job['status'] ) && 'running' === $job['status'] ) ) {
 			return;
 		}
-		update_option( self::AUTOSTART, array( 'demo' => sanitize_key( $demo ), 'builder' => 'gutenberg', 'redirect' => true ), false );
+		$auto = array(
+			'demo'     => sanitize_key( $demo ),
+			'builder'  => 'gutenberg',
+			'redirect' => true,
+		);
+		update_option( self::AUTOSTART, $auto, false );
 	}
 
 	/**

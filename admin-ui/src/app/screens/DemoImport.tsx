@@ -9,7 +9,11 @@ export interface ImportRest {
 	nonce: string;
 }
 
-export type ImportText = Record< string, string >;
+type ImportKey =
+	| 'import' | 'importWith' | 'unlock' | 'importing' | 'starting' | 'progress' | 'done' | 'failed' | 'saved'
+	| 'viewSite' | 'close' | 'resume' | 'cancel' | 'interrupted' | 'installed' | 'remove' | 'removeConfirm'
+	| 'replaceConfirm' | 'doneNotice' | 'replaceTitle' | 'replaceAgree';
+export type ImportText = Record< ImportKey, string > & Record< string, string | undefined >;
 
 interface Step {
 	key: string;
