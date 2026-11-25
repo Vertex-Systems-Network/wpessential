@@ -102,6 +102,12 @@ class Importer {
 		if ( ! empty( $demo['locked'] ) ) {
 			return new \WP_Error( 'wpe_license', __( 'This is a Pro demo. Activate your license on the License tab to import it.', 'wpessential' ) );
 		}
+		if ( 'bundled' !== ( $demo['source'] ?? '' ) && 'licensed' === ( $demo['builders'][ $builder ]['package'] ?? '' ) ) {
+			$url = Demos::packageUrl( $demo['id'], $builder );
+			if ( is_wp_error( $url ) ) {
+				return new \WP_Error( 'wpe_license', __( 'Pro demos download from wpessential.org with an activated licence key. Activate your key on the License screen, then import again. Nothing on your site was changed.', 'wpessential' ) );
+			}
+		}
 
 		delete_option( Rest::AUTOSTART );
 		$skip = array_map( 'sanitize_key', (array) ( $options['skip'] ?? array() ) );
@@ -120,11 +126,11 @@ class Importer {
 
 		$options['skip'] = $skip;
 
-		$keys = array( 'preflight' );
+		// Package first: a licence or download failure must stop the import before the previous demo is removed.
+		$keys = array( 'preflight', 'package' );
 		if ( $options['reset'] && self::imported() ) {
 			$keys[] = 'cleanup';
 		}
-		$keys[] = 'package';
 		if ( $options['plugins'] ) {
 			$keys[] = 'plugins';
 		}
