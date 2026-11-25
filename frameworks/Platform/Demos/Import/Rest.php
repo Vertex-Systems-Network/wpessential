@@ -28,10 +28,15 @@ class Rest {
 		add_action( 'after_switch_theme', array( __CLASS__, 'queue_default' ) );
 		add_action( 'admin_init', array( __CLASS__, 'open_default' ) );
 		// A demo set WPForms up already: keep its first-run setup wizard from taking over the admin.
-		add_filter(
-			'wpforms_setup_wizard_setup_wizard_is_disabled',
-			static function ( $off ) {
-				return $off || (bool) Importer::imported();
+		add_action(
+			'init',
+			static function () {
+				add_filter(
+					'wpforms_setup_wizard_setup_wizard_is_disabled',
+					static function ( $off ) {
+						return $off || (bool) Importer::imported();
+					}
+				);
 			}
 		);
 	}
