@@ -608,7 +608,9 @@ class Kit {
 		if ( is_array( $swipe ) ? array_filter( $swipe, static fn( $v ) => is_string( $v ) && '' !== $v && 'off' !== $v ) : ( '' !== $swipe && 'off' !== $swipe ) ) {
 			wp_enqueue_script( 'wpessential-kit-swipe-nav' );
 		}
-		$id   = 'wpe-' . $name . '-' . substr( md5( wp_json_encode( $a ) . wp_rand() ), 0, 8 );
+		// The block "HTML anchor" becomes the element id so in-page links (#anchor) and tabs can target it.
+		$anchor = sanitize_html_class( (string) ( $attributes['anchor'] ?? '' ) );
+		$id     = '' !== $anchor ? $anchor : 'wpe-' . $name . '-' . substr( md5( wp_json_encode( $a ) . wp_rand() ), 0, 8 );
 		$css  = self::css( $def, $a, $id );
 		$html = self::template( $def['dir'] . '/render.php', $a, $id, $content );
 		return ( $css ? '<style>' . $css . '</style>' : '' ) . self::root_extras( $html, $id, $a );
