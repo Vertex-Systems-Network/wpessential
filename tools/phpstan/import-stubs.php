@@ -33,6 +33,15 @@ namespace {
 		/** @return list<int> */ public function get_children(): array { return array(); }
 		public function save(): int { return 0; }
 		public function get_id(): int { return 0; }
+		public function get_name(): string { return ''; }
+		public function get_slug(): string { return ''; }
+		public function get_status(): string { return ''; }
+		public function get_regular_price(): string { return ''; }
+		public function get_sale_price(): string { return ''; }
+		public function get_sku(): string { return ''; }
+		public function get_image_id(): int { return 0; }
+		/** @param mixed $v */ public function set_sku( $v ): void {}
+		/** @param mixed $v */ public function set_downloadable( $v ): void {}
 	}
 	class WC_Product_Simple extends WC_Product {}
 	class WC_Product_Grouped extends WC_Product {}
@@ -57,6 +66,11 @@ namespace {
 		/** @return array<int,array<string,mixed>> */ public static function get_zones(): array { return array(); }
 		/** @return object|false */ public static function get_shipping_method( int $id ) { return false; }
 	}
+	/** @param array<string,mixed> $args @return array<int,WC_Product> */
+	function wc_get_products( array $args ) { return array(); }
+	/** @param mixed $id @return WC_Product|false|null */
+	function wc_get_product( $id = false ) { return null; }
+	function wc_get_page_id( string $page ): int { return 0; }
 	function wc_attribute_taxonomy_name( string $name ): string { return ''; }
 	function wc_attribute_taxonomy_id_by_name( string $name ): int { return 0; }
 	/** @param array<string,mixed> $args @return int|\WP_Error */

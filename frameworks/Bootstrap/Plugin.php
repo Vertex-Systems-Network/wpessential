@@ -203,7 +203,8 @@ final class Plugin {
 		$siteProof = new SiteProof();
 		$siteProof->register();
 		$elements  = new ElementRegistry();
-		$aiConnect = new AiConnect( static fn (): bool => Shell::premiumAvailable() && $moduleToggles->isEnabled( 'ai-connect' ) );
+		// Free, as in the Hi WPEssential theme it replaces: every site can connect its own AI assistant.
+		$aiConnect = new AiConnect( static fn (): bool => $moduleToggles->isEnabled( 'ai-connect' ) );
 		ImportDemos::useLicense( $license, static fn (): bool => Shell::premiumAvailable() );
 		ImportRest::boot();
 		SiteTools::boot( $pluginUrl, defined( 'WPE_VERSION' ) ? (string) WPE_VERSION : '0' );

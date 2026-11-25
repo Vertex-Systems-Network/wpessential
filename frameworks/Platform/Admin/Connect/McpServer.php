@@ -15,7 +15,9 @@ use WP_REST_Response;
 use WPEssential\Contracts\AuditLoggerInterface;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Admin\Connect\Mcp\BuilderTools;
 use WPEssential\Platform\Admin\Connect\Mcp\SettingsAbilities;
+use WPEssential\Platform\Admin\Connect\Mcp\SiteTools;
 use WPEssential\Platform\Audit\AuditOutcome;
 use WPEssential\Platform\Audit\AuditRecord;
 use WPEssential\Platform\Auth\ExecutionChannel;
@@ -53,6 +55,7 @@ final class McpServer {
 		if ( function_exists( 'add_filter' ) ) {
 			// Connector links (Claude custom connectors, ChatGPT) sign in before REST runs.
 			add_filter( 'determine_current_user', [ $this->connect, 'authenticateLink' ], 30 );
+			BuilderTools::hooks();
 		}
 	}
 
@@ -75,8 +78,11 @@ final class McpServer {
 		);
 	}
 
-	public function permission(): bool {
-		if ( ! $this->connect->enabled() || ! current_user_can( 'manage_options' ) ) {
+	public function permission(): bool|\WP_Error {
+		if ( ! $this->connect->enabled() ) {
+			return new \WP_Error( 'wpe_mcp_off', 'The WPEssential MCP server is switched off. Turn it on under WPEssential → AI Connect.', [ 'status' => 403 ] );
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return false;
 		}
 		$link = AiConnect::linkSession();
@@ -123,7 +129,7 @@ final class McpServer {
 						'name'    => 'wpessential',
 						'version' => defined( 'WPE_VERSION' ) ? (string) WPE_VERSION : '0.0.0',
 					],
-					'instructions'    => 'Manage WPEssential on this WordPress site. Confirm changes with the user before calling a tool that changes settings.',
+					'instructions'    => ( function_exists( 'get_bloginfo' ) ? SiteTools::instructions() . ' ' : '' ) . 'Confirm changes with the user before calling a tool that changes the site.',
 				]
 			),
 			'ping'       => self::result( $id, [] ),
@@ -145,6 +151,14 @@ final class McpServer {
 				],
 			],
 		];
+		foreach ( $this->siteTools() as $tool ) {
+			$tools[] = [
+				'name'        => $tool['name'],
+				'description' => (string) $tool['description'],
+				'inputSchema' => $tool['inputSchema'],
+				'annotations' => [ 'readOnlyHint' => ! in_array( $tool['name'], SiteTools::WRITES, true ) && $tool['name'] !== 'wp_rest' ],
+			];
+		}
 		foreach ( $this->exposed() as $tool => $descriptor ) {
 			$schema  = $descriptor->inputSchema !== [] ? $descriptor->inputSchema : [
 				'type'       => 'object',
@@ -162,6 +176,56 @@ final class McpServer {
 		}
 
 		return $tools;
+	}
+
+	/**
+	 * Site and builder tools (ported from the Hi WPEssential theme); write tools only while writes are allowed.
+	 *
+	 * @return array<string,array<string,mixed>>
+	 */
+	private function siteTools(): array {
+		if ( ! function_exists( 'apply_filters' ) ) {
+			return [];
+		}
+		$writes = $this->connect->allowWrites();
+		$tools  = [];
+		foreach ( SiteTools::tools() as $name => $tool ) {
+			if ( $name === 'site_info' || ( ! $writes && in_array( $name, SiteTools::WRITES, true ) ) ) {
+				continue;
+			}
+			if ( ! $writes && $name === 'block_templates' ) {
+				$tool['description'] = 'Gutenberg site editor: list templates and template parts. Saving needs "Allow AI to change settings".';
+			}
+			$tools[ (string) $name ] = $tool;
+		}
+
+		return $tools;
+	}
+
+	/**
+	 * Runs a site or builder tool. Read-only mode refuses REST writes and template saves.
+	 *
+	 * @param array<string,mixed> $tool
+	 * @param array<string,mixed> $arguments
+	 * @return array<string,mixed>
+	 */
+	private function runSiteTool( mixed $id, array $tool, array $arguments ): array {
+		$writes = $this->connect->allowWrites();
+		$method = strtoupper( (string) ( $arguments['method'] ?? 'GET' ) );
+		if ( ! $writes && ( ( $tool['name'] === 'wp_rest' && $method !== 'GET' ) || ( $tool['name'] === 'block_templates' && ! empty( $arguments['content'] ) )
+			|| ( in_array( $tool['name'], [ 'elementor_kit', 'global_styles' ], true ) && ( ! empty( $arguments['settings'] ) || ! empty( $arguments['styles'] ) ) ) ) ) {
+			return self::result( $id, self::content( [ 'error' => 'Read-only: turn on "Allow AI to change settings" under WPEssential → AI Connect.' ], true ) );
+		}
+		try {
+			$data = call_user_func( $tool['run'], $arguments );
+		} catch ( Throwable $error ) {
+			return self::result( $id, self::content( [ 'error' => $error->getMessage() ], true ) );
+		}
+		if ( $data instanceof \WP_Error ) {
+			return self::result( $id, self::content( [ 'error' => $data->get_error_message() ], true ) );
+		}
+
+		return self::result( $id, self::content( $data ) );
 	}
 
 	/** @return array<string,AbilityDescriptor> MCP tool name => descriptor. */
@@ -183,7 +247,11 @@ final class McpServer {
 	 */
 	private function call( mixed $id, string $tool, array $arguments ): array {
 		if ( $tool === 'site_info' ) {
-			return self::result( $id, self::content( $this->siteInfo() ) );
+			return self::result( $id, self::content( function_exists( 'get_bloginfo' ) && function_exists( 'wp_get_theme' ) ? SiteTools::tool_site_info() + $this->siteInfo() : $this->siteInfo() ) );
+		}
+		$site = $this->siteTools()[ $tool ] ?? null;
+		if ( $site !== null ) {
+			return $this->runSiteTool( $id, $site, $arguments );
 		}
 		$descriptor = $this->exposed()[ $tool ] ?? null;
 		if ( $descriptor === null ) {
@@ -266,7 +334,8 @@ final class McpServer {
 					'text' => (string) json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ), // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- runs outside WordPress in tests.
 				],
 			],
-			'structuredContent' => is_array( $data ) ? $data : [ 'value' => $data ],
+			// MCP requires an object here; lists and scalars are wrapped.
+			'structuredContent' => is_array( $data ) && $data !== [] && ! array_is_list( $data ) ? $data : [ 'value' => $data ],
 			'isError'           => $isError,
 		];
 	}

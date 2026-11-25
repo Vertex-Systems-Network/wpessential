@@ -163,25 +163,22 @@ final class AiConnectScreen implements AdminScreen {
 		Screen::render( Shell::AI_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '' );
 	}
 
-	/** AI Connect is a Premium module: locked without Premium, or switched off in Modules. */
+	/** AI Connect is free; this shows only while the module is switched off in Modules. */
 	private function unavailable(): string {
-		$locked = ! Shell::premiumAvailable();
-		$html   = '<div class="wpe-ui-empty wpe-ui-empty--dashed"><span class="wpe-ui-icon wpe-ui-icon--lg">' . Icon::render( $locked ? 'lock' : 'spark', 26 ) . '</span>';
-		$html  .= '<h2>' . esc_html( $locked ? __( 'AI Connect is a Premium module', 'wpessential' ) : __( 'AI Connect is switched off', 'wpessential' ) ) . '</h2>';
-		$html  .= '<p>' . esc_html( $locked ? __( 'Activate a Premium subscription to connect AI assistants to WPEssential.', 'wpessential' ) : __( 'Switch the AI Connect module on to use the WPEssential MCP server. While it is off, no AI client can connect.', 'wpessential' ) ) . '</p>';
-		$html  .= $locked
-			? Button::link( __( 'Go Premium', 'wpessential' ), Shell::UPGRADE_URL, 'primary', false, true )
-			: Toggle::form(
-				CoreAdminController::TOGGLE_ACTION,
-				CoreAdminController::TOGGLE_ACTION,
-				false,
-				__( 'Turn AI Connect on or off', 'wpessential' ),
-				[
-					'module' => 'ai-connect',
-					'return' => Shell::AI_SLUG,
-					'reload' => '1',
-				]
-			);
+		$html  = '<div class="wpe-ui-empty wpe-ui-empty--dashed"><span class="wpe-ui-icon wpe-ui-icon--lg">' . Icon::render( 'spark', 26 ) . '</span>';
+		$html .= '<h2>' . esc_html__( 'AI Connect is switched off', 'wpessential' ) . '</h2>';
+		$html .= '<p>' . esc_html__( 'Switch the AI Connect module on to use the WPEssential MCP server. While it is off, no AI client can connect.', 'wpessential' ) . '</p>';
+		$html .= Toggle::form(
+			CoreAdminController::TOGGLE_ACTION,
+			CoreAdminController::TOGGLE_ACTION,
+			false,
+			__( 'Turn AI Connect on or off', 'wpessential' ),
+			[
+				'module' => 'ai-connect',
+				'return' => Shell::AI_SLUG,
+				'reload' => '1',
+			]
+		);
 
 		return $html . '</div>';
 	}

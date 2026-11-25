@@ -108,15 +108,15 @@ test('Elements lists the kit for Gutenberg and Elementor, Pro ones locked', asyn
   await expect(page.locator('#wpe-elements-elementor .wpe-ui-option').first()).toBeVisible();
 });
 
-test('AI Connect is a Premium module and stays locked without Premium', async ({ page }) => {
+test('AI Connect is free: its switches show without Premium', async ({ page }) => {
   await visitCore(page, 'wpessential-ai');
-  await expect(page.getByRole('heading', { name: 'AI Connect is a Premium module' })).toBeVisible();
-  await expect(page.getByRole('switch', { name: 'Turn AI Connect on or off' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Connect your AI assistant' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'AI Connect is a Premium module' })).toHaveCount(0);
   await expectNoAxeViolations(page);
 
   await visitCore(page, 'wpessential-modules');
   const card = page.locator('[data-wpe-module]').filter({ has: page.getByRole('heading', { name: 'AI Connect' }) });
-  await expect(card.getByRole('link', { name: 'Premium' })).toBeVisible();
+  await expect(card.getByRole('link', { name: 'Premium' })).toHaveCount(0);
 });
 
 test('dark mode is saved per user and every screen passes axe in dark', async ({ page }) => {
