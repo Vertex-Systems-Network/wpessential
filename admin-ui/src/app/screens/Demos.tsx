@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router';
 import type { Html, ScreenData } from '../data';
 import { DEMOS, to } from '../routes';
 import { Count, PageHeader, Raw, buttonClass } from '../ui';
-import { ImportPanel, importCall, type ImportRest, type ImportText } from './DemoImport';
+import { ImportWizard, importCall, type ImportRest, type ImportText } from './DemoImport';
 
 interface Demo {
 	id: string;
@@ -28,6 +28,7 @@ interface DemosData extends ScreenData {
 	upgradeUrl: string;
 	imported: { demo: string; title: string; builder: string } | null;
 	job: { demo: string; title: string; builder: string; status: string } | null;
+	autostart: { demo: string; builder: string } | null;
 }
 
 export function Demos( { data }: { data: ScreenData } ) {
@@ -42,16 +43,13 @@ export function Demos( { data }: { data: ScreenData } ) {
 		}
 	}
 	const it = d.importText;
-	const [ panel, setPanel ] = useState< { demo: string; builder: string; reset: boolean } | 'resume' | null >( null );
+	const [ panel, setPanel ] = useState< Demo | 'resume' | null >( () => ( d.autostart && ! d.imported && ! d.job ? d.demos.find( ( x ) => x.id === d.autostart?.demo && ! x.locked ) ?? null : null ) );
 	const [ imported, setImported ] = useState( d.imported );
 	const [ pending, setPending ] = useState( d.job );
 	const [ notice, setNotice ] = useState( '' );
-	const begin = ( demo: Demo, builder: string ) => {
-		if ( imported && ! window.confirm( it.replaceConfirm.replace( '%s', imported.title ) ) ) {
-			return;
-		}
+	const begin = ( demo: Demo ) => {
 		setNotice( '' );
-		setPanel( { demo: demo.id, builder, reset: imported !== null } );
+		setPanel( demo );
 	};
 	const finished = async ( done: boolean ) => {
 		setPanel( null );
@@ -98,8 +96,9 @@ export function Demos( { data }: { data: ScreenData } ) {
 				</div>
 			) : null }
 			{ panel !== null ? (
-				<ImportPanel rest={ d.rest } text={ it } start={ panel === 'resume' ? undefined : panel } resume={ panel === 'resume' } onClose={ finished } />
-			) : pending ? (
+				<ImportWizard rest={ d.rest } text={ it } demo={ panel === 'resume' ? null : panel } imported={ imported } resume={ panel === 'resume' } onClose={ finished } />
+			) : null }
+			{ pending && panel === null ? (
 				<div className="wpe-ui-notice wpe-ui-notice--warning">
 					<p>{ it.interrupted.replace( '%s', pending.title ) }</p>
 					<button type="button" className={ buttonClass( 'primary', true ) } onClick={ () => setPanel( 'resume' ) }>
@@ -131,7 +130,8 @@ export function Demos( { data }: { data: ScreenData } ) {
 			) : (
 				<div className="wpe-ui-demo-grid">
 					{ demos.map( ( demo ) => (
-						<article className="wpe-ui-demo" key={ demo.id }>
+						<article className={ `wpe-ui-demo${ imported?.demo === demo.id ? ' is-active' : '' }` } key={ demo.id }>
+							{ imported?.demo === demo.id ? <span className="wpe-ui-demo__active">✓ { it.active }</span> : null }
 							{ demo.thumbnail !== '' ? (
 								<img className="wpe-ui-demo__shot" src={ demo.thumbnail } alt="" loading="lazy" />
 							) : (
@@ -166,17 +166,9 @@ export function Demos( { data }: { data: ScreenData } ) {
 											{ it.unlock }
 										</a>
 									) : (
-										demo.importable.map( ( b ) => (
-											<button
-												type="button"
-												key={ b.key }
-												className={ buttonClass( 'primary', true ) }
-												disabled={ panel !== null }
-												onClick={ () => begin( demo, b.key ) }
-											>
-												{ demo.importable.length > 1 ? it.importWith.replace( '%s', b.label ) : it.import }
-											</button>
-										) )
+										<button type="button" className={ buttonClass( imported?.demo === demo.id ? 'secondary' : 'primary', true ) } disabled={ panel !== null || demo.importable.length === 0 } onClick={ () => begin( demo ) }>
+											{ imported?.demo === demo.id ? it.reimport : it.import }
+										</button>
 									) }
 									{ demo.preview !== '' ? (
 										<a className={ buttonClass( 'ghost', true ) } href={ demo.preview } target="_blank" rel="noopener noreferrer">
