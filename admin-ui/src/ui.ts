@@ -2,6 +2,7 @@ import './ui.scss';
 import { initAjaxForms } from './core/forms';
 import { initAjaxNav } from './core/nav';
 import { initClickLoaders } from './core/skeleton';
+import { initDropdowns } from './core/dropdown';
 import { initSiteKit } from './core/sitekit';
 import { enhanceTable } from './core/table';
 import { BULK_ACTIONS, LIFECYCLE_VIEWS, markRow, rowActions, runLifecycle } from './core/lifecycle';
@@ -124,6 +125,7 @@ function initModeToggle(): void {
 function initScreen(): void {
 	initModeToggle();
 	initSiteKit();
+	initDropdowns();
 	const root = document.querySelector< HTMLElement >( '[data-wpessential-surface="core"]' );
 	if ( root ) {
 		initModuleFilters( root );
