@@ -1,3 +1,10 @@
+# 2026-11-26 — WP5 shared kit integration / cross-repo dependency
+
+- Combined Free candidate 6061e808: seven workflows PASS; WP E2E 45871191904 passed 41/41 including named colour lifecycle and actual light/dark rendering. CI Complete 45871191897 failed solely on GitHub API i/o timeout; rerun requested. These are historical checks, not evidence for new heads.
+- 72dbd944 adds global palette and typography references to dynamic kit elements registered from element.json (52 Free, 17 Pro), using the common Groups renderer and Elementor controls. f6722b53 makes Elementor kit mutation fail closed without premium opt-in, enabled module and edit_theme_options.
+- Dependencies: Pro #34 (e153228f) contributes entitlement-gated opt-in; theme #127 (6da0a4f7) delegates to the new plugin API and preserves standalone user globals. Stage companion PRs before Free #1596; no independent production deployment. Exact-head CI and paired runtime evidence remain required. WP9 still owns full shared inspector/React dropdown parity.
+- Resume Free #1595 / #1596, Pro #33 / #34, theme #126 / #127. Do not mark WP5 complete yet.
+
 # 2026-11-26 — ADR-0239 WP5 combined candidate
 
 - WP0 #1594 merged after 3/3 exact-head checks; Free main 644ecee4c0c480c61a7975ab34fd3dd84ae42522. WP5 #1596 synchronized with that main at 34601eb6. Previous WP5 head 810749f3 passed 8/8; intermediate b1f4dffd PHPCS failed on seven formatting errors, corrected at 34601eb6.

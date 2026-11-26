@@ -10,8 +10,8 @@ active_branch: agent/adr-0239-wp5-global-tokens
 current_milestone: "P5-M14 WP5 global design tokens and consumer integration"
 milestone_status: COMMITTED_PENDING_INTEGRATION
 last_completed_milestone: "WP0 #1594 merged after 3/3 gates; WP1–WP4 kit baseline retained."
-next_safe_action: "Inspect exact-head CI and targeted browser evidence for #1596; resolve outstanding WP5 consumer acceptance and premium sync boundary; then WP6."
-waiting_external: "WP5 exact-head CI and full consumer acceptance pending. P-006 and unrelated UI lanes remain separate."
+next_safe_action: "Verify Pro #34 and theme #127 companion gates; integrate those before Free #1596; verify paired runtime and WP5 acceptance, then WP6."
+waiting_external: "Free #1596, Pro #34 and theme #127 exact-head CI and paired runtime acceptance pending. Other lanes remain separate."
 next_planned_slot: adr-0239-wp5-global-tokens-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true

@@ -70,6 +70,8 @@ The MCP server is off by default. It exposes AI-channel abilities, and write too
 
 ## Current AI-Native Development Progress
 
+**2026-11-26 — WP5 shared kit / companion PRs:** Free #1596 now includes dynamic kit block/widget preset controls and entitlement-gated Elementor sync. Pro #34 contributes the opt-in and theme #127 delegates to the plugin while preserving standalone globals. Historical Free `6061e808` passed seven workflows and 41/41 E2E; aggregate CI failed on API timeout. Fresh combined-head verification and paired integration pending; no release or product certification.
+
 **2026-11-26 — WP0 merged / WP5 combined candidate:** #1594 merged after 3/3 exact-head checks. #1596 is based on `644ecee4` and adds named light/dark colours and responsive typography, shared references, native text block styles, non-destructive Elementor globals and lifecycle/frontend browser coverage. Previous WP5 head `810749f3` passed eight workflows; new head requires fresh tests. WP5 remains active, not certified or released.
 
 **2026-11-26 — ADR-0239 Site Tools Kit / Block Editor Parity:** Free #1589–#1592 and Pro #31 merged; WP1 migration complete, WP2–WP4 kit portions merged (React/block consumers remain). Free PHP Quality and Compatibility PASS; Pro CI, Lifecycle and Compatibility PASS on merged main; Pro PR E2E [47/47 PASS](https://github.com/Vertex-Systems-Network/wpessential-pro/actions/runs/45858236138). WP0 reconciliation candidate #1593; next WP5 global tokens. Existing milestone percentages and full-product certification are unchanged. The module ID and stored option keys remain stable. Elementor extension boundary is still to be reconciled.

@@ -19,7 +19,7 @@ Work ID root: `P5-M14`
 
 ## Current execution handoff (2026-11-26)
 
-WP1 migration is merged in Free and Pro. WP2–WP4 kit portions are merged; block/React follow-ups remain. WP0 #1594 is merged. WP5 #1596 is active on the merged WP0 baseline; registry and bounded consumers staged, exact-head checks and remaining acceptance pending. Preserve the existing `site-kit` runtime ID and option keys. Free currently registers Elementor synchronization directly; the planned premium-extension boundary is not yet proven and must be reconciled before marking that aspect complete. No new full-product or release claim follows.
+WP1 migration is merged in Free and Pro. WP2–WP4 kit portions are merged; block/React follow-ups remain. WP0 #1594 is merged. WP5 #1596 is active on the merged WP0 baseline; registry and bounded consumers staged, exact-head checks and remaining acceptance pending. Preserve the existing `site-kit` runtime ID and option keys. Premium sync boundary is staged in Free #1596, Pro #34 and theme #127; integrate Pro/theme companions first, then verify paired runtime before promoting WP1 boundary or WP5 acceptance. Dynamic kit elements use element.json and shared Groups controls; full React inspector parity remains WP9. No new full-product or release claim follows.
 
 ## Work packages
 
