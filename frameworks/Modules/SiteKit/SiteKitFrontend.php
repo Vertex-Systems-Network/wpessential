@@ -22,6 +22,8 @@ final class SiteKitFrontend {
 
 	public function register(): void {
 		add_filter( 'wp_theme_json_data_user', [ $this, 'themeJson' ] );
+		add_filter( 'wpessential_kit_global_palette', [ $this, 'kitPalette' ] );
+		add_filter( 'wpessential_kit_typography_presets', [ $this, 'kitTypography' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 25 );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueueFonts' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueueEditorTokens' ] );
@@ -30,6 +32,32 @@ final class SiteKitFrontend {
 		add_action( 'wp_head', [ $this, 'schemeScript' ], 1 );
 		add_action( 'wp_footer', [ $this, 'floatingControls' ], 50 );
 		add_action( 'wpessential_site_kit_saved', [ $this, 'saved' ] );
+	}
+
+	/** @param array<string,string> $palette @return array<string,string> */
+	public function kitPalette( array $palette ): array {
+		foreach ( SiteKitTokens::colours( $this->store->values()['custom_colours'] ?? [] ) as $token ) {
+			$palette[ $token['slug'] ] = $token['name'];
+		}
+		return $palette;
+	}
+
+	/** @param array<mixed> $presets @return array<mixed> */
+	public function kitTypography( array $presets ): array {
+		$values = $this->store->values();
+		foreach ( SiteKitTokens::typography( $values['custom_typography'] ?? [] ) as $token ) {
+			$devices = array_keys( SiteKitBreakpoints::enabled( (array) ( $values['breakpoints'] ?? [] ) ) );
+			$props   = [];
+			foreach ( SiteKitCompiler::typography( $token['typography'], $devices ) as $declarations ) {
+				$props = array_merge( $props, array_keys( $declarations ) );
+			}
+			$presets[] = [
+				'slug'       => $token['slug'],
+				'name'       => $token['name'],
+				'properties' => array_values( array_unique( $props ) ),
+			];
+		}
+		return $presets;
 	}
 
 	/** @param \WP_Theme_JSON_Data $themeJson */

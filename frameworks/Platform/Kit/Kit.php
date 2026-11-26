@@ -541,13 +541,22 @@ class Kit {
 	public static function palette() {
 		$out = array();
 		if ( function_exists( 'wp_get_global_settings' ) ) {
-			foreach ( (array) wp_get_global_settings( array( 'color', 'palette', 'theme' ) ) as $c ) {
+			$palette = array_merge(
+				(array) wp_get_global_settings( array( 'color', 'palette', 'theme' ) ),
+				(array) wp_get_global_settings( array( 'color', 'palette', 'custom' ) )
+			);
+			foreach ( $palette as $c ) {
 				if ( is_array( $c ) && isset( $c['slug'], $c['name'] ) ) {
 					$out[ $c['slug'] ] = $c['name'];
 				}
 			}
 		}
-		return $out;
+		return function_exists( 'apply_filters' ) ? (array) apply_filters( 'wpessential_kit_global_palette', $out ) : $out;
+	}
+
+	/** Global typography names and properties, provided by the enabled Site Tools Kit. */
+	public static function typography_presets(): array {
+		return function_exists( 'apply_filters' ) ? (array) apply_filters( 'wpessential_kit_typography_presets', array() ) : array();
 	}
 
 	/**
