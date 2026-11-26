@@ -16,6 +16,9 @@ use Closure;
  */
 final class SiteKitCompiler {
 
+	/** @var array<string,mixed> The `units` setting of the values being compiled (custom unit conversion). */
+	private static array $units = [];
+
 	public const BUTTON = '.wp-element-button,.wp-block-button__link,.wpe-btn,button.button,a.button';
 	public const FIELD  = 'input:is([type="text"],[type="email"],[type="url"],[type="password"],[type="search"],[type="number"],[type="tel"],[type="date"]),select,textarea,.wpe-input';
 	public const HEADER = ':is(header.wp-block-template-part,.wp-site-blocks>header,.site-header,#masthead,.wpe-header)';
@@ -321,7 +324,8 @@ final class SiteKitCompiler {
 	 * @param array<string,mixed> $v
 	 */
 	public static function css( array $v ): string {
-		$css  = '';
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$css         = '';
 		$dark = '';
 		// Brand colours stay the same in dark mode unless a dark value is set.
 		foreach ( [ 'primary', 'primary-hover', 'secondary', 'accent', 'success', 'warning', 'danger' ] as $slug ) {
@@ -472,18 +476,18 @@ final class SiteKitCompiler {
 			$value = $value['size'] ?? '';
 		}
 
-		return is_numeric( $value ) ? ( 0 + $value ) . $unit : '';
+		return is_numeric( $value ) ? SiteKitUnits::css( 0 + $value, $unit, self::$units ) : '';
 	}
 
 	/** @param array<string,mixed> $d Dimensions {top,right,bottom,left,unit}. */
 	public static function dims( array $d ): string {
-		$unit  = in_array( $d['unit'] ?? 'px', [ 'px', 'em', 'rem', '%' ], true ) ? (string) ( $d['unit'] ?? 'px' ) : 'px';
+		$unit  = (string) ( $d['unit'] ?? 'px' );
 		$sides = [];
 		foreach ( [ 'top', 'right', 'bottom', 'left' ] as $side ) {
 			if ( ! isset( $d[ $side ] ) || ! is_numeric( $d[ $side ] ) ) {
 				return '';
 			}
-			$sides[] = ( 0 + $d[ $side ] ) . $unit;
+			$sides[] = SiteKitUnits::css( 0 + $d[ $side ], $unit, self::$units );
 		}
 
 		return implode( ' ', $sides );

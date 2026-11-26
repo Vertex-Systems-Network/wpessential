@@ -315,6 +315,11 @@ final class SiteKitSchema {
 						'label'       => self::t( 'Breakpoints' ),
 						'description' => self::t( 'Switch on the screen sizes you design for. Only these appear in the device menu next to responsive fields.' ),
 					],
+					'units'         => [
+						'type'        => 'units',
+						'label'       => self::t( 'Units' ),
+						'description' => self::t( 'Units offered in size fields. Add your own as "1 name = value unit", for example 1 hm = 2 px.' ),
+					],
 					'content_width' => self::range( self::t( 'Content width' ), 480, 1200 ),
 					'wide_width'    => self::range( self::t( 'Wide width' ), 900, 1920 ),
 					'section_space' => self::range( self::t( 'Space between sections' ), 24, 200, 1, 'px', true ),

@@ -249,12 +249,9 @@ final class McpServer {
 		if ( $tool === 'site_info' ) {
 			return self::result( $id, self::content( function_exists( 'get_bloginfo' ) && function_exists( 'wp_get_theme' ) ? SiteTools::tool_site_info() + $this->siteInfo() : $this->siteInfo() ) );
 		}
-		$site = $this->siteTools()[ $tool ] ?? null;
-		if ( $site !== null ) {
-			return $this->runSiteTool( $id, $site, $arguments );
-		}
-		$descriptor = $this->exposed()[ $tool ] ?? null;
-		if ( $descriptor === null ) {
+		$site       = $this->siteTools()[ $tool ] ?? null;
+		$descriptor = $site === null ? ( $this->exposed()[ $tool ] ?? null ) : null;
+		if ( $site === null && $descriptor === null ) {
 			return self::error( $id, -32602, 'Unknown tool' );
 		}
 
@@ -268,9 +265,20 @@ final class McpServer {
 			'client'    => $this->connect->clientFor( ( $this->currentUser )(), AiConnect::linkSession() ?? ( function_exists( 'rest_get_authenticated_app_password' ) ? rest_get_authenticated_app_password() : null ) ),
 			'arguments' => $arguments,
 		];
+		if ( $site !== null ) {
+			// Site tools (REST, templates, builder data) are not abilities, but every AI call is still audited.
+			$response = $this->runSiteTool( $id, $site, $arguments );
+			$failed   = ! empty( $response['result']['isError'] );
+			$this->record( $context, 'site/' . $tool, $failed ? AuditOutcome::Failed : AuditOutcome::Success, $failed ? (string) ( $response['result']['structuredContent']['error'] ?? '' ) : null, $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
+
+			return $response;
+		}
+		if ( $descriptor === null ) {
+			return self::error( $id, -32602, 'Unknown tool' );
+		}
 		$decision = $this->abilities->authorize( $descriptor->name, $context, $arguments );
 		if ( ! $decision->allowed ) {
-			$this->record( $context, $descriptor, AuditOutcome::Denied, $decision->reason, $meta );
+			$this->record( $context, $descriptor->name, AuditOutcome::Denied, $decision->reason, $meta );
 
 			return self::result( $id, self::content( [ 'error' => 'Not allowed: ' . $decision->reason ], true ) );
 		}
@@ -278,11 +286,11 @@ final class McpServer {
 		try {
 			$output = $this->abilities->execute( $descriptor->name, $arguments, $context );
 		} catch ( Throwable $error ) {
-			$this->record( $context, $descriptor, AuditOutcome::Failed, $error->getMessage(), $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
+			$this->record( $context, $descriptor->name, AuditOutcome::Failed, $error->getMessage(), $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
 
 			return self::result( $id, self::content( [ 'error' => $error->getMessage() ], true ) );
 		}
-		$this->record( $context, $descriptor, AuditOutcome::Success, null, $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
+		$this->record( $context, $descriptor->name, AuditOutcome::Success, null, $meta + [ 'duration_ms' => (int) round( ( microtime( true ) - $started ) * 1000 ) ] );
 
 		return self::result( $id, self::content( $output ) );
 	}
@@ -301,7 +309,7 @@ final class McpServer {
 	}
 
 	/** @param array<string,mixed> $metadata */
-	private function record( ExecutionContext $context, AbilityDescriptor $descriptor, AuditOutcome $outcome, ?string $reason, array $metadata = [] ): void {
+	private function record( ExecutionContext $context, string $resourceId, AuditOutcome $outcome, ?string $reason, array $metadata = [] ): void {
 		if ( $this->audit === null || ! function_exists( 'wp_generate_uuid4' ) ) {
 			return;
 		}
@@ -314,7 +322,7 @@ final class McpServer {
 					action: 'mcp.tools.call',
 					outcome: $outcome,
 					resourceType: 'ability',
-					resourceId: $descriptor->name,
+					resourceId: $resourceId,
 					reason: $reason,
 					metadata: $metadata,
 				)

@@ -42,6 +42,7 @@ for (const id of MODULES) {
   test(`module ${id}: page, switch and builder`, async ({ page, audit }) => {
     let locked = false;
     let builder = false;
+    let restoreOff = false;
 
     await audit(id, 'module page opens', async () => {
       await openAdmin(page, `wpessential-module-${id}`);
@@ -59,9 +60,13 @@ for (const id of MODULES) {
     }
 
     await audit(id, 'switch off then on', async () => {
+      await openAdmin(page, `wpessential-module-${id}`);
+      // Leave the module as found: opt-in modules such as coming-soon change what visitors see.
+      const wasOn = (await toggle(page).getAttribute('aria-checked')) === 'true';
       await setModule(page, id, false);
       await expect(page.getByRole('link', { name: 'Open builder' })).toHaveCount(0);
       await setModule(page, id, true);
+      restoreOff = !wasOn;
     });
 
     if (builder) {
@@ -71,6 +76,10 @@ for (const id of MODULES) {
         await expect(page).toHaveURL(new RegExp(`${BASE}/wp-admin/admin\\.php\\?page=wpessential-`));
         await openAdmin(page, new URL(page.url()).searchParams.get('page'));
       });
+    }
+
+    if (restoreOff) {
+      await setModule(page, id, false);
     }
   });
 }

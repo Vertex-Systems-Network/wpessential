@@ -1026,3 +1026,68 @@
 		margin-top: var(--wpe-space-2);
 	}
 }
+
+// Units (Layout).
+.wpe-ui {
+	.wpec-units {
+		display: grid;
+		gap: 10px;
+	}
+
+	.wpec-units__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.wpec-units__chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 3px 9px;
+		border: 1px solid var(--wpe-line);
+		border-radius: 999px;
+		font-size: 12px;
+		cursor: pointer;
+
+		&:has(input:checked) {
+			border-color: var(--wpe-blue);
+			background: var(--wpe-blue-tint);
+			color: var(--wpe-indigo);
+		}
+
+		input {
+			margin: 0;
+		}
+	}
+
+	.wpec-units__row {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) 72px 28px;
+		align-items: center;
+		gap: 6px;
+
+		.wpe-dd {
+			min-width: 0;
+		}
+	}
+
+	.wpec-units__add,
+	.wpec-units__remove {
+		justify-self: start;
+		padding: 4px 10px;
+		border: 1px dashed var(--wpe-line);
+		border-radius: var(--wpe-radius-sm);
+		background: transparent;
+		color: var(--wpe-text);
+		font-size: 12px;
+		cursor: pointer;
+	}
+
+	.wpec-units__remove {
+		display: inline-grid;
+		place-items: center;
+		padding: 4px;
+		border-style: solid;
+	}
+}

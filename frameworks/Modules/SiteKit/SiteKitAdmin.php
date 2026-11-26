@@ -273,7 +273,8 @@ final class SiteKitAdmin {
 				];
 			}
 		}
-		$enabled = SiteKitBreakpoints::enabled( (array) ( ( new SiteKitStore() )->values()['breakpoints'] ?? [] ) );
+		$stored  = ( new SiteKitStore() )->values();
+		$enabled = SiteKitBreakpoints::enabled( (array) ( $stored['breakpoints'] ?? [] ) );
 		$labels  = SiteKitBreakpoints::labels();
 		$all     = [];
 		foreach ( SiteKitBreakpoints::ALL as $key => [ , $width, $on, $dir ] ) {
@@ -299,6 +300,11 @@ final class SiteKitAdmin {
 				$enabled
 			),
 			'allBreakpoints' => $all,
+			'units'          => [
+				'builtin' => SiteKitUnits::BUILTIN,
+				'on'      => SiteKitUnits::enabled( (array) ( $stored['units'] ?? [] ) ),
+				'custom'  => array_keys( SiteKitUnits::custom( (array) ( $stored['units'] ?? [] ) ) ),
+			],
 		];
 
 		return '<script type="application/json" id="wpe-controls-config">' . (string) wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES ) . '</script>';

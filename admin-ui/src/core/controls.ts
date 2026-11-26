@@ -38,6 +38,8 @@ export interface ControlsConfig {
 	/** Enabled breakpoints in cascade order, from Site Tools Kit → Layout → Breakpoints. */
 	breakpoints?: Array< { key: string; label: string; width: number; dir: string } >;
 	allBreakpoints?: Record< string, { label: string; width: number; on: boolean; dir: string } >;
+	/** Site Tools Kit → Layout → Units: enabled built-in units and custom unit names. */
+	units?: { builtin: string[]; on: string[]; custom: string[] };
 }
 
 type Json = Record< string, unknown >;
@@ -53,6 +55,17 @@ const DEVICE_ICONS: Record< string, string > = {
 	mobile: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
 	mobile_small: '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 17h2"/>',
 };
+
+/** A field's units narrowed to the site's enabled units; custom units join any length field. */
+function siteUnits( units: string[] ): string[] {
+	const site = cfg.units;
+	if ( ! site || units.length === 0 ) {
+		return units;
+	}
+	const kept = units.filter( ( u ) => u === '' || ! site.builtin.includes( u ) || site.on.includes( u ) );
+	const out = kept.length ? kept : units.slice( 0, 1 );
+	return units.includes( 'px' ) ? [ ...out, ...site.custom.filter( ( c ) => ! out.includes( c ) ) ] : out;
+}
 
 /** Enabled devices: [key, tooltip label, icon]. Falls back to desktop/tablet/phone. */
 function devices(): Array< [ string, string, string ] > {
@@ -611,7 +624,7 @@ types.color = ( ctx ) => {
 
 types.range = ( ctx ) => {
 	const o = ctx.opt;
-	const units = o.units ?? ( o.unit !== undefined && o.unit !== '' ? [ o.unit ] : [] );
+	const units = siteUnits( o.units ?? ( o.unit !== undefined && o.unit !== '' ? [ o.unit ] : [] ) );
 	const withUnit = units.length > 1;
 	const min = Number( o.min ?? 0 );
 	const max = Number( o.max ?? 100 );
@@ -688,6 +701,81 @@ types.breakpoints = ( ctx ) => {
 			for ( const r of rows ) {
 				r();
 			}
+		},
+	};
+};
+
+// Site Tools Kit → Layout → Units: which CSS units appear, plus custom units "1 name = factor base".
+types.units = ( ctx ) => {
+	const builtin = cfg.units?.builtin ?? [ 'px', 'em', 'rem', '%', 'vw', 'vh' ];
+	type Custom = { n: string; f: number | string; b: string };
+	const read = (): { on: string; custom: Custom[] } => {
+		const v = parse( ctx.get() ) as { on?: string; custom?: Custom[] | Record< string, Custom > };
+		const custom = Array.isArray( v.custom ) ? v.custom : Object.values( v.custom ?? {} );
+		return { on: v.on ?? ( cfg.units?.on ?? [] ).join( ',' ), custom };
+	};
+	const write = ( patch: Partial< { on: string; custom: Custom[] } > ): void => ctx.set( stringify( { ...read(), ...patch } ) );
+	const chips = h( 'div', { class: 'wpec-units__chips', role: 'group', 'aria-label': t( 'Units' ) } );
+	const boxes: HTMLInputElement[] = builtin.map( ( u ) => {
+		const box = h( 'input', {
+			type: 'checkbox',
+			value: u,
+			onchange: () => write( { on: boxes.filter( ( b ) => b.checked ).map( ( b ) => b.value ).join( ',' ) } ),
+		} ) as HTMLInputElement;
+		chips.append( h( 'label', { class: 'wpec-units__chip' }, [ box, h( 'span', { text: u } ) ] ) );
+		return box;
+	} );
+	const rows = h( 'div', { class: 'wpec-units__custom' } );
+	const draw = (): void => {
+		rows.textContent = '';
+		read().custom.forEach( ( c, index ) => {
+			const update = ( patch: Partial< Custom > ): void => {
+				const list = read().custom;
+				list[ index ] = { ...( list[ index ] ?? { n: '', f: 1, b: 'px' } ), ...patch };
+				write( { custom: list } );
+			};
+			const base = h( 'select', { class: 'wpec-input', 'aria-label': t( 'Base unit' ), onchange: ( e: Event ) => update( { b: ( e.target as HTMLSelectElement ).value } ) }, builtin.map( ( u ) => h( 'option', { value: u, text: u } ) ) ) as HTMLSelectElement;
+			base.value = c.b || 'px';
+			rows.append(
+				h( 'div', { class: 'wpec-units__row' }, [
+					h( 'span', { text: '1' } ),
+					h( 'input', { class: 'wpec-input', 'aria-label': t( 'Unit name' ), placeholder: 'hm', maxlength: 8, value: c.n, onchange: ( e: Event ) => update( { n: ( e.target as HTMLInputElement ).value.toLowerCase().replace( /[^a-z]/g, '' ) } ) } ),
+					h( 'span', { text: '=' } ),
+					h( 'input', { class: 'wpec-input', type: 'number', min: 0.0001, step: 'any', 'aria-label': t( 'Value' ), value: String( c.f ), onchange: ( e: Event ) => update( { f: Number( ( e.target as HTMLInputElement ).value ) } ) } ),
+					base,
+					h( 'button', {
+						type: 'button',
+						class: 'wpec-units__remove',
+						'aria-label': t( 'Remove unit' ),
+						html: svg( '<path d="M18 6 6 18M6 6l12 12"/>', 14 ),
+						onclick: () => {
+							const list = read().custom;
+							list.splice( index, 1 );
+							write( { custom: list } );
+							draw();
+						},
+					} ),
+				] )
+			);
+		} );
+	};
+	const add = h( 'button', {
+		type: 'button',
+		class: 'wpec-units__add',
+		text: t( 'Add custom unit' ),
+		onclick: () => {
+			write( { custom: [ ...read().custom, { n: '', f: 1, b: 'px' } ] } );
+			draw();
+		},
+	} );
+	return {
+		el: h( 'div', { class: 'wpec-units' }, [ chips, rows, add ] ),
+		refresh: () => {
+			const on = read().on.split( ',' );
+			for ( const box of boxes ) {
+				box.checked = on.includes( box.value );
+			}
+			draw();
 		},
 	};
 };
@@ -824,7 +912,7 @@ types.fonts = ( ctx ) => {
 };
 
 types.dimensions = ( ctx ) => {
-	const units = ctx.opt.units ?? [ 'px' ];
+	const units = siteUnits( ctx.opt.units ?? [ 'px', 'em', 'rem', '%' ] );
 	let linked = true;
 	const inputs: Partial< Record< string, HTMLInputElement > > = {};
 	const row = h( 'div', { class: 'wpec-dims' } );
