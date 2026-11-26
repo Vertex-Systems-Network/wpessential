@@ -21,7 +21,7 @@ Work ID root: `P5-M14`
 
 | WP | Owner request | Scope | Repo | Status |
 |---|---|---|---|---|
-| WP1 | 7 | Move Site Kit from Pro to **Free**, rename **Site Tools Kit**; Pro keeps premium extras (code inserter extras, Elementor sync) via filter | Free, Pro | TODO |
+| WP1 | 7 | Move Site Kit from Pro to **Free**, rename **Site Tools Kit**; Pro keeps premium extras (code inserter extras, Elementor sync) via filter | Free, Pro | DONE |
 | WP2 | 15 | House `Dropdown` component (React + vanilla for admin screens); replace `<select>` in Site Tools Kit, field UI, block inspector | Free | TODO |
 | WP3 | 10 | Breakpoints list in Layout (320…1920, enable/disable, edit px); `ResponsiveControl` device dropdown with icons/tooltips; used by kit and blocks | Free | TODO |
 | WP4 | 4 | Units setting: multi-select allowed units (px, %, em, rem, vh, vw, vmin, vmax, ch, fr) + custom units with `1 X = n <base>`; `UnitControl` shows only enabled units; compiler converts custom → `calc(n * base)` | Free | TODO |
