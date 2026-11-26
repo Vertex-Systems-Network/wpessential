@@ -1,0 +1,153 @@
+// House dropdown (core/dropdown.ts): replaces native selects inside .wpe-ui screens.
+.wpe-ui {
+	.wpe-dd {
+		position: relative;
+		display: inline-block;
+		min-width: 140px;
+		max-width: 100%;
+		vertical-align: middle;
+	}
+
+	.wpec-control .wpe-dd,
+	.wpe-dd:has(> .wpec-input) {
+		display: block;
+		width: 100%;
+	}
+
+	.wpe-dd__native {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.wpe-dd__button {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--wpe-space-2, 8px);
+		width: 100%;
+		min-height: 36px;
+		padding: 0 34px 0 var(--wpe-space-3, 12px);
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius-sm);
+		background: var(--wpe-card);
+		color: var(--wpe-text);
+		font: inherit;
+		font-size: 13px;
+		text-align: left;
+		cursor: pointer;
+
+		&::after {
+			position: absolute;
+			top: 50%;
+			right: 12px;
+			width: 7px;
+			height: 7px;
+			border-right: 1.5px solid currentcolor;
+			border-bottom: 1.5px solid currentcolor;
+			content: "";
+			transform: translateY(-70%) rotate(45deg);
+			transition: transform 0.15s ease;
+		}
+
+		&:hover {
+			border-color: var(--wpe-muted);
+		}
+
+		&:focus-visible {
+			border-color: var(--wpe-blue);
+			box-shadow: 0 0 0 3px var(--wpe-blue-tint);
+			outline: none;
+		}
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+	}
+
+	// Focus stays on the native select; show it on the visible button.
+	.wpe-dd:has(> .wpe-dd__native:focus) .wpe-dd__button {
+		border-color: var(--wpe-blue);
+		box-shadow: 0 0 0 3px var(--wpe-blue-tint);
+	}
+
+	.wpe-dd.is-open .wpe-dd__button::after {
+		transform: translateY(-30%) rotate(-135deg);
+	}
+
+	.wpe-dd__text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.wpe-dd__panel {
+		position: absolute;
+		z-index: 100000;
+		top: calc(100% + 4px);
+		left: 0;
+		min-width: 100%;
+		max-width: min(420px, 90vw);
+		padding: 4px;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius);
+		background: var(--wpe-card);
+		box-shadow: var(--wpe-shadow-lg);
+	}
+
+	.wpe-dd__search {
+		width: 100%;
+		min-height: 32px;
+		margin-bottom: 4px;
+		padding: 0 10px;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius-sm);
+		font-size: 13px;
+	}
+
+	.wpe-dd__list {
+		max-height: 280px;
+		margin: 0;
+		padding: 0;
+		overflow-y: auto;
+		list-style: none;
+	}
+
+	.wpe-dd__group {
+		margin: 6px 8px 2px;
+		color: var(--wpe-muted);
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.wpe-dd__option {
+		margin: 0;
+		padding: 7px 10px;
+		border-radius: var(--wpe-radius-sm);
+		color: var(--wpe-text);
+		font-size: 13px;
+		cursor: pointer;
+
+		&.is-active {
+			background: var(--wpe-surface);
+		}
+
+		&[aria-selected="true"] {
+			background: var(--wpe-blue-tint);
+			color: var(--wpe-indigo);
+			font-weight: 600;
+		}
+
+		&[aria-disabled="true"] {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+}
