@@ -81,6 +81,7 @@ final class SiteKitTest extends TestCase
             ['slug' => 'wpe-custom-brand-blue', 'name' => 'Brand blue', 'color' => '#3458c9'],
         ], $json['settings']['color']['palette']);
         self::assertStringContainsString('--wp--preset--color--wpe-custom-brand-blue:#99aaff;', SiteKitCompiler::css($values));
+        self::assertStringContainsString(':root{--wp--preset--color--wpe-custom-brand-blue:#3458c9;}', SiteKitCompiler::tokenCss($values));
         self::assertSame(['custom_colours'], $store->resetSection('colors'));
         self::assertSame([], $store->values());
     }
@@ -118,7 +119,7 @@ final class SiteKitTest extends TestCase
         ];
         $css = SiteKitCompiler::css($values);
         self::assertStringContainsString('h1,.wp-block-post-title{font-size:48px;font-weight:600;', $css);
-        self::assertStringContainsString(':where(.is-style-wpe-custom-display)', $css);
+        self::assertStringContainsString('.is-style-wpe-custom-display{', $css);
         self::assertStringContainsString('--wpe-typography-wpe-custom-display-font-size:48px;', SiteKitCompiler::tokenCss($values));
         $values['custom_typography']['tokens'][0]['typography']['size'] = 56;
         self::assertStringContainsString('h1,.wp-block-post-title{font-size:56px;font-weight:600;', SiteKitCompiler::css($values));

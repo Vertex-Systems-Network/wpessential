@@ -121,6 +121,18 @@ test('Site Tools Kit: named colour token persists, updates, and removes', async 
       await saved.getByRole('textbox', { name: 'Light colour' }).blur();
       await save();
       await expect(stored).toHaveValue(/#123456/);
+      const frontend = await page.context().newPage();
+      try {
+        await frontend.goto(BASE + '/', { waitUntil: 'load' });
+        const token = '--wp--preset--color--wpe-custom-' + slug;
+        const read = () => frontend.evaluate((key) => getComputedStyle(document.documentElement).getPropertyValue(key).trim().toLowerCase(), token);
+        await frontend.evaluate(() => document.documentElement.setAttribute('data-wpe-scheme', 'light'));
+        await expect.poll(read).toBe('#123456');
+        await frontend.evaluate(() => document.documentElement.setAttribute('data-wpe-scheme', 'dark'));
+        await expect.poll(read).toBe('#99aaff');
+      } finally {
+        await frontend.close();
+      }
     });
   } finally {
     await openColours();

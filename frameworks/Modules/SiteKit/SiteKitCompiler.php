@@ -678,6 +678,13 @@ final class SiteKitCompiler {
 		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
 		$devices    = SiteKitBreakpoints::enabled( (array) ( $v['breakpoints'] ?? [] ) );
 		$css        = '';
+		$colours    = '';
+		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
+			$colours .= '--wp--preset--color--' . $token['slug'] . ':' . $token['color'] . ';';
+		}
+		if ( $colours !== '' ) {
+			$css .= ':root{' . $colours . '}';
+		}
 		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
 			$slug   = $token['slug'];
 			$styles = self::typography( $token['typography'], array_keys( $devices ) );
@@ -699,7 +706,7 @@ final class SiteKitCompiler {
 				}
 			}
 			if ( $props !== [] ) {
-				$css .= ':where(.is-style-' . $slug . '){';
+				$css .= '.is-style-' . $slug . '{';
 				foreach ( $props as $property => $value ) {
 					$css .= $property . ':' . $value . ';';
 				}
