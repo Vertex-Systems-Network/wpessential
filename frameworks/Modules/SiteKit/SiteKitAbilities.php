@@ -50,7 +50,8 @@ final class SiteKitAbilities {
 				}
 				$unknown = array_diff( array_map( 'strval', array_keys( $values ) ), array_keys( SiteKitSchema::fields() ) );
 				if ( $unknown !== [] ) {
-					throw new InvalidArgumentException( 'Unknown Site Kit fields: ' . ( function_exists( 'esc_html' ) ? esc_html( implode( ', ', $unknown ) ) : implode( ', ', $unknown ) ) . '. Read wpessential/site-kit/schema first.' );
+					$list = implode( ', ', $unknown );
+					throw new InvalidArgumentException( 'Unknown Site Kit fields: ' . ( function_exists( 'esc_html' ) ? esc_html( $list ) : $list ) . '. Read wpessential/site-kit/schema first.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Escaped when WordPress is loaded.
 				}
 
 				return [ 'changed' => $this->store->update( $values ) ];
