@@ -4,8 +4,8 @@ state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
 observed_main_sha: 5ebd02572a04bc9001192ac42870b731f9c48e52
 observed_main_source: "2026-11-26 exact-main refresh; Free #1592 and Pro #31 merged; observed anchor, not this candidate commit."
-active_issue: 1593
-active_pr: null
+active_issue: "#1593"
+active_pr: "#1594"
 active_branch: agent/adr-0239-wp0-reconciliation
 current_milestone: "P5-M14 ADR-0239 WP0 reconciliation; WP5 global design tokens next"
 milestone_status: COMMITTED_PENDING_INTEGRATION
