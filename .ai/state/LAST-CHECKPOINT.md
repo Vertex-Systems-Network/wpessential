@@ -1,3 +1,11 @@
+# 2026-11-26 — Block Editor Parity & Site Tools Kit plan adopted
+
+- Owner 15-point request recorded as `docs/IMPLEMENTATION/BLOCK-EDITOR-PARITY-AND-SITE-TOOLS-KIT-V1.md` (WP1–WP14, AI rules, acceptance) and ADR-0239 (Site Kit → Free "Site Tools Kit", supersedes ADR-0232 §1).
+- Plan audit: this state file was stale (Oct 21); next action now points at this plan. ADR-0232 Pro placement superseded.
+- Next: WP1.
+
+## Previous checkpoint
+
 # 2026-10-21 — Surface 3 Fields Atomic Option Contract V1 committed
 
 - PR #1476 Surface 9 Listings merged (12/12 CI PASS).
