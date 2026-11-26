@@ -106,7 +106,7 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		const all = options().filter( ( li ) => li.getAttribute( 'aria-disabled' ) !== 'true' );
 		if ( all.length === 0 ) {
 			active = -1;
-			
+
 			return;
 		}
 		active = absolute ? Math.max( 0, Math.min( all.length - 1, to ) ) : Math.max( 0, Math.min( all.length - 1, active + to ) );
@@ -116,7 +116,7 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		const current = all[ active ];
 		if ( current ) {
 			current.scrollIntoView( { block: 'nearest' } );
-			
+
 		}
 	};
 
@@ -139,7 +139,7 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		panel.hidden = true;
 		wrap.classList.remove( 'is-open' );
 		select.setAttribute( 'aria-expanded', 'false' );
-		
+
 		if ( search ) {
 			search.value = '';
 			search.dispatchEvent( new Event( 'input' ) );
