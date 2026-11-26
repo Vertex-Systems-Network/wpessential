@@ -2,16 +2,16 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 5ebd02572a04bc9001192ac42870b731f9c48e52
-observed_main_source: "2026-11-26 exact-main refresh; Free #1592 and Pro #31 merged; observed anchor, not this candidate commit."
-active_issue: "#1593"
-active_pr: "#1594"
-active_branch: agent/adr-0239-wp0-reconciliation
-current_milestone: "P5-M14 ADR-0239 WP0 reconciliation; WP5 global design tokens next"
+observed_main_sha: 644ecee4c0c480c61a7975ab34fd3dd84ae42522
+observed_main_source: "WP0 #1594 merged; observed exact main 644ecee4. WP5 remains unmerged."
+active_issue: "#1595"
+active_pr: "#1596"
+active_branch: agent/adr-0239-wp5-global-tokens
+current_milestone: "P5-M14 WP5 global design tokens and consumer integration"
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "WP1 migration Free #1589 / Pro #31; WP2–WP4 kit slices Free #1590–#1592. Pro E2E 47/47 PASS."
-next_safe_action: "Integrate WP0 after exact-head checks; then implement WP5 in docs/IMPLEMENTATION/BLOCK-EDITOR-PARITY-AND-SITE-TOOLS-KIT-V1.md. Do not restart WP1. WP2–WP4 remaining block consumers land with WP9."
-waiting_external: "WP0 exact-head CI pending; P-006 #1102/#1425/#1426 separately gated; draft #1490 and module UI backlog remain separate. #858 historical external-admin entry requires fresh verification."
+last_completed_milestone: "WP0 #1594 merged after 3/3 gates; WP1–WP4 kit baseline retained."
+next_safe_action: "Inspect exact-head CI and targeted browser evidence for #1596; resolve outstanding WP5 consumer acceptance and premium sync boundary; then WP6."
+waiting_external: "WP5 exact-head CI and full consumer acceptance pending. P-006 and unrelated UI lanes remain separate."
 next_planned_slot: adr-0239-wp5-global-tokens-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true

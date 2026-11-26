@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "5ebd02572a04bc9001192ac42870b731f9c48e52",
+  "anchor_main_sha": "644ecee4c0c480c61a7975ab34fd3dd84ae42522",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -4025,7 +4025,7 @@
     },
     {
       "id": "RB-0131",
-      "source": "ADR-0239 WP5 / #1593",
+      "source": "ADR-0239 WP5 / #1595 / PR #1596",
       "category": "ADR_0239_GLOBAL_TOKENS",
       "runner": "GitHub Actions",
       "command_or_workflow": "WP5 exact-head PHP Quality, platform compatibility and applicable admin build/browser checks",
@@ -4040,12 +4040,16 @@
       "expected_minutes": 15,
       "dedup_key": "adr0239|wp5|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
-      "evidence": [],
-      "note": "Not executed; capture actual head and results before promotion."
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "810749f3: eight workflows PASS including WordPress E2E 45869079741; historical candidate only.",
+        "b1f4dffd PHP Quality 45870719560 FAIL: seven PHPCS formatting errors; corrected at 34601eb6.",
+        "9027b26e source adds native style specificity and light/dark rendering assertions; fresh combined head checks required."
+      ],
+      "note": "Do not promote terminal PASS before exact-head checks and remaining acceptance."
     }
   ],
-  "last_reconciled_issue": "#1593",
+  "last_reconciled_issue": "#1595",
   "last_reconciled_policy": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

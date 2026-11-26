@@ -1,9 +1,9 @@
 {
   "schema_version": 214,
   "snapshot_date": "2026-11-26",
-  "queue_anchor_main_sha": "5ebd02572a04bc9001192ac42870b731f9c48e52",
+  "queue_anchor_main_sha": "644ecee4c0c480c61a7975ab34fd3dd84ae42522",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1593",
+  "source_issue": "#1595",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -257,7 +257,8 @@
     "1497": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
     "1498": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
     "1499": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
-    "1593": "ACTIVE_ADR_0239_RECONCILIATION"
+    "1593": "COMPLETED_WP0_PR_1594",
+    "1595": "ACTIVE_ADR_0239_WP5_DRAFT_PR_1596"
   },
   "auto_assignment": {
     "enabled": true,
@@ -287,7 +288,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Integrate ADR-0239 WP0 reconciliation after exact-head CI; select WP5 global tokens next. WP2–WP4 remaining block consumers with WP9. Preserve separate UI and P-006 lanes.",
+    "next_safe_action": "WP0 merged. Verify and complete WP5 #1596, then WP6; preserve other lanes.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8668,9 +8669,9 @@
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "ADR_0239_GLOBAL_TOKENS",
-      "source": "ADR-0239 / #1593 / WP5",
+      "source": "ADR-0239 / #1595 / PR #1596",
       "dependencies": [
-        "WP0 reconciliation merged",
+        "WP0 #1594 merged",
         "WP1–WP4 kit baseline merged"
       ],
       "runtime_allowed": true,
