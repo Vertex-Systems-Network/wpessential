@@ -125,6 +125,12 @@ final class SiteKitTest extends TestCase
         self::assertStringContainsString('h1,.wp-block-post-title{font-size:56px;font-weight:600;', SiteKitCompiler::css($values));
     }
 
+    public function testElementorSyncFailsClosedWithoutPremiumOptIn(): void
+    {
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitElementor::enabled());
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitElementor::sync());
+    }
+
     public function testElementorGlobalMergePreservesUserEntriesAndProperties(): void
     {
         $existing = [

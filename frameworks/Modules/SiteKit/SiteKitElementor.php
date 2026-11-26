@@ -16,6 +16,11 @@ final class SiteKitElementor {
 
 	public const HASH_OPTION = 'wpessential_site_kit_elementor_hash';
 
+	/** Pro contributes this opt-in only when its compatibility and mutation policy allow it. */
+	public static function enabled(): bool {
+		return function_exists( 'apply_filters' ) && true === apply_filters( 'wpessential_site_kit_elementor_sync_enabled', false );
+	}
+
 	public static function register(): void {
 		add_action( 'admin_init', [ self::class, 'maybeSync' ] );
 	}
@@ -34,7 +39,7 @@ final class SiteKitElementor {
 	}
 
 	public static function maybeSync(): void {
-		if ( ! current_user_can( 'edit_theme_options' ) ) {
+		if ( ! self::enabled() || ! current_user_can( 'edit_theme_options' ) ) {
 			return;
 		}
 		$values = ( new SiteKitStore() )->values();
@@ -127,6 +132,9 @@ final class SiteKitElementor {
 	}
 
 	public static function sync(): bool {
+		if ( ! self::enabled() || ! ( new \WPEssential\Platform\Admin\Core\ModuleToggleStore() )->isEnabled( SiteKitModule::ID ) || ! current_user_can( 'edit_theme_options' ) ) {
+			return false;
+		}
 		if ( ! class_exists( '\Elementor\Plugin' ) || empty( \Elementor\Plugin::$instance->kits_manager ) ) {
 			return false;
 		}

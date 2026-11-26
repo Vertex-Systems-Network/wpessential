@@ -52,7 +52,9 @@ final class SiteKitModule implements ModuleInterface {
 		( new SiteKitFrontend( $store ) )->register();
 		$snippets->register();
 		( new SiteKitSeo( $store ) )->register();
-		SiteKitElementor::register();
+		if ( SiteKitElementor::enabled() ) {
+			SiteKitElementor::register();
+		}
 		( new SiteKitAdmin( $store, $snippets ) )->register();
 	}
 
