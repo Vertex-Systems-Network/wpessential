@@ -85,6 +85,29 @@ final class SiteKitTest extends TestCase
         self::assertSame([], $store->values());
     }
 
+
+    public function testCustomTypographyTokensProjectResponsiveSafeValues(): void
+    {
+        $store = new SiteKitStore();
+        $store->update(['custom_typography' => ['tokens' => [
+            ['name' => 'Display', 'slug' => 'display', 'typography' => [
+                'family' => 'google:Inter',
+                'size' => ['desktop' => ['size' => 48, 'unit' => 'px'], 'mobile' => ['size' => 28, 'unit' => 'px']],
+                'weight' => '700',
+                'style' => 'bad;}body',
+            ]],
+        ]]]);
+        $values = $store->values();
+        self::assertArrayNotHasKey('style', $values['custom_typography']['tokens'][0]['typography']);
+        $json = SiteKitCompiler::themeJson([], $values, static fn (array $path): array => []);
+        self::assertSame('48px', $json['settings']['typography']['fontSizes'][0]['size']);
+        self::assertSame('wpe-custom-display', $json['settings']['typography']['fontSizes'][0]['slug']);
+        $css = SiteKitCompiler::css($values);
+        self::assertStringContainsString('--wpe-typography-wpe-custom-display-font-weight:700;', $css);
+        self::assertStringContainsString('--wp--preset--font-size--wpe-custom-display:28px;', $css);
+        self::assertStringNotContainsString('bad;}body', $css);
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

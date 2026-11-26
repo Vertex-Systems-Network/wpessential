@@ -1205,15 +1205,15 @@ types.background = ( ctx ) => {
 };
 
 
-types.colour_tokens = ( ctx ) => {
-	type Token = { name?: string; slug?: string; color?: string; dark?: string };
+const tokenRepeater = ( ctx: ControlContext, typography: boolean ): Control => {
+	type Token = { name?: string; slug?: string; color?: string; dark?: string; typography?: Json };
 	const read = (): Token[] => {
 		const value = parse( ctx.get() ).tokens;
 		return Array.isArray( value ) ? value as Token[] : Object.values( ( value ?? {} ) as Record< string, Token > );
 	};
 	const write = ( tokens: Token[] ): void => ctx.set( tokens.length ? JSON.stringify( { tokens } ) : '' );
 	const rows = h( 'div', { class: 'wpec-units__custom' } );
-	const add = h( 'button', { type: 'button', class: 'wpec-link', text: t( 'Add custom colour' ), onclick: () => write( [ ...read(), {} ] ) } ) as HTMLButtonElement;
+	const add = h( 'button', { type: 'button', class: 'wpec-link', text: t( typography ? 'Add custom typography' : 'Add custom colour' ), onclick: () => write( [ ...read(), {} ] ) } ) as HTMLButtonElement;
 	let parts: Part[][] = [];
 	const draw = (): void => {
 		rows.replaceChildren();
@@ -1228,14 +1228,16 @@ types.colour_tokens = ( ctx ) => {
 				},
 			};
 			const fields = [
-				part( row, 'name', 'text', { placeholder: t( 'Brand colour' ) }, t( 'Name' ) ),
-				part( row, 'slug', 'text', { placeholder: 'brand-colour' }, t( 'Stable slug' ) ),
-				part( row, 'color', 'color', { literalColour: true }, t( 'Light colour' ) ),
-				part( row, 'dark', 'color', { literalColour: true }, t( 'Dark colour (optional)' ) ),
+				part( row, 'name', 'text', { placeholder: t( typography ? 'Display heading' : 'Brand colour' ) }, t( 'Name' ) ),
+				part( row, 'slug', 'text', { placeholder: typography ? 'display-heading' : 'brand-colour' }, t( 'Stable slug' ) ),
+				...( typography ? [ part( row, 'typography', 'typography', {}, t( 'Typography' ) ) ] : [
+					part( row, 'color', 'color', { literalColour: true }, t( 'Light colour' ) ),
+					part( row, 'dark', 'color', { literalColour: true }, t( 'Dark colour (optional)' ) ),
+				] ),
 			];
-			rows.append( h( 'div', { class: 'wpec-field', role: 'group', 'aria-label': `${ t( 'Custom colour' ) } ${ index + 1 }` }, [
+			rows.append( h( 'div', { class: 'wpec-field', role: 'group', 'aria-label': `${ t( typography ? 'Custom typography' : 'Custom colour' ) } ${ index + 1 }` }, [
 				...fields.map( ( field ) => field.node ),
-				h( 'button', { type: 'button', class: 'wpec-link is-danger', text: t( 'Remove' ), 'aria-label': `${ t( 'Remove custom colour' ) } ${ index + 1 }`, onclick: () => write( read().filter( ( _row, i ) => i !== index ) ) } ),
+				h( 'button', { type: 'button', class: 'wpec-link is-danger', text: t( 'Remove' ), 'aria-label': `${ t( typography ? 'Remove custom typography' : 'Remove custom colour' ) } ${ index + 1 }`, onclick: () => write( read().filter( ( _row, i ) => i !== index ) ) } ),
 			] ) );
 			return fields;
 		} );
@@ -1247,11 +1249,18 @@ types.colour_tokens = ( ctx ) => {
 			if ( count !== parts.length ) {
 				draw();
 			}
-			parts.forEach( ( row ) => row.forEach( ( field ) => field.ctl.refresh() ) );
+			for ( const row of parts ) {
+				for ( const field of row ) {
+					field.ctl.refresh();
+				}
+			}
 			add.disabled = count >= 100;
 		},
 	};
 };
+
+types.colour_tokens = ( ctx ) => tokenRepeater( ctx, false );
+types.typography_tokens = ( ctx ) => tokenRepeater( ctx, true );
 
 /** Builds a control; responsive options wrap it with per-device values. */
 export function create( type: string, ctx: ControlContext ): Control {

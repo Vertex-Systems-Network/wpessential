@@ -59,7 +59,8 @@ final class SiteKitCompiler {
 	 * @return array<string,mixed>
 	 */
 	public static function themeJson( array $data, array $v, Closure $preset ): array {
-		$settings = is_array( $data['settings'] ?? null ) ? $data['settings'] : [];
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$settings    = is_array( $data['settings'] ?? null ) ? $data['settings'] : [];
 		$styles   = is_array( $data['styles'] ?? null ) ? $data['styles'] : [];
 		$list     = static function ( array $path ) use ( $settings, $preset ): array {
 			$own = $settings;
@@ -94,7 +95,11 @@ final class SiteKitCompiler {
 			}
 		}
 		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
-			$entry = [ 'slug' => $token['slug'], 'name' => $token['name'], 'color' => $token['color'] ];
+			$entry = [
+				'slug'  => $token['slug'],
+				'name'  => $token['name'],
+				'color' => $token['color'],
+			];
 			foreach ( $palette as $index => $colour ) {
 				if ( ( $colour['slug'] ?? '' ) === $token['slug'] ) {
 					$palette[ $index ] = $entry;
@@ -164,6 +169,24 @@ final class SiteKitCompiler {
 				];
 			}
 			$sizes[] = $size;
+		}
+		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
+			$style = self::typography( $token['typography'] )['desktop'];
+			if ( isset( $style['font-size'] ) ) {
+				$entry = [
+					'slug'  => $token['slug'],
+					'name'  => $token['name'],
+					'size'  => $style['font-size'],
+					'fluid' => false,
+				];
+				foreach ( $sizes as $index => $size ) {
+					if ( ( $size['slug'] ?? '' ) === $token['slug'] ) {
+						$sizes[ $index ] = $entry;
+						continue 2;
+					}
+				}
+				$sizes[] = $entry;
+			}
 		}
 		if ( $sizes !== [] ) {
 			$settings['typography']['fontSizes'] = $sizes;
@@ -656,6 +679,16 @@ final class SiteKitCompiler {
 				$rules[ $device ][ $selector ][ $p ] = $value;
 			}
 		};
+		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
+			foreach ( self::typography( $token['typography'], array_keys( $rules ) ) as $device => $declarations ) {
+				foreach ( $declarations as $property => $value ) {
+					$add( $device, ':root', '--wpe-typography-' . $token['slug'] . '-' . $property, $value );
+					if ( $property === 'font-size' ) {
+						$add( $device, ':root', '--wp--preset--font-size--' . $token['slug'], $value );
+					}
+				}
+			}
+		}
 		foreach ( self::TARGETS as $key => [ $selector, $property ] ) {
 			if ( empty( $v[ $key ] ) ) {
 				continue;

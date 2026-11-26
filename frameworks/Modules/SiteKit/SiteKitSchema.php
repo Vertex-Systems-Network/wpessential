@@ -216,6 +216,12 @@ final class SiteKitSchema {
 			];
 		}
 
+		$globalType['custom_typography'] = [
+			'type'  => 'typography_tokens',
+			'label' => self::t( 'Custom global typography' ),
+			'help'  => self::t( 'Add named responsive typography presets with stable slugs.' ),
+		];
+
 		return [
 			'colors'    => self::section( self::t( 'Global colours' ), self::t( 'The site palette used by every block and Elementor widget. Leave a colour empty to keep the theme\'s.' ), 'brush', $light ),
 			'dark'      => self::section(
