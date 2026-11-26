@@ -108,6 +108,35 @@ final class SiteKitTest extends TestCase
         self::assertStringNotContainsString('bad;}body', $css);
     }
 
+    public function testTypographyReferenceInheritsAndLocalOverrideWins(): void
+    {
+        $values = [
+            'custom_typography' => ['tokens' => [
+                ['name' => 'Display', 'slug' => 'display', 'typography' => ['size' => 48, 'weight' => '700']],
+            ]],
+            'typo_h1' => ['preset' => 'wpe-custom-display', 'weight' => '600'],
+        ];
+        $css = SiteKitCompiler::css($values);
+        self::assertStringContainsString('h1,.wp-block-post-title{font-size:48px;font-weight:600;', $css);
+        self::assertStringContainsString(':where(.is-style-wpe-custom-display)', $css);
+        self::assertStringContainsString('--wpe-typography-wpe-custom-display-font-size:48px;', SiteKitCompiler::tokenCss($values));
+        $values['custom_typography']['tokens'][0]['typography']['size'] = 56;
+        self::assertStringContainsString('h1,.wp-block-post-title{font-size:56px;font-weight:600;', SiteKitCompiler::css($values));
+    }
+
+    public function testElementorGlobalMergePreservesUserEntriesAndProperties(): void
+    {
+        $existing = [
+            ['_id' => 'user', 'title' => 'User colour', 'color' => '#123456'],
+            ['_id' => 'wpe123', 'title' => 'Old', 'color' => '#ffffff', 'extra' => 'keep'],
+        ];
+        $result = \WPEssential\Modules\SiteKit\SiteKitElementor::mergeGlobals($existing, [
+            ['_id' => 'wpe123', 'title' => 'New', 'color' => '#000000'],
+        ]);
+        self::assertSame($existing[0], $result[0]);
+        self::assertSame(['_id' => 'wpe123', 'title' => 'New', 'color' => '#000000', 'extra' => 'keep'], $result[1]);
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

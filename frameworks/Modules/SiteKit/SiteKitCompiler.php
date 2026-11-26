@@ -484,6 +484,7 @@ final class SiteKitCompiler {
 		if ( $gradients !== '' ) {
 			$css .= ':root{' . $gradients . '}';
 		}
+		$css .= self::tokenCss( $v );
 		$css .= self::controls( $v );
 		if ( ! empty( $v['motion_off'] ) ) {
 			$css .= '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}';
@@ -667,6 +668,48 @@ final class SiteKitCompiler {
 		return $d;
 	}
 
+
+	/**
+	 * Token-only CSS for the editor canvas and front end. Register block styles by stable slug.
+	 *
+	 * @param array<string,mixed> $v
+	 */
+	public static function tokenCss( array $v ): string {
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$devices    = SiteKitBreakpoints::enabled( (array) ( $v['breakpoints'] ?? [] ) );
+		$css        = '';
+		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
+			$slug   = $token['slug'];
+			$styles = self::typography( $token['typography'], array_keys( $devices ) );
+			$props  = [];
+			foreach ( $styles as $device => $declarations ) {
+				$vars = '';
+				foreach ( $declarations as $property => $value ) {
+					$var                = '--wpe-typography-' . $slug . '-' . $property;
+					$vars              .= $var . ':' . $value . ';';
+					$props[ $property ] = 'var(' . $var . ',inherit)';
+					if ( $property === 'font-size' ) {
+						$vars .= '--wp--preset--font-size--' . $slug . ':' . $value . ';';
+					}
+				}
+				if ( $vars !== '' ) {
+					$rule  = ':root{' . $vars . '}';
+					$media = $devices[ $device ]['media'];
+					$css  .= $media === '' ? $rule : $media . '{' . $rule . '}';
+				}
+			}
+			if ( $props !== [] ) {
+				$css .= ':where(.is-style-' . $slug . '){';
+				foreach ( $props as $property => $value ) {
+					$css .= $property . ':' . $value . ';';
+				}
+				$css .= '}';
+			}
+		}
+
+		return $css;
+	}
+
 	/** Responsive and composite settings, one media query per enabled breakpoint. @param array<string,mixed> $v */
 	private static function controls( array $v ): string {
 		$breakpoints = SiteKitBreakpoints::enabled( is_array( $v['breakpoints'] ?? null ) ? $v['breakpoints'] : [] );
@@ -679,22 +722,15 @@ final class SiteKitCompiler {
 				$rules[ $device ][ $selector ][ $p ] = $value;
 			}
 		};
-		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
-			foreach ( self::typography( $token['typography'], array_keys( $rules ) ) as $device => $declarations ) {
-				foreach ( $declarations as $property => $value ) {
-					$add( $device, ':root', '--wpe-typography-' . $token['slug'] . '-' . $property, $value );
-					if ( $property === 'font-size' ) {
-						$add( $device, ':root', '--wp--preset--font-size--' . $token['slug'], $value );
-					}
-				}
-			}
-		}
+		$presets = array_column( SiteKitTokens::typography( $v['custom_typography'] ?? [] ), 'typography', 'slug' );
 		foreach ( self::TARGETS as $key => [ $selector, $property ] ) {
 			if ( empty( $v[ $key ] ) ) {
 				continue;
 			}
 			$value = $v[ $key ];
 			if ( str_starts_with( $key, 'typo_' ) && is_array( $value ) ) {
+				$preset = is_string( $value['preset'] ?? null ) ? $value['preset'] : '';
+				$value  = array_replace_recursive( $presets[ $preset ] ?? [], $value );
 				foreach ( self::typography( $value, array_keys( $rules ) ) as $device => $declarations ) {
 					foreach ( $declarations as $p => $x ) {
 						$add( $device, $selector, $p, $x );

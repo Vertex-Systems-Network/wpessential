@@ -46,6 +46,28 @@ final class SiteKitElementor {
 		}
 	}
 
+	/**
+	 * Update matching global IDs without dropping unrelated user entries or extra properties.
+	 *
+	 * @param array<mixed> $existing
+	 * @param list<array<string,mixed>> $incoming
+	 * @return list<mixed>
+	 */
+	public static function mergeGlobals( array $existing, array $incoming ): array {
+		$out = array_values( $existing );
+		foreach ( $incoming as $row ) {
+			foreach ( $out as $index => $old ) {
+				if ( is_array( $old ) && isset( $old['_id'] ) && $old['_id'] === $row['_id'] ) {
+					$out[ $index ] = array_replace( $old, $row );
+					continue 2;
+				}
+			}
+			$out[] = $row;
+		}
+
+		return $out;
+	}
+
 	public static function sync(): bool {
 		if ( ! class_exists( '\Elementor\Plugin' ) || empty( \Elementor\Plugin::$instance->kits_manager ) ) {
 			return false;
@@ -101,10 +123,13 @@ final class SiteKitElementor {
 			}
 		}
 		$settings                  = $kit->get_settings();
-		$settings['system_colors'] = $system;
-		$settings['custom_colors'] = $custom;
+		$settings['system_colors'] = self::mergeGlobals( (array) ( $settings['system_colors'] ?? [] ), $system );
+		$settings['custom_colors'] = self::mergeGlobals( (array) ( $settings['custom_colors'] ?? [] ), $custom );
 		if ( $typography !== [] ) {
-			$settings['system_typography'] = $typography;
+			$settings['system_typography'] = self::mergeGlobals(
+				(array) ( $settings['system_typography'] ?? [] ),
+				$typography
+			);
 		}
 		try {
 			$kit->save( [ 'settings' => $settings ] );

@@ -24,6 +24,8 @@ final class SiteKitFrontend {
 		add_filter( 'wp_theme_json_data_user', [ $this, 'themeJson' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 25 );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueueFonts' ] );
+		add_action( 'enqueue_block_assets', [ $this, 'enqueueEditorTokens' ] );
+		add_action( 'init', [ $this, 'registerTypographyStyles' ], 20 );
 		add_filter( 'language_attributes', [ $this, 'schemeAttribute' ] );
 		add_action( 'wp_head', [ $this, 'schemeScript' ], 1 );
 		add_action( 'wp_footer', [ $this, 'floatingControls' ], 50 );
@@ -62,6 +64,39 @@ final class SiteKitFrontend {
 		wp_register_style( self::STYLE_HANDLE, false, [], (string) ( defined( 'WPE_VERSION' ) ? WPE_VERSION : '1' ) );
 		wp_enqueue_style( self::STYLE_HANDLE );
 		wp_add_inline_style( self::STYLE_HANDLE, $css );
+	}
+
+	/** Native block style picker for text blocks; local block styles keep precedence. */
+	public function registerTypographyStyles(): void {
+		if ( ! function_exists( 'register_block_style' ) ) {
+			return;
+		}
+		$values = $this->store->values();
+		foreach ( SiteKitTokens::typography( $values['custom_typography'] ?? [] ) as $token ) {
+			foreach ( [ 'core/paragraph', 'core/heading' ] as $block ) {
+				register_block_style(
+					$block,
+					[
+						'name'  => $token['slug'],
+						'label' => $token['name'],
+					]
+				);
+			}
+		}
+	}
+
+	public function enqueueEditorTokens(): void {
+		if ( ! is_admin() ) {
+			return;
+		}
+		$css = SiteKitCompiler::tokenCss( $this->store->values() );
+		if ( $css === '' ) {
+			return;
+		}
+		$handle = self::STYLE_HANDLE . '-editor-tokens';
+		wp_register_style( $handle, false, [], (string) ( defined( 'WPE_VERSION' ) ? WPE_VERSION : '1' ) );
+		wp_enqueue_style( $handle );
+		wp_add_inline_style( $handle, $css );
 	}
 
 	public function enqueueFonts(): void {

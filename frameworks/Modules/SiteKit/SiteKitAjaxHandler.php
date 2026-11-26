@@ -26,7 +26,7 @@ final class SiteKitAjaxHandler implements AjaxHandlerInterface {
 
 		return match ( $this->operation ) {
 			SiteKitAdmin::AJAX_SAVE     => isset( SiteKitSchema::sections()[ $group ] )
-				? [ 'changed' => $this->store->update( SiteKitAdmin::groupValues( $group, is_array( $payload['values'] ?? null ) ? $payload['values'] : [] ) ) ]
+				? $this->saveGroup( $group, $payload )
 				: throw new InvalidArgumentException( 'Unknown Site Kit group.' ),
 			SiteKitAdmin::AJAX_RESET    => isset( SiteKitSchema::sections()[ $group ] )
 				? [
@@ -40,5 +40,17 @@ final class SiteKitAjaxHandler implements AjaxHandlerInterface {
 			],
 			default                     => throw new InvalidArgumentException( 'Unknown Site Kit operation.' ),
 		};
+	}
+
+	/** @param array<string,mixed> $payload @return array<string,mixed> */
+	private function saveGroup( string $group, array $payload ): array {
+		$changed = $this->store->update(
+			SiteKitAdmin::groupValues( $group, is_array( $payload['values'] ?? null ) ? $payload['values'] : [] )
+		);
+
+		return [
+			'changed' => $changed,
+			'reload'  => isset( $changed['custom_colours'] ) || isset( $changed['custom_typography'] ),
+		];
 	}
 }

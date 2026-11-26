@@ -184,7 +184,7 @@ final class SiteKitAdmin {
 			__( 'Reset group', 'wpessential' ),
 			'ghost',
 			[
-				'type'           => 'submit',
+				'type'       => 'submit',
 				'name'           => 'reset',
 				'value'          => '1',
 				'data-wpe-reset' => true,
@@ -231,6 +231,9 @@ final class SiteKitAdmin {
 			],
 			static fn ( mixed $x ): bool => $x !== null
 		);
+		if ( str_starts_with( $key, 'color_' ) || str_starts_with( $key, 'dark_' ) ) {
+			$config['defineColour'] = true;
+		}
 			$wide   = in_array( $type, [ 'typography', 'background', 'gradient', 'shadow', 'dimensions', 'fonts', 'colour_tokens', 'typography_tokens' ], true );
 			$string = is_array( $value ) ? (string) wp_json_encode( $value ) : ( $value === true ? '1' : ( is_scalar( $value ) ? (string) $value : '' ) );
 
@@ -274,6 +277,10 @@ final class SiteKitAdmin {
 			}
 		}
 		$stored  = ( new SiteKitStore() )->values();
+		$typography = [];
+		foreach ( SiteKitTokens::typography( $stored['custom_typography'] ?? [] ) as $token ) {
+			$typography[ $token['slug'] ] = $token['name'];
+		}
 		$enabled = SiteKitBreakpoints::enabled( (array) ( $stored['breakpoints'] ?? [] ) );
 		$labels  = SiteKitBreakpoints::labels();
 		$all     = [];
@@ -306,6 +313,8 @@ final class SiteKitAdmin {
 				'custom'  => array_keys( SiteKitUnits::custom( (array) ( $stored['units'] ?? [] ) ) ),
 			],
 		];
+
+		$config['typographyTokens'] = (object) $typography;
 
 		return '<script type="application/json" id="wpe-controls-config">' . (string) wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES ) . '</script>';
 	}
