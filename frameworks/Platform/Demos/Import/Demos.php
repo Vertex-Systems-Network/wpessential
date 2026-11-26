@@ -223,10 +223,7 @@ class Demos {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		$uploads = wp_upload_dir();
 		$dir     = trailingslashit( $uploads['basedir'] ) . 'wpessential-demos/' . sanitize_key( $demo['id'] . '-' . $builder );
-		if ( is_readable( $dir . '/content.json' ) ) {
-			return $dir;
-		}
-
+		// Download on every import: a copy left from an earlier import would hide a newer package on the server.
 		$tmp = download_url( $package, 120 );
 		if ( is_wp_error( $tmp ) ) {
 			/* translators: %s: error message. */
@@ -235,6 +232,10 @@ class Demos {
 		if ( ! WP_Filesystem() ) {
 			wp_delete_file( $tmp );
 			return new \WP_Error( 'wpe_fs', __( 'WordPress cannot write to the uploads folder. Check its permissions.', 'wpessential' ) );
+		}
+		global $wp_filesystem;
+		if ( $wp_filesystem && $wp_filesystem->is_dir( $dir ) ) {
+			$wp_filesystem->delete( $dir, true );
 		}
 		$result = unzip_file( $tmp, $dir );
 		wp_delete_file( $tmp );
