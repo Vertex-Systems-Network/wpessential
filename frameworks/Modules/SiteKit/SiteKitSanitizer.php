@@ -79,7 +79,7 @@ final class SiteKitSanitizer {
 	private static function text( mixed $value ): string {
 		$value = is_scalar( $value ) ? (string) $value : '';
 
-		return function_exists( 'sanitize_text_field' ) ? sanitize_text_field( $value ) : trim( strip_tags( $value ) );
+		return function_exists( 'sanitize_text_field' ) ? sanitize_text_field( $value ) : trim( wp_strip_all_tags( $value ) );
 	}
 
 	/**

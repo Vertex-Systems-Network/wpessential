@@ -72,10 +72,10 @@ final class SiteKitSnippets {
 		}
 		$code = is_scalar( $snippet['code'] ?? null ) ? (string) $snippet['code'] : '';
 		if ( $type === 'css' ) {
-			$code = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $code ) : strip_tags( $code );
+			$code = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $code ) : $code;
 		}
 		$id    = strtolower( (string) preg_replace( '/[^a-z0-9]/i', '', is_scalar( $snippet['id'] ?? null ) ? (string) $snippet['id'] : '' ) );
-		$title = is_scalar( $snippet['title'] ?? null ) ? trim( strip_tags( (string) $snippet['title'] ) ) : '';
+		$title = is_scalar( $snippet['title'] ?? null ) ? trim( wp_strip_all_tags( (string) $snippet['title'] ) ) : '';
 
 		return [
 			'id'       => $id !== '' ? substr( $id, 0, 32 ) : substr( md5( uniqid( '', true ) ), 0, 8 ),

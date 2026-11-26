@@ -50,7 +50,7 @@ final class SiteKitAbilities {
 				}
 				$unknown = array_diff( array_map( 'strval', array_keys( $values ) ), array_keys( SiteKitSchema::fields() ) );
 				if ( $unknown !== [] ) {
-					throw new InvalidArgumentException( 'Unknown Site Kit fields: ' . implode( ', ', $unknown ) . '. Read wpessential/site-kit/schema first.' );
+					throw new InvalidArgumentException( 'Unknown Site Kit fields: ' . ( function_exists( 'esc_html' ) ? esc_html( implode( ', ', $unknown ) ) : implode( ', ', $unknown ) ) . '. Read wpessential/site-kit/schema first.' );
 				}
 
 				return [ 'changed' => $this->store->update( $values ) ];
