@@ -42,3 +42,7 @@
 @media(max-width:768px){.wpe-menu.is-break-768 .wpe-menu__mega-content{width:100%}}
 @media(max-width:560px){.wpe-menu.is-break-560 .wpe-menu__mega-content{width:100%}}
 @media(prefers-reduced-motion:reduce){.wpe-menu__submenu-button{transition:none}}
+/* With the script running the submenu button is the indicator, and it sits beside the link. */
+.wpe-menu.is-js .wpe-menu__desktop .menu-item-has-children>a:after{content:none}
+.wpe-menu__desktop .wpe-menu__items>li:has(>.wpe-menu__submenu-button){display:flex;align-items:center}
+.wpe-menu__desktop .wpe-menu__items>li>.wpe-menu__submenu-button{margin-inline-start:-10px}

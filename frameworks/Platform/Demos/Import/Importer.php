@@ -1156,22 +1156,21 @@ class Importer {
 		$menu  = $this->content()['menus'][ $i ];
 		$items = array();
 		foreach ( (array) $menu['items'] as $item ) {
-			$items[] = $this->menu_target( $item );
+			$target             = $this->menu_target( $item );
+			$target['children'] = array_map( array( $this, 'menu_target' ), (array) ( $item['children'] ?? array() ) );
+			$items[]            = $target;
 		}
 
 		// Block themes: a wp_navigation post (the header navigation falls back to the newest one).
 		$blocks = '';
 		foreach ( $items as $item ) {
-			$attrs   = array(
-				'label' => $item['title'],
-				'url'   => $item['url'],
-			);
-			$attrs  += $item['id'] ? array(
-				'type' => $item['object'],
-				'id'   => $item['id'],
-				'kind' => 'post-type',
-			) : array( 'kind' => 'custom' );
-			$blocks .= '<!-- wp:navigation-link ' . wp_json_encode( $attrs ) . ' /-->';
+			$inner = '';
+			foreach ( $item['children'] as $child ) {
+				$inner .= '<!-- wp:navigation-link ' . wp_json_encode( self::nav_attrs( $child ) ) . ' /-->';
+			}
+			$blocks .= '' === $inner
+				? '<!-- wp:navigation-link ' . wp_json_encode( self::nav_attrs( $item ) ) . ' /-->'
+				: '<!-- wp:navigation-submenu ' . wp_json_encode( self::nav_attrs( $item ) ) . ' -->' . $inner . '<!-- /wp:navigation-submenu -->';
 		}
 		$nav = wp_insert_post(
 			wp_slash(
@@ -1194,18 +1193,10 @@ class Importer {
 		if ( ! is_wp_error( $menu_id ) ) {
 			$this->track( 'terms', array( $menu_id, 'nav_menu' ) );
 			foreach ( $items as $item ) {
-				wp_update_nav_menu_item(
-					$menu_id,
-					0,
-					array(
-						'menu-item-title'     => $item['title'],
-						'menu-item-url'       => $item['url'],
-						'menu-item-object'    => $item['id'] ? $item['object'] : 'custom',
-						'menu-item-object-id' => $item['id'],
-						'menu-item-type'      => $item['id'] ? 'post_type' : 'custom',
-						'menu-item-status'    => 'publish',
-					)
-				);
+				$parent = wp_update_nav_menu_item( $menu_id, 0, self::nav_item( $item ) );
+				foreach ( $item['children'] as $child ) {
+					wp_update_nav_menu_item( $menu_id, 0, self::nav_item( $child ) + array( 'menu-item-parent-id' => is_wp_error( $parent ) ? 0 : (int) $parent ) );
+				}
 			}
 			if ( ! empty( $menu['location'] ) && array_key_exists( $menu['location'], get_registered_nav_menus() ) ) {
 				$this->track( 'option', 'theme_mods_' . get_option( 'stylesheet' ) );
@@ -1217,6 +1208,41 @@ class Importer {
 		/* translators: 1: menu, 2: count. */
 		$this->log( 'info', sprintf( __( 'Created menu "%1$s" with %2$d links.', 'wpessential' ), $menu['name'], count( $items ) ) );
 		return null;
+	}
+
+	/**
+	 * Navigation block attributes for a resolved menu entry.
+	 *
+	 * @param array $item Resolved entry.
+	 * @return array
+	 */
+	private static function nav_attrs( array $item ): array {
+		$attrs = array(
+			'label' => $item['title'],
+			'url'   => $item['url'],
+		);
+		return $attrs + ( $item['id'] ? array(
+			'type' => $item['object'],
+			'id'   => $item['id'],
+			'kind' => 'post-type',
+		) : array( 'kind' => 'custom' ) );
+	}
+
+	/**
+	 * Classic menu item fields for a resolved menu entry.
+	 *
+	 * @param array $item Resolved entry.
+	 * @return array
+	 */
+	private static function nav_item( array $item ): array {
+		return array(
+			'menu-item-title'     => $item['title'],
+			'menu-item-url'       => $item['url'],
+			'menu-item-object'    => $item['id'] ? $item['object'] : 'custom',
+			'menu-item-object-id' => $item['id'],
+			'menu-item-type'      => $item['id'] ? 'post_type' : 'custom',
+			'menu-item-status'    => 'publish',
+		);
 	}
 
 	/**
