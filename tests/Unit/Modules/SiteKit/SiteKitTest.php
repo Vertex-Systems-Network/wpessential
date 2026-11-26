@@ -137,6 +137,22 @@ final class SiteKitTest extends TestCase
         self::assertSame(['_id' => 'wpe123', 'title' => 'New', 'color' => '#000000', 'extra' => 'keep'], $result[1]);
     }
 
+    public function testElementorTypographyProjectionKeepsStableIdAndSupportedFields(): void
+    {
+        $raw = ['tokens' => [
+            ['name' => 'Display', 'slug' => 'display', 'typography' => [
+                'family' => 'google:Inter', 'weight' => '700',
+                'size' => ['desktop' => ['size' => 48, 'unit' => 'px'], 'mobile' => ['size' => 28, 'unit' => 'px']],
+            ]],
+        ]];
+        $row = \WPEssential\Modules\SiteKit\SiteKitElementor::customTypography($raw)[0];
+        self::assertSame('Inter', $row['typography_font_family']);
+        self::assertSame('700', $row['typography_font_weight']);
+        self::assertSame(['size' => 28.0, 'unit' => 'px'], $row['typography_font_size_mobile']);
+        $raw['tokens'][0]['name'] = 'New name';
+        self::assertSame($row['_id'], \WPEssential\Modules\SiteKit\SiteKitElementor::customTypography($raw)[0]['_id']);
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [
