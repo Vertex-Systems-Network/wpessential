@@ -109,7 +109,11 @@ final class SiteKitElementor {
 				'lineHeight'    => 'line_height',
 				'letterSpacing' => 'letter_spacing',
 			] as $key => $field ) {
-				foreach ( [ 'desktop' => '', 'tablet' => '_tablet', 'mobile' => '_mobile' ] as $device => $suffix ) {
+				foreach ( [
+					'desktop' => '',
+					'tablet'  => '_tablet',
+					'mobile'  => '_mobile',
+				] as $device => $suffix ) {
 					$length = $style[ $key ][ $device ] ?? null;
 					if ( is_array( $length ) && in_array( $length['unit'], [ 'px', 'em', 'rem', '%', 'vw', 'vh' ], true ) ) {
 						$row[ 'typography_' . $field . $suffix ] = $length;

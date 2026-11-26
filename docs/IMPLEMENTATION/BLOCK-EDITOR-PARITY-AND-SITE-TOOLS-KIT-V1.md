@@ -17,14 +17,18 @@ Work ID root: `P5-M14`
 8. Theme classes keep the `wpe-` prefix; plugin code keeps Free/Pro boundaries (Free must not call Pro).
 9. Each WP below ships in its own PR with tests; update CHECKPOINT.md + this file's status column.
 
+## Current execution handoff (2026-11-26)
+
+WP1 migration is merged in Free and Pro. WP2–WP4 kit portions are merged; block/React follow-ups remain. WP5 is next after #1593 reconciliation. Preserve the existing `site-kit` runtime ID and option keys. Free currently registers Elementor synchronization directly; the planned premium-extension boundary is not yet proven and must be reconciled before marking that aspect complete. No new full-product or release claim follows.
+
 ## Work packages
 
 | WP | Owner request | Scope | Repo | Status |
 |---|---|---|---|---|
-| WP1 | 7 | Move Site Kit from Pro to **Free**, rename **Site Tools Kit**; Pro keeps premium extras (code inserter extras, Elementor sync) via filter | Free, Pro | DONE |
-| WP2 | 15 | House `Dropdown` component (React + vanilla for admin screens); replace `<select>` in Site Tools Kit, field UI, block inspector | Free | DONE (PHP/vanilla screens; React screens Demos/Modules still native — follow-up) |
-| WP3 | 10 | Breakpoints list in Layout (320…1920, enable/disable, edit px); `ResponsiveControl` device dropdown with icons/tooltips; used by kit and blocks | Free | DONE for Site Tools Kit; block inspector reuse lands with WP9 |
-| WP4 | 4 | Units setting: multi-select allowed units (px, %, em, rem, vh, vw, vmin, vmax, ch, fr) + custom units with `1 X = n <base>`; `UnitControl` shows only enabled units; compiler converts custom → `calc(n * base)` | Free | DONE for Site Tools Kit (block UnitControl reuse with WP9) |
+| WP1 | 7 | Move Site Kit from Pro to **Free**, rename **Site Tools Kit**; Pro keeps premium extras (code inserter extras, Elementor sync) via filter | Free, Pro | MIGRATION MERGED (premium extension boundary pending) |
+| WP2 | 15 | House `Dropdown` component (React + vanilla for admin screens); replace `<select>` in Site Tools Kit, field UI, block inspector | Free | PARTIAL (PHP/vanilla screens; React screens Demos/Modules still native — follow-up) |
+| WP3 | 10 | Breakpoints list in Layout (320…1920, enable/disable, edit px); `ResponsiveControl` device dropdown with icons/tooltips; used by kit and blocks | Free | KIT DONE for Site Tools Kit; block inspector reuse lands with WP9 |
+| WP4 | 4 | Units setting: multi-select allowed units (px, %, em, rem, vh, vw, vmin, vmax, ch, fr) + custom units with `1 X = n <base>`; `UnitControl` shows only enabled units; compiler converts custom → `calc(n * base)` | Free | KIT DONE for Site Tools Kit (block UnitControl reuse with WP9) |
 | WP5 | 9 | Global colours / dark colours / typography: repeater "Add custom" with name + slug; exposed as CSS vars + `theme.json` palette/fontSizes + global picker in blocks/Elementor | Free | TODO |
 | WP6 | 13 | Expand groups: images, forms (labels, inputs, focus, placeholder, errors), buttons (states, sizes, variants), background, links (states, underline), shadows (named presets) — every sub-element + full CSS props | Free | TODO |
 | WP7 | 12 | Custom code: repeater of snippets — language (CSS, SCSS-lite, JS, HTML, PHP-off-by-default), location (head, body open, footer, before/after content, admin, login), conditions (all/front/page ids), priority, enable | Free (PHP exec Pro) | TODO |

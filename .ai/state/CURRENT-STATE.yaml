@@ -2,17 +2,17 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: bc0605272942fc7dfac1c7d34ca975da6b223f55
-observed_main_source: "2026-10-20 exact-main refresh after PR #1468 closeout merged; main @ bc0605272942fc7dfac1c7d34ca975da6b223f55."
-active_issue: null
-active_pr: null
-active_branch: main
-current_milestone: "Surface 3 Fields Atomic Option Contract V1; 618 reviewed Bank records."
+observed_main_sha: 5ebd02572a04bc9001192ac42870b731f9c48e52
+observed_main_source: "2026-11-26 exact-main refresh; Free #1592 and Pro #31 merged; observed anchor, not this candidate commit."
+active_issue: "#1593"
+active_pr: "#1594"
+active_branch: agent/adr-0239-wp0-reconciliation
+current_milestone: "P5-M14 ADR-0239 WP0 reconciliation; WP5 global design tokens next"
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "PR #1476 Surface 9 Listings Atomic Option Contract merged; 150/150 (127/16/1/6); 12/12 exact-head CI PASS."
-next_safe_action: "Execute docs/IMPLEMENTATION/BLOCK-EDITOR-PARITY-AND-SITE-TOOLS-KIT-V1.md (ADR-0239) in WP order: WP1 Site Tools Kit to Free first. Rules in that file bind every AI agent."
-waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
-next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
+last_completed_milestone: "WP1 migration Free #1589 / Pro #31; WP2–WP4 kit slices Free #1590–#1592. Pro E2E 47/47 PASS."
+next_safe_action: "Integrate WP0 after exact-head checks; then implement WP5 in docs/IMPLEMENTATION/BLOCK-EDITOR-PARITY-AND-SITE-TOOLS-KIT-V1.md. Do not restart WP1. WP2–WP4 remaining block consumers land with WP9."
+waiting_external: "WP0 exact-head CI pending; P-006 #1102/#1425/#1426 separately gated; draft #1490 and module UI backlog remain separate. #858 historical external-admin entry requires fresh verification."
+next_planned_slot: adr-0239-wp5-global-tokens-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -20,7 +20,10 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
+    - RB-0131
   terminal_pass:
+    - RB-0130
+    - RB-0129
     - RB-0128
     - RB-0127
     - RB-0041

@@ -1,9 +1,9 @@
 {
   "schema_version": 214,
-  "snapshot_date": "2026-10-20",
-  "queue_anchor_main_sha": "e3cf5878f9d19ad80483688426ebae21aac2e62d",
+  "snapshot_date": "2026-11-26",
+  "queue_anchor_main_sha": "5ebd02572a04bc9001192ac42870b731f9c48e52",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
-  "source_issue": "#1468",
+  "source_issue": "#1593",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -101,7 +101,6 @@
   "issue_classification": {
     "858": "NON_BLOCKING_EXTERNAL_ADMIN",
     "947": "CLOSED_COMPLETED_PR_1422_BOUNDED_STATIC_REVIEW",
-    "1423": "CLOSED_COMPLETED_P006_WAVE1A_SHARED_TRUTH_CLOSEOUT",
     "1014": "COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL",
     "1015": "COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
@@ -251,7 +250,14 @@
     "1405": "CLOSED_COMPLETED_RB0123_PR1406_REAL_MYSQL_12_OF_12_PASS",
     "1407": "CLOSED_COMPLETED_RB0124_PR1408_PINNED_WP_15_OF_15_PASS",
     "1411": "CLOSED_COMPLETED_RB0125_PR1412_14_OF_14_PASS",
-    "1458": "CLOSED_COMPLETED_PR1459_EXACT_HEAD_GATES_PASS"
+    "1423": "CLOSED_COMPLETED_P006_WAVE1A_SHARED_TRUTH_CLOSEOUT",
+    "1458": "CLOSED_COMPLETED_PR1459_EXACT_HEAD_GATES_PASS",
+    "1489": "OPEN_DESIGN_ONLY_DRAFT_PR_1490",
+    "1495": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
+    "1497": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
+    "1498": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
+    "1499": "OPEN_SEPARATE_MODULE_UI_BACKLOG",
+    "1593": "ACTIVE_ADR_0239_RECONCILIATION"
   },
   "auto_assignment": {
     "enabled": true,
@@ -281,7 +287,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Surface 28 Bank Review is complete. Schema-valid Atomic Option Contract derivation and UX re-review need a separate scoped issue; do not promote runtime or attachment/file/reference mutation.",
+    "next_safe_action": "Integrate ADR-0239 WP0 reconciliation after exact-head CI; select WP5 global tokens next. WP2–WP4 remaining block consumers with WP9. Preserve separate UI and P-006 lanes.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8654,6 +8660,32 @@
       "terminal_architecture_run": 39423015376,
       "terminal_platform_run": 39423015390,
       "terminal_merge_sha": "e3cf5878f9d19ad80483688426ebae21aac2e62d"
+    },
+    {
+      "priority": 1212,
+      "slot_id": "adr-0239-wp5-global-tokens-v1",
+      "title": "ADR-0239 WP5 global colour and typography tokens V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "ADR_0239_GLOBAL_TOKENS",
+      "source": "ADR-0239 / #1593 / WP5",
+      "dependencies": [
+        "WP0 reconciliation merged",
+        "WP1–WP4 kit baseline merged"
+      ],
+      "runtime_allowed": true,
+      "claim_branch": "agent/adr-0239-wp5-global-tokens",
+      "allowed_scope": [
+        "Site Tools Kit global colour, dark colour and typography schema, registry, compiler, admin controls, theme.json projection, compatible consumer integration and tests"
+      ],
+      "forbidden_scope": [
+        "PHP snippet execution",
+        "unrelated module UI backlog",
+        "production release or deployment",
+        "formal P-006 evidence promotion"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
+      "close_condition": "Scoped WP5 exact-head checks PASS and merge; mark remaining block picker consumers explicitly if deferred to WP9."
     }
   ],
   "historical_closeout": {

@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "e400ea23ae2af0b49a3292963e5eaaf488ec325a",
+  "anchor_main_sha": "5ebd02572a04bc9001192ac42870b731f9c48e52",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3999,9 +3999,53 @@
         "Planning/UX lifecycle only; Backup/restore runtime remains separately gated"
       ],
       "note": "PASS_BACKUP_ATOMIC_CONTRACT_UX_V1 only; no archive/capture/upload/restore/copy/delete/provider execution or runtime certification."
+    },
+    {
+      "id": "RB-0130",
+      "source": "ADR-0239 WP1–WP4 / Free #1589–1592 / Pro #31",
+      "category": "ADR_0239_CROSS_REPO_INTEGRATION",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality, Platform Compatibility, Pro CI, Free + Pro Lifecycle, Pro E2E",
+      "environment": "Free main 5ebd02572a04bc9001192ac42870b731f9c48e52; Pro main a77aca5f9e8f2d9c541cccf96a3ab8d4db63e2c9",
+      "dependencies": [
+        "WP1–WP4 kit baseline"
+      ],
+      "authorization": "BEP-STK-V1",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 15,
+      "dedup_key": "adr0239|wp1-4|observed-20261126",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "Free 45861383685 and 45861383756 PASS; Pro 45867583179, 45867583205, 45867582959 PASS",
+        "Pro PR 45858236138 attempt 2 47/47 PASS; not a new merged-main E2E run"
+      ],
+      "note": "Bounded integration evidence only; no P-006 or full product certification."
+    },
+    {
+      "id": "RB-0131",
+      "source": "ADR-0239 WP5 / #1593",
+      "category": "ADR_0239_GLOBAL_TOKENS",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "WP5 exact-head PHP Quality, platform compatibility and applicable admin build/browser checks",
+      "environment": "Future WP5 exact head, Free + Pro compatibility as applicable",
+      "dependencies": [
+        "WP0 merged",
+        "WP5 source and tests"
+      ],
+      "authorization": "BEP-STK-V1",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 15,
+      "dedup_key": "adr0239|wp5|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "CAPTURED",
+      "evidence": [],
+      "note": "Not executed; capture actual head and results before promotion."
     }
   ],
-  "last_reconciled_issue": "#1468",
+  "last_reconciled_issue": "#1593",
   "last_reconciled_policy": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
