@@ -45,13 +45,6 @@ final class SiteKitSchema {
 		'star',
 	];
 
-	/** Breakpoints for responsive values (desktop first). */
-	public const DEVICES = [
-		'desktop' => '',
-		'tablet'  => '@media (max-width: 1023px)',
-		'mobile'  => '@media (max-width: 767px)',
-	];
-
 	/** @return array<string,array{title:string,description:string,icon:string,fields:array<string,array<string,mixed>>}> */
 	public static function sections(): array {
 		// Abilities register on plugins_loaded and read the group ids. Translating there would
@@ -317,6 +310,11 @@ final class SiteKitSchema {
 				'',
 				'monitor',
 				[
+					'breakpoints'   => [
+						'type'        => 'breakpoints',
+						'label'       => self::t( 'Breakpoints' ),
+						'description' => self::t( 'Switch on the screen sizes you design for. Only these appear in the device menu next to responsive fields.' ),
+					],
 					'content_width' => self::range( self::t( 'Content width' ), 480, 1200 ),
 					'wide_width'    => self::range( self::t( 'Wide width' ), 900, 1920 ),
 					'section_space' => self::range( self::t( 'Space between sections' ), 24, 200, 1, 'px', true ),

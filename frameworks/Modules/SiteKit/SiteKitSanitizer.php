@@ -24,7 +24,7 @@ final class SiteKitSanitizer {
 			$value   = is_array( $decoded ) ? $decoded : '';
 		}
 
-		if ( in_array( $type, [ 'dimensions', 'typography', 'background', 'gradient', 'shadow' ], true ) || ( $type === 'range' && is_array( $value ) ) ) {
+		if ( in_array( $type, [ 'dimensions', 'typography', 'background', 'gradient', 'shadow', 'breakpoints' ], true ) || ( $type === 'range' && is_array( $value ) ) ) {
 			return is_array( $value ) ? self::tree( $value ) : [];
 		}
 
