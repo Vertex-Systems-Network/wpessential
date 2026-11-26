@@ -354,6 +354,10 @@ final class Plugin {
 		$services->set( 'platform.modules.toggles', $moduleToggles );
 
 		$modules = [ new CustomPostTypeModule(), new TaxonomyModule() ];
+		// Pro builds before ADR-0239 still register Site Kit themselves; avoid a duplicate module id.
+		if ( ! defined( 'WPE_PRO_FILE' ) || ! is_file( dirname( (string) WPE_PRO_FILE ) . '/frameworks/Modules/SiteKit/SiteKitModule.php' ) ) {
+			$modules[] = new \WPEssential\Modules\SiteKit\SiteKitModule();
+		}
 		if ( $customTablesModule instanceof CustomTablesModule ) {
 			$modules[] = $customTablesModule;
 		}

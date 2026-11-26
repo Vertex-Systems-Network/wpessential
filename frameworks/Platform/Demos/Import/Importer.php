@@ -1536,6 +1536,34 @@ class Importer {
 		}
 		/* translators: %s: variation. */
 		$this->log( 'success', sprintf( __( 'Applied the %s colours and fonts.', 'wpessential' ), $styles['title'] ) );
+		$this->sync_site_kit( $data );
+	}
+
+	/**
+	 * Copy the variation's palette and fonts into Site Tools Kit, the single source of defaults (ADR-0239).
+	 *
+	 * @param array $data Variation data (theme.json shape).
+	 */
+	private function sync_site_kit( $data ) {
+		if ( ! class_exists( \WPEssential\Modules\SiteKit\SiteKitStore::class ) ) {
+			return;
+		}
+		$changes = array();
+		foreach ( (array) ( $data['settings']['color']['palette'] ?? array() ) as $colour ) {
+			if ( isset( $colour['slug'], $colour['color'] ) ) {
+				$changes[ 'color_' . sanitize_key( $colour['slug'] ) ] = (string) $colour['color'];
+			}
+		}
+		foreach ( (array) ( $data['settings']['typography']['fontFamilies'] ?? array() ) as $font ) {
+			if ( isset( $font['slug'], $font['name'] ) ) {
+				$changes[ 'font_' . sanitize_key( $font['slug'] ) ] = (string) $font['name'];
+			}
+		}
+		if ( array() === $changes ) {
+			return;
+		}
+		$this->track( 'option', \WPEssential\Modules\SiteKit\SiteKitStore::OPTION );
+		( new \WPEssential\Modules\SiteKit\SiteKitStore() )->update( $changes );
 	}
 
 	/**

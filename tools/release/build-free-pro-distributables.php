@@ -266,13 +266,15 @@ function isFreeFrameworkFile(string $relative): bool
     }
 
     return str_starts_with($relative, 'Modules/CustomPostTypes/')
-        || str_starts_with($relative, 'Modules/Taxonomies/');
+        || str_starts_with($relative, 'Modules/Taxonomies/')
+        || str_starts_with($relative, 'Modules/SiteKit/');
 }
 
 function isProModuleFile(string $relative): bool
 {
     return !str_starts_with($relative, 'CustomPostTypes/')
-        && !str_starts_with($relative, 'Taxonomies/');
+        && !str_starts_with($relative, 'Taxonomies/')
+        && !str_starts_with($relative, 'SiteKit/');
 }
 
 /** @param list<string> $freeAssets */
