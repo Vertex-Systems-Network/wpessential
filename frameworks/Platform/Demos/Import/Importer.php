@@ -50,8 +50,9 @@ class Importer {
 			'cleanup'   => __( 'Removing the previous demo', 'wpessential' ),
 			'package'   => __( 'Preparing the demo package', 'wpessential' ),
 			'plugins'   => __( 'Installing plugins', 'wpessential' ),
-			'media'     => __( 'Importing images', 'wpessential' ),
-			'terms'     => __( 'Creating categories', 'wpessential' ),
+			'media'       => __( 'Importing images', 'wpessential' ),
+			'definitions' => __( 'Creating post types and fields', 'wpessential' ),
+			'terms'       => __( 'Creating categories', 'wpessential' ),
 			'forms'     => __( 'Creating forms', 'wpessential' ),
 			'content'   => __( 'Building pages and posts', 'wpessential' ),
 			'products'  => __( 'Adding products', 'wpessential' ),
@@ -138,7 +139,7 @@ class Importer {
 			if ( $options['media'] ) {
 				$keys[] = 'media';
 			}
-			array_push( $keys, 'terms', 'forms', 'content' );
+			array_push( $keys, 'definitions', 'terms', 'forms', 'content' );
 			if ( $options['products'] ) {
 				$keys[] = 'products';
 			}
@@ -1057,6 +1058,18 @@ class Importer {
 			);
 		}
 		$id = $product->save();
+		// Terms in other product taxonomies (e.g. a niche taxonomy from the demo's definitions).
+		foreach ( (array) ( $item['terms'] ?? array() ) as $taxonomy => $keys ) {
+			$ids = array();
+			foreach ( (array) $keys as $key ) {
+				if ( isset( $map['terms'][ $key ] ) ) {
+					$ids[] = (int) $map['terms'][ $key ][0];
+				}
+			}
+			if ( $ids && $id ) {
+				wp_set_object_terms( $id, $ids, sanitize_key( $taxonomy ) );
+			}
+		}
 		if ( ! $id ) {
 			/* translators: %s: product. */
 			$this->log( 'error', sprintf( __( 'Product "%s" could not be saved.', 'wpessential' ), $item['name'] ) );
@@ -1148,6 +1161,109 @@ class Importer {
 			$variation->save();
 		}
 		\WC_Product_Variable::sync( $id );
+	}
+
+	/**
+	 * One post type, taxonomy or field group, saved and published through the plugin's own
+	 * Abilities (wpessential/cpt, wpessential/taxonomy, wpessential/fields), so it shows and stays
+	 * editable in the plugin's screens. Field groups need WPEssential Pro and are skipped without it.
+	 *
+	 * @param int $i Index.
+	 * @return null
+	 */
+	private function step_definitions( $i ) {
+		$item  = (array) $this->content()['definitions'][ $i ];
+		$kind  = (string) ( $item['kind'] ?? '' );
+		$map   = array(
+			'cpt'      => array( 'wpessential/cpt/save', 'wpessential/cpt/status', 'post_type_key' ),
+			'taxonomy' => array( 'wpessential/taxonomy/save', 'wpessential/taxonomy/status', 'taxonomy_key' ),
+			'fields'   => array( 'wpessential/fields/save-group', 'wpessential/fields/status-group', 'group_key' ),
+		);
+		$kernel = function_exists( 'wpessential_kernel' ) ? wpessential_kernel() : null;
+		$name   = (string) ( $item['payload'][ $map[ $kind ][2] ?? '' ] ?? $kind );
+		if ( ! isset( $map[ $kind ] ) || ! $kernel || ! $kernel->services()->has( 'platform.abilities' ) ) {
+			return null;
+		}
+		$abilities = $kernel->services()->get( 'platform.abilities' );
+		$context   = $kernel->services()->get( 'platform.abilities.contexts' )->current();
+		if ( null === $abilities->descriptor( $map[ $kind ][0] ) ) {
+			/* translators: %s: definition key. */
+			$this->log( 'warning', sprintf( __( '"%s" needs WPEssential Pro and was skipped.', 'wpessential' ), $name ) );
+			return null;
+		}
+		try {
+			$saved = $abilities->execute( $map[ $kind ][0], array( 'payload' => (array) $item['payload'] ), $context )['definition'];
+			$saved = $abilities->execute(
+				$map[ $kind ][1],
+				array(
+					'id'                => $saved['id'],
+					'expected_revision' => $saved['revision'],
+					'status'            => 'published',
+				),
+				$context
+			)['definition'];
+			$this->track( 'definitions', array( $kind, (string) $saved['id'] ) );
+			// The module registers it on the next request; terms and posts are written in this one.
+			$payload = (array) $item['payload'];
+			if ( 'cpt' === $kind && ! post_type_exists( $name ) ) {
+				register_post_type( $name, array( 'public' => true, 'label' => (string) ( $payload['name'] ?? $name ) ) );
+			} elseif ( 'taxonomy' === $kind && ! taxonomy_exists( $name ) ) {
+				register_taxonomy( $name, (array) ( $payload['object_types'] ?? array( 'post' ) ), array( 'public' => true, 'label' => (string) ( $payload['name'] ?? $name ) ) );
+			}
+			/* translators: %s: definition key. */
+			$this->log( 'info', sprintf( __( 'Created "%s".', 'wpessential' ), $name ) );
+		} catch ( \Throwable $e ) {
+			/* translators: 1: definition key, 2: error. */
+			$this->log( 'warning', sprintf( __( '"%1$s" was not created: %2$s', 'wpessential' ), $name, $e->getMessage() ) );
+		}
+		return null;
+	}
+
+	/**
+	 * Trash, then delete, the post types, taxonomies and field groups a demo created.
+	 *
+	 * @param array $items [kind, id] pairs.
+	 */
+	private static function remove_definitions( array $items ) {
+		$kernel = function_exists( 'wpessential_kernel' ) ? wpessential_kernel() : null;
+		if ( ! $items || ! $kernel || ! $kernel->services()->has( 'platform.abilities' ) ) {
+			return;
+		}
+		$abilities = $kernel->services()->get( 'platform.abilities' );
+		$context   = $kernel->services()->get( 'platform.abilities.contexts' )->current();
+		$prefix    = array(
+			'cpt'      => array( 'wpessential/cpt/get', 'wpessential/cpt/trash', 'wpessential/cpt/delete' ),
+			'taxonomy' => array( 'wpessential/taxonomy/get', 'wpessential/taxonomy/trash', 'wpessential/taxonomy/delete' ),
+			'fields'   => array( 'wpessential/fields/get-group', 'wpessential/fields/lifecycle-group', 'wpessential/fields/lifecycle-group' ),
+		);
+		foreach ( array_reverse( $items ) as $item ) {
+			$names = $prefix[ $item[0] ] ?? null;
+			if ( ! $names ) {
+				continue;
+			}
+			try {
+				$fields = 'fields' === $item[0];
+				$def    = $abilities->execute( $names[0], array( 'id' => $item[1] ), $context )['definition'];
+				$def    = $abilities->execute(
+					$names[1],
+					array(
+						'id'                => $item[1],
+						'expected_revision' => $def['revision'],
+					) + ( $fields ? array( 'action' => 'trash' ) : array() ),
+					$context
+				)['definition'];
+				$abilities->execute(
+					$names[2],
+					array(
+						'id'                => $item[1],
+						'expected_revision' => $def['revision'],
+					) + ( $fields ? array( 'action' => 'delete' ) : array() ),
+					$context
+				);
+			} catch ( \Throwable $e ) {
+				continue; // Already removed or edited by the owner: keep it.
+			}
+		}
 	}
 
 	/**
@@ -1677,6 +1793,7 @@ class Importer {
 			}
 			++$count;
 		}
+		self::remove_definitions( (array) ( $record['definitions'] ?? array() ) );
 		foreach ( (array) ( $record['post_status'] ?? array() ) as $state ) {
 			if ( get_post( (int) $state[0] ) ) {
 				wp_update_post(
