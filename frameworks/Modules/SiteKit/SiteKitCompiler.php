@@ -93,6 +93,16 @@ final class SiteKitCompiler {
 				];
 			}
 		}
+		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
+			$entry = [ 'slug' => $token['slug'], 'name' => $token['name'], 'color' => $token['color'] ];
+			foreach ( $palette as $index => $colour ) {
+				if ( ( $colour['slug'] ?? '' ) === $token['slug'] ) {
+					$palette[ $index ] = $entry;
+					continue 2;
+				}
+			}
+			$palette[] = $entry;
+		}
 		if ( $palette !== [] ) {
 			$settings['color']['palette'] = $palette;
 		}
@@ -336,6 +346,11 @@ final class SiteKitCompiler {
 		foreach ( $v as $key => $value ) {
 			if ( str_starts_with( (string) $key, 'dark_' ) && is_string( $value ) ) {
 				$dark .= '--wp--preset--color--' . substr( (string) $key, 5 ) . ':' . $value . ';';
+			}
+		}
+		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
+			if ( $token['dark'] !== '' ) {
+				$dark .= '--wp--preset--color--' . $token['slug'] . ':' . $token['dark'] . ';';
 			}
 		}
 		if ( $dark !== '' ) {

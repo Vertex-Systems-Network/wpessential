@@ -24,6 +24,12 @@ final class SiteKitSanitizer {
 			$value   = is_array( $decoded ) ? $decoded : '';
 		}
 
+		if ( $type === 'colour_tokens' ) {
+			$tokens = SiteKitTokens::colours( $value );
+
+			return $tokens === [] ? [] : [ 'tokens' => $tokens ];
+		}
+
 		if ( in_array( $type, [ 'dimensions', 'typography', 'background', 'gradient', 'shadow', 'breakpoints', 'units' ], true ) || ( $type === 'range' && is_array( $value ) ) ) {
 			return is_array( $value ) ? self::tree( $value ) : [];
 		}

@@ -73,7 +73,13 @@ final class SiteKitFrontend {
 
 	/** Dark mode is active only when dark colours are set; the server-side default is light. */
 	private function schemeEnabled(): bool {
-		foreach ( array_keys( $this->store->values() ) as $key ) {
+		$values = $this->store->values();
+		foreach ( SiteKitTokens::colours( $values['custom_colours'] ?? [] ) as $token ) {
+			if ( $token['dark'] !== '' ) {
+				return true;
+			}
+		}
+		foreach ( array_keys( $values ) as $key ) {
 			if ( str_starts_with( (string) $key, 'dark_' ) || $key === 'site_bg_dark' ) {
 				return true;
 			}

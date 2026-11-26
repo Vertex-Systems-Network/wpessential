@@ -231,7 +231,7 @@ final class SiteKitAdmin {
 			],
 			static fn ( mixed $x ): bool => $x !== null
 		);
-			$wide   = in_array( $type, [ 'typography', 'background', 'gradient', 'shadow', 'dimensions', 'fonts' ], true );
+			$wide   = in_array( $type, [ 'typography', 'background', 'gradient', 'shadow', 'dimensions', 'fonts', 'colour_tokens' ], true );
 			$string = is_array( $value ) ? (string) wp_json_encode( $value ) : ( $value === true ? '1' : ( is_scalar( $value ) ? (string) $value : '' ) );
 
 			return '<div class="wpec wpec--' . esc_attr( $type ) . ( $wide ? ' wpe-ui-sitekit__wide' : '' ) . '" data-wpec="' . esc_attr( (string) wp_json_encode( $config ) ) . '"' . ( isset( $field['tab'] ) ? ' data-wpec-tab="' . esc_attr( (string) $field['tab'] ) . '"' : '' ) . '>'

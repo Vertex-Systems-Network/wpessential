@@ -50,6 +50,41 @@ final class SiteKitTest extends TestCase
         self::assertArrayNotHasKey('color_primary', $store->values());
     }
 
+
+    public function testCustomColourTokensValidateAndPreserveStableSlugs(): void
+    {
+        $raw = ['tokens' => [
+            ['name' => 'Brand blue', 'slug' => 'brand-blue', 'color' => '#3458C9', 'dark' => '#99AAFF'],
+            ['name' => 'Duplicate', 'slug' => 'wpe-custom-brand-blue', 'color' => '#fff'],
+            ['name' => 'Invalid', 'slug' => 'bad;}body', 'color' => '#fff'],
+            ['name' => 'Unsafe colour', 'slug' => 'unsafe', 'color' => 'red;}body{display:none'],
+            ['name' => 'Primary', 'slug' => 'primary', 'color' => '#123'],
+        ]];
+        $clean = SiteKitSanitizer::clean(['type' => 'colour_tokens'], json_encode($raw));
+        self::assertSame(['tokens' => [
+            ['name' => 'Brand blue', 'slug' => 'wpe-custom-brand-blue', 'color' => '#3458c9', 'dark' => '#99aaff'],
+            ['name' => 'Primary', 'slug' => 'wpe-custom-primary', 'color' => '#123', 'dark' => ''],
+        ]], $clean);
+        self::assertSame($clean, SiteKitSanitizer::clean(['type' => 'colour_tokens'], $clean));
+    }
+
+    public function testCustomColoursProjectIntoPaletteAndDarkCss(): void
+    {
+        $store = new SiteKitStore();
+        $store->update(['custom_colours' => ['tokens' => [
+            ['name' => 'Brand blue', 'slug' => 'brand-blue', 'color' => '#3458c9', 'dark' => '#99aaff'],
+        ]]]);
+        $values = $store->values();
+        $json = SiteKitCompiler::themeJson([], $values, static fn (array $path): array => $path === ['color', 'palette'] ? [['slug' => 'primary', 'color' => '#000']] : []);
+        self::assertSame([
+            ['slug' => 'primary', 'color' => '#000'],
+            ['slug' => 'wpe-custom-brand-blue', 'name' => 'Brand blue', 'color' => '#3458c9'],
+        ], $json['settings']['color']['palette']);
+        self::assertStringContainsString('--wp--preset--color--wpe-custom-brand-blue:#99aaff;', SiteKitCompiler::css($values));
+        self::assertSame(['custom_colours'], $store->resetSection('colors'));
+        self::assertSame([], $store->values());
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

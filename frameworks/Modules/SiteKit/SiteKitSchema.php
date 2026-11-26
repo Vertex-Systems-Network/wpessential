@@ -114,6 +114,12 @@ final class SiteKitSchema {
 			$dark[ 'dark_' . $slug ]   = self::colour( $labels[ $slug ] );
 		}
 
+		$light['custom_colours'] = [
+			'type'  => 'colour_tokens',
+			'label' => self::t( 'Custom global colours' ),
+			'help'  => self::t( 'Add named colours with stable slugs and optional dark-mode overrides. Custom slugs use the wpe-custom- prefix.' ),
+		];
+
 		$weights = [
 			''    => self::t( 'Theme default' ),
 			'400' => '400 · Regular',

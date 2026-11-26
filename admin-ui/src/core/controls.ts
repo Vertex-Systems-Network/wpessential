@@ -14,6 +14,7 @@ export interface ControlOptions {
 	responsive?: boolean;
 	placeholder?: string;
 	tab?: string;
+	literalColour?: boolean;
 }
 
 export interface ControlContext {
@@ -534,7 +535,8 @@ types.color = ( ctx ) => {
 		'aria-label': ctx.label,
 		onchange: ( event: Event ) => {
 			const value = ( event.target as HTMLInputElement ).value.trim();
-			if ( ! value || /^#?[0-9a-f]{3,8}$/i.test( value ) || /^(rgb|hsl)a?\(/i.test( value ) || /^var\(/.test( value ) ) {
+			const validHex = /^#?(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test( value );
+			if ( ! value || validHex || ( ! ctx.opt.literalColour && ( /^(rgb|hsl)a?\(/i.test( value ) || /^var\(/.test( value ) ) ) ) {
 				ctx.set( value && /^[0-9a-f]{3,8}$/i.test( value ) ? '#' + value : value );
 			}
 		},
@@ -551,7 +553,7 @@ types.color = ( ctx ) => {
 	};
 	picker.addEventListener( 'input', setCustom );
 	alpha.addEventListener( 'input', setCustom );
-	const hasPalette = Object.keys( cfg.palette ?? {} ).length > 0;
+	const hasPalette = ! ctx.opt.literalColour && Object.keys( cfg.palette ?? {} ).length > 0;
 	( hasPalette ? [ [ 'globals', t( 'Global' ) ], [ 'custom', t( 'Custom' ) ] ] : [ [ 'custom', t( 'Custom' ) ] ] ).forEach( ( [ key, label ], index ) => {
 		tabs.append(
 			h( 'button', {
@@ -573,7 +575,7 @@ types.color = ( ctx ) => {
 	} );
 	globals.hidden = ! hasPalette;
 	custom.hidden = hasPalette;
-	for ( const [ name, colour ] of Object.values( cfg.palette ?? {} ) ) {
+	for ( const [ name, colour ] of Object.values( ctx.opt.literalColour ? {} : cfg.palette ?? {} ) ) {
 		globals.append(
 			h(
 				'button',
@@ -1198,6 +1200,55 @@ types.background = ( ctx ) => {
 			classic.el.hidden = isGradient;
 			gradientBox.hidden = ! isGradient;
 			( isGradient ? gradient : classic ).refresh();
+		},
+	};
+};
+
+
+types.colour_tokens = ( ctx ) => {
+	type Token = { name?: string; slug?: string; color?: string; dark?: string };
+	const read = (): Token[] => {
+		const value = parse( ctx.get() ).tokens;
+		return Array.isArray( value ) ? value as Token[] : Object.values( ( value ?? {} ) as Record< string, Token > );
+	};
+	const write = ( tokens: Token[] ): void => ctx.set( tokens.length ? JSON.stringify( { tokens } ) : '' );
+	const rows = h( 'div', { class: 'wpec-units__custom' } );
+	const add = h( 'button', { type: 'button', class: 'wpec-link', text: t( 'Add custom colour' ), onclick: () => write( [ ...read(), {} ] ) } ) as HTMLButtonElement;
+	let parts: Part[][] = [];
+	const draw = (): void => {
+		rows.replaceChildren();
+		parts = read().map( ( _token, index ) => {
+			const row: ControlContext = {
+				opt: {},
+				get: () => JSON.stringify( read()[ index ] ?? {} ),
+				set: ( value ) => {
+					const tokens = read();
+					tokens[ index ] = parse( value ) as Token;
+					write( tokens );
+				},
+			};
+			const fields = [
+				part( row, 'name', 'text', { placeholder: t( 'Brand colour' ) }, t( 'Name' ) ),
+				part( row, 'slug', 'text', { placeholder: 'brand-colour' }, t( 'Stable slug' ) ),
+				part( row, 'color', 'color', { literalColour: true }, t( 'Light colour' ) ),
+				part( row, 'dark', 'color', { literalColour: true }, t( 'Dark colour (optional)' ) ),
+			];
+			rows.append( h( 'div', { class: 'wpec-field', role: 'group', 'aria-label': `${ t( 'Custom colour' ) } ${ index + 1 }` }, [
+				...fields.map( ( field ) => field.node ),
+				h( 'button', { type: 'button', class: 'wpec-link is-danger', text: t( 'Remove' ), 'aria-label': `${ t( 'Remove custom colour' ) } ${ index + 1 }`, onclick: () => write( read().filter( ( _row, i ) => i !== index ) ) } ),
+			] ) );
+			return fields;
+		} );
+	};
+	return {
+		el: h( 'div', {}, [ rows, add ] ),
+		refresh: () => {
+			const count = read().length;
+			if ( count !== parts.length ) {
+				draw();
+			}
+			parts.forEach( ( row ) => row.forEach( ( field ) => field.ctl.refresh() ) );
+			add.disabled = count >= 100;
 		},
 	};
 };
