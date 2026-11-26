@@ -1206,9 +1206,22 @@ class Importer {
 			// The module registers it on the next request; terms and posts are written in this one.
 			$payload = (array) $item['payload'];
 			if ( 'cpt' === $kind && ! post_type_exists( $name ) ) {
-				register_post_type( $name, array( 'public' => true, 'label' => (string) ( $payload['name'] ?? $name ) ) );
+				register_post_type(
+					$name,
+					array(
+						'public' => true,
+						'label'  => (string) ( $payload['name'] ?? $name ),
+					)
+				);
 			} elseif ( 'taxonomy' === $kind && ! taxonomy_exists( $name ) ) {
-				register_taxonomy( $name, (array) ( $payload['object_types'] ?? array( 'post' ) ), array( 'public' => true, 'label' => (string) ( $payload['name'] ?? $name ) ) );
+				register_taxonomy(
+					$name,
+					(array) ( $payload['object_types'] ?? array( 'post' ) ),
+					array(
+						'public' => true,
+						'label'  => (string) ( $payload['name'] ?? $name ),
+					)
+				);
 			}
 			/* translators: %s: definition key. */
 			$this->log( 'info', sprintf( __( 'Created "%s".', 'wpessential' ), $name ) );
