@@ -70,6 +70,12 @@
 		}
 	}
 
+	// Focus stays on the native select; show it on the visible button.
+	.wpe-dd:has(> .wpe-dd__native:focus) .wpe-dd__button {
+		border-color: var(--wpe-blue);
+		box-shadow: 0 0 0 3px var(--wpe-blue-tint);
+	}
+
 	.wpe-dd.is-open .wpe-dd__button::after {
 		transform: translateY(-30%) rotate(-135deg);
 	}

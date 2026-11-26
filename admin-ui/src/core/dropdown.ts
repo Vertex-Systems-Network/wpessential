@@ -31,27 +31,21 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 	const button = document.createElement( 'button' );
 	button.type = 'button';
 	button.className = 'wpe-dd__button';
-	button.setAttribute( 'role', 'combobox' );
-	button.setAttribute( 'aria-haspopup', 'listbox' );
-	button.setAttribute( 'aria-expanded', 'false' );
-	button.setAttribute( 'aria-controls', `${ id }-list` );
-	const label = select.getAttribute( 'aria-label' ) || ( select.id ? document.querySelector( `label[for="${ CSS.escape( select.id ) }"]` )?.textContent?.trim() : '' ) || '';
-	if ( label ) {
-		button.setAttribute( 'aria-label', label );
-	}
+	// The native select keeps focus, its label and its role for assistive tech and validation;
+	// the button and panel are the visual, pointer-driven layer.
+	button.tabIndex = -1;
+	button.setAttribute( 'aria-hidden', 'true' );
 	const text = document.createElement( 'span' );
 	text.className = 'wpe-dd__text';
 	button.append( text );
 	const panel = document.createElement( 'div' );
 	panel.className = 'wpe-dd__panel';
 	panel.hidden = true;
+	panel.setAttribute( 'aria-hidden', 'true' );
 	const list = document.createElement( 'ul' );
 	list.id = `${ id }-list`;
 	list.className = 'wpe-dd__list';
 	list.setAttribute( 'role', 'listbox' );
-	if ( label ) {
-		list.setAttribute( 'aria-label', label );
-	}
 	let search: HTMLInputElement | null = null;
 	let active = -1;
 
@@ -112,7 +106,7 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		const all = options().filter( ( li ) => li.getAttribute( 'aria-disabled' ) !== 'true' );
 		if ( all.length === 0 ) {
 			active = -1;
-			button.removeAttribute( 'aria-activedescendant' );
+			
 			return;
 		}
 		active = absolute ? Math.max( 0, Math.min( all.length - 1, to ) ) : Math.max( 0, Math.min( all.length - 1, active + to ) );
@@ -122,7 +116,7 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		const current = all[ active ];
 		if ( current ) {
 			current.scrollIntoView( { block: 'nearest' } );
-			button.setAttribute( 'aria-activedescendant', current.id );
+			
 		}
 	};
 
@@ -132,7 +126,7 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		}
 		panel.hidden = false;
 		wrap.classList.add( 'is-open' );
-		button.setAttribute( 'aria-expanded', 'true' );
+		select.setAttribute( 'aria-expanded', 'true' );
 		const all = options().filter( ( li ) => li.getAttribute( 'aria-disabled' ) !== 'true' );
 		move( Math.max( 0, all.findIndex( ( li ) => li.dataset.value === select.value ) ), true );
 		search?.focus();
@@ -144,14 +138,14 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		}
 		panel.hidden = true;
 		wrap.classList.remove( 'is-open' );
-		button.setAttribute( 'aria-expanded', 'false' );
-		button.removeAttribute( 'aria-activedescendant' );
+		select.setAttribute( 'aria-expanded', 'false' );
+		
 		if ( search ) {
 			search.value = '';
 			search.dispatchEvent( new Event( 'input' ) );
 		}
 		if ( focus ) {
-			button.focus();
+			select.focus();
 		}
 	};
 
@@ -226,8 +220,16 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 		}
 	}
 
-	button.addEventListener( 'click', () => ( panel.hidden ? open() : close() ) );
-	button.addEventListener( 'keydown', keys );
+	button.addEventListener( 'click', () => {
+		select.focus();
+		if ( panel.hidden ) {
+			open();
+		} else {
+			close();
+		}
+	} );
+	select.addEventListener( 'keydown', keys );
+	select.addEventListener( 'mousedown', ( event ) => event.preventDefault() );
 	list.addEventListener( 'mousedown', ( event ) => event.preventDefault() );
 	list.addEventListener( 'click', ( event ) => choose( ( event.target as HTMLElement ).closest< HTMLLIElement >( '[role="option"]' ) ?? undefined ) );
 	document.addEventListener( 'click', ( event ) => {
@@ -253,8 +255,6 @@ export function enhanceSelect( select: HTMLSelectElement ): void {
 	select.closest( 'form' )?.addEventListener( 'reset', () => setTimeout( sync ) );
 
 	select.classList.add( 'wpe-dd__native' );
-	select.tabIndex = -1;
-	select.setAttribute( 'aria-hidden', 'true' );
 	select.before( wrap );
 	panel.append( list );
 	wrap.append( button, panel, select );
