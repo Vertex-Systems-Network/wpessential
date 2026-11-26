@@ -10,7 +10,7 @@ active_branch: main
 current_milestone: "Surface 3 Fields Atomic Option Contract V1; 618 reviewed Bank records."
 milestone_status: COMMITTED_PENDING_INTEGRATION
 last_completed_milestone: "PR #1476 Surface 9 Listings Atomic Option Contract merged; 150/150 (127/16/1/6); 12/12 exact-head CI PASS."
-next_safe_action: "Integrate Surface 3 Fields contract PR (612 options / 618 records OPTION_CONTRACT_COMPLETE) after exact-head CI. All BANK_REVIEWED surfaces then have contracts; next work is Bank seeding + native/market audit from Surface 29 XML-RPC, and UX re-reviews for Surfaces 3/5/6/7/9."
+next_safe_action: "Execute docs/IMPLEMENTATION/BLOCK-EDITOR-PARITY-AND-SITE-TOOLS-KIT-V1.md (ADR-0239) in WP order: WP1 Site Tools Kit to Free first. Rules in that file bind every AI agent."
 waiting_external: "#1102 authorization-gated P-006; #858 external-admin. #1416 indentation batches superseded by ADR-0223; its PHPUnit fixes to be re-applied."
 next_planned_slot: FRESH_ISSUE_AND_SOURCE_AUDIT
 readme_progress_contract:
