@@ -563,12 +563,8 @@ final class SiteKitCompiler {
 	 * @param array<string,mixed> $t
 	 * @return array<string,array<string,string>>
 	 */
-	public static function typography( array $t ): array {
-		$out    = [
-			'desktop' => [],
-			'tablet'  => [],
-			'mobile'  => [],
-		];
+	public static function typography( array $t, array $devices = [ 'desktop', 'tablet', 'mobile' ] ): array {
+		$out    = array_fill_keys( $devices, [] );
 		$family = (string) ( $t['family'] ?? '' );
 		if ( str_starts_with( $family, 'google:' ) && SiteKitFonts::exists( substr( $family, 7 ) ) ) {
 			$out['desktop']['font-family'] = SiteKitFonts::stack( substr( $family, 7 ) );
@@ -629,14 +625,14 @@ final class SiteKitCompiler {
 		return $d;
 	}
 
-	/** Responsive and composite settings, with tablet and phone media queries. @param array<string,mixed> $v */
+	/** Responsive and composite settings, one media query per enabled breakpoint. @param array<string,mixed> $v */
 	private static function controls( array $v ): string {
-		$rules = [
-			'desktop' => [],
-			'tablet'  => [],
-			'mobile'  => [],
-		];
-		$add   = static function ( string $device, string $selector, string $property, string $value ) use ( &$rules ): void {
+		$breakpoints = SiteKitBreakpoints::enabled( is_array( $v['breakpoints'] ?? null ) ? $v['breakpoints'] : [] );
+		$rules       = array_fill_keys( array_keys( $breakpoints ), [] );
+		$add         = static function ( string $device, string $selector, string $property, string $value ) use ( &$rules ): void {
+			if ( ! isset( $rules[ $device ] ) ) {
+				return;
+			}
 			foreach ( explode( '|', $property ) as $p ) {
 				$rules[ $device ][ $selector ][ $p ] = $value;
 			}
@@ -647,7 +643,7 @@ final class SiteKitCompiler {
 			}
 			$value = $v[ $key ];
 			if ( str_starts_with( $key, 'typo_' ) && is_array( $value ) ) {
-				foreach ( self::typography( $value ) as $device => $declarations ) {
+				foreach ( self::typography( $value, array_keys( $rules ) ) as $device => $declarations ) {
 					foreach ( $declarations as $p => $x ) {
 						$add( $device, $selector, $p, $x );
 					}
@@ -682,7 +678,7 @@ final class SiteKitCompiler {
 				$block .= '}';
 			}
 			if ( $block !== '' ) {
-				$media = SiteKitSchema::DEVICES[ $device ];
+				$media = $breakpoints[ $device ]['media'] ?? '';
 				$css  .= $media !== '' ? $media . '{' . $block . '}' : $block;
 			}
 		}

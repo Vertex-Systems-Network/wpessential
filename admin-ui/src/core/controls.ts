@@ -35,16 +35,40 @@ export interface ControlsConfig {
 	themeFonts?: Array< { value: string; name: string; stack: string } >;
 	googleList?: string;
 	i18n?: Record< string, string >;
+	/** Enabled breakpoints in cascade order, from Site Tools Kit → Layout → Breakpoints. */
+	breakpoints?: Array< { key: string; label: string; width: number; dir: string } >;
+	allBreakpoints?: Record< string, { label: string; width: number; on: boolean; dir: string } >;
 }
 
 type Json = Record< string, unknown >;
 type Builder = ( ctx: ControlContext ) => Control;
 
-const DEVICES: Array< [ string, string, string ] > = [
-	[ 'desktop', 'Desktop', '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>' ],
-	[ 'tablet', 'Tablet (1023px and below)', '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/>' ],
-	[ 'mobile', 'Phone (767px and below)', '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>' ],
-];
+const DEVICE_ICONS: Record< string, string > = {
+	widescreen: '<rect x="1" y="4" width="22" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+	desktop: '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+	laptop: '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+	tablet_extra: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M18 12h.01"/>',
+	tablet: '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/>',
+	mobile_extra: '<rect x="2" y="7" width="20" height="10" rx="2"/><path d="M18 12h.01"/>',
+	mobile: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+	mobile_small: '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 17h2"/>',
+};
+
+/** Enabled devices: [key, tooltip label, icon]. Falls back to desktop/tablet/phone. */
+function devices(): Array< [ string, string, string ] > {
+	const list = cfg.breakpoints?.length
+		? cfg.breakpoints
+		: [
+				{ key: 'desktop', label: 'Desktop', width: 0, dir: '' },
+				{ key: 'tablet', label: 'Tablet', width: 1023, dir: 'max' },
+				{ key: 'mobile', label: 'Phone', width: 767, dir: 'max' },
+			];
+	return list.map( ( b ) => [
+		b.key,
+		b.dir === '' ? t( b.label ) : `${ t( b.label ) } · ${ b.dir === 'min' ? '≥' : '≤' } ${ b.width }px`,
+		DEVICE_ICONS[ b.key ] ?? DEVICE_ICONS.desktop ?? '',
+	] );
+}
 
 let cfg: ControlsConfig = {};
 let googleList: Array< [ string, string, number[], number, number[] | null ] > | null = null;
@@ -372,20 +396,76 @@ export function setDevice( device: string ): void {
 	} );
 }
 
+// One device button per field: it shows the current device and opens a menu of enabled breakpoints.
 function deviceSwitch( ctx: ControlContext ): HTMLElement {
-	const box = h( 'span', { class: 'wpec-devices', role: 'group', 'aria-label': t( 'Device' ) } );
-	for ( const [ key, label, icon ] of DEVICES ) {
-		box.append( h( 'button', { type: 'button', class: 'wpec-devices__btn', 'data-device': key, title: t( label ), 'aria-label': t( label ), html: svg( icon, 13 ), onclick: () => setDevice( key ) } ) );
+	const box = h( 'span', { class: 'wpec-devices' } );
+	const menu = h( 'span', { class: 'wpec-devices__menu', role: 'menu', hidden: true } );
+	const trigger = h( 'button', {
+		type: 'button',
+		class: 'wpec-devices__btn wpec-devices__trigger',
+		'aria-haspopup': 'menu',
+		'aria-expanded': 'false',
+		onclick: () => toggle(),
+	} ) as HTMLButtonElement;
+	const toggle = ( force?: boolean ): void => {
+		const open = force ?? menu.hidden;
+		menu.hidden = ! open;
+		trigger.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+		if ( open ) {
+			menu.querySelector< HTMLElement >( '.is-active' )?.focus();
+		}
+	};
+	for ( const [ key, label, icon ] of devices() ) {
+		menu.append(
+			h( 'button', {
+				type: 'button',
+				role: 'menuitemradio',
+				class: 'wpec-devices__item',
+				'data-device': key,
+				title: label,
+				html: `${ svg( icon, 14 ) }<span>${ label.replace( /[<>&]/g, '' ) }</span>`,
+				onclick: () => {
+					setDevice( key );
+					toggle( false );
+					trigger.focus();
+				},
+			} )
+		);
 	}
+	menu.addEventListener( 'keydown', ( event: KeyboardEvent ) => {
+		const items = Array.from( menu.querySelectorAll< HTMLElement >( '.wpec-devices__item' ) );
+		const at = items.indexOf( document.activeElement as HTMLElement );
+		if ( event.key === 'ArrowDown' || event.key === 'ArrowUp' ) {
+			event.preventDefault();
+			items[ ( at + ( event.key === 'ArrowDown' ? 1 : -1 ) + items.length ) % items.length ]?.focus();
+		} else if ( event.key === 'Escape' ) {
+			toggle( false );
+			trigger.focus();
+		}
+	} );
+	document.addEventListener( 'click', ( event ) => {
+		if ( ! box.contains( event.target as Node ) ) {
+			toggle( false );
+		}
+	} );
 	const sync = (): void => {
-		box.querySelectorAll< HTMLElement >( '.wpec-devices__btn' ).forEach( ( b ) => {
-			const on = b.dataset.device === ( ctx.device?.() ?? currentDevice );
+		const current = ctx.device?.() ?? currentDevice;
+		const found = devices().find( ( d ) => d[ 0 ] === current ) ?? devices()[ 0 ];
+		if ( found ) {
+			trigger.innerHTML = svg( found[ 2 ], 13 );
+			trigger.title = found[ 1 ];
+			trigger.setAttribute( 'aria-label', `${ t( 'Device' ) }: ${ found[ 1 ] }` );
+			trigger.classList.toggle( 'is-active', found[ 0 ] !== 'desktop' );
+		}
+		menu.querySelectorAll< HTMLElement >( '.wpec-devices__item' ).forEach( ( b ) => {
+			const on = b.dataset.device === current;
 			b.classList.toggle( 'is-active', on );
-			b.setAttribute( 'aria-pressed', on ? 'true' : 'false' );
+			b.setAttribute( 'aria-checked', on ? 'true' : 'false' );
 		} );
 	};
 	listeners.push( sync );
 	sync();
+	box.append( trigger, menu );
 	return box;
 }
 
@@ -567,6 +647,47 @@ types.range = ( ctx ) => {
 			slider.classList.toggle( 'is-empty', value === '' );
 			const pct = value === '' ? 0 : ( ( Number( value ) - min ) / ( max - min ) ) * 100;
 			slider.style.setProperty( '--wpec-fill', `${ Math.max( 0, Math.min( 100, pct ) ) }%` );
+		},
+	};
+};
+
+// Site Tools Kit → Layout → Breakpoints: a switch and a width per screen size; desktop is always on.
+types.breakpoints = ( ctx ) => {
+	const all = cfg.allBreakpoints ?? {};
+	const rows: Array< () => void > = [];
+	const read = (): Record< string, { on?: boolean; w?: number } > => parse( ctx.get() ) as Record< string, { on?: boolean; w?: number } >;
+	const write = ( key: string, patch: { on?: boolean; w?: number } ): void => {
+		const value = read();
+		value[ key ] = { ...( value[ key ] ?? {} ), ...patch };
+		ctx.set( stringify( value ) );
+	};
+	const list = h( 'div', { class: 'wpec-bps' } );
+	for ( const [ key, b ] of Object.entries( all ) ) {
+		const fixed = key === 'desktop';
+		const sw = h( 'input', { type: 'checkbox', role: 'switch', class: 'wpec-switch__input', 'aria-label': t( b.label ), disabled: fixed, onchange: ( e: Event ) => write( key, { on: ( e.target as HTMLInputElement ).checked } ) } ) as HTMLInputElement;
+		const width = h( 'input', { type: 'number', class: 'wpec-input wpec-bps__w', min: 240, max: 3840, step: 1, 'aria-label': `${ t( b.label ) } ${ t( 'width' ) }`, disabled: fixed, onchange: ( e: Event ) => write( key, { w: Number( ( e.target as HTMLInputElement ).value ) || b.width } ) } ) as HTMLInputElement;
+		list.append(
+			h( 'div', { class: 'wpec-bps__row' }, [
+				h( 'span', { class: 'wpec-bps__icon', html: svg( DEVICE_ICONS[ key ] ?? '', 16 ) } ),
+				h( 'span', { class: 'wpec-bps__label', text: t( b.label ) } ),
+				fixed ? h( 'span', { class: 'wpec-bps__note', text: t( 'Base' ) } ) : h( 'span', { class: 'wpec-bps__dir', text: b.dir === 'min' ? '≥' : '≤' } ),
+				fixed ? h( 'span' ) : width,
+				fixed ? h( 'span' ) : h( 'span', { text: 'px' } ),
+				fixed ? h( 'span' ) : h( 'label', { class: 'wpec-switch' }, [ sw, h( 'span', { class: 'wpec-switch__track', 'aria-hidden': 'true' } ) ] ),
+			] )
+		);
+		rows.push( () => {
+			const v = read()[ key ] ?? {};
+			sw.checked = fixed || ( v.on ?? b.on );
+			width.value = String( v.w ?? b.width );
+		} );
+	}
+	return {
+		el: list,
+		refresh: () => {
+			for ( const r of rows ) {
+				r();
+			}
 		},
 	};
 };

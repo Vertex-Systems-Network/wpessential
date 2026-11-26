@@ -584,9 +584,80 @@
 
 	// Devices.
 	.wpec-devices {
+		position: relative;
 		display: inline-flex;
 		gap: 1px;
 		margin-inline-end: auto;
+	}
+
+	.wpec-devices__menu {
+		position: absolute;
+		z-index: 1000;
+		top: calc(100% + 4px);
+		left: 0;
+		display: grid;
+		min-width: 210px;
+		padding: 4px;
+		border: 1px solid var(--wpe-line);
+		border-radius: var(--wpe-radius);
+		background: var(--wpe-card);
+		box-shadow: var(--wpe-shadow-lg);
+
+		&[hidden] {
+			display: none;
+		}
+	}
+
+	.wpec-devices__item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 7px 10px;
+		border: 0;
+		border-radius: var(--wpe-radius-sm);
+		background: transparent;
+		color: var(--wpe-text);
+		font-size: 12px;
+		text-align: left;
+		white-space: nowrap;
+		cursor: pointer;
+
+		&:hover,
+		&:focus-visible {
+			background: var(--wpe-surface);
+			outline: none;
+		}
+
+		&.is-active {
+			background: var(--wpe-blue-tint);
+			color: var(--wpe-indigo);
+			font-weight: 600;
+		}
+	}
+
+	// Breakpoints list (Layout).
+	.wpec-bps {
+		display: grid;
+		gap: 6px;
+	}
+
+	.wpec-bps__row {
+		display: grid;
+		grid-template-columns: 20px 1fr auto 86px 20px auto;
+		align-items: center;
+		gap: 8px;
+		color: var(--wpe-text);
+		font-size: 13px;
+	}
+
+	.wpec-bps__icon {
+		color: var(--wpe-muted);
+	}
+
+	.wpec-bps__dir,
+	.wpec-bps__note {
+		color: var(--wpe-muted);
+		font-size: 12px;
 	}
 
 	.wpec-devices__btn {

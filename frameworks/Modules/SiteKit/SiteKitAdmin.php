@@ -273,10 +273,32 @@ final class SiteKitAdmin {
 				];
 			}
 		}
+		$enabled = SiteKitBreakpoints::enabled( (array) ( ( new SiteKitStore() )->values()['breakpoints'] ?? [] ) );
+		$labels  = SiteKitBreakpoints::labels();
+		$all     = [];
+		foreach ( SiteKitBreakpoints::ALL as $key => [ , $width, $on, $dir ] ) {
+			$all[ $key ] = [
+				'label' => $labels[ $key ],
+				'width' => $width,
+				'on'    => $on,
+				'dir'   => $dir,
+			];
+		}
 		$config = [
-			'palette'    => (object) $palette,
-			'themeFonts' => $fonts,
-			'googleList' => plugins_url( 'data/google-fonts.json', __FILE__ ),
+			'palette'        => (object) $palette,
+			'themeFonts'     => $fonts,
+			'googleList'     => plugins_url( 'data/google-fonts.json', __FILE__ ),
+			'breakpoints'    => array_map(
+				static fn ( string $key, array $b ): array => [
+					'key'   => $key,
+					'label' => $labels[ $key ],
+					'width' => $b['width'],
+					'dir'   => $b['dir'],
+				],
+				array_keys( $enabled ),
+				$enabled
+			),
+			'allBreakpoints' => $all,
 		];
 
 		return '<script type="application/json" id="wpe-controls-config">' . (string) wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES ) . '</script>';
