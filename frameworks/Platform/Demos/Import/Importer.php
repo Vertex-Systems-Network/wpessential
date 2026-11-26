@@ -874,6 +874,10 @@ class Importer {
 		if ( ! empty( $item['elementor'] ) ) {
 			$this->elementor_meta( $id, $item );
 		}
+		if ( ! empty( $item['sticky'] ) && 'post' === get_post_type( $id ) ) {
+			$this->track( 'option', 'sticky_posts' );
+			stick_post( $id );
+		}
 		$labels = array(
 			'post'            => __( 'post', 'wpessential' ),
 			'page'            => __( 'page', 'wpessential' ),
@@ -1278,6 +1282,20 @@ class Importer {
 		$settings = (array) ( $this->content()['settings'] ?? array() );
 		$posts    = $this->job['map']['posts'];
 
+		// WordPress's untouched "Hello world!" post would lead the demo blog: keep it as a draft.
+		if ( ! empty( $settings['hide_sample_post'] ) ) {
+			$sample = get_page_by_path( 'hello-world', OBJECT, 'post' );
+			if ( $sample && 'publish' === $sample->post_status && $sample->post_modified === $sample->post_date ) {
+				$this->track( 'post_status', array( $sample->ID, 'publish' ) );
+				wp_update_post(
+					array(
+						'ID'          => $sample->ID,
+						'post_status' => 'draft',
+					)
+				);
+				$this->log( 'info', __( 'The sample "Hello world!" post was moved to drafts.', 'wpessential' ) );
+			}
+		}
 		if ( ! empty( $settings['front_page'] ) && isset( $posts[ $settings['front_page'] ] ) ) {
 			foreach ( array( 'show_on_front', 'page_on_front', 'page_for_posts' ) as $option ) {
 				$this->track( 'option', $option );
@@ -1658,6 +1676,16 @@ class Importer {
 				wp_delete_term( (int) $term[0], $term[1] );
 			}
 			++$count;
+		}
+		foreach ( (array) ( $record['post_status'] ?? array() ) as $state ) {
+			if ( get_post( (int) $state[0] ) ) {
+				wp_update_post(
+					array(
+						'ID'          => (int) $state[0],
+						'post_status' => (string) $state[1],
+					)
+				);
+			}
 		}
 		foreach ( (array) ( $record['options'] ?? array() ) as $option => $value ) {
 			if ( null === $value ) {
