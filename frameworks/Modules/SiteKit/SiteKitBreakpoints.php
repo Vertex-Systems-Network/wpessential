@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class SiteKitBreakpoints {
 
-	/** key => [label, default width, default on, "min" for wider-than or "max" for narrower-than]. */
+	/** Map of key => [label, default width, default on, "min" for wider-than or "max" for narrower-than]. */
 	public const ALL = [
 		'widescreen'   => [ 'Widescreen', 1920, false, 'min' ],
 		'desktop'      => [ 'Desktop', 0, true, '' ],
