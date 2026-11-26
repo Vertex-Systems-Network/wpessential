@@ -168,7 +168,7 @@ jobs:
           fi
           unexpected_free_modules="$(
             grep -E '^wpessential/frameworks/Modules/' artifacts/wpessential-files.txt \
-              | grep -Ev '^wpessential/frameworks/Modules/(CustomPostTypes|Taxonomies)/' \
+              | grep -Ev '^wpessential/frameworks/Modules/(CustomPostTypes|Taxonomies|SiteKit)/' \
               || true
           )"
           if [ -n "${unexpected_free_modules}" ]; then
