@@ -28,7 +28,6 @@ function bindField( root: HTMLElement ): void {
 		set: ( value ) => {
 			input.value = value;
 			input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
-			sync();
 		},
 	} );
 	if ( control.devices ) {
@@ -43,7 +42,6 @@ function bindField( root: HTMLElement ): void {
 	reset?.addEventListener( 'click', () => {
 		input.value = '';
 		input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
-		sync();
 	} );
 	sync();
 }

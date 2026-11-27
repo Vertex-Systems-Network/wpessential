@@ -155,8 +155,9 @@ function initAccountMenu(): void {
 	} );
 }
 
-if ( document.body.classList.contains( 'wp-customizer' ) ) {
+if ( document.getElementById( 'customize-controls' ) ) {
 	initSiteKitCustomizer();
+	initDropdowns();
 } else {
 	initAjaxForms();
 	initClickLoaders();

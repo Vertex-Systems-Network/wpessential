@@ -51,7 +51,7 @@ final class SiteKitCustomizer {
 		}
 		$composite = ! empty( $field['responsive'] ) || in_array(
 			$field['type'],
-			[ 'dimensions', 'typography', 'background', 'gradient', 'shadow', 'breakpoints', 'units', 'colour_tokens', 'typography_tokens', 'shadow_tokens' ],
+			[ 'range', 'dimensions', 'typography', 'background', 'gradient', 'shadow', 'breakpoints', 'units', 'colour_tokens', 'typography_tokens', 'shadow_tokens' ],
 			true
 		);
 		if ( is_string( $value ) && str_starts_with( ltrim( $value ), '{' ) ) {
