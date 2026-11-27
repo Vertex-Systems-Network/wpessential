@@ -496,9 +496,18 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect.poll(async () => Math.round((await page.locator('#customize-preview').boundingBox())?.width ?? 0)).toBe(420);
       await size.fill('15');
       await size.blur();
-      await device.click();
-      await control('size_body').locator('[data-device="desktop"]').click();
+      // Native Desktop is already selected internally while a custom width is
+      // displayed. Its click must still restore the shared desktop device.
+      await page.locator('.wp-full-overlay-footer .devices button[data-device="desktop"]').click();
       await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
+      await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('desktop');
+      await device.click();
+      await control('size_body').locator('[data-device="mobile_small"]').click();
+      await expect(size).toHaveValue('15');
+      await page.locator('.wp-full-overlay-footer .devices button[data-device="mobile"]').click();
+      await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
+      await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('mobile');
+      await page.locator('.wp-full-overlay-footer .devices button[data-device="desktop"]').click();
       await size.fill('19');
       await expect.poll(() => page.evaluate((id) => window.wp.customize(id).get(), setting('size_body'))).toMatch(/19/);
       await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_button').expand());

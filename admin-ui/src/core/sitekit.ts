@@ -335,6 +335,13 @@ export function initSiteKitCustomizer(): void {
 	};
 	bindNative();
 	api.bind( 'ready', bindNative );
+	// Custom widths use WordPress' desktop mode internally. Clicking its already
+	// selected Desktop button does not emit a Value change, so handle that intent.
+	document.addEventListener( 'click', ( event ) => {
+		if ( preview?.dataset.wpeKitPreview && event.target instanceof Element && event.target.closest( '.wp-full-overlay-footer .devices button[data-device="desktop"]' ) ) {
+			setDevice( 'desktop' );
+		}
+	}, true );
 	api( 'wpessential_site_kit[values][breakpoints]', ( setting ) => {
 		updateBreakpoints( encode( setting.get() ) );
 		setting.bind( ( value ) => updateBreakpoints( encode( value ) ) );
