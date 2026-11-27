@@ -219,13 +219,14 @@ test('Site Tools Kit: global styling defaults render on frontend', async ({ page
         $store = new \\WPEssential\\Modules\\SiteKit\\SiteKitStore();
         $store->update([
           'btn_variant_primary_bg' => '#123456', 'btn_variant_primary_text' => '#ffffff',
+          'custom_colours' => ['tokens' => [['name' => 'E2E local', 'slug' => 'wp6-local', 'color' => '#fedcba']]],
           'btn_scale_sm_height' => ['desktop' => ['size' => 40, 'unit' => 'px'], 'mobile' => ['size' => 32, 'unit' => 'px']],
           'image_radius' => ['desktop' => ['size' => 9, 'unit' => 'px']],
           'field_placeholder' => '#345678', 'link_decoration_style' => 'dotted',
           'custom_shadows' => ['tokens' => [['name' => 'E2E card', 'slug' => 'wp6-card', 'shadow' => ['x' => 4, 'y' => 8, 'blur' => 16, 'spread' => -2, 'color' => '#123456']]]],
         ]);
         $content = '<!-- wp:wpessential/button ' . wp_json_encode(['text' => 'WP6 button', 'variant' => 'primary', 'size' => 'sm', 'url' => '#wp6']) . ' /-->';
-        $content .= '<!-- wp:wpessential/button ' . wp_json_encode(['text' => 'WP6 local override', 'variant' => 'primary', 'size' => 'sm', 'url' => '#wp6', 'textColor' => ['normal' => '#fedcba'], 'shadow' => ['preset' => 'wpe-custom-wp6-card']]) . ' /-->';
+        $content .= '<!-- wp:wpessential/button ' . wp_json_encode(['text' => 'WP6 local override', 'variant' => 'primary', 'size' => 'sm', 'url' => '#wp6', 'textColor' => ['normal' => 'wpe-custom-wp6-local'], 'shadow' => ['preset' => 'wpe-custom-wp6-card']]) . ' /-->';
         $content .= '<!-- wp:html --><div class="entry-content" id="wp6-fixture"><figure class="wp-block-image"><img alt="Test" width="20" height="20" src="' . esc_url( includes_url('images/blank.gif') ) . '"></figure><form><label for="wp6-input">Field</label><input id="wp6-input" type="text" placeholder="Example"></form><a id="wp6-link" href="#wp6">Example link</a></div><!-- /wp:html -->';
         $id = wp_insert_post(['post_title' => 'WP6 style audit', 'post_type' => 'page', 'post_status' => 'publish', 'post_content' => $content], true);
         if (is_wp_error($id)) { throw new \\RuntimeException($id->get_error_message()); }
