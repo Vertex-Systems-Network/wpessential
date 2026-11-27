@@ -20,7 +20,11 @@ final class SiteKitCompiler {
 	private static array $units = [];
 
 	public const BUTTON = '.wp-element-button,.wp-block-button__link,.wpe-btn,button.button,a.button';
+	public const LABEL = ':where(form,.wpe-form,.elementor-form) label';
 	public const FIELD  = 'input:is([type="text"],[type="email"],[type="url"],[type="password"],[type="search"],[type="number"],[type="tel"],[type="date"]),select,textarea,.wpe-input';
+	public const IMAGE = ':where(.wp-block-post-content,.entry-content) :where(.wp-block-image img,.wp-block-post-featured-image img,figure img)';
+	public const CAPTION = ':where(.wp-block-post-content,.entry-content) :where(.wp-block-image figcaption,.wp-block-post-featured-image figcaption)';
+	public const LINK = ':where(.wp-block-post-content,.entry-content) a';
 	public const HEADER = ':is(header.wp-block-template-part,.wp-site-blocks>header,.site-header,#masthead,.wpe-header)';
 	public const FOOTER = ':is(footer.wp-block-template-part,.wp-site-blocks>footer,.site-footer,#colophon,.wpe-footer)';
 
@@ -33,8 +37,13 @@ final class SiteKitCompiler {
 		'menu_gap'      => [ self::HEADER . ' .wp-block-navigation', 'gap|--navigation-layout-gap' ],
 		'btn_size'      => [ self::BUTTON, 'font-size' ],
 		'btn_padding'   => [ self::BUTTON, 'padding' ],
+		'btn_min_height' => [ self::BUTTON, 'min-height' ],
+		'field_text_size' => [ self::FIELD, 'font-size' ],
+		'field_label_size' => [ self::LABEL, 'font-size' ],
 		'field_height'  => [ self::FIELD, 'min-height' ],
 		'field_padding' => [ self::FIELD, 'padding' ],
+		'image_radius' => [ self::IMAGE, 'border-radius' ],
+		'image_caption_size' => [ self::CAPTION, 'font-size' ],
 		'gutter'        => [ ':root', '--wp--style--root--padding-left|--wp--style--root--padding-right' ],
 		'typo_body'     => [ 'body', '' ],
 		'typo_h1'       => [ 'h1,.wp-block-post-title', '' ],
@@ -320,6 +329,14 @@ final class SiteKitCompiler {
 			}
 			$shadows[] = $shadow;
 		}
+		foreach ( SiteKitTokens::shadows( $v['custom_shadows'] ?? [] ) as $token ) {
+			$shadows = array_values( array_filter( $shadows, static fn ( array $p ): bool => ( $p['slug'] ?? '' ) !== $token['slug'] ) );
+			$shadows[] = [
+				'name'   => $token['name'],
+				'slug'   => $token['slug'],
+				'shadow' => self::namedShadow( $token['shadow'] ),
+			];
+		}
 		if ( $shadows !== [] ) {
 			$settings['shadow']['presets'] = $shadows;
 		}
@@ -400,12 +417,51 @@ final class SiteKitCompiler {
 			]
 		);
 		$css  .= $rule( self::FIELD, $field );
+		// Keep new defaults opt-in and low specificity so local styles win.
+		$input = ':where(' . self::FIELD . ')';
+		$css .= $rule(
+			$input,
+			[
+				'color'        => SiteKitSanitizer::colour( $v['field_text'] ?? '' ),
+				'border-width' => self::len( $v, 'field_border_width' ),
+				'border-style' => self::len( $v, 'field_border_width' ) !== '' ? 'solid' : '',
+			]
+		);
+		$css .= $rule( $input . '::placeholder', [ 'color' => SiteKitSanitizer::colour( $v['field_placeholder'] ?? '' ) ] );
+		$css .= $rule( self::LABEL, [ 'color' => SiteKitSanitizer::colour( $v['field_label'] ?? '' ) ] );
+		$css .= $rule(
+			$input . ':focus',
+			[
+				'background-color' => SiteKitSanitizer::colour( $v['field_focus_bg'] ?? '' ),
+				'color'            => SiteKitSanitizer::colour( $v['field_focus_text'] ?? '' ),
+			]
+		);
+		$css .= $rule(
+			$input . ':is(:disabled,[aria-disabled="true"])',
+			[
+				'background-color' => SiteKitSanitizer::colour( $v['field_disabled_bg'] ?? '' ),
+				'color'            => SiteKitSanitizer::colour( $v['field_disabled_text'] ?? '' ),
+				'border-color'     => SiteKitSanitizer::colour( $v['field_disabled_border'] ?? '' ),
+			]
+		);
+		$css .= $rule( $input . '[aria-invalid="true"]', [ 'border-color' => SiteKitSanitizer::colour( $v['field_error'] ?? '' ) ] );
+		$css .= $rule( ':where(.wpcf7-not-valid-tip,.elementor-message-danger,.wpe-field-error)', [ 'color' => SiteKitSanitizer::colour( $v['field_error_text'] ?? '' ) ] );
 		if ( ! empty( $v['field_focus'] ) ) {
-			$css .= 'input:focus,select:focus,textarea:focus,.wpe-input:focus{border-color:' . $v['field_focus'] . ';box-shadow:0 0 0 3px color-mix(in srgb,' . $v['field_focus'] . ' 25%,transparent);outline:0}';
+			$css .= 'input:focus,select:focus,textarea:focus,.wpe-input:focus{border-color:' . $v['field_focus'] . ';box-shadow:0 0 0 3px color-mix(in srgb,' . $v['field_focus'] . ' 25%,transparent);outline:2px solid ' . $v['field_focus'] . ';outline-offset:2px}';
 		}
-		if ( ! empty( $v['image_round'] ) ) {
+		if ( ! empty( $v['image_round'] ) && ! isset( $v['image_radius'] ) ) {
 			$css .= '.wp-block-post-content img,.entry-content img{border-radius:var(--wp--custom--radius--md,12px)}';
 		}
+		$css .= $rule(
+			self::IMAGE,
+			[
+				'border-width' => self::len( $v, 'image_border_width' ),
+				'border-style' => self::len( $v, 'image_border_width' ) !== '' ? 'solid' : '',
+				'border-color' => SiteKitSanitizer::colour( $v['image_border_color'] ?? '' ),
+				'object-fit' => in_array( $v['image_fit'] ?? '', [ 'cover', 'contain', 'fill', 'none', 'scale-down' ], true ) ? $v['image_fit'] : '',
+			]
+		);
+		$css .= $rule( self::CAPTION, [ 'color' => SiteKitSanitizer::colour( $v['image_caption_color'] ?? '' ) ] );
 		if ( self::len( $v, 'image_zoom', '' ) !== '' ) {
 			$css .= '.wp-block-image,.wp-block-post-featured-image{overflow:hidden}.wp-block-image img,.wp-block-post-featured-image img{transition:transform var(--wp--custom--hover--duration,.3s) var(--wp--custom--hover--ease,ease)}.wp-block-image:hover img,.wp-block-post-featured-image:hover img{transform:scale(' . self::len( $v, 'image_zoom', '' ) . ')}';
 		}
@@ -429,6 +485,14 @@ final class SiteKitCompiler {
 				'text-underline-offset'     => self::len( $v, 'link_offset' ),
 			]
 		);
+		$css .= $rule( self::LINK, [ 'text-decoration-style' => in_array( $v['link_decoration_style'] ?? '', [ 'solid', 'double', 'dotted', 'dashed', 'wavy' ], true ) ? $v['link_decoration_style'] : '' ] );
+		foreach ( [
+			'visited'       => 'link_visited',
+			'focus-visible' => 'link_focus',
+			'active'        => 'link_active',
+		] as $state => $key ) {
+			$css .= $rule( self::LINK . ':' . $state, [ 'color' => SiteKitSanitizer::colour( $v[ $key ] ?? '' ) ] );
+		}
 		if ( ( $v['link_underline'] ?? '' ) === 'text' ) {
 			$css .= '.wp-block-post-content p a,.entry-content p a,.wp-block-post-content li a{text-decoration:underline}';
 		}
@@ -436,6 +500,32 @@ final class SiteKitCompiler {
 			$css .= self::hover( self::BUTTON ) . '{transform:translateY(-' . self::len( $v, 'btn_lift' ) . ')}';
 		}
 		$css .= $rule( self::hover( self::BUTTON ), [ 'border-color' => (string) ( $v['btn_hover_border'] ?? '' ) ] );
+		foreach ( [
+			'focus-visible'                     => 'focus',
+			'active'                            => 'active',
+			'is(:disabled,[aria-disabled="true"])' => 'disabled',
+		] as $pseudo => $state ) {
+			$selector = ':is(' . self::BUTTON . '):' . $pseudo;
+			$css .= $rule(
+				$selector,
+				[
+					'background-color' => SiteKitSanitizer::colour( $v[ 'btn_' . $state . '_bg' ] ?? '' ),
+					'color'            => SiteKitSanitizer::colour( $v[ 'btn_' . $state . '_text' ] ?? '' ),
+					'border-color'     => SiteKitSanitizer::colour( $v[ 'btn_' . $state . '_border' ] ?? '' ),
+				]
+			);
+		}
+		$ring = SiteKitSanitizer::colour( $v['btn_focus_ring'] ?? '' );
+		$width = self::len( $v, 'btn_focus_width' );
+		if ( $ring !== '' || $width !== '' ) {
+			$css .= $rule(
+				':is(' . self::BUTTON . '):focus-visible',
+				[
+					'outline'        => ( $width ?: '2px' ) . ' solid ' . ( $ring ?: 'currentColor' ),
+					'outline-offset' => '2px',
+				]
+			);
+		}
 		$css .= $rule(
 			self::HEADER,
 			[
@@ -600,6 +690,11 @@ final class SiteKitCompiler {
 		);
 	}
 
+	/** @param array{x:float,y:float,blur:float,spread:float,inset:bool,color:string} $box Sanitized named shadow. */
+	public static function namedShadow( array $box ): string {
+		return ( $box['inset'] ? 'inset ' : '' ) . $box['x'] . 'px ' . $box['y'] . 'px ' . $box['blur'] . 'px ' . $box['spread'] . 'px ' . $box['color'];
+	}
+
 	/**
 	 * Typography set as declarations per device.
 	 *
@@ -665,6 +760,15 @@ final class SiteKitCompiler {
 			}
 		}
 
+		foreach ( [
+			'origin' => [ 'border-box', 'padding-box', 'content-box' ],
+			'clip'   => [ 'border-box', 'padding-box', 'content-box' ],
+			'blend'  => [ 'normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'soft-light', 'hard-light', 'difference', 'exclusion' ],
+		] as $key => $allowed ) {
+			if ( in_array( $b[ $key ] ?? '', $allowed, true ) ) {
+				$d[ 'background-' . ( $key === 'blend' ? 'blend-mode' : $key ) ] = $b[ $key ];
+			}
+		}
 		return $d;
 	}
 
@@ -685,6 +789,14 @@ final class SiteKitCompiler {
 		if ( $colours !== '' ) {
 			$css .= ':root{' . $colours . '}';
 		}
+		$shadowVars = '';
+		foreach ( SiteKitTokens::shadows( $v['custom_shadows'] ?? [] ) as $token ) {
+			$shadowVars .= '--wp--preset--shadow--' . $token['slug'] . ':' . self::namedShadow( $token['shadow'] ) . ';';
+		}
+		if ( $shadowVars !== '' ) {
+			$css .= ':root{' . $shadowVars . '}';
+		}
+		$css .= self::buttonVariantCss( $v );
 		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
 			$slug   = $token['slug'];
 			$styles = self::typography( $token['typography'], array_keys( $devices ) );
@@ -717,6 +829,39 @@ final class SiteKitCompiler {
 		return $css;
 	}
 
+	/** @param array<string,mixed> $v */
+	public static function buttonVariantCss( array $v ): string {
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$vars = '';
+		foreach ( [ 'gradient', 'primary', 'dark', 'outline', 'ghost', 'link' ] as $variant ) {
+			foreach ( [ 'bg', 'text', 'border' ] as $prop ) {
+				$value = SiteKitSanitizer::colour( $v[ 'btn_variant_' . $variant . '_' . $prop ] ?? '' );
+				if ( $value !== '' ) {
+					$vars .= '--wpe-btn-' . $variant . '-' . $prop . ':' . $value . ';';
+				}
+			}
+		}
+		$css = $vars !== '' ? ':root{' . $vars . '}' : '';
+		foreach ( SiteKitBreakpoints::enabled( (array) ( $v['breakpoints'] ?? [] ) ) as $device => $breakpoint ) {
+			$vars = '';
+			foreach ( [ 'sm', 'md', 'lg' ] as $scale ) {
+				foreach ( [ 'height', 'size' ] as $prop ) {
+					$value = $v[ 'btn_scale_' . $scale . '_' . $prop ] ?? [];
+					$value = is_array( $value ) ? ( $value[ $device ] ?? '' ) : ( $device === 'desktop' ? $value : '' );
+					$length = self::size( $value );
+					if ( $length !== '' ) {
+						$vars .= '--wpe-btn-' . $scale . '-' . $prop . ':' . $length . ';';
+					}
+				}
+			}
+			if ( $vars !== '' ) {
+				$rule = ':root{' . $vars . '}';
+				$css .= $breakpoint['media'] === '' ? $rule : $breakpoint['media'] . '{' . $rule . '}';
+			}
+		}
+		return $css;
+	}
+
 	/** Responsive and composite settings, one media query per enabled breakpoint. @param array<string,mixed> $v */
 	private static function controls( array $v ): string {
 		$breakpoints = SiteKitBreakpoints::enabled( is_array( $v['breakpoints'] ?? null ) ? $v['breakpoints'] : [] );
@@ -731,7 +876,7 @@ final class SiteKitCompiler {
 		};
 		$presets = array_column( SiteKitTokens::typography( $v['custom_typography'] ?? [] ), 'typography', 'slug' );
 		foreach ( self::TARGETS as $key => [ $selector, $property ] ) {
-			if ( empty( $v[ $key ] ) ) {
+			if ( ! isset( $v[ $key ] ) || $v[ $key ] === '' || $v[ $key ] === [] || $v[ $key ] === false ) {
 				continue;
 			}
 			$value = $v[ $key ];

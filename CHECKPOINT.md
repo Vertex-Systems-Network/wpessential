@@ -1,5 +1,11 @@
 # WPEssential — Engineering Checkpoint
 
+# 2026-11-27 — ADR-0239 WP5 integrated / WP6 first slice
+
+- Free #1596 exact candidate 60a79623: 8/8 workflows, 10/10 checks, 42/42 wp-env E2E (45945992115). Paired Pro validation #36 pinned that candidate; 49/49 E2E (45948684490), Pro CI passed. Pro #34 merged b8ff3ce0, theme #127 merged 32b75373, Free #1596 merged d44f69672c525468282dd54c28f7a05905d5369a. Temporary Pro #36 closed without merge; WP5 #1595 closed.
+- WP5 scope: named light/dark colours and responsive typography, block render references and actual Elementor admin control metadata, entitlement gate; bounded Elementor native mapping and retention of deleted managed globals remain documented limitations. Full React dropdown, editor/frontend/theme parity stay WP9/WP12. No release or formal P-006 certification.
+- WP6 #1597 / draft #1598 from merged Free main: first image/link source slice 6646ffaf (responsive radius/caption, border, object fit, link states/underline style and unit tests). Remaining forms, buttons, background, named shadows and integration acceptance pending. Fresh exact-head CI required. Resume RB-0132.
+
 # 2026-11-26 — ADR-0239 WP0 reconciliation / WP5 handoff
 
 - Observed Free main 5ebd02572a04bc9001192ac42870b731f9c48e52; Pro main a77aca5f9e8f2d9c541cccf96a3ab8d4db63e2c9. Free #1589–#1592 and Pro #31 merged. Free PHP Quality 45861383685 and Platform Compatibility 45861383756 PASS; Pro CI 45867583179, Lifecycle 45867583205 and Platform Compatibility 45867582959 PASS. Pro E2E 45858236138 attempt 2: 47/47 PASS on the PR head (not a new main run).

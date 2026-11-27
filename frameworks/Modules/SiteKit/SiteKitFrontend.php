@@ -24,6 +24,7 @@ final class SiteKitFrontend {
 		add_filter( 'wp_theme_json_data_user', [ $this, 'themeJson' ] );
 		add_filter( 'wpessential_kit_global_palette', [ $this, 'kitPalette' ] );
 		add_filter( 'wpessential_kit_typography_presets', [ $this, 'kitTypography' ] );
+		add_filter( 'wpessential_kit_shadow_presets', [ $this, 'kitShadows' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 25 );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueueFonts' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueueEditorTokens' ] );
@@ -56,6 +57,14 @@ final class SiteKitFrontend {
 				'name'       => $token['name'],
 				'properties' => array_values( array_unique( $props ) ),
 			];
+		}
+		return $presets;
+	}
+
+	/** @param array<string,string> $presets @return array<string,string> */
+	public function kitShadows( array $presets ): array {
+		foreach ( SiteKitTokens::shadows( $this->store->values()['custom_shadows'] ?? [] ) as $token ) {
+			$presets[ $token['slug'] ] = $token['name'];
 		}
 		return $presets;
 	}

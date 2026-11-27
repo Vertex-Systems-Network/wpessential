@@ -1,7 +1,7 @@
 {
   "schema_version": 214,
-  "snapshot_date": "2026-11-26",
-  "queue_anchor_main_sha": "644ecee4c0c480c61a7975ab34fd3dd84ae42522",
+  "snapshot_date": "2026-11-27",
+  "queue_anchor_main_sha": "d44f69672c525468282dd54c28f7a05905d5369a",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
   "source_issue": "#1595",
   "approval": {
@@ -8667,7 +8667,7 @@
       "slot_id": "adr-0239-wp5-global-tokens-v1",
       "title": "ADR-0239 WP5 global colour and typography tokens V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "ADR_0239_GLOBAL_TOKENS",
       "source": "ADR-0239 / #1595 / PR #1596",
       "dependencies": [
@@ -8686,7 +8686,34 @@
         "formal P-006 evidence promotion"
       ],
       "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
-      "close_condition": "Scoped WP5 exact-head checks PASS and merge; mark remaining block picker consumers explicitly if deferred to WP9."
+      "close_condition": "Scoped WP5 exact-head checks PASS and merge; mark remaining block picker consumers explicitly if deferred to WP9.",
+      "terminal_result": "PASS_ADR_0239_WP5",
+      "terminal_evidence": "Free 60a79623 8/8 workflows, 42/42 E2E 45945992115; paired 49/49 45948684490; merged d44f6967.",
+      "terminal_merge_sha": "d44f69672c525468282dd54c28f7a05905d5369a"
+    },
+    {
+      "priority": 1213,
+      "slot_id": "adr-0239-wp6-global-styling-v1",
+      "title": "ADR-0239 WP6 global styling groups",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "ADR_0239_GLOBAL_STYLING",
+      "source": "ADR-0239 / #1597 / PR #1598",
+      "dependencies": [
+        "WP5 #1596 merged"
+      ],
+      "runtime_allowed": true,
+      "claim_branch": "agent/adr-0239-wp6-global-styling",
+      "allowed_scope": [
+        "Site Tools Kit image, form, button, background, link and named shadow schema, compiler, shared controls and tests"
+      ],
+      "forbidden_scope": [
+        "Unrelated modules",
+        "Production release",
+        "P-006 evidence promotion"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
+      "close_condition": "WP6 acceptance and exact-head CI PASS; merge."
     }
   ],
   "historical_closeout": {

@@ -160,6 +160,100 @@ final class SiteKitTest extends TestCase
         self::assertSame($row['_id'], \WPEssential\Modules\SiteKit\SiteKitElementor::customTypography($raw)[0]['_id']);
     }
 
+    public function testGlobalImageAndLinkStylesAreOptInAndResponsive(): void
+    {
+        $store = new SiteKitStore();
+        $store->update([
+            'image_round' => true,
+            'image_radius' => ['desktop' => ['size' => 0, 'unit' => 'px'], 'mobile' => ['size' => 8, 'unit' => 'px']],
+            'image_border_width' => 2,
+            'image_border_color' => '#123456',
+            'image_fit' => 'cover',
+            'image_caption_color' => '#345678',
+            'link_focus' => '#006039',
+            'link_active' => '#112233',
+            'link_visited' => '#654321',
+            'link_decoration_style' => 'dotted',
+        ]);
+        $css = SiteKitCompiler::css($store->values());
+        self::assertStringContainsString(SiteKitCompiler::IMAGE . '{border-radius:0px;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::IMAGE . '{border-radius:8px;}', $css);
+        self::assertStringContainsString('border-width:2px;border-style:solid;border-color:#123456;object-fit:cover;', $css);
+        self::assertStringContainsString(SiteKitCompiler::CAPTION . '{color:#345678;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::LINK . ':focus-visible{color:#006039;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::LINK . ':active{color:#112233;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::LINK . ':visited{color:#654321;}', $css);
+        self::assertStringContainsString('text-decoration-style:dotted;', $css);
+        $store->update(['image_fit' => 'invalid;display:none', 'link_decoration_style' => 'invalid']);
+        self::assertArrayNotHasKey('image_fit', $store->values());
+        self::assertArrayNotHasKey('link_decoration_style', $store->values());
+        self::assertStringNotContainsString('object-fit:', SiteKitCompiler::css([]));
+        self::assertStringNotContainsString('text-decoration-style:', SiteKitCompiler::css([]));
+    }
+
+    public function testExpandedFormAndButtonStatesAreOptIn(): void
+    {
+        $store = new SiteKitStore();
+        $store->update([
+            'field_label' => '#123456',
+            'field_placeholder' => '#555555',
+            'field_disabled_bg' => '#eeeeee',
+            'field_error' => '#aa0000',
+            'field_focus' => '#006039',
+            'btn_focus_bg' => '#123456',
+            'btn_active_text' => '#ffffff',
+            'btn_disabled_border' => '#888888',
+            'btn_focus_ring' => '#006039',
+            'btn_focus_width' => 3,
+        ]);
+        $css = SiteKitCompiler::css($store->values());
+        self::assertStringContainsString(SiteKitCompiler::LABEL . '{color:#123456;}', $css);
+        self::assertStringContainsString('::placeholder{color:#555555;}', $css);
+        self::assertStringContainsString(':is(:disabled,[aria-disabled="true"]){background-color:#eeeeee;}', $css);
+        self::assertStringContainsString('[aria-invalid="true"]{border-color:#aa0000;}', $css);
+        self::assertStringContainsString(':focus-visible{background-color:#123456;}', $css);
+        self::assertStringContainsString(':active{color:#ffffff;}', $css);
+        self::assertStringContainsString(':is(:disabled,[aria-disabled="true"]){border-color:#888888;}', $css);
+        self::assertStringContainsString('outline:3px solid #006039;outline-offset:2px;', $css);
+        self::assertStringNotContainsString('::placeholder{', SiteKitCompiler::css([]));
+    }
+
+    public function testNamedShadowTokensAreSafeAndProjected(): void
+    {
+        $store = new SiteKitStore();
+        $store->update(['custom_shadows' => ['tokens' => [
+            ['name' => 'Card', 'slug' => 'card', 'shadow' => ['x' => 4, 'y' => 8, 'blur' => 16, 'spread' => -2, 'color' => '#123456']],
+            ['name' => 'Invalid', 'slug' => 'bad', 'shadow' => ['color' => 'red;display:none']],
+        ]]]);
+        $values = $store->values();
+        self::assertCount(1, $values['custom_shadows']['tokens']);
+        $json = SiteKitCompiler::themeJson([], $values, static fn (array $path): array => []);
+        self::assertSame('wpe-custom-card', $json['settings']['shadow']['presets'][0]['slug']);
+        self::assertSame('4px 8px 16px -2px #123456', $json['settings']['shadow']['presets'][0]['shadow']);
+        self::assertStringContainsString('--wp--preset--shadow--wpe-custom-card:4px 8px 16px -2px #123456;', SiteKitCompiler::css($values));
+        $store->update(['custom_shadows' => '']);
+        self::assertStringNotContainsString('--wp--preset--shadow--wpe-custom-card', SiteKitCompiler::css($store->values()));
+    }
+
+    public function testButtonVariantsAndBackgroundAdvancedControls(): void
+    {
+        $store = new SiteKitStore();
+        $store->update([
+            'btn_variant_primary_bg' => '#123456',
+            'btn_variant_outline_border' => '#234567',
+            'btn_scale_sm_height' => ['desktop' => ['size' => 40, 'unit' => 'px'], 'mobile' => ['size' => 32, 'unit' => 'px']],
+            'site_bg' => ['color' => '#ffffff', 'origin' => 'content-box', 'clip' => 'padding-box', 'blend' => 'multiply'],
+        ]);
+        $css = SiteKitCompiler::css($store->values());
+        self::assertStringContainsString('--wpe-btn-primary-bg:#123456;', $css);
+        self::assertStringContainsString('--wpe-btn-outline-border:#234567;', $css);
+        self::assertStringContainsString('--wpe-btn-sm-height:40px;', $css);
+        self::assertStringContainsString('@media (max-width: 767px){:root{--wpe-btn-sm-height:32px;}}', $css);
+        self::assertStringContainsString('background-origin:content-box;background-clip:padding-box;background-blend-mode:multiply;', $css);
+        self::assertSame([], SiteKitCompiler::background(['clip' => 'invalid', 'blend' => 'bad']));
+        self::assertSame('', SiteKitCompiler::buttonVariantCss([]));
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

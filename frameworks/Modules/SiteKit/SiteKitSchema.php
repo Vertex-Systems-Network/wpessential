@@ -222,6 +222,32 @@ final class SiteKitSchema {
 			'help'  => self::t( 'Add named responsive typography presets with stable slugs.' ),
 		];
 
+		$buttonVariants = [];
+		foreach ( [
+			'gradient' => self::t( 'Brand gradient' ),
+			'primary'  => self::t( 'Primary' ),
+			'dark'     => self::t( 'Dark' ),
+			'outline'  => self::t( 'Outline' ),
+			'ghost'    => self::t( 'Ghost' ),
+			'link'     => self::t( 'Text link' ),
+		] as $slug => $label ) {
+			$prefix = 'btn_variant_' . $slug;
+			$buttonVariants[ $prefix . '_heading' ] = self::heading( $label );
+			$buttonVariants[ $prefix . '_bg' ] = self::colour( self::t( 'Background colour' ) );
+			$buttonVariants[ $prefix . '_text' ] = self::colour( self::t( 'Text colour' ) );
+			$buttonVariants[ $prefix . '_border' ] = self::colour( self::t( 'Border colour' ) );
+		}
+		foreach ( [
+			'sm' => self::t( 'Small' ),
+			'md' => self::t( 'Medium' ),
+			'lg' => self::t( 'Large' ),
+		] as $slug => $label ) {
+			$prefix = 'btn_scale_' . $slug;
+			$buttonVariants[ $prefix . '_heading' ] = self::heading( $label );
+			$buttonVariants[ $prefix . '_height' ] = self::range( self::t( 'Minimum height' ), 24, 120, 1, 'px', true );
+			$buttonVariants[ $prefix . '_size' ] = self::range( self::t( 'Text size' ), 10, 40, 1, 'px', true );
+		}
+
 		return [
 			'colors'    => self::section( self::t( 'Global colours' ), self::t( 'The site palette used by every block and Elementor widget. Leave a colour empty to keep the theme\'s.' ), 'brush', $light ),
 			'dark'      => self::section(
@@ -289,7 +315,25 @@ final class SiteKitSchema {
 					'btn_hover_bg'     => [ 'tab' => 'hover' ] + self::colour( self::t( 'Background on hover' ) ),
 					'btn_hover_text'   => [ 'tab' => 'hover' ] + self::colour( self::t( 'Text colour on hover' ) ),
 					'btn_hover_border' => [ 'tab' => 'hover' ] + self::colour( self::t( 'Border colour on hover' ) ),
+					'btn_focus_bg' => [ 'tab' => 'focus' ] + self::colour( self::t( 'Background (keyboard focus)' ) ),
+					'btn_focus_text' => [ 'tab' => 'focus' ] + self::colour( self::t( 'Text colour (keyboard focus)' ) ),
+					'btn_focus_border' => [ 'tab' => 'focus' ] + self::colour( self::t( 'Border colour (keyboard focus)' ) ),
+					'btn_active_bg' => [ 'tab' => 'active' ] + self::colour( self::t( 'Background (pressed)' ) ),
+					'btn_active_text' => [ 'tab' => 'active' ] + self::colour( self::t( 'Text colour (pressed)' ) ),
+					'btn_active_border' => [ 'tab' => 'active' ] + self::colour( self::t( 'Border colour (pressed)' ) ),
+					'btn_disabled_bg' => [ 'tab' => 'disabled' ] + self::colour( self::t( 'Background (disabled)' ) ),
+					'btn_disabled_text' => [ 'tab' => 'disabled' ] + self::colour( self::t( 'Text colour (disabled)' ) ),
+					'btn_disabled_border' => [ 'tab' => 'disabled' ] + self::colour( self::t( 'Border colour (disabled)' ) ),
+					'btn_min_height' => self::range( self::t( 'Minimum height' ), 24, 120, 1, 'px', true ),
+					'btn_focus_width' => self::range( self::t( 'Focus outline width' ), 1, 8 ),
+					'btn_focus_ring' => self::colour( self::t( 'Focus outline colour' ) ),
 				]
+			),
+			'button_variants' => self::section(
+				self::t( 'Button variants & sizes' ),
+				self::t( 'Global defaults for the WPEssential button variants and size scale. Local element styles take precedence.' ),
+				'grid',
+				$buttonVariants
 			),
 			'forms'     => self::section(
 				self::t( 'Form fields' ),
@@ -302,6 +346,19 @@ final class SiteKitSchema {
 					'field_border'  => self::colour( self::t( 'Border colour' ) ),
 					'field_bg'      => self::colour( self::t( 'Background' ) ),
 					'field_focus'   => self::colour( self::t( 'Focus ring colour' ) ),
+					'field_text' => self::colour( self::t( 'Field text colour' ) ),
+					'field_placeholder' => self::colour( self::t( 'Placeholder colour' ) ),
+					'field_label' => self::colour( self::t( 'Label colour' ) ),
+					'field_error' => self::colour( self::t( 'Error border colour' ) ),
+					'field_error_text' => self::colour( self::t( 'Error message colour' ) ),
+					'field_disabled_bg' => self::colour( self::t( 'Disabled background' ) ),
+					'field_disabled_text' => self::colour( self::t( 'Disabled text colour' ) ),
+					'field_disabled_border' => self::colour( self::t( 'Disabled border colour' ) ),
+					'field_focus_bg' => self::colour( self::t( 'Focus background' ) ),
+					'field_focus_text' => self::colour( self::t( 'Focus text colour' ) ),
+					'field_text_size' => self::range( self::t( 'Field text size' ), 10, 32, 1, 'px', true ),
+					'field_label_size' => self::range( self::t( 'Label text size' ), 10, 32, 1, 'px', true ),
+					'field_border_width' => self::range( self::t( 'Border width' ), 0, 8 ),
 				]
 			),
 			'shape'     => self::section(
@@ -315,6 +372,22 @@ final class SiteKitSchema {
 					'radius_xl'   => self::range( self::t( 'Extra large radius' ), 0, 64 ),
 					'image_zoom'  => self::range( self::t( 'Image zoom on hover' ), 1, 1.2, 0.01, '' ),
 					'image_round' => self::toggle( self::t( 'Round the corners of images in content' ) ),
+					'image_radius' => self::range( self::t( 'Image radius' ), 0, 100, 1, 'px', true ),
+					'image_border_width' => self::range( self::t( 'Image border width' ), 0, 12 ),
+					'image_border_color' => self::colour( self::t( 'Image border colour' ) ),
+					'image_fit' => self::select(
+						self::t( 'Image object fit' ),
+						[
+							'' => self::t( 'Theme default' ),
+							'cover' => self::t( 'Cover' ),
+							'contain' => self::t( 'Contain' ),
+							'fill' => self::t( 'Fill' ),
+							'none' => self::t( 'None' ),
+							'scale-down' => self::t( 'Scale down' ),
+						]
+					),
+					'image_caption_color' => self::colour( self::t( 'Caption colour' ) ),
+					'image_caption_size' => self::range( self::t( 'Caption text size' ), 10, 32, 1, 'px', true ),
 				]
 			),
 			'layout'    => self::section(
@@ -385,6 +458,20 @@ final class SiteKitSchema {
 					'link_thickness' => self::range( self::t( 'Underline thickness' ), 1, 4 ),
 					'link_offset'    => self::range( self::t( 'Underline distance' ), 0, 10 ),
 					'link_weight'    => self::select( self::t( 'Link weight' ), $weights ),
+					'link_focus' => self::colour( self::t( 'Keyboard focus colour' ) ),
+					'link_active' => self::colour( self::t( 'Active link colour' ) ),
+					'link_visited' => self::colour( self::t( 'Visited link colour' ) ),
+					'link_decoration_style' => self::select(
+						self::t( 'Underline style' ),
+						[
+							'' => self::t( 'Theme default' ),
+							'solid' => self::t( 'Solid' ),
+							'double' => self::t( 'Double' ),
+							'dotted' => self::t( 'Dotted' ),
+							'dashed' => self::t( 'Dashed' ),
+							'wavy' => self::t( 'Wavy' ),
+						]
+					),
 				]
 			),
 			'shadows'   => self::section(
@@ -392,6 +479,10 @@ final class SiteKitSchema {
 				self::t( 'The small, medium and large shadows cards and elements use.' ),
 				'layers',
 				[
+					'custom_shadows' => [
+						'type'  => 'shadow_tokens',
+						'label' => self::t( 'Custom global shadows' ),
+					],
 					'shadow_color'    => self::colour( self::t( 'Shadow colour' ) ),
 					'shadow_strength' => self::range( self::t( 'Shadow strength (%)' ), 0, 300, 10, '%' ),
 					'shadow_sm'       => [

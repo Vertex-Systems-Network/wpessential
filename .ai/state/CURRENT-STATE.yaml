@@ -2,17 +2,17 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 644ecee4c0c480c61a7975ab34fd3dd84ae42522
-observed_main_source: "WP0 #1594 merged; observed exact main 644ecee4. WP5 remains unmerged."
-active_issue: "#1595"
-active_pr: "#1596"
-active_branch: agent/adr-0239-wp5-global-tokens
-current_milestone: "P5-M14 WP5 global design tokens and consumer integration"
+observed_main_sha: d44f69672c525468282dd54c28f7a05905d5369a
+observed_main_source: "Free #1596 merged after exact-head and paired runtime checks."
+active_issue: "#1597"
+active_pr: "#1598"
+active_branch: agent/adr-0239-wp6-global-styling
+current_milestone: "P5-M14 WP6 global styling groups"
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "WP0 #1594 merged after 3/3 gates; WP1–WP4 kit baseline retained."
-next_safe_action: "Verify Pro #34 and theme #127 companion gates; integrate those before Free #1596; verify paired runtime and WP5 acceptance, then WP6."
-waiting_external: "Free #1596, Pro #34 and theme #127 exact-head CI and paired runtime acceptance pending. Other lanes remain separate."
-next_planned_slot: adr-0239-wp5-global-tokens-v1
+last_completed_milestone: "WP5 #1596 merged; Free 42/42, paired Free + Pro 49/49."
+next_safe_action: "Verify WP6 first slice, implement remaining styling groups and tests; merge only after exact-head gates."
+waiting_external: "WP6 fresh CI pending; unrelated lanes remain separate."
+next_planned_slot: adr-0239-wp6-global-styling-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -20,8 +20,9 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0131
+    - RB-0132
   terminal_pass:
+    - RB-0131
     - RB-0130
     - RB-0129
     - RB-0128
