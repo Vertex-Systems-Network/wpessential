@@ -24,6 +24,11 @@ final class SiteKitSanitizer {
 			$value   = is_array( $decoded ) ? $decoded : '';
 		}
 
+		if ( $type === 'shadow_tokens' ) {
+			$tokens = SiteKitTokens::shadows( $value );
+			return $tokens === [] ? [] : [ 'tokens' => $tokens ];
+		}
+
 		if ( $type === 'typography_tokens' ) {
 			$tokens = SiteKitTokens::typography( $value );
 

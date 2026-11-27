@@ -1215,15 +1215,15 @@ types.background = ( ctx ) => {
 };
 
 
-const tokenRepeater = ( ctx: ControlContext, typography: boolean ): Control => {
-	type Token = { name?: string; slug?: string; color?: string; dark?: string; typography?: Json };
+const tokenRepeater = ( ctx: ControlContext, typography: boolean, shadow = false ): Control => {
+	type Token = { name?: string; slug?: string; color?: string; dark?: string; typography?: Json; shadow?: Json };
 	const read = (): Token[] => {
 		const value = parse( ctx.get() ).tokens;
 		return Array.isArray( value ) ? value as Token[] : Object.values( ( value ?? {} ) as Record< string, Token > );
 	};
 	const write = ( tokens: Token[] ): void => ctx.set( tokens.length ? JSON.stringify( { tokens } ) : '' );
 	const rows = h( 'div', { class: 'wpec-units__custom' } );
-	const add = h( 'button', { type: 'button', class: 'wpec-link', text: t( typography ? 'Add custom typography' : 'Add custom colour' ), onclick: () => write( [ ...read(), {} ] ) } ) as HTMLButtonElement;
+	const add = h( 'button', { type: 'button', class: 'wpec-link', text: t( shadow ? 'Add custom shadow' : typography ? 'Add custom typography' : 'Add custom colour' ), onclick: () => write( [ ...read(), {} ] ) } ) as HTMLButtonElement;
 	let parts: Part[][] = [];
 	const draw = (): void => {
 		rows.replaceChildren();
@@ -1238,16 +1238,16 @@ const tokenRepeater = ( ctx: ControlContext, typography: boolean ): Control => {
 				},
 			};
 			const fields = [
-				part( row, 'name', 'text', { placeholder: t( typography ? 'Display heading' : 'Brand colour' ) }, t( 'Name' ) ),
-				part( row, 'slug', 'text', { placeholder: typography ? 'display-heading' : 'brand-colour' }, t( 'Stable slug' ) ),
-				...( typography ? [ part( row, 'typography', 'typography', { defineTypography: true }, t( 'Typography' ) ) ] : [
+				part( row, 'name', 'text', { placeholder: t( shadow ? 'Card shadow' : typography ? 'Display heading' : 'Brand colour' ) }, t( 'Name' ) ),
+				part( row, 'slug', 'text', { placeholder: shadow ? 'card-shadow' : typography ? 'display-heading' : 'brand-colour' }, t( 'Stable slug' ) ),
+				...( shadow ? [ part( row, 'shadow', 'shadow', {}, t( 'Shadow' ) ) ] : typography ? [ part( row, 'typography', 'typography', { defineTypography: true }, t( 'Typography' ) ) ] : [
 					part( row, 'color', 'color', { literalColour: true }, t( 'Light colour' ) ),
 					part( row, 'dark', 'color', { literalColour: true }, t( 'Dark colour (optional)' ) ),
 				] ),
 			];
-			rows.append( h( 'div', { class: 'wpec-field', role: 'group', 'aria-label': `${ t( typography ? 'Custom typography' : 'Custom colour' ) } ${ index + 1 }` }, [
+			rows.append( h( 'div', { class: 'wpec-field', role: 'group', 'aria-label': `${ t( shadow ? 'Custom shadow' : typography ? 'Custom typography' : 'Custom colour' ) } ${ index + 1 }` }, [
 				...fields.map( ( field ) => field.node ),
-				h( 'button', { type: 'button', class: 'wpec-link is-danger', text: t( 'Remove' ), 'aria-label': `${ t( typography ? 'Remove custom typography' : 'Remove custom colour' ) } ${ index + 1 }`, onclick: () => write( read().filter( ( _row, i ) => i !== index ) ) } ),
+				h( 'button', { type: 'button', class: 'wpec-link is-danger', text: t( 'Remove' ), 'aria-label': `${ t( shadow ? 'Remove custom shadow' : typography ? 'Remove custom typography' : 'Remove custom colour' ) } ${ index + 1 }`, onclick: () => write( read().filter( ( _row, i ) => i !== index ) ) } ),
 			] ) );
 			return fields;
 		} );
@@ -1271,6 +1271,7 @@ const tokenRepeater = ( ctx: ControlContext, typography: boolean ): Control => {
 
 types.colour_tokens = ( ctx ) => tokenRepeater( ctx, false );
 types.typography_tokens = ( ctx ) => tokenRepeater( ctx, true );
+types.shadow_tokens = ( ctx ) => tokenRepeater( ctx, false, true );
 
 /** Builds a control; responsive options wrap it with per-device values. */
 export function create( type: string, ctx: ControlContext ): Control {

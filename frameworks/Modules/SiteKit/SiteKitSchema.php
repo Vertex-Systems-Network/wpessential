@@ -447,6 +447,10 @@ final class SiteKitSchema {
 				self::t( 'The small, medium and large shadows cards and elements use.' ),
 				'layers',
 				[
+					'custom_shadows' => [
+						'type'  => 'shadow_tokens',
+						'label' => self::t( 'Custom global shadows' ),
+					],
 					'shadow_color'    => self::colour( self::t( 'Shadow colour' ) ),
 					'shadow_strength' => self::range( self::t( 'Shadow strength (%)' ), 0, 300, 10, '%' ),
 					'shadow_sm'       => [

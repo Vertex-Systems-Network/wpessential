@@ -329,6 +329,14 @@ final class SiteKitCompiler {
 			}
 			$shadows[] = $shadow;
 		}
+		foreach ( SiteKitTokens::shadows( $v['custom_shadows'] ?? [] ) as $token ) {
+			$shadows = array_values( array_filter( $shadows, static fn ( array $p ): bool => ( $p['slug'] ?? '' ) !== $token['slug'] ) );
+			$shadows[] = [
+				'name'   => $token['name'],
+				'slug'   => $token['slug'],
+				'shadow' => self::namedShadow( $token['shadow'] ),
+			];
+		}
 		if ( $shadows !== [] ) {
 			$settings['shadow']['presets'] = $shadows;
 		}
@@ -478,7 +486,11 @@ final class SiteKitCompiler {
 			]
 		);
 		$css .= $rule( self::LINK, [ 'text-decoration-style' => in_array( $v['link_decoration_style'] ?? '', [ 'solid', 'double', 'dotted', 'dashed', 'wavy' ], true ) ? $v['link_decoration_style'] : '' ] );
-		foreach ( [ 'visited' => 'link_visited', 'focus-visible' => 'link_focus', 'active' => 'link_active' ] as $state => $key ) {
+		foreach ( [
+			'visited'       => 'link_visited',
+			'focus-visible' => 'link_focus',
+			'active'        => 'link_active',
+		] as $state => $key ) {
 			$css .= $rule( self::LINK . ':' . $state, [ 'color' => SiteKitSanitizer::colour( $v[ $key ] ?? '' ) ] );
 		}
 		if ( ( $v['link_underline'] ?? '' ) === 'text' ) {
@@ -488,7 +500,11 @@ final class SiteKitCompiler {
 			$css .= self::hover( self::BUTTON ) . '{transform:translateY(-' . self::len( $v, 'btn_lift' ) . ')}';
 		}
 		$css .= $rule( self::hover( self::BUTTON ), [ 'border-color' => (string) ( $v['btn_hover_border'] ?? '' ) ] );
-		foreach ( [ 'focus-visible' => 'focus', 'active' => 'active', 'is(:disabled,[aria-disabled="true"])' => 'disabled' ] as $pseudo => $state ) {
+		foreach ( [
+			'focus-visible'                     => 'focus',
+			'active'                            => 'active',
+			'is(:disabled,[aria-disabled="true"])' => 'disabled',
+		] as $pseudo => $state ) {
 			$selector = ':is(' . self::BUTTON . '):' . $pseudo;
 			$css .= $rule(
 				$selector,
@@ -502,7 +518,13 @@ final class SiteKitCompiler {
 		$ring = SiteKitSanitizer::colour( $v['btn_focus_ring'] ?? '' );
 		$width = self::len( $v, 'btn_focus_width' );
 		if ( $ring !== '' || $width !== '' ) {
-			$css .= $rule( ':is(' . self::BUTTON . '):focus-visible', [ 'outline' => ( $width ?: '2px' ) . ' solid ' . ( $ring ?: 'currentColor' ), 'outline-offset' => '2px' ] );
+			$css .= $rule(
+				':is(' . self::BUTTON . '):focus-visible',
+				[
+					'outline'        => ( $width ?: '2px' ) . ' solid ' . ( $ring ?: 'currentColor' ),
+					'outline-offset' => '2px',
+				]
+			);
 		}
 		$css .= $rule(
 			self::HEADER,
@@ -551,6 +573,13 @@ final class SiteKitCompiler {
 		}
 		if ( $gradients !== '' ) {
 			$css .= ':root{' . $gradients . '}';
+		}
+		$shadowVars = '';
+		foreach ( SiteKitTokens::shadows( $v['custom_shadows'] ?? [] ) as $token ) {
+			$shadowVars .= '--wp--preset--shadow--' . $token['slug'] . ':' . self::namedShadow( $token['shadow'] ) . ';';
+		}
+		if ( $shadowVars !== '' ) {
+			$css .= ':root{' . $shadowVars . '}';
 		}
 		$css .= self::tokenCss( $v );
 		$css .= self::controls( $v );
@@ -666,6 +695,11 @@ final class SiteKitCompiler {
 			static fn ( array $m ): string => 'rgba(' . $rgb . ',' . round( min( 1, (float) $m[1] * $strength ), 3 ) . ')',
 			(string) ( $preset['shadow'] ?? '' )
 		);
+	}
+
+	/** @param array{x:float,y:float,blur:float,spread:float,inset:bool,color:string} $box Sanitized named shadow. */
+	public static function namedShadow( array $box ): string {
+		return ( $box['inset'] ? 'inset ' : '' ) . $box['x'] . 'px ' . $box['y'] . 'px ' . $box['blur'] . 'px ' . $box['spread'] . 'px ' . $box['color'];
 	}
 
 	/**

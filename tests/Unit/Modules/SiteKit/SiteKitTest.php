@@ -218,6 +218,23 @@ final class SiteKitTest extends TestCase
         self::assertStringNotContainsString('::placeholder{', SiteKitCompiler::css([]));
     }
 
+    public function testNamedShadowTokensAreSafeAndProjected(): void
+    {
+        $store = new SiteKitStore();
+        $store->update(['custom_shadows' => ['tokens' => [
+            ['name' => 'Card', 'slug' => 'card', 'shadow' => ['x' => 4, 'y' => 8, 'blur' => 16, 'spread' => -2, 'color' => '#123456']],
+            ['name' => 'Invalid', 'slug' => 'bad', 'shadow' => ['color' => 'red;display:none']],
+        ]]]);
+        $values = $store->values();
+        self::assertCount(1, $values['custom_shadows']['tokens']);
+        $json = SiteKitCompiler::themeJson([], $values, static fn (array $path): array => []);
+        self::assertSame('wpe-custom-card', $json['settings']['shadow']['presets'][0]['slug']);
+        self::assertSame('4px 8px 16px -2px #123456', $json['settings']['shadow']['presets'][0]['shadow']);
+        self::assertStringContainsString('--wp--preset--shadow--wpe-custom-card:4px 8px 16px -2px #123456;', SiteKitCompiler::css($values));
+        $store->update(['custom_shadows' => '']);
+        self::assertStringNotContainsString('--wp--preset--shadow--wpe-custom-card', SiteKitCompiler::css($store->values()));
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

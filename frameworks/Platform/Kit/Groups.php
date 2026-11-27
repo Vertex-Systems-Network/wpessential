@@ -548,7 +548,7 @@ class Groups {
 	 * @return array
 	 */
 	public static function shadows() {
-		return array(
+		$out = array(
 			'none'  => 'none',
 			'sm'    => '0 1px 2px rgba(11,26,61,.06), 0 1px 3px rgba(11,26,61,.08)',
 			'md'    => '0 4px 12px rgba(11,26,61,.08), 0 12px 32px rgba(11,26,61,.08)',
@@ -557,6 +557,10 @@ class Groups {
 			'glow'  => '0 0 0 4px color-mix(in srgb, var(--wp--preset--color--primary) 25%, transparent), 0 12px 32px color-mix(in srgb, var(--wp--preset--color--primary) 40%, transparent)',
 			'inner' => 'inset 0 2px 6px rgba(11,26,61,.12)',
 		);
+		foreach ( self::custom_shadow_labels() as $slug => $label ) {
+			$out[ $slug ] = 'var(--wp--preset--shadow--' . $slug . ',none)';
+		}
+		return $out;
 	}
 
 	/**
@@ -574,7 +578,13 @@ class Groups {
 			'xl'    => __( 'Extra large', 'wpessential' ),
 			'glow'  => __( 'Brand glow', 'wpessential' ),
 			'inner' => __( 'Inner', 'wpessential' ),
-		);
+		) + self::custom_shadow_labels();
+	}
+
+	/** @return array<string,string> Named global shadows supplied by Site Tools Kit. */
+	private static function custom_shadow_labels(): array {
+		$presets = function_exists( 'apply_filters' ) ? (array) apply_filters( 'wpessential_kit_shadow_presets', array() ) : array();
+		return array_filter( $presets, static fn( $slug ): bool => is_string( $slug ) && preg_match( '/^wpe-custom-[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug ) === 1, ARRAY_FILTER_USE_KEY );
 	}
 
 	/**

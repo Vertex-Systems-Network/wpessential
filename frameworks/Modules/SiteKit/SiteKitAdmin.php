@@ -234,7 +234,7 @@ final class SiteKitAdmin {
 			if ( str_starts_with( $key, 'color_' ) || str_starts_with( $key, 'dark_' ) ) {
 				$config['defineColour'] = true;
 			}
-			$wide   = in_array( $type, [ 'typography', 'background', 'gradient', 'shadow', 'dimensions', 'fonts', 'colour_tokens', 'typography_tokens' ], true );
+			$wide   = in_array( $type, [ 'typography', 'background', 'gradient', 'shadow', 'dimensions', 'fonts', 'colour_tokens', 'typography_tokens', 'shadow_tokens' ], true );
 			$string = is_array( $value ) ? (string) wp_json_encode( $value ) : ( $value === true ? '1' : ( is_scalar( $value ) ? (string) $value : '' ) );
 
 			return '<div class="wpec wpec--' . esc_attr( $type ) . ( $wide ? ' wpe-ui-sitekit__wide' : '' ) . '" data-wpec="' . esc_attr( (string) wp_json_encode( $config ) ) . '"' . ( isset( $field['tab'] ) ? ' data-wpec-tab="' . esc_attr( (string) $field['tab'] ) . '"' : '' ) . '>'
