@@ -90,24 +90,15 @@ final class SiteKitAdmin {
 			$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
 			$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
 			$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
-			$review  = SiteKitLegacyPreview::assess( $pending, $this->store->values() );
-			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $this->store->values() );
-			$fonts = SiteKitLegacyFontPreview::bundledCandidates( $pending );
-			$this->store->update( $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $this->store->values() ) );
-			$stored = $this->store->values();
-			$keys   = [];
-			foreach ( SiteKitLegacyPreview::handoffKeys( $legacy ) as $key ) {
-				if ( in_array( $key, $handed, true ) || array_key_exists( $key, $stored ) ) {
-					$keys[] = $key;
-				}
-			}
-			$keys = array_merge( $keys, SiteKitLegacyScalarPreview::confirmedKeys( $legacy, $stored, $handed ) );
-			foreach ( array_keys( $fonts ) as $key ) {
-				if ( array_key_exists( $key, $stored ) ) {
-					$keys[] = $key;
-				}
-			}
-			$next = array_values( array_unique( array_merge( $handed, $keys ) ) );
+			$before  = $this->store->values();
+			$review  = SiteKitLegacyPreview::assess( $pending, $before );
+			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $before );
+			$fonts   = SiteKitLegacyFontPreview::bundledCandidates( $pending );
+			$changes = $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $before );
+			$this->store->update( $changes );
+			$eligible = array_merge( SiteKitLegacyPreview::handoffKeys( $pending ), SiteKitLegacyScalarPreview::handoffKeys( $pending ), array_keys( $fonts ) );
+			$keys     = SiteKitLegacyPreview::confirmedReadback( $eligible, $before + $changes, $this->store->values() );
+			$next     = array_values( array_unique( array_merge( $handed, $keys ) ) );
 			if ( $next !== $handed ) {
 				set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, $next );
 				// Rebuild after the theme stops compiling the newly delegated fields.

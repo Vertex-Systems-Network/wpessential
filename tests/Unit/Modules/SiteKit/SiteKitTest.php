@@ -68,6 +68,17 @@ final class SiteKitTest extends TestCase
         self::assertSame([], $class::confirmedKeys($legacy, ['hover_duration' => 500, 'font_body' => 'Inter'], []));
     }
 
+    public function testHandoffReadbackRequiresExpectedValueAndKeepsCanonicalConflicts(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyPreview::class;
+        $keys = ['btn_radius', 'field_radius', 'color_primary', 'font_body', 'color_secondary'];
+        $expected = ['btn_radius' => 0, 'field_radius' => 8, 'color_primary' => '#123456', 'font_body' => 'theme:hi-wpessential-inter', 'color_secondary' => '#112233'];
+        $stored = ['btn_radius' => 0, 'field_radius' => 8, 'color_primary' => '#abcdef', 'font_body' => 'theme:hi-wpessential-heading'];
+        self::assertSame(['btn_radius', 'field_radius'], $class::confirmedReadback($keys, $expected, $stored));
+        self::assertSame($keys, $class::confirmedReadback($keys, $expected, $expected));
+        self::assertSame([], $class::confirmedReadback($keys, $expected, []));
+    }
+
     public function testLegacyThemePreviewDoesNotOverwriteCanonicalValues(): void
     {
         $legacy = ['color_primary' => '#ABCDEF', 'color_secondary' => '#123456', 'dark_primary' => 'bad', 'font_body' => 'Inter', 'breakpoints' => '768|560', 'btn_radius' => '12', 'color_accent' => ''];

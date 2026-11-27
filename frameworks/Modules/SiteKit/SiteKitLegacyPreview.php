@@ -58,6 +58,27 @@ final class SiteKitLegacyPreview {
 		);
 	}
 
+	/**
+	 * A new ownership marker requires exact readback of the expected canonical value.
+	 * Existing conflict winners are included in expected; reset markers are handled
+	 * separately and do not need a stored value.
+	 *
+	 * @param list<string> $eligible
+	 * @param array<string,mixed> $expected
+	 * @param array<string,mixed> $stored
+	 * @return list<string>
+	 */
+	public static function confirmedReadback( array $eligible, array $expected, array $stored ): array {
+		$confirmed = [];
+		foreach ( $eligible as $key ) {
+			if ( array_key_exists( $key, $expected ) && array_key_exists( $key, $stored ) && $stored[ $key ] === $expected[ $key ] ) {
+				$confirmed[] = $key;
+			}
+		}
+
+		return array_values( array_unique( $confirmed ) );
+	}
+
 	/** @return list<string> */
 	public static function themeOwnedKeys(): array {
 		if ( get_template() !== 'hi-wpessential' ) {

@@ -641,6 +641,16 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(reset.legacy).toEqual(original);
       expect(reset.effective.color_secondary).toBeUndefined();
       expect(reset.handed).toContain('color_secondary');
+      await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_type', { waitUntil: 'load' });
+      const font = page.locator('[data-wpe-setting="wpessential_site_kit[values][font_body]"]');
+      await expect(font).toBeVisible();
+      await font.getByRole('button', { name: /Reset .* to the theme default/ }).click();
+      await expect(page.locator('#save')).toBeEnabled();
+      await page.locator('#save').click();
+      await expect.poll(() => read().canonical.values.font_body ?? '', { timeout: 30000 }).toBe('');
+      expect(read().handed).toContain('font_body');
+      expect(read().effective.font_body).toBeUndefined();
+      expect(read().legacy).toEqual(original);
       await setModule(page, 'site-kit', false);
       expect(read().effective.color_secondary).toBe('#112233');
       expect(read().effective.btn_radius).toBe('0');
@@ -649,6 +659,8 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(read().legacy).toEqual(original);
       await setModule(page, 'site-kit', true);
       expect(read().effective.color_secondary).toBeUndefined();
+      expect(read().effective.font_body).toBeUndefined();
+      expect(read().canonical.values.font_body).toBeUndefined();
     });
   } finally {
     if (themeBackup) {
