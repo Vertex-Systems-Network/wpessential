@@ -109,12 +109,9 @@ final class SiteKitCustomizer {
 					new SiteKitCustomizerControl(
 						$manager,
 						$id,
-						[
-							'section'  => $sectionId,
-							'settings' => $id,
-							'fieldKey' => $key,
-							'field'    => $field,
-						]
+						$sectionId,
+						$key,
+						$field
 					)
 				);
 			}

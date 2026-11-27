@@ -130,6 +130,7 @@ final class SiteKitAdmin {
 		$values   = $this->store->values();
 
 		$html  = PageHeader::render( __( 'Site Tools Kit', 'wpessential' ), __( 'Site settings', 'wpessential' ), __( 'Colours, fonts, buttons, forms, layout and motion for the whole site, in Gutenberg and Elementor. Empty fields keep your theme\'s value.', 'wpessential' ), Button::link( __( 'View site', 'wpessential' ), home_url( '/' ), 'ghost', true, true ) );
+		$html .= $this->legacyMigrationNotice( $values );
 		$html .= '<div class="wpe-ui-sitekit" data-wpe-tabs>';
 		$html .= '<nav class="wpe-ui-sitekit__nav" role="tablist" aria-label="' . esc_attr__( 'Site Kit groups', 'wpessential' ) . '">';
 		foreach ( $sections as $id => $section ) {
@@ -149,6 +150,28 @@ final class SiteKitAdmin {
 			'reset' => [ 'info', __( 'Group reset to the theme defaults.', 'wpessential' ) ],
 		];
 		Screen::render( self::PAGE_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '', 'site-kit' );
+	}
+
+	/** @param array<string,mixed> $values */
+	private function legacyMigrationNotice( array $values ): string {
+		if ( ! function_exists( 'get_template' ) || get_template() !== 'hi-wpessential' || ! function_exists( 'get_theme_mod' ) ) {
+			return '';
+		}
+		$legacy = get_theme_mod( 'wpessential_site', [] );
+		if ( ! is_array( $legacy ) || $legacy === [] ) {
+			return '';
+		}
+		$review = SiteKitLegacyPreview::assess( $legacy, $values );
+		return Notice::render(
+			'info',
+			sprintf(
+				/* translators: 1: import-ready colours, 2: conflicts, 3: deferred settings. */
+				__( 'Legacy theme settings review: %1$d compatible colours, %2$d conflicts and %3$d deferred values. Nothing has been migrated or overwritten.', 'wpessential' ),
+				count( $review['ready'] ),
+				count( $review['conflicts'] ),
+				count( $review['deferred'] )
+			)
+		);
 	}
 
 	private static function tab( string $id, string $title, string $icon, bool $active, int $count ): string {

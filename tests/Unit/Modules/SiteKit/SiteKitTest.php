@@ -34,6 +34,19 @@ final class SiteKitTest extends TestCase
         self::assertSame(['color_primary' => '#123abc', 'color_secondary' => '#ffffff'], $store->values());
     }
 
+    public function testLegacyThemePreviewDoesNotOverwriteCanonicalValues(): void
+    {
+        $legacy = ['color_primary' => '#ABCDEF', 'color_secondary' => '#123456', 'dark_primary' => 'bad', 'font_body' => 'Inter', 'breakpoints' => '768|560', 'btn_radius' => '12', 'color_accent' => ''];
+        $canonical = ['color_primary' => '#ffffff'];
+        $before = $legacy;
+        $review = \WPEssential\Modules\SiteKit\SiteKitLegacyPreview::assess($legacy, $canonical);
+        self::assertSame(['color_secondary' => '#123456'], $review['ready']);
+        self::assertSame(['color_primary'], $review['conflicts']);
+        self::assertSame(['dark_primary', 'font_body', 'breakpoints', 'btn_radius'], $review['deferred']);
+        self::assertSame($before, $legacy);
+        self::assertSame(['color_primary' => '#ffffff'], $canonical);
+    }
+
     public function testSnippetMetadataAndRestrictedReplacement(): void
     {
         $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}', 'enabled' => true];
