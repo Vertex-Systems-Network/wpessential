@@ -1,3 +1,7 @@
+# 2026-11-28 — WP8 smallest-phone representation and CI correction
+
+- Free `640a16ad` failed PHP Quality and Architecture due to PHPCS multiline-call formatting; corrected the reported formatting errors in `f25a2e26`. Added disabled-by-default `mobile_tiny` slot (359px maximum) to preserve both legacy 320/360 boundaries, retaining existing canonical `mobile_small` behavior. Shared controls, compiler/unit tests and paired review updated; added native Customizer preview/save regression for independent device values. Legacy responsive field ownership remains review-only, no migration or merge. Exact final candidate CI pending; RB-0134 open.
+
 # 2026-11-28 — WP8 consolidated local-cache candidate
 
 - Free `9257bf5c` passed 8/8 workflows and 10/10 checks; theme `c53b27b6` CI passed. Free #1603 advanced to `18637d86` (font reference guard); its exact verification is not assumed. Local-cache handoff candidate validates existing files/metadata and requires confirmed canonical readback before ownership. No production migration. Legacy breakpoint ownership remains deliberately deferred due to incompatible numeric slots and responsive values; preserve original data. Final consolidated CI required; RB-0134 open.

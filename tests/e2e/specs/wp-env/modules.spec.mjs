@@ -518,7 +518,16 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await smallEnabled.check();
       await smallWidth.fill('420');
       await smallWidth.blur();
+      const tinyEnabled = breakpoint.getByRole('switch', { name: 'Smallest phone', exact: true });
+      await expect(tinyEnabled).not.toBeChecked();
+      await tinyEnabled.check();
       await expandSection('type', 'size_body');
+      await device.click();
+      await control('size_body').locator('[data-device="mobile_tiny"]').click();
+      await expect(page.locator('#customize-preview')).toHaveAttribute('data-wpe-kit-preview', 'mobile_tiny');
+      await expect.poll(async () => Math.round((await page.locator('#customize-preview').boundingBox())?.width ?? 0)).toBe(359);
+      await size.fill('12');
+      await size.blur();
       await device.click();
       await control('size_body').locator('[data-device="mobile_small"]').click();
       await expect(size).toHaveValue('15');
@@ -592,6 +601,8 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       expect(JSON.stringify(values.size_body)).toContain('19');
       expect(JSON.stringify(values.size_body.mobile_small)).toContain('15');
       expect(values.breakpoints.mobile_small).toEqual({ on: true, w: 420 });
+      expect(values.breakpoints.mobile_tiny.on).toBe(true);
+      expect(JSON.stringify(values.size_body.mobile_tiny)).toContain('12');
       expect(values.breakpoints.mobile.on).toBe(false);
       expect(values.btn_hover_bg).toBe('#567890');
       expect(values.btn_focus_bg).toBe('#654321');
