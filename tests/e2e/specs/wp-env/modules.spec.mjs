@@ -318,3 +318,53 @@ test('Site Tools Kit: named shadow admin lifecycle and Elementor picker', async 
     if (!wasOn) await setModule(page, 'site-kit', false);
   }
 });
+
+test('Site Tools Kit: snippet save, disable, safe mode and explicit remove', async ({ page, audit }) => {
+  await openAdmin(page, 'wpessential-module-site-kit');
+  const wasOn = (await toggle(page).getAttribute('aria-checked')) === 'true';
+  if (!wasOn) await setModule(page, 'site-kit', true);
+  const run = (code) => wp('--user=admin eval \'eval(base64_decode("' + Buffer.from(code).toString('base64') + '"));\'').trim().split('\n').at(-1);
+  const backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit_snippets", null)));');
+  const panel = () => page.locator('#wpe-sk-snippets');
+  const row = () => panel().getByRole('group', { name: 'WP7 audit CSS', exact: true });
+  const save = async () => {
+    const nav = page.waitForEvent('load');
+    await panel().getByRole('button', { name: 'Save snippets', exact: true }).click();
+    await nav;
+    await expect(panel()).toBeVisible();
+  };
+  const marker = '--wpe-wp7-audit: 123';
+  try {
+    await audit('site-kit', 'snippet admin lifecycle and frontend isolation', async () => {
+      run('update_option("wpessential_site_kit_snippets", []); echo "ready";');
+      await openAdmin(page, 'wpessential-site-kit&group=snippets');
+      const fresh = panel().getByRole('group', { name: 'New snippet', exact: true });
+      await fresh.getByRole('textbox', { name: 'Snippet title' }).fill('WP7 audit CSS');
+      await fresh.getByRole('textbox', { name: 'Code', exact: true }).fill(':root { ' + marker + '; }');
+      await fresh.locator('input[type=checkbox][name$="[enabled]"]').check();
+      await save();
+      await expect(row()).toBeVisible();
+      const front = await page.context().newPage();
+      try {
+        const style = front.locator('#wpessential-site-kit-snippets-inline-css');
+        await front.goto(BASE + '/', { waitUntil: 'load' });
+        await expect(style).toContainText(marker);
+        await front.goto(BASE + '/?wpe-safe-mode=1', { waitUntil: 'load' });
+        await expect(style).toHaveCount(0);
+        await row().locator('input[type=checkbox][name$="[enabled]"]').uncheck();
+        await save();
+        await expect(row()).toBeVisible();
+        await front.goto(BASE + '/', { waitUntil: 'load' });
+        await expect(style).toHaveCount(0);
+        await row().getByRole('checkbox', { name: 'Remove on save' }).check();
+        await save();
+        await expect(row()).toHaveCount(0);
+      } finally {
+        await front.close();
+      }
+    });
+  } finally {
+    run(' $old = json_decode(base64_decode("' + backup + '"), true); if ($old === null) { delete_option("wpessential_site_kit_snippets"); } else { update_option("wpessential_site_kit_snippets", $old); } echo "restored";');
+    if (!wasOn) await setModule(page, 'site-kit', false);
+  }
+});
