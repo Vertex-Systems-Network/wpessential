@@ -327,7 +327,13 @@ export function initSiteKitCustomizer(): void {
 			syncing = true;
 			try {
 				clearPreview();
-				setDevice( typeof value === 'string' ? value : 'desktop' );
+				const requested = typeof value === 'string' ? value : 'desktop';
+				const selected = setDevice( requested );
+				// Native device buttons remain available even when the corresponding
+				// Kit breakpoint is disabled. Keep preview and field selection aligned.
+				if ( selected !== requested ) {
+					api.previewedDevice?.set( 'desktop' );
+				}
 			} finally {
 				syncing = false;
 			}

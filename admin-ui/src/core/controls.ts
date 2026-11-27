@@ -412,12 +412,13 @@ export function observeDevice( callback: ( device: string, width: number ) => vo
 	deviceObserver = callback;
 }
 
-export function setDevice( device: string ): void {
+export function setDevice( device: string ): string {
 	currentDevice = devices().some( ( d ) => d[ 0 ] === device ) ? device : 'desktop';
 	listeners.forEach( ( fn ) => {
 		fn();
 	} );
 	deviceObserver?.( currentDevice, cfg.breakpoints?.find( ( b ) => b.key === currentDevice )?.width ?? 0 );
+	return currentDevice;
 }
 
 /** Recompute the menu from an unpublished breakpoint setting, preserving valid selection. */

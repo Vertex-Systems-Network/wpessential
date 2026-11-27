@@ -524,6 +524,14 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
       await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('mobile');
       await page.locator('.wp-full-overlay-footer .devices button[data-device="desktop"]').click();
+      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_layout').expand());
+      const phoneEnabled = breakpoint.getByRole('switch', { name: 'Phone', exact: true });
+      await phoneEnabled.uncheck();
+      await page.locator('.wp-full-overlay-footer .devices button[data-device="mobile"]').click();
+      await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('desktop');
+      await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile');
+      await phoneEnabled.check();
+      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
       await size.fill('19');
       await expect.poll(() => page.evaluate((id) => window.wp.customize(id).get(), setting('size_body'))).toMatch(/19/);
       await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_button').expand());
