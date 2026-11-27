@@ -167,6 +167,32 @@ function bindAjaxForm( form: HTMLFormElement ): void {
 	} );
 }
 
+/** Clone the inert server-rendered blank row, never a row with saved code or live dropdown state. */
+function bindSnippetManager( root: HTMLElement ): void {
+	const template = root.querySelector< HTMLTemplateElement >( '[data-wpe-snippet-template]' );
+	const add = root.querySelector< HTMLButtonElement >( '[data-wpe-add-snippet]' );
+	if ( ! template || ! add ) {
+		return;
+	}
+	let next = Number( template.dataset.nextIndex ?? '0' );
+	add.hidden = false;
+	add.addEventListener( 'click', () => {
+		const fragment = template.content.cloneNode( true ) as DocumentFragment;
+		const index = String( next++ );
+		for ( const element of fragment.querySelectorAll( '[name], [id], [for]' ) ) {
+			for ( const attr of [ 'name', 'id', 'for' ] ) {
+				const value = element.getAttribute( attr );
+				if ( value?.includes( '__index__' ) ) {
+					element.setAttribute( attr, value.replace( '__index__', index ) );
+				}
+			}
+		}
+		const title = fragment.querySelector< HTMLInputElement >( 'input[name$="[title]"]' );
+		template.before( fragment );
+		title?.focus();
+	} );
+}
+
 export function initSiteKit(): void {
 	const root = document.querySelector< HTMLElement >( '.wpe-ui-sitekit' );
 	if ( ! root ) {
@@ -183,5 +209,6 @@ export function initSiteKit(): void {
 		bindAjaxForm( form );
 	} );
 	bindTabs( root );
+	bindSnippetManager( root );
 	setDevice( 'desktop' );
 }

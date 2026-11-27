@@ -342,13 +342,21 @@ test('Site Tools Kit: snippet save, disable, safe mode and explicit remove', asy
       await fresh.getByRole('textbox', { name: 'Snippet title' }).fill('WP7 audit CSS');
       await fresh.getByRole('textbox', { name: 'Code', exact: true }).fill(':root { ' + marker + '; }');
       await fresh.locator('input[type=checkbox][name$="[enabled]"]').check();
+      await panel().getByRole('button', { name: 'Add snippet', exact: true }).click();
+      const second = panel().getByRole('group', { name: 'New snippet', exact: true }).last();
+      await second.getByRole('textbox', { name: 'Snippet title' }).fill('WP7 second CSS');
+      await second.getByRole('textbox', { name: 'Code', exact: true }).fill(':root { --wpe-wp7-second: 456; }');
+      await expect(second.locator('input[type=checkbox][name$="[enabled]"]')).not.toBeChecked();
       await save();
       await expect(row()).toBeVisible();
+      await expect(panel().getByRole('group', { name: 'WP7 second CSS', exact: true })).toBeVisible();
       const front = await page.context().newPage();
       try {
         const style = front.locator('#wpessential-site-kit-snippets-inline-css');
         await front.goto(BASE + '/', { waitUntil: 'load' });
-        await expect(style).toContainText(marker);
+        await expect(style).toHaveCount(1);
+        await expect(front.locator('html')).toHaveCSS('--wpe-wp7-audit', '123');
+        await expect(front.locator('html')).toHaveCSS('--wpe-wp7-second', '');
         await front.goto(BASE + '/?wpe-safe-mode=1', { waitUntil: 'load' });
         await expect(style).toHaveCount(0);
         await row().locator('input[type=checkbox][name$="[enabled]"]').uncheck();
@@ -359,6 +367,7 @@ test('Site Tools Kit: snippet save, disable, safe mode and explicit remove', asy
         await row().getByRole('checkbox', { name: 'Remove on save' }).check();
         await save();
         await expect(row()).toHaveCount(0);
+        await expect(panel().getByRole('group', { name: 'WP7 second CSS', exact: true })).toBeVisible();
       } finally {
         await front.close();
       }
