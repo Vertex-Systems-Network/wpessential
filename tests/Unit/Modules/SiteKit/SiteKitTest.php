@@ -262,6 +262,25 @@ final class SiteKitTest extends TestCase
         self::assertSame('ready', $class::assess(['breakpoints' => '768|560', 'size_body' => '{"desktop":"18"}'])['status']);
     }
 
+    public function testLegacyFontPreviewRequiresExactBundledReferencesAndCompatibleDelivery(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $legacy = ['font_body' => 'Inter', 'font_heading' => 'google:Roboto', 'font_mono' => 'System UI', 'fonts_extra' => 'Roboto|Inter'];
+        $review = $class::assess($legacy, [], ['Inter' => 'theme:body']);
+        self::assertSame(['font_body' => 'theme:body', 'font_heading' => 'google:Roboto', 'fonts_extra' => 'Roboto|Inter'], $review['ready']);
+        self::assertSame(['font_mono'], $review['deferred']);
+        $review = $class::assess($legacy, ['font_body' => 'theme:heading', 'fonts_delivery' => 'google'], ['Inter' => 'theme:body']);
+        self::assertSame([], $review['ready']);
+        self::assertSame(['font_body'], $review['conflicts']);
+        self::assertSame(['font_heading', 'font_mono', 'fonts_extra'], $review['deferred']);
+        $review = $class::assess(['font_body' => 'Inter', 'fonts_extra' => 'Roboto|Unknown Invalid Family'], [], []);
+        self::assertSame([], $review['ready']);
+        self::assertSame(['font_body', 'fonts_extra'], $review['deferred']);
+        $review = $class::assess(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'google:Roboto|Inter'], []);
+        self::assertSame(['fonts_extra'], $review['unchanged']);
+        self::assertSame(['fonts_extra'], $class::assess(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'Roboto'], [])['conflicts']);
+    }
+
     public function testStoreReportsChangesAndResetsGroups(): void
     {
         $store = new SiteKitStore();
