@@ -79,9 +79,14 @@ final class SiteKitLegacyPreview {
 		return array_values( array_unique( $confirmed ) );
 	}
 
+	/** Whether the active companion implements the explicit ownership contract. */
+	public static function supported(): bool {
+		return function_exists( 'get_template' ) && get_template() === 'hi-wpessential' && function_exists( 'apply_filters' ) && apply_filters( 'wpessential_site_kit_handoff_contract', 0 ) === 1;
+	}
+
 	/** @return list<string> */
 	public static function themeOwnedKeys(): array {
-		if ( get_template() !== 'hi-wpessential' ) {
+		if ( ! self::supported() ) {
 			return [];
 		}
 		$legacy = get_theme_mod( 'wpessential_site', [] );

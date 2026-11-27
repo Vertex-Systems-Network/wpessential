@@ -592,12 +592,14 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
     await expect(toggle(page)).toBeVisible();
     if (!wasOn) await setModule(page, 'site-kit', true);
     await audit('site-kit', 'paired theme retains legacy data and delegates compatible settings', async () => {
-      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8]]); wp_clean_theme_json_cache(); echo "ready";');
+      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"360|320"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8]]); wp_clean_theme_json_cache(); echo "ready";');
       const original = read().legacy;
       expect(read().effective.color_secondary).toBe('#112233');
       await openAdmin(page, 'wpessential-site-kit&group=colors');
       await expect(page).toHaveURL(/page=wpessential-site-kit&group=colors/);
       await expect(page.locator('#wpe-sk-colors')).toBeVisible();
+      await expect(page.locator('[data-wpe-legacy-breakpoint-review="slot_conflict"]')).toBeVisible();
+      expect(run('remove_all_filters("wpessential_site_kit_handoff_contract"); echo \\WPEssential\\Modules\\SiteKit\\SiteKitLegacyPreview::supported() ? "yes" : "no";')).toBe('no');
       const transfer = page.getByRole('button', { name: 'Transfer compatible legacy settings', exact: true });
       await expect(transfer).toBeVisible();
       const navigation = page.waitForEvent('load');
@@ -605,6 +607,9 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       await navigation;
       const migrated = read();
       expect(migrated.legacy).toEqual(original);
+      expect(migrated.canonical.values.breakpoints).toBeUndefined();
+      expect(migrated.effective.breakpoints).toBe('360|320');
+      expect(migrated.handed).not.toContain('breakpoints');
       expect(migrated.canonical.values.color_primary).toBe('#123456');
       expect(migrated.canonical.values.color_secondary).toBe('#112233');
       expect(migrated.handed).toEqual(expect.arrayContaining(['color_primary', 'color_secondary', 'btn_radius', 'field_radius']));

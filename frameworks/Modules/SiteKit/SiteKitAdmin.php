@@ -81,7 +81,7 @@ final class SiteKitAdmin {
 
 	/** Explicit palette and reviewed scalar migration; no legacy values are deleted. */
 	public function handleLegacyPalette(): void {
-		if ( ! current_user_can( SiteKitAbilities::CAPABILITY ) || get_template() !== 'hi-wpessential' ) {
+		if ( ! current_user_can( SiteKitAbilities::CAPABILITY ) || ! SiteKitLegacyPreview::supported() ) {
 			wp_die( esc_html__( 'You are not allowed to migrate these settings.', 'wpessential' ), 'WPEssential', [ 'response' => 403 ] );
 		}
 		check_admin_referer( self::LEGACY_ACTION );
@@ -193,6 +193,9 @@ final class SiteKitAdmin {
 		if ( ! is_array( $legacy ) || $legacy === [] ) {
 			return '';
 		}
+		if ( ! SiteKitLegacyPreview::supported() ) {
+			return Notice::render( 'info', __( 'Legacy settings transfer requires a compatible Hi WPEssential theme version. Original theme settings remain active.', 'wpessential' ) );
+		}
 		$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
 		$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
 		$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
@@ -212,6 +215,16 @@ final class SiteKitAdmin {
 				count( $deferred )
 			)
 		);
+		if ( array_key_exists( 'breakpoints', $legacy ) ) {
+			$breakpoint = SiteKitLegacyBreakpointPreview::assess( $legacy );
+			$message = match ( $breakpoint['status'] ) {
+				'ready' => __( 'Legacy breakpoint boundaries can be represented in the Kit. Review only: transfer is not enabled while legacy responsive controls remain.', 'wpessential' ),
+				'slot_conflict' => __( 'Legacy breakpoints need review: separate 320 and 360 device slots cannot both be represented without loss.', 'wpessential' ),
+				'responsive_values' => __( 'Legacy breakpoints need review: existing responsive values must be reconciled before transfer.', 'wpessential' ),
+				default => __( 'Legacy breakpoints need review: unsupported format. No values have been changed.', 'wpessential' ),
+			};
+			$html .= '<p data-wpe-legacy-breakpoint-review="' . esc_attr( $breakpoint['status'] ) . '">' . esc_html( $message ) . '</p>';
+		}
 		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ), array_keys( $fonts ) ), $handed ) !== [] ) {
 			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
