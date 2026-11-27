@@ -50,6 +50,116 @@ final class SiteKitTest extends TestCase
         self::assertArrayNotHasKey('color_primary', $store->values());
     }
 
+
+    public function testCustomColourTokensValidateAndPreserveStableSlugs(): void
+    {
+        $raw = ['tokens' => [
+            ['name' => 'Brand blue', 'slug' => 'brand-blue', 'color' => '#3458C9', 'dark' => '#99AAFF'],
+            ['name' => 'Duplicate', 'slug' => 'wpe-custom-brand-blue', 'color' => '#fff'],
+            ['name' => 'Invalid', 'slug' => 'bad;}body', 'color' => '#fff'],
+            ['name' => 'Unsafe colour', 'slug' => 'unsafe', 'color' => 'red;}body{display:none'],
+            ['name' => 'Primary', 'slug' => 'primary', 'color' => '#123'],
+        ]];
+        $clean = SiteKitSanitizer::clean(['type' => 'colour_tokens'], json_encode($raw));
+        self::assertSame(['tokens' => [
+            ['name' => 'Brand blue', 'slug' => 'wpe-custom-brand-blue', 'color' => '#3458c9', 'dark' => '#99aaff'],
+            ['name' => 'Primary', 'slug' => 'wpe-custom-primary', 'color' => '#123', 'dark' => ''],
+        ]], $clean);
+        self::assertSame($clean, SiteKitSanitizer::clean(['type' => 'colour_tokens'], $clean));
+    }
+
+    public function testCustomColoursProjectIntoPaletteAndDarkCss(): void
+    {
+        $store = new SiteKitStore();
+        $store->update(['custom_colours' => ['tokens' => [
+            ['name' => 'Brand blue', 'slug' => 'brand-blue', 'color' => '#3458c9', 'dark' => '#99aaff'],
+        ]]]);
+        $values = $store->values();
+        $json = SiteKitCompiler::themeJson([], $values, static fn (array $path): array => $path === ['color', 'palette'] ? [['slug' => 'primary', 'color' => '#000']] : []);
+        self::assertSame([
+            ['slug' => 'primary', 'color' => '#000'],
+            ['slug' => 'wpe-custom-brand-blue', 'name' => 'Brand blue', 'color' => '#3458c9'],
+        ], $json['settings']['color']['palette']);
+        self::assertStringContainsString('--wp--preset--color--wpe-custom-brand-blue:#99aaff;', SiteKitCompiler::css($values));
+        self::assertStringContainsString(':root{--wp--preset--color--wpe-custom-brand-blue:#3458c9;}', SiteKitCompiler::tokenCss($values));
+        self::assertSame(['custom_colours'], $store->resetSection('colors'));
+        self::assertSame([], $store->values());
+    }
+
+
+    public function testCustomTypographyTokensProjectResponsiveSafeValues(): void
+    {
+        $store = new SiteKitStore();
+        $store->update(['custom_typography' => ['tokens' => [
+            ['name' => 'Display', 'slug' => 'display', 'typography' => [
+                'family' => 'google:Inter',
+                'size' => ['desktop' => ['size' => 48, 'unit' => 'px'], 'mobile' => ['size' => 28, 'unit' => 'px']],
+                'weight' => '700',
+                'style' => 'bad;}body',
+            ]],
+        ]]]);
+        $values = $store->values();
+        self::assertArrayNotHasKey('style', $values['custom_typography']['tokens'][0]['typography']);
+        $json = SiteKitCompiler::themeJson([], $values, static fn (array $path): array => []);
+        self::assertSame('48px', $json['settings']['typography']['fontSizes'][0]['size']);
+        self::assertSame('wpe-custom-display', $json['settings']['typography']['fontSizes'][0]['slug']);
+        $css = SiteKitCompiler::css($values);
+        self::assertStringContainsString('--wpe-typography-wpe-custom-display-font-weight:700;', $css);
+        self::assertStringContainsString('--wp--preset--font-size--wpe-custom-display:28px;', $css);
+        self::assertStringNotContainsString('bad;}body', $css);
+    }
+
+    public function testTypographyReferenceInheritsAndLocalOverrideWins(): void
+    {
+        $values = [
+            'custom_typography' => ['tokens' => [
+                ['name' => 'Display', 'slug' => 'display', 'typography' => ['size' => 48, 'weight' => '700']],
+            ]],
+            'typo_h1' => ['preset' => 'wpe-custom-display', 'weight' => '600'],
+        ];
+        $css = SiteKitCompiler::css($values);
+        self::assertStringContainsString('h1,.wp-block-post-title{font-size:48px;font-weight:600;', $css);
+        self::assertStringContainsString('.is-style-wpe-custom-display{', $css);
+        self::assertStringContainsString('--wpe-typography-wpe-custom-display-font-size:48px;', SiteKitCompiler::tokenCss($values));
+        $values['custom_typography']['tokens'][0]['typography']['size'] = 56;
+        self::assertStringContainsString('h1,.wp-block-post-title{font-size:56px;font-weight:600;', SiteKitCompiler::css($values));
+    }
+
+    public function testElementorSyncFailsClosedWithoutPremiumOptIn(): void
+    {
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitElementor::enabled());
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitElementor::sync());
+    }
+
+    public function testElementorGlobalMergePreservesUserEntriesAndProperties(): void
+    {
+        $existing = [
+            ['_id' => 'user', 'title' => 'User colour', 'color' => '#123456'],
+            ['_id' => 'wpe123', 'title' => 'Old', 'color' => '#ffffff', 'extra' => 'keep'],
+        ];
+        $result = \WPEssential\Modules\SiteKit\SiteKitElementor::mergeGlobals($existing, [
+            ['_id' => 'wpe123', 'title' => 'New', 'color' => '#000000'],
+        ]);
+        self::assertSame($existing[0], $result[0]);
+        self::assertSame(['_id' => 'wpe123', 'title' => 'New', 'color' => '#000000', 'extra' => 'keep'], $result[1]);
+    }
+
+    public function testElementorTypographyProjectionKeepsStableIdAndSupportedFields(): void
+    {
+        $raw = ['tokens' => [
+            ['name' => 'Display', 'slug' => 'display', 'typography' => [
+                'family' => 'google:Inter', 'weight' => '700',
+                'size' => ['desktop' => ['size' => 48, 'unit' => 'px'], 'mobile' => ['size' => 28, 'unit' => 'px']],
+            ]],
+        ]];
+        $row = \WPEssential\Modules\SiteKit\SiteKitElementor::customTypography($raw)[0];
+        self::assertSame('Inter', $row['typography_font_family']);
+        self::assertSame('700', $row['typography_font_weight']);
+        self::assertSame(['size' => 28.0, 'unit' => 'px'], $row['typography_font_size_mobile']);
+        $raw['tokens'][0]['name'] = 'New name';
+        self::assertSame($row['_id'], \WPEssential\Modules\SiteKit\SiteKitElementor::customTypography($raw)[0]['_id']);
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

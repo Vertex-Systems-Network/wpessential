@@ -59,7 +59,8 @@ final class SiteKitCompiler {
 	 * @return array<string,mixed>
 	 */
 	public static function themeJson( array $data, array $v, Closure $preset ): array {
-		$settings = is_array( $data['settings'] ?? null ) ? $data['settings'] : [];
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$settings    = is_array( $data['settings'] ?? null ) ? $data['settings'] : [];
 		$styles   = is_array( $data['styles'] ?? null ) ? $data['styles'] : [];
 		$list     = static function ( array $path ) use ( $settings, $preset ): array {
 			$own = $settings;
@@ -92,6 +93,20 @@ final class SiteKitCompiler {
 					'color' => $v[ 'color_' . $slug ],
 				];
 			}
+		}
+		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
+			$entry = [
+				'slug'  => $token['slug'],
+				'name'  => $token['name'],
+				'color' => $token['color'],
+			];
+			foreach ( $palette as $index => $colour ) {
+				if ( ( $colour['slug'] ?? '' ) === $token['slug'] ) {
+					$palette[ $index ] = $entry;
+					continue 2;
+				}
+			}
+			$palette[] = $entry;
 		}
 		if ( $palette !== [] ) {
 			$settings['color']['palette'] = $palette;
@@ -154,6 +169,24 @@ final class SiteKitCompiler {
 				];
 			}
 			$sizes[] = $size;
+		}
+		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
+			$style = self::typography( $token['typography'] )['desktop'];
+			if ( isset( $style['font-size'] ) ) {
+				$entry = [
+					'slug'  => $token['slug'],
+					'name'  => $token['name'],
+					'size'  => $style['font-size'],
+					'fluid' => false,
+				];
+				foreach ( $sizes as $index => $size ) {
+					if ( ( $size['slug'] ?? '' ) === $token['slug'] ) {
+						$sizes[ $index ] = $entry;
+						continue 2;
+					}
+				}
+				$sizes[] = $entry;
+			}
 		}
 		if ( $sizes !== [] ) {
 			$settings['typography']['fontSizes'] = $sizes;
@@ -338,6 +371,11 @@ final class SiteKitCompiler {
 				$dark .= '--wp--preset--color--' . substr( (string) $key, 5 ) . ':' . $value . ';';
 			}
 		}
+		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
+			if ( $token['dark'] !== '' ) {
+				$dark .= '--wp--preset--color--' . $token['slug'] . ':' . $token['dark'] . ';';
+			}
+		}
 		if ( $dark !== '' ) {
 			$css .= ':root[data-wpe-scheme="dark"]{color-scheme:dark;' . $dark . '}';
 		}
@@ -446,6 +484,7 @@ final class SiteKitCompiler {
 		if ( $gradients !== '' ) {
 			$css .= ':root{' . $gradients . '}';
 		}
+		$css .= self::tokenCss( $v );
 		$css .= self::controls( $v );
 		if ( ! empty( $v['motion_off'] ) ) {
 			$css .= '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}';
@@ -629,6 +668,55 @@ final class SiteKitCompiler {
 		return $d;
 	}
 
+
+	/**
+	 * Token-only CSS for the editor canvas and front end. Register block styles by stable slug.
+	 *
+	 * @param array<string,mixed> $v
+	 */
+	public static function tokenCss( array $v ): string {
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$devices    = SiteKitBreakpoints::enabled( (array) ( $v['breakpoints'] ?? [] ) );
+		$css        = '';
+		$colours    = '';
+		foreach ( SiteKitTokens::colours( $v['custom_colours'] ?? [] ) as $token ) {
+			$colours .= '--wp--preset--color--' . $token['slug'] . ':' . $token['color'] . ';';
+		}
+		if ( $colours !== '' ) {
+			$css .= ':root{' . $colours . '}';
+		}
+		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
+			$slug   = $token['slug'];
+			$styles = self::typography( $token['typography'], array_keys( $devices ) );
+			$props  = [];
+			foreach ( $styles as $device => $declarations ) {
+				$vars = '';
+				foreach ( $declarations as $property => $value ) {
+					$var                = '--wpe-typography-' . $slug . '-' . $property;
+					$vars              .= $var . ':' . $value . ';';
+					$props[ $property ] = 'var(' . $var . ',inherit)';
+					if ( $property === 'font-size' ) {
+						$vars .= '--wp--preset--font-size--' . $slug . ':' . $value . ';';
+					}
+				}
+				if ( $vars !== '' ) {
+					$rule  = ':root{' . $vars . '}';
+					$media = $devices[ $device ]['media'];
+					$css  .= $media === '' ? $rule : $media . '{' . $rule . '}';
+				}
+			}
+			if ( $props !== [] ) {
+				$css .= '.is-style-' . $slug . '{';
+				foreach ( $props as $property => $value ) {
+					$css .= $property . ':' . $value . ';';
+				}
+				$css .= '}';
+			}
+		}
+
+		return $css;
+	}
+
 	/** Responsive and composite settings, one media query per enabled breakpoint. @param array<string,mixed> $v */
 	private static function controls( array $v ): string {
 		$breakpoints = SiteKitBreakpoints::enabled( is_array( $v['breakpoints'] ?? null ) ? $v['breakpoints'] : [] );
@@ -641,12 +729,15 @@ final class SiteKitCompiler {
 				$rules[ $device ][ $selector ][ $p ] = $value;
 			}
 		};
+		$presets = array_column( SiteKitTokens::typography( $v['custom_typography'] ?? [] ), 'typography', 'slug' );
 		foreach ( self::TARGETS as $key => [ $selector, $property ] ) {
 			if ( empty( $v[ $key ] ) ) {
 				continue;
 			}
 			$value = $v[ $key ];
 			if ( str_starts_with( $key, 'typo_' ) && is_array( $value ) ) {
+				$preset = is_string( $value['preset'] ?? null ) ? $value['preset'] : '';
+				$value  = array_replace_recursive( $presets[ $preset ] ?? [], $value );
 				foreach ( self::typography( $value, array_keys( $rules ) ) as $device => $declarations ) {
 					foreach ( $declarations as $p => $x ) {
 						$add( $device, $selector, $p, $x );

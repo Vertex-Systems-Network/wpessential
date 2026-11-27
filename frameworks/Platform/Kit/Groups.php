@@ -29,7 +29,8 @@ class Groups {
 	 * @return array
 	 */
 	public static function fields() {
-		$fonts = array( '' => __( 'Default', 'wpessential' ) ) + self::fonts();
+		$fonts   = array( '' => __( 'Default', 'wpessential' ) ) + self::fonts();
+		$presets = array( '' => __( 'Default / custom', 'wpessential' ) ) + array_column( Kit::typography_presets(), 'name', 'slug' );
 		$px    = array(
 			'type' => 'range',
 			'unit' => 'px',
@@ -47,6 +48,12 @@ class Groups {
 		);
 		return array(
 			'typography'  => array(
+				'preset'        => array(
+					'type'    => 'select',
+					'label'   => __( 'Global typography preset', 'wpessential' ),
+					'prop'    => '',
+					'options' => $presets,
+				),
 				'family'        => array(
 					'type'    => 'select',
 					'label'   => __( 'Font', 'wpessential' ),
@@ -1688,6 +1695,12 @@ class Groups {
 		$fields = self::fields()[ $group['type'] ] ?? array();
 		$base   = trim( $root . ' ' . ( $group['selector'] ?? '' ) );
 		$parts  = array_map( 'trim', explode( ',', $base ) );
+		if ( 'typography' === $group['type'] && is_string( $value['preset'] ?? null ) ) {
+			$decls = self::preset_declarations( $value['preset'], Kit::typography_presets() );
+			foreach ( $decls as $decl ) {
+				$rules['base'][ $base ][] = $decl;
+			}
+		}
 		// Fluid font size: one clamp() between the 360px and the 1440px value.
 		if ( 'typography' === $group['type'] && is_numeric( $value['sizeMin'] ?? '' ) && is_numeric( $value['sizeMax'] ?? '' ) ) {
 			$min                      = (float) $value['sizeMin'];
@@ -1717,7 +1730,7 @@ class Groups {
 			}
 		}
 		foreach ( $fields as $key => $f ) {
-			if ( ! isset( $value[ $key ] ) || ! empty( $f['fluid'] ) || ! empty( $f['fn'] ) ) {
+			if ( '' === $f['prop'] || ! isset( $value[ $key ] ) || ! empty( $f['fluid'] ) || ! empty( $f['fn'] ) ) {
 				continue;
 			}
 			$values = ! empty( $f['responsive'] ) && is_array( $value[ $key ] ) ? $value[ $key ] : array( 'base' => $value[ $key ] );
@@ -1746,6 +1759,32 @@ class Groups {
 				}
 			}
 		}
+	}
+
+	/**
+	 * A validated preset slug becomes references to the Site Tools Kit variables.
+	 * Local group declarations follow these, so explicit overrides win.
+	 *
+	 * @param string $slug Preset identifier.
+	 * @param array  $presets Available registry.
+	 * @return array
+	 */
+	public static function preset_declarations( string $slug, array $presets ): array {
+		if ( preg_match( '/^wpe-custom-[a-z0-9]+(?:-[a-z0-9]+)*$/D', $slug ) !== 1 ) {
+			return array();
+		}
+		$allowed = array( 'font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'text-transform', 'font-style', 'text-decoration' );
+		foreach ( $presets as $preset ) {
+			if ( $slug !== ( $preset['slug'] ?? '' ) ) {
+				continue;
+			}
+			$out = array();
+			foreach ( array_intersect( $allowed, (array) ( $preset['properties'] ?? array() ) ) as $property ) {
+				$out[] = $property . ':var(--wpe-typography-' . $slug . '-' . $property . ',inherit)';
+			}
+			return $out;
+		}
+		return array();
 	}
 
 	/**
@@ -1790,6 +1829,30 @@ class Groups {
 		$label = $group['label'] ?? $key;
 		switch ( $group['type'] ) {
 			case 'typography':
+				$presets = Kit::typography_presets();
+				$choices = array( '' => __( 'Default / custom', 'wpessential' ) );
+				$map     = array();
+				foreach ( $presets as $preset ) {
+					$slug  = (string) ( $preset['slug'] ?? '' );
+					$decls = self::preset_declarations( $slug, $presets );
+					if ( $decls ) {
+						$choices[ $slug ] = (string) $preset['name'];
+						$map[ $slug ]     = implode( ';', $decls ) . ';';
+					}
+				}
+				if ( $map ) {
+					$w->add_control(
+						$key . '_wpe_preset',
+						array(
+							'label'                => __( 'Global typography preset', 'wpessential' ),
+							'type'                 => \Elementor\Controls_Manager::SELECT,
+							'options'              => $choices,
+							'default'              => '',
+							'selectors_dictionary' => $map,
+							'selectors'            => array( $sel => '{{VALUE}}' ),
+						)
+					);
+				}
 				$w->add_group_control(
 					\Elementor\Group_Control_Typography::get_type(),
 					array(
@@ -1948,6 +2011,19 @@ class Groups {
 				}
 				break;
 			case 'colors':
+				$palette = Kit::palette();
+				if ( $palette ) {
+					$w->add_control(
+						$key . '_wpe_global',
+						array(
+							'label'     => __( 'Global colour', 'wpessential' ),
+							'type'      => \Elementor\Controls_Manager::SELECT,
+							'options'   => array( '' => __( 'Default / custom', 'wpessential' ) ) + $palette,
+							'default'   => '',
+							'selectors' => array( $sel => ( $group['prop'] ?? 'color' ) . ':var(--wp--preset--color--{{VALUE}});' ),
+						)
+					);
+				}
 				$w->add_control(
 					$key,
 					array(

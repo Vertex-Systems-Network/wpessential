@@ -14,6 +14,9 @@ export interface ControlOptions {
 	responsive?: boolean;
 	placeholder?: string;
 	tab?: string;
+	literalColour?: boolean;
+	defineColour?: boolean;
+	defineTypography?: boolean;
 }
 
 export interface ControlContext {
@@ -32,6 +35,7 @@ export interface Control {
 
 export interface ControlsConfig {
 	palette?: Record< string, [ string, string ] >;
+	typographyTokens?: Record< string, string >;
 	themeFonts?: Array< { value: string; name: string; stack: string } >;
 	googleList?: string;
 	i18n?: Record< string, string >;
@@ -534,7 +538,8 @@ types.color = ( ctx ) => {
 		'aria-label': ctx.label,
 		onchange: ( event: Event ) => {
 			const value = ( event.target as HTMLInputElement ).value.trim();
-			if ( ! value || /^#?[0-9a-f]{3,8}$/i.test( value ) || /^(rgb|hsl)a?\(/i.test( value ) || /^var\(/.test( value ) ) {
+			const validHex = /^#?(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test( value );
+			if ( ! value || validHex || ( ! ctx.opt.literalColour && ( /^(rgb|hsl)a?\(/i.test( value ) || /^var\(/.test( value ) ) ) ) {
 				ctx.set( value && /^[0-9a-f]{3,8}$/i.test( value ) ? '#' + value : value );
 			}
 		},
@@ -551,7 +556,7 @@ types.color = ( ctx ) => {
 	};
 	picker.addEventListener( 'input', setCustom );
 	alpha.addEventListener( 'input', setCustom );
-	const hasPalette = Object.keys( cfg.palette ?? {} ).length > 0;
+	const hasPalette = ! ctx.opt.literalColour && Object.keys( cfg.palette ?? {} ).length > 0;
 	( hasPalette ? [ [ 'globals', t( 'Global' ) ], [ 'custom', t( 'Custom' ) ] ] : [ [ 'custom', t( 'Custom' ) ] ] ).forEach( ( [ key, label ], index ) => {
 		tabs.append(
 			h( 'button', {
@@ -573,16 +578,17 @@ types.color = ( ctx ) => {
 	} );
 	globals.hidden = ! hasPalette;
 	custom.hidden = hasPalette;
-	for ( const [ name, colour ] of Object.values( cfg.palette ?? {} ) ) {
+	for ( const [ slug, [ name, colour ] ] of Object.entries( ctx.opt.literalColour ? {} : cfg.palette ?? {} ) ) {
+		const reference = ! ctx.opt.defineColour && slug.startsWith( 'wpe-custom-' ) ? `var(--wp--preset--color--${ slug })` : colour;
 		globals.append(
 			h(
 				'button',
 				{
 					type: 'button',
 					class: 'wpec-color__global',
-					'data-color': colour.toLowerCase(),
+					'data-color': reference.toLowerCase(),
 					onclick: () => {
-						ctx.set( colour );
+						ctx.set( reference );
 						pop.hidden = true;
 						chip.setAttribute( 'aria-expanded', 'false' );
 					},
@@ -607,7 +613,9 @@ types.color = ( ctx ) => {
 		el: wrap,
 		refresh: () => {
 			const value = ctx.get();
-			chip.style.background = value ? `${ value } padding-box` : '';
+			const slug = /^var\(--wp--preset--color--([a-z0-9-]+)\)$/.exec( value )?.[ 1 ];
+			const previewColour = slug ? cfg.palette?.[ slug ]?.[ 1 ] ?? '' : value;
+			chip.style.background = previewColour ? `${ previewColour } padding-box` : '';
 			chip.classList.toggle( 'is-empty', ! value );
 			hex.value = value;
 			const match = /^#([0-9a-f]{6})([0-9a-f]{2})?$/i.exec( value );
@@ -1060,6 +1068,9 @@ types.typography = ( ctx ) =>
 			const size = parse( value.size );
 			const desktop = size.desktop as Json | string | undefined;
 			const bits: string[] = [];
+			if ( value.preset ) {
+				bits.push( cfg.typographyTokens?.[ String( value.preset ) ] ?? t( 'Missing preset' ) );
+			}
 			if ( value.family ) {
 				bits.push( fontLabel( String( value.family ) ) );
 			}
@@ -1073,6 +1084,7 @@ types.typography = ( ctx ) =>
 		},
 		() =>
 			group( [
+				...( ! ctx.opt.defineTypography && Object.keys( cfg.typographyTokens ?? {} ).length ? [ part( ctx, 'preset', 'select', { choices: { '': t( 'Theme default / custom' ), ...cfg.typographyTokens } }, t( 'Global typography preset' ) ) ] : [] ),
 				part( ctx, 'family', 'font', {}, t( 'Family' ) ),
 				part( ctx, 'size', 'range', { responsive: true, min: 8, max: 120, units: [ 'px', 'em', 'rem', 'vw' ] }, t( 'Size' ) ),
 				part( ctx, 'weight', 'select', { choices: weights() }, t( 'Weight' ) ),
@@ -1201,6 +1213,64 @@ types.background = ( ctx ) => {
 		},
 	};
 };
+
+
+const tokenRepeater = ( ctx: ControlContext, typography: boolean ): Control => {
+	type Token = { name?: string; slug?: string; color?: string; dark?: string; typography?: Json };
+	const read = (): Token[] => {
+		const value = parse( ctx.get() ).tokens;
+		return Array.isArray( value ) ? value as Token[] : Object.values( ( value ?? {} ) as Record< string, Token > );
+	};
+	const write = ( tokens: Token[] ): void => ctx.set( tokens.length ? JSON.stringify( { tokens } ) : '' );
+	const rows = h( 'div', { class: 'wpec-units__custom' } );
+	const add = h( 'button', { type: 'button', class: 'wpec-link', text: t( typography ? 'Add custom typography' : 'Add custom colour' ), onclick: () => write( [ ...read(), {} ] ) } ) as HTMLButtonElement;
+	let parts: Part[][] = [];
+	const draw = (): void => {
+		rows.replaceChildren();
+		parts = read().map( ( _token, index ) => {
+			const row: ControlContext = {
+				opt: {},
+				get: () => JSON.stringify( read()[ index ] ?? {} ),
+				set: ( value ) => {
+					const tokens = read();
+					tokens[ index ] = parse( value ) as Token;
+					write( tokens );
+				},
+			};
+			const fields = [
+				part( row, 'name', 'text', { placeholder: t( typography ? 'Display heading' : 'Brand colour' ) }, t( 'Name' ) ),
+				part( row, 'slug', 'text', { placeholder: typography ? 'display-heading' : 'brand-colour' }, t( 'Stable slug' ) ),
+				...( typography ? [ part( row, 'typography', 'typography', { defineTypography: true }, t( 'Typography' ) ) ] : [
+					part( row, 'color', 'color', { literalColour: true }, t( 'Light colour' ) ),
+					part( row, 'dark', 'color', { literalColour: true }, t( 'Dark colour (optional)' ) ),
+				] ),
+			];
+			rows.append( h( 'div', { class: 'wpec-field', role: 'group', 'aria-label': `${ t( typography ? 'Custom typography' : 'Custom colour' ) } ${ index + 1 }` }, [
+				...fields.map( ( field ) => field.node ),
+				h( 'button', { type: 'button', class: 'wpec-link is-danger', text: t( 'Remove' ), 'aria-label': `${ t( typography ? 'Remove custom typography' : 'Remove custom colour' ) } ${ index + 1 }`, onclick: () => write( read().filter( ( _row, i ) => i !== index ) ) } ),
+			] ) );
+			return fields;
+		} );
+	};
+	return {
+		el: h( 'div', {}, [ rows, add ] ),
+		refresh: () => {
+			const count = read().length;
+			if ( count !== parts.length ) {
+				draw();
+			}
+			for ( const row of parts ) {
+				for ( const field of row ) {
+					field.ctl.refresh();
+				}
+			}
+			add.disabled = count >= 100;
+		},
+	};
+};
+
+types.colour_tokens = ( ctx ) => tokenRepeater( ctx, false );
+types.typography_tokens = ( ctx ) => tokenRepeater( ctx, true );
 
 /** Builds a control; responsive options wrap it with per-device values. */
 export function create( type: string, ctx: ControlContext ): Control {

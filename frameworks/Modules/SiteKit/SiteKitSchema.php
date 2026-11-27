@@ -114,6 +114,12 @@ final class SiteKitSchema {
 			$dark[ 'dark_' . $slug ]   = self::colour( $labels[ $slug ] );
 		}
 
+		$light['custom_colours'] = [
+			'type'  => 'colour_tokens',
+			'label' => self::t( 'Custom global colours' ),
+			'help'  => self::t( 'Add named colours with stable slugs and optional dark-mode overrides. Custom slugs use the wpe-custom- prefix.' ),
+		];
+
 		$weights = [
 			''    => self::t( 'Theme default' ),
 			'400' => '400 · Regular',
@@ -209,6 +215,12 @@ final class SiteKitSchema {
 				'label' => $label,
 			];
 		}
+
+		$globalType['custom_typography'] = [
+			'type'  => 'typography_tokens',
+			'label' => self::t( 'Custom global typography' ),
+			'help'  => self::t( 'Add named responsive typography presets with stable slugs.' ),
+		];
 
 		return [
 			'colors'    => self::section( self::t( 'Global colours' ), self::t( 'The site palette used by every block and Elementor widget. Leave a colour empty to keep the theme\'s.' ), 'brush', $light ),

@@ -1,3 +1,17 @@
+# 2026-11-26 — WP5 shared kit integration / cross-repo dependency
+
+- Combined Free candidate 6061e808: seven workflows PASS; WP E2E 45871191904 passed 41/41 including named colour lifecycle and actual light/dark rendering. CI Complete 45871191897 failed solely on GitHub API i/o timeout; rerun requested. These are historical checks, not evidence for new heads.
+- 72dbd944 adds global palette and typography references to dynamic kit elements registered from element.json (52 Free, 17 Pro), using the common Groups renderer and Elementor controls. f6722b53 makes Elementor kit mutation fail closed without premium opt-in, enabled module and edit_theme_options.
+- Dependencies: Pro #34 (e153228f) contributes entitlement-gated opt-in; theme #127 (6da0a4f7) delegates to the new plugin API and preserves standalone user globals. Stage companion PRs before Free #1596; no independent production deployment. Exact-head CI and paired runtime evidence remain required. WP9 still owns full shared inspector/React dropdown parity.
+- Resume Free #1595 / #1596, Pro #33 / #34, theme #126 / #127. Do not mark WP5 complete yet.
+
+# 2026-11-26 — ADR-0239 WP5 combined candidate
+
+- WP0 #1594 merged after 3/3 exact-head checks; Free main 644ecee4c0c480c61a7975ab34fd3dd84ae42522. WP5 #1596 synchronized with that main at 34601eb6. Previous WP5 head 810749f3 passed 8/8; intermediate b1f4dffd PHPCS failed on seven formatting errors, corrected at 34601eb6.
+- WP5 source 9027b26e: named colour and responsive typography tokens, shared references, typography inheritance/local overrides, native paragraph/heading styles, non-destructive Elementor global merge and bounded typography mapping; explicit light CSS variables, dark overrides and lifecycle/frontend browser assertions. Fresh exact-head checks required.
+- Outstanding: browser evidence, live Gutenberg/Elementor consumer parity, Free/Pro premium sync boundary; Elementor removed managed entries retained to protect existing references. Do not certify full WP5 or advance to WP6 before remaining acceptance is resolved or explicitly scoped.
+- Resume #1595 / draft #1596, RB-0131. Preserve separate UI and formal P-006 lanes. No production release or new product parity claim.
+
 # 2026-11-26 — ADR-0239 WP0 reconciliation / WP5 handoff
 
 - Observed Free main 5ebd02572a04bc9001192ac42870b731f9c48e52; Pro main a77aca5f9e8f2d9c541cccf96a3ab8d4db63e2c9. Free #1589–#1592 and Pro #31 merged. Free PHP Quality 45861383685 and Platform Compatibility 45861383756 PASS; Pro CI 45867583179, Lifecycle 45867583205 and Platform Compatibility 45867582959 PASS. Pro E2E 45858236138 attempt 2: 47/47 PASS on the PR head (not a new main run).

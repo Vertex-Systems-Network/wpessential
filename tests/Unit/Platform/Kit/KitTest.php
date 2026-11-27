@@ -54,6 +54,19 @@ final class KitTest extends TestCase
         self::assertSame( 'pro', $byKey['elementor:countdown'] );
     }
 
+    public function testGlobalTypographyPresetUsesOnlyKnownCssVariables(): void
+    {
+        $registry = [
+            ['slug' => 'wpe-custom-display', 'name' => 'Display', 'properties' => ['font-size', 'font-weight', 'background-image']],
+        ];
+        self::assertSame([
+            'font-size:var(--wpe-typography-wpe-custom-display-font-size,inherit)',
+            'font-weight:var(--wpe-typography-wpe-custom-display-font-weight,inherit)',
+        ], \WPEssential\Platform\Kit\Groups::preset_declarations('wpe-custom-display', $registry));
+        self::assertSame([], \WPEssential\Platform\Kit\Groups::preset_declarations('wpe-custom-missing', $registry));
+        self::assertSame([], \WPEssential\Platform\Kit\Groups::preset_declarations('x;}body{', $registry));
+    }
+
     public function testEveryElementDefinitionIsValid(): void
     {
         foreach ( Kit::defs() as $name => $def ) {

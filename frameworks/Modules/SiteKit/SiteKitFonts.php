@@ -103,6 +103,9 @@ final class SiteKitFonts {
 				$out[] = (string) ( $value['family'] ?? '' );
 			}
 		}
+		foreach ( SiteKitTokens::typography( $values['custom_typography'] ?? [] ) as $token ) {
+			$out[] = (string) ( $token['typography']['family'] ?? '' );
+		}
 		$families = [];
 		foreach ( $out as $ref ) {
 			if ( str_starts_with( $ref, 'google:' ) && self::exists( substr( $ref, 7 ) ) ) {

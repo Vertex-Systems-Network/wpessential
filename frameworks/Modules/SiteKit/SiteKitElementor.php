@@ -16,6 +16,11 @@ final class SiteKitElementor {
 
 	public const HASH_OPTION = 'wpessential_site_kit_elementor_hash';
 
+	/** Pro contributes this opt-in only when its compatibility and mutation policy allow it. */
+	public static function enabled(): bool {
+		return function_exists( 'apply_filters' ) && true === apply_filters( 'wpessential_site_kit_elementor_sync_enabled', false );
+	}
+
 	public static function register(): void {
 		add_action( 'admin_init', [ self::class, 'maybeSync' ] );
 	}
@@ -34,10 +39,17 @@ final class SiteKitElementor {
 	}
 
 	public static function maybeSync(): void {
-		if ( ! current_user_can( 'edit_theme_options' ) ) {
+		if ( ! self::enabled() || ! current_user_can( 'edit_theme_options' ) ) {
 			return;
 		}
-		$hash = md5( (string) wp_json_encode( self::palette() ) );
+		$values = ( new SiteKitStore() )->values();
+		$input  = [
+			self::palette(),
+			$values['custom_colours'] ?? [],
+			$values['custom_typography'] ?? [],
+			wp_get_global_settings( [ 'typography', 'fontFamilies' ] ),
+		];
+		$hash   = md5( (string) wp_json_encode( $input ) );
 		if ( get_option( self::HASH_OPTION ) === $hash ) {
 			return;
 		}
@@ -46,7 +58,83 @@ final class SiteKitElementor {
 		}
 	}
 
+	/**
+	 * Update matching global IDs without dropping unrelated user entries or extra properties.
+	 *
+	 * @param array<mixed> $existing
+	 * @param list<array<string,mixed>> $incoming
+	 * @return list<mixed>
+	 */
+	public static function mergeGlobals( array $existing, array $incoming ): array {
+		$out = array_values( $existing );
+		foreach ( $incoming as $row ) {
+			foreach ( $out as $index => $old ) {
+				if ( is_array( $old ) && isset( $old['_id'] ) && $old['_id'] === $row['_id'] ) {
+					$out[ $index ] = array_replace( $old, $row );
+					continue 2;
+				}
+			}
+			$out[] = $row;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Elementor global typography rows use stable IDs. Map the supported desktop fields and
+	 * Elementor's standard tablet/mobile controls without inventing unsupported breakpoint keys.
+	 *
+	 * @return list<array<string,mixed>>
+	 */
+	public static function customTypography( mixed $value ): array {
+		$out = [];
+		foreach ( SiteKitTokens::typography( $value ) as $token ) {
+			$style = $token['typography'];
+			$row   = [
+				'_id'                   => 'wpet' . substr( md5( $token['slug'] ), 0, 7 ),
+				'title'                 => $token['name'],
+				'typography_typography' => 'custom',
+			];
+			$family = (string) ( $style['family'] ?? '' );
+			if ( str_starts_with( $family, 'google:' ) ) {
+				$row['typography_font_family'] = substr( $family, 7 );
+			}
+			foreach ( [
+				'weight'     => 'font_weight',
+				'transform'  => 'text_transform',
+				'style'      => 'font_style',
+				'decoration' => 'text_decoration',
+			] as $key => $field ) {
+				if ( isset( $style[ $key ] ) ) {
+					$row[ 'typography_' . $field ] = $style[ $key ];
+				}
+			}
+			foreach ( [
+				'size'          => 'font_size',
+				'lineHeight'    => 'line_height',
+				'letterSpacing' => 'letter_spacing',
+			] as $key => $field ) {
+				foreach ( [
+					'desktop' => '',
+					'tablet'  => '_tablet',
+					'mobile'  => '_mobile',
+				] as $device => $suffix ) {
+					$length = $style[ $key ][ $device ] ?? null;
+					if ( is_array( $length ) && in_array( $length['unit'], [ 'px', 'em', 'rem', '%', 'vw', 'vh' ], true ) ) {
+						$row[ 'typography_' . $field . $suffix ] = $length;
+					}
+				}
+			}
+			$out[] = $row;
+		}
+
+		return $out;
+	}
+
 	public static function sync(): bool {
+		if ( ! self::enabled() || ! ( new \WPEssential\Platform\Admin\Core\ModuleToggleStore() )->isEnabled( SiteKitModule::ID ) || ! current_user_can( 'edit_theme_options' ) ) {
+			return false;
+		}
 		if ( ! class_exists( '\Elementor\Plugin' ) || empty( \Elementor\Plugin::$instance->kits_manager ) ) {
 			return false;
 		}
@@ -55,6 +143,8 @@ final class SiteKitElementor {
 			return false;
 		}
 		$palette = self::palette();
+		$values  = ( new SiteKitStore() )->values();
+		$names   = array_column( SiteKitTokens::colours( $values['custom_colours'] ?? [] ), 'name', 'slug' );
 		$system  = [];
 		foreach ( [ 'primary', 'secondary', 'text', 'accent' ] as $id ) {
 			if ( isset( $palette[ $id ] ) ) {
@@ -69,7 +159,7 @@ final class SiteKitElementor {
 		foreach ( array_diff_key( $palette, array_flip( [ 'primary', 'secondary', 'text', 'accent' ] ) ) as $slug => $colour ) {
 			$custom[] = [
 				'_id'   => 'wpe' . substr( md5( $slug ), 0, 7 ),
-				'title' => 'WPE ' . ucwords( str_replace( '-', ' ', $slug ) ),
+				'title' => $names[ $slug ] ?? 'WPE ' . ucwords( str_replace( '-', ' ', $slug ) ),
 				'color' => $colour,
 			];
 		}
@@ -101,10 +191,20 @@ final class SiteKitElementor {
 			}
 		}
 		$settings                  = $kit->get_settings();
-		$settings['system_colors'] = $system;
-		$settings['custom_colors'] = $custom;
+		$settings['system_colors'] = self::mergeGlobals( (array) ( $settings['system_colors'] ?? [] ), $system );
+		$settings['custom_colors'] = self::mergeGlobals( (array) ( $settings['custom_colors'] ?? [] ), $custom );
 		if ( $typography !== [] ) {
-			$settings['system_typography'] = $typography;
+			$settings['system_typography'] = self::mergeGlobals(
+				(array) ( $settings['system_typography'] ?? [] ),
+				$typography
+			);
+		}
+		$customTypography = self::customTypography( $values['custom_typography'] ?? [] );
+		if ( $customTypography !== [] ) {
+			$settings['custom_typography'] = self::mergeGlobals(
+				(array) ( $settings['custom_typography'] ?? [] ),
+				$customTypography
+			);
 		}
 		try {
 			$kit->save( [ 'settings' => $settings ] );

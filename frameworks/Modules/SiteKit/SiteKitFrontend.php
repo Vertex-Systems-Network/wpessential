@@ -22,12 +22,42 @@ final class SiteKitFrontend {
 
 	public function register(): void {
 		add_filter( 'wp_theme_json_data_user', [ $this, 'themeJson' ] );
+		add_filter( 'wpessential_kit_global_palette', [ $this, 'kitPalette' ] );
+		add_filter( 'wpessential_kit_typography_presets', [ $this, 'kitTypography' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 25 );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueueFonts' ] );
+		add_action( 'enqueue_block_assets', [ $this, 'enqueueEditorTokens' ] );
+		add_action( 'init', [ $this, 'registerTypographyStyles' ], 20 );
 		add_filter( 'language_attributes', [ $this, 'schemeAttribute' ] );
 		add_action( 'wp_head', [ $this, 'schemeScript' ], 1 );
 		add_action( 'wp_footer', [ $this, 'floatingControls' ], 50 );
 		add_action( 'wpessential_site_kit_saved', [ $this, 'saved' ] );
+	}
+
+	/** @param array<string,string> $palette @return array<string,string> */
+	public function kitPalette( array $palette ): array {
+		foreach ( SiteKitTokens::colours( $this->store->values()['custom_colours'] ?? [] ) as $token ) {
+			$palette[ $token['slug'] ] = $token['name'];
+		}
+		return $palette;
+	}
+
+	/** @param array<mixed> $presets @return array<mixed> */
+	public function kitTypography( array $presets ): array {
+		$values = $this->store->values();
+		foreach ( SiteKitTokens::typography( $values['custom_typography'] ?? [] ) as $token ) {
+			$devices = array_keys( SiteKitBreakpoints::enabled( (array) ( $values['breakpoints'] ?? [] ) ) );
+			$props   = [];
+			foreach ( SiteKitCompiler::typography( $token['typography'], $devices ) as $declarations ) {
+				$props = array_merge( $props, array_keys( $declarations ) );
+			}
+			$presets[] = [
+				'slug'       => $token['slug'],
+				'name'       => $token['name'],
+				'properties' => array_values( array_unique( $props ) ),
+			];
+		}
+		return $presets;
 	}
 
 	/** @param \WP_Theme_JSON_Data $themeJson */
@@ -64,6 +94,39 @@ final class SiteKitFrontend {
 		wp_add_inline_style( self::STYLE_HANDLE, $css );
 	}
 
+	/** Native block style picker for text blocks; local block styles keep precedence. */
+	public function registerTypographyStyles(): void {
+		if ( ! function_exists( 'register_block_style' ) ) {
+			return;
+		}
+		$values = $this->store->values();
+		foreach ( SiteKitTokens::typography( $values['custom_typography'] ?? [] ) as $token ) {
+			foreach ( [ 'core/paragraph', 'core/heading' ] as $block ) {
+				register_block_style(
+					$block,
+					[
+						'name'  => $token['slug'],
+						'label' => $token['name'],
+					]
+				);
+			}
+		}
+	}
+
+	public function enqueueEditorTokens(): void {
+		if ( ! is_admin() ) {
+			return;
+		}
+		$css = SiteKitCompiler::tokenCss( $this->store->values() );
+		if ( $css === '' ) {
+			return;
+		}
+		$handle = self::STYLE_HANDLE . '-editor-tokens';
+		wp_register_style( $handle, false, [], (string) ( defined( 'WPE_VERSION' ) ? WPE_VERSION : '1' ) );
+		wp_enqueue_style( $handle );
+		wp_add_inline_style( $handle, $css );
+	}
+
 	public function enqueueFonts(): void {
 		$url = SiteKitFonts::url( SiteKitFonts::remote( $this->store->values() ) );
 		if ( $url !== '' ) {
@@ -73,7 +136,13 @@ final class SiteKitFrontend {
 
 	/** Dark mode is active only when dark colours are set; the server-side default is light. */
 	private function schemeEnabled(): bool {
-		foreach ( array_keys( $this->store->values() ) as $key ) {
+		$values = $this->store->values();
+		foreach ( SiteKitTokens::colours( $values['custom_colours'] ?? [] ) as $token ) {
+			if ( $token['dark'] !== '' ) {
+				return true;
+			}
+		}
+		foreach ( array_keys( $values ) as $key ) {
 			if ( str_starts_with( (string) $key, 'dark_' ) || $key === 'site_bg_dark' ) {
 				return true;
 			}
