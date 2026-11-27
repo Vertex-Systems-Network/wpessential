@@ -668,7 +668,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       await openAdmin(page, 'wpessential-site-kit&group=colors');
       await expect(page).toHaveURL(/page=wpessential-site-kit&group=colors/);
       await expect(page.locator('#wpe-sk-colors')).toBeVisible();
-      await expect(page.locator('[data-wpe-legacy-breakpoint-review="slot_conflict"]')).toBeVisible();
+      await expect(page.locator('[data-wpe-legacy-breakpoint-review="ready"]')).toBeVisible();
       expect(run('remove_all_filters("wpessential_site_kit_handoff_contract"); echo \\WPEssential\\Modules\\SiteKit\\SiteKitLegacyPreview::supported() ? "yes" : "no";')).toBe('no');
       const transfer = page.getByRole('button', { name: 'Transfer compatible legacy settings', exact: true });
       await expect(transfer).toBeVisible();

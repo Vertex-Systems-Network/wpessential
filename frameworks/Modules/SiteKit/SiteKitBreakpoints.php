@@ -24,6 +24,7 @@ final class SiteKitBreakpoints {
 		'mobile_extra' => [ 'Phone landscape', 880, false, 'max' ],
 		'mobile'       => [ 'Phone', 767, true, 'max' ],
 		'mobile_small' => [ 'Small phone', 480, false, 'max' ],
+		'mobile_tiny'  => [ 'Smallest phone', 359, false, 'max' ],
 	];
 
 	/**
@@ -71,6 +72,7 @@ final class SiteKitBreakpoints {
 			'mobile_extra' => function_exists( '__' ) ? __( 'Phone landscape', 'wpessential' ) : 'Phone landscape',
 			'mobile'       => function_exists( '__' ) ? __( 'Phone', 'wpessential' ) : 'Phone',
 			'mobile_small' => function_exists( '__' ) ? __( 'Small phone', 'wpessential' ) : 'Small phone',
+			'mobile_tiny'  => function_exists( '__' ) ? __( 'Smallest phone', 'wpessential' ) : 'Smallest phone',
 		];
 	}
 

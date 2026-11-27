@@ -219,7 +219,6 @@ final class SiteKitAdmin {
 			$breakpoint = SiteKitLegacyBreakpointPreview::assess( $legacy );
 			$message = match ( $breakpoint['status'] ) {
 				'ready' => __( 'Legacy breakpoint boundaries can be represented in the Kit. Review only: transfer is not enabled while legacy responsive controls remain.', 'wpessential' ),
-				'slot_conflict' => __( 'Legacy breakpoints need review: separate 320 and 360 device slots cannot both be represented without loss.', 'wpessential' ),
 				'responsive_values' => __( 'Legacy breakpoints need review: existing responsive values must be reconciled before transfer.', 'wpessential' ),
 				default => __( 'Legacy breakpoints need review: unsupported format. No values have been changed.', 'wpessential' ),
 			};

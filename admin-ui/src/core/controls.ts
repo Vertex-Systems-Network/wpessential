@@ -58,6 +58,7 @@ const DEVICE_ICONS: Record< string, string > = {
 	mobile_extra: '<rect x="2" y="7" width="20" height="10" rx="2"/><path d="M18 12h.01"/>',
 	mobile: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
 	mobile_small: '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 17h2"/>',
+	mobile_tiny: '<rect x="9" y="5" width="6" height="14" rx="1.5"/><path d="M11 16h2"/>',
 };
 
 /** A field's units narrowed to the site's enabled units; custom units join any length field. */

@@ -23,7 +23,7 @@ final class SiteKitLegacyBreakpointPreview {
 		560  => [ 'mobile', 767 ],
 		480  => [ 'mobile', 559 ],
 		360  => [ 'mobile_small', 479 ],
-		320  => [ 'mobile_small', 359 ],
+		320  => [ 'mobile_tiny', 359 ],
 	];
 
 	/**
@@ -46,12 +46,6 @@ final class SiteKitLegacyBreakpointPreview {
 					'values' => [],
 				];
 			}
-		}
-		if ( in_array( '360', $keys, true ) && in_array( '320', $keys, true ) ) {
-			return [
-				'status' => 'slot_conflict',
-				'values' => [],
-			];
 		}
 		// The old theme has numeric device keys and tablet/mobile aliases nested in
 		// multiple controls. Until all those values move together, keep its ownership.

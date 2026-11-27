@@ -101,22 +101,27 @@ final class SiteKitLegacyFontPreview {
 		$dir  = trailingslashit( $uploads['basedir'] ) . 'wpessential-fonts/' . $slug . '/';
 		$cache = (array) get_option( SiteKitFonts::LOCAL_OPTION, [] );
 		$legacy = (array) get_option( 'wpessential_fonts_local', [] );
-		return self::validatedFaces( $family, array_key_exists( $family, $cache ) ? $cache[ $family ] : ( $legacy[ $family ] ?? [] ), static function ( string $src ) use ( $base, $dir, $slug ): bool {
-			if ( ! str_starts_with( $src, $base ) ) {
-				return false;
+		$faces = array_key_exists( $family, $cache ) ? $cache[ $family ] : ( $legacy[ $family ] ?? [] );
+		return self::validatedFaces(
+			$family,
+			$faces,
+			static function ( string $src ) use ( $base, $dir, $slug ): bool {
+				if ( ! str_starts_with( $src, $base ) ) {
+					return false;
+				}
+				$file = substr( $src, strlen( $base ) );
+				if ( preg_match( '/^' . preg_quote( $slug, '/' ) . '-(?:normal|italic)-[0-9-]+-latin(?:-ext)?\\.woff2$/D', $file ) !== 1 ) {
+					return false;
+				}
+				$path = $dir . $file;
+				$real = realpath( $path );
+				$root = realpath( $dir );
+				if ( $real === false || $root === false || dirname( $real ) !== $root || ! is_file( $path ) || is_link( $path ) || ! is_readable( $path ) || filesize( $path ) <= 4 ) {
+					return false;
+				}
+				return file_get_contents( $path, false, null, 0, 4 ) === 'wOF2'; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local font signature only.
 			}
-			$file = substr( $src, strlen( $base ) );
-			if ( preg_match( '/^' . preg_quote( $slug, '/' ) . '-(?:normal|italic)-[0-9-]+-latin(?:-ext)?\\.woff2$/D', $file ) !== 1 ) {
-				return false;
-			}
-			$path = $dir . $file;
-			$real = realpath( $path );
-			$root = realpath( $dir );
-			if ( $real === false || $root === false || dirname( $real ) !== $root || ! is_file( $path ) || is_link( $path ) || ! is_readable( $path ) || filesize( $path ) <= 4 ) {
-				return false;
-			}
-			return file_get_contents( $path, false, null, 0, 4 ) === 'wOF2'; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local font signature only.
-		} );
+		);
 	}
 
 	/**
