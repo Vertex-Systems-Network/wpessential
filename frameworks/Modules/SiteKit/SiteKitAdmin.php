@@ -93,7 +93,7 @@ final class SiteKitAdmin {
 			$before  = $this->store->values();
 			$review  = SiteKitLegacyPreview::assess( $pending, $before );
 			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $before );
-			$fonts   = SiteKitLegacyFontPreview::candidates( $pending, $before );
+			$fonts   = SiteKitLegacyFontPreview::adoptLocalCache( SiteKitLegacyFontPreview::candidates( $pending, $before ), $before );
 			$changes = $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $before );
 			$this->store->update( $changes );
 			$eligible = array_merge( SiteKitLegacyPreview::handoffKeys( $pending ), SiteKitLegacyScalarPreview::handoffKeys( $pending ), array_keys( $fonts ) );
@@ -229,7 +229,7 @@ final class SiteKitAdmin {
 			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
 			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
-			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar and font values while retaining existing Site Tools Kit settings where they conflict. Local Google font caches and delivery settings are not migrated.', 'wpessential' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar and font values while retaining existing Site Tools Kit settings where they conflict. Local Google font values transfer only when existing local files and cache metadata are verified. Delivery settings are not migrated.', 'wpessential' ) . '</p>';
 			$html .= Button::button( __( 'Transfer compatible legacy settings', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
 		}
 		return $html;

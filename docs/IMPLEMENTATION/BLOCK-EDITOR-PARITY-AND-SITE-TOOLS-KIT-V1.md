@@ -69,3 +69,7 @@ Low: PHP unit + JS build per WP; WP12/WP14 add one Playground Playwright job (~5
 ## Rollback
 
 Each WP is an isolated PR; revert the PR. WP1 keeps option keys, so reverting restores the Pro module without data loss.
+
+### WP8 consolidated local-cache candidate
+
+The active font-reference guard candidate `18637d86` is the base. Local-to-local Google handoff is eligible only when all winning family metadata and existing upload files validate; transfer reuses the existing files, preserves the original theme cache and delivery mode, and confirms canonical metadata readback before claiming ownership. Missing, malformed, remote and conflicting cache entries remain legacy-owned. Breakpoint ownership remains deferred where the fixed numeric theme devices and dependent responsive values cannot be represented losslessly; the read-only review and explicit preview arbitration remain in place. No final CI or full parity claim is made here.

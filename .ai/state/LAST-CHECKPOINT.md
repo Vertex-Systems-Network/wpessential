@@ -1,3 +1,7 @@
+# 2026-11-28 — WP8 consolidated local-cache candidate
+
+- Free `9257bf5c` passed 8/8 workflows and 10/10 checks; theme `c53b27b6` CI passed. Free #1603 advanced to `18637d86` (font reference guard); its exact verification is not assumed. Local-cache handoff candidate validates existing files/metadata and requires confirmed canonical readback before ownership. No production migration. Legacy breakpoint ownership remains deliberately deferred due to incompatible numeric slots and responsive values; preserve original data. Final consolidated CI required; RB-0134 open.
+
 # 2026-11-27 — WP8 shared Customizer and theme palette companion
 
 - WP8 #1602 / #1603 shared scalar, responsive and composite controls use native changesets and the canonical option. `27fa040f` PHPStan rejected inherited constructor arguments (PHP Quality and Architecture); `ba54a806` corrects the constructor. `5323b3be` adds capability/nonce-gated palette-only ownership transfer, keeps legacy values and existing canonical conflicts, and retains reset ownership. Theme companion hi-wpessential #129 (`0ccd33cd`, issue #128) consumes the owned-key contract, suppressing only owned palette controls/legacy compiler values and preserving standalone behavior. Actual combined browser, preview, save/reset and paired CI evidence pending; non-palette legacy formats remain unresolved.

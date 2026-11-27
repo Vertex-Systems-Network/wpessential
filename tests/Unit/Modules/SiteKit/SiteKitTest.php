@@ -304,6 +304,20 @@ final class SiteKitTest extends TestCase
         self::assertSame(['font_heading' => 'google:Roboto'], $class::remoteCandidates($legacy, ['fonts_delivery' => 'google']));
     }
 
+    public function testLocalFontHandoffRequiresEveryWinningFamilyAndValidFaces(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $candidates = ['font_body' => 'google:Roboto', 'font_heading' => 'google:Inter', 'fonts_extra' => 'Inter|Roboto'];
+        self::assertSame(['font_heading' => 'google:Inter'], $class::cachedCandidates($candidates, [], static fn (string $family): bool => $family === 'Inter'));
+        self::assertSame(['font_body' => 'google:Roboto', 'font_heading' => 'google:Inter'], $class::cachedCandidates($candidates, ['font_body' => 'google:Inter'], static fn (string $family): bool => $family === 'Inter'));
+        $face = ['fontFamily' => 'Inter', 'fontStyle' => 'normal', 'fontWeight' => '100 900', 'fontDisplay' => 'swap', 'unicodeRange' => 'U+0000-00FF', 'src' => ['https://example.test/uploads/inter.woff2']];
+        $valid = static fn (string $src): bool => $src === 'https://example.test/uploads/inter.woff2';
+        self::assertSame([$face], $class::validatedFaces('Inter', [$face], $valid));
+        self::assertSame([], $class::validatedFaces('Inter', [$face, array_replace($face, ['src' => ['https://fonts.gstatic.com/a.woff2']])], $valid));
+        self::assertSame([], $class::validatedFaces('Roboto', [$face], $valid));
+        self::assertSame([], $class::validatedFaces('Inter', [array_replace($face, ['extra' => 'unexpected'])], $valid));
+    }
+
     public function testFontHandoffDefersUnresolvedCanonicalConflict(): void
     {
         $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
