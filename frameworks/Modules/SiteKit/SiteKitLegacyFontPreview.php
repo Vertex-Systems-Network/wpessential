@@ -110,7 +110,12 @@ final class SiteKitLegacyFontPreview {
 				return false;
 			}
 			$path = $dir . $file;
-			return is_file( $path ) && ! is_link( $path ) && is_readable( $path ) && filesize( $path ) > 0;
+			$real = realpath( $path );
+			$root = realpath( $dir );
+			if ( $real === false || $root === false || dirname( $real ) !== $root || ! is_file( $path ) || is_link( $path ) || ! is_readable( $path ) || filesize( $path ) <= 4 ) {
+				return false;
+			}
+			return file_get_contents( $path, false, null, 0, 4 ) === 'wOF2'; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local font signature only.
 		} );
 	}
 

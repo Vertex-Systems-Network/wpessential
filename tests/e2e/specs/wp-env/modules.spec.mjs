@@ -769,6 +769,35 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(read().effective.font_body).toBeUndefined();
       expect(read().canonical.values.font_body).toBeUndefined();
     });
+    await audit('site-kit', 'paired local Google font handoff reuses only verified cache files', async () => {
+      const cacheBackup = run('echo base64_encode(wp_json_encode([get_option("wpessential_fonts_local", null),get_option("wpessential_site_kit_fonts", null)]));');
+      const fixture = run('$u=wp_get_upload_dir(); $d=trailingslashit($u["basedir"])."wpessential-fonts/inter"; $p=$d."/inter-normal-100-900-latin.woff2"; wp_mkdir_p($d); $created=!file_exists($p); if($created && !copy(get_theme_file_path("assets/fonts/inter-var.woff2"),$p)){throw new RuntimeException("font fixture copy failed");} echo $created ? "created" : "existing";');
+      try {
+        run('$u=wp_get_upload_dir(); $base=trailingslashit($u["baseurl"])."wpessential-fonts/"; $face=["fontFamily"=>"Inter","fontStyle"=>"normal","fontWeight"=>"100 900","fontDisplay"=>"swap","unicodeRange"=>"U+0000-00FF","src"=>[$base."inter/inter-normal-100-900-latin.woff2"]]; $bad=array_replace($face,["fontFamily"=>"Roboto","src"=>["https://example.invalid/roboto.woff2"]]); update_option("wpessential_fonts_local",["Inter"=>[$face],"Roboto"=>[$bad]]); update_option("wpessential_site_kit_fonts",[]); set_theme_mod("wpessential_site",["font_body"=>"google:Inter","font_heading"=>"google:Roboto","fonts_extra"=>"Inter|Roboto"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit",["version"=>1,"values"=>[]]); wp_clean_theme_json_cache(); echo "ready";');
+        const localOriginal = read().legacy;
+        await openAdmin(page, 'wpessential-site-kit&group=colors');
+        const transfer = page.getByRole('button', { name: 'Transfer compatible legacy settings', exact: true });
+        await expect(transfer).toBeVisible();
+        const navigation = page.waitForEvent('load');
+        await transfer.click();
+        await navigation;
+        const local = read();
+        expect(local.legacy).toEqual(localOriginal);
+        expect(local.canonical.values.font_body).toBe('google:Inter');
+        expect(local.handed).toContain('font_body');
+        expect(local.handed).not.toContain('font_heading');
+        expect(local.handed).not.toContain('fonts_extra');
+        expect(local.effective.font_heading).toBe('google:Roboto');
+        expect(local.effective.fonts_extra).toBe('Inter|Roboto');
+        const caches = JSON.parse(run('echo wp_json_encode([get_option("wpessential_fonts_local"),get_option("wpessential_site_kit_fonts")]);'));
+        expect(caches[1].Inter).toEqual(caches[0].Inter);
+        expect(caches[1].Roboto).toBeUndefined();
+        expect(JSON.parse(run('echo wp_json_encode(\\WPEssential\\Modules\\SiteKit\\SiteKitFonts::remote(["font_body"=>"google:Inter"]));'))).toEqual([]);
+      } finally {
+        run('$old=json_decode(base64_decode("' + cacheBackup + '"),true); foreach(["wpessential_fonts_local","wpessential_site_kit_fonts"] as $i=>$key){if($old[$i]===null){delete_option($key);}else{update_option($key,$old[$i]);}} echo "restored";');
+        if (fixture === 'created') run('$u=wp_get_upload_dir(); $p=trailingslashit($u["basedir"])."wpessential-fonts/inter/inter-normal-100-900-latin.woff2"; wp_delete_file($p); echo "removed";');
+      }
+    });
   } finally {
     if (themeBackup) {
       run('$mods = json_decode(base64_decode("' + themeBackup + '"), true); update_option("theme_mods_" . get_stylesheet(), $mods); echo "restored";');
