@@ -45,6 +45,13 @@ final class SiteKitTest extends TestCase
         self::assertSame(['dark_primary', 'font_body', 'breakpoints', 'btn_radius'], $review['deferred']);
         self::assertSame($before, $legacy);
         self::assertSame(['color_primary' => '#ffffff'], $canonical);
+        self::assertSame(['color_primary', 'color_secondary'], array_values(array_intersect(\WPEssential\Modules\SiteKit\SiteKitLegacyPreview::handoffKeys($legacy), ['color_primary', 'color_secondary', 'dark_primary'])));
+        $owned = \WPEssential\Modules\SiteKit\SiteKitLegacyPreview::ownedKeys($legacy, ['color_primary']);
+        self::assertContains('color_primary', $owned);
+        self::assertContains('color_accent', $owned);
+        self::assertNotContains('color_secondary', $owned);
+        self::assertNotContains('dark_primary', $owned);
+        self::assertNotContains('font_body', $owned);
     }
 
     public function testSnippetMetadataAndRestrictedReplacement(): void

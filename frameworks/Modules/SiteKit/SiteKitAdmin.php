@@ -29,6 +29,7 @@ final class SiteKitAdmin {
 	public const AJAX_SAVE       = 'site-kit.save';
 	public const AJAX_RESET      = 'site-kit.reset';
 	public const AJAX_SNIPPETS   = 'site-kit.snippets';
+	public const LEGACY_ACTION   = 'wpessential_site_kit_palette_handoff';
 
 	public function __construct( private readonly SiteKitStore $store, private readonly SiteKitSnippets $snippets ) {}
 
@@ -37,6 +38,7 @@ final class SiteKitAdmin {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
 		add_action( 'admin_post_' . self::SAVE_ACTION, [ $this, 'handleSave' ] );
 		add_action( 'admin_post_' . self::SNIPPETS_ACTION, [ $this, 'handleSnippets' ] );
+		add_action( 'admin_post_' . self::LEGACY_ACTION, [ $this, 'handleLegacyPalette' ] );
 		CoreAjaxRoutes::expose( self::AJAX_SAVE );
 		CoreAjaxRoutes::expose( self::AJAX_RESET );
 		CoreAjaxRoutes::expose( self::AJAX_SNIPPETS );
@@ -74,6 +76,31 @@ final class SiteKitAdmin {
 				]
 			)
 		);
+		exit;
+	}
+
+	/** Explicit palette-only migration; no legacy values are deleted. */
+	public function handleLegacyPalette(): void {
+		if ( ! current_user_can( SiteKitAbilities::CAPABILITY ) || get_template() !== 'hi-wpessential' ) {
+			wp_die( esc_html__( 'You are not allowed to migrate these settings.', 'wpessential' ), 'WPEssential', [ 'response' => 403 ] );
+		}
+		check_admin_referer( self::LEGACY_ACTION );
+		$legacy = get_theme_mod( 'wpessential_site', [] );
+		if ( is_array( $legacy ) ) {
+			$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
+			$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
+			$review = SiteKitLegacyPreview::assess( array_diff_key( $legacy, array_fill_keys( $handed, true ) ), $this->store->values() );
+			$this->store->update( $review['ready'] );
+			$stored = $this->store->values();
+			$keys   = [];
+			foreach ( SiteKitLegacyPreview::handoffKeys( $legacy ) as $key ) {
+				if ( in_array( $key, $handed, true ) || array_key_exists( $key, $stored ) ) {
+					$keys[] = $key;
+				}
+			}
+			set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, array_values( array_unique( array_merge( $handed, $keys ) ) ) );
+		}
+		wp_safe_redirect( AdminUrl::page( self::PAGE_SLUG, [ 'group' => 'colors' ] ) );
 		exit;
 	}
 
@@ -161,17 +188,27 @@ final class SiteKitAdmin {
 		if ( ! is_array( $legacy ) || $legacy === [] ) {
 			return '';
 		}
-		$review = SiteKitLegacyPreview::assess( $legacy, $values );
-		return Notice::render(
+		$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
+		$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
+		$review = SiteKitLegacyPreview::assess( array_diff_key( $legacy, array_fill_keys( $handed, true ) ), $values );
+		$html   = Notice::render(
 			'info',
 			sprintf(
 				/* translators: 1: import-ready colours, 2: conflicts, 3: deferred settings. */
-				__( 'Legacy theme settings review: %1$d compatible colours, %2$d conflicts and %3$d deferred values. Nothing has been migrated or overwritten.', 'wpessential' ),
+				__( 'Legacy theme settings review: %1$d compatible colours, %2$d conflicts and %3$d deferred values. Canonical colours take priority; original theme values are retained.', 'wpessential' ),
 				count( $review['ready'] ),
 				count( $review['conflicts'] ),
 				count( $review['deferred'] )
 			)
 		);
+		if ( $review['ready'] !== [] || $review['conflicts'] !== [] || array_diff( SiteKitLegacyPreview::handoffKeys( $legacy ), $handed ) !== [] ) {
+			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
+			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
+			$html .= '<p>' . esc_html__( 'Import compatible palette values and retain existing Site Tools Kit colours where they conflict. Other settings are not migrated.', 'wpessential' ) . '</p>';
+			$html .= Button::button( __( 'Transfer legacy palette ownership', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
+		}
+		return $html;
 	}
 
 	private static function tab( string $id, string $title, string $icon, bool $active, int $count ): string {
