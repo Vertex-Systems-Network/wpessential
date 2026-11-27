@@ -611,7 +611,13 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(migrated.effective.radius_md).toBe('999');
       expect(migrated.effective.color_primary).toBeUndefined();
       expect(migrated.effective.color_secondary).toBeUndefined();
-      expect(migrated.effective.font_body).toBe('Inter');
+      expect(migrated.effective.font_body).toBeUndefined();
+      expect(migrated.legacy.font_body).toBe('Inter');
+      expect(migrated.canonical.values.font_body).toBe('theme:hi-wpessential-inter');
+      expect(migrated.handed).toContain('font_body');
+      const compiledFonts = JSON.parse(run('echo wp_json_encode(wp_get_global_settings(["typography","fontFamilies"]));'));
+      const allFonts = Object.values(compiledFonts).flat();
+      expect(allFonts.find((font) => font.slug === 'hi-wpessential-inter')?.fontFamily).toBe('Inter, system-ui, sans-serif');
       await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_button', { waitUntil: 'load' });
       const states = page.locator('.wpe-sitekit-state-tabs').getByRole('tablist', { name: 'State' });
       await expect(states.getByRole('tab', { name: 'Focus', exact: true })).toBeVisible();
@@ -633,6 +639,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       await setModule(page, 'site-kit', false);
       expect(read().effective.color_secondary).toBe('#112233');
       expect(read().effective.btn_radius).toBe('0');
+      expect(read().effective.font_body).toBe('Inter');
       expect(read().effective.field_radius).toBe('12');
       expect(read().legacy).toEqual(original);
       await setModule(page, 'site-kit', true);

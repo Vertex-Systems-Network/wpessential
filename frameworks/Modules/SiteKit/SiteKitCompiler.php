@@ -131,6 +131,10 @@ final class SiteKitCompiler {
 		foreach ( $original as $family ) {
 			$sources[ (string) ( $family['slug'] ?? '' ) ] = $family;
 		}
+		$bundled = SiteKitFonts::bundledPresets();
+		foreach ( $bundled as $family ) {
+			$sources[ (string) $family['slug'] ] = $family;
+		}
 		$chosen = [];
 		foreach ( [ 'body', 'heading', 'mono' ] as $slug ) {
 			$pick = (string) ( $v[ 'font_' . $slug ] ?? '' );
@@ -151,6 +155,11 @@ final class SiteKitCompiler {
 		}
 		foreach ( $chosen as $slug => $family ) {
 			if ( ! isset( $present[ $slug ] ) ) {
+				$families[] = $family;
+			}
+		}
+		foreach ( $bundled as $family ) {
+			if ( ! isset( $present[ (string) $family['slug'] ] ) ) {
 				$families[] = $family;
 			}
 		}

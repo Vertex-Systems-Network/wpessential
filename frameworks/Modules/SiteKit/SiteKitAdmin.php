@@ -92,7 +92,8 @@ final class SiteKitAdmin {
 			$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
 			$review  = SiteKitLegacyPreview::assess( $pending, $this->store->values() );
 			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $this->store->values() );
-			$this->store->update( $review['ready'] + $scalar['ready'] );
+			$fonts = SiteKitLegacyFontPreview::bundledCandidates( $pending );
+			$this->store->update( $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $this->store->values() ) );
 			$stored = $this->store->values();
 			$keys   = [];
 			foreach ( SiteKitLegacyPreview::handoffKeys( $legacy ) as $key ) {
@@ -101,6 +102,11 @@ final class SiteKitAdmin {
 				}
 			}
 			$keys = array_merge( $keys, SiteKitLegacyScalarPreview::confirmedKeys( $legacy, $stored, $handed ) );
+			foreach ( array_keys( $fonts ) as $key ) {
+				if ( array_key_exists( $key, $stored ) ) {
+					$keys[] = $key;
+				}
+			}
 			$next = array_values( array_unique( array_merge( $handed, $keys ) ) );
 			if ( $next !== $handed ) {
 				set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, $next );
@@ -201,22 +207,25 @@ final class SiteKitAdmin {
 		$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
 		$review  = SiteKitLegacyPreview::assess( $pending, $values );
 		$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $values );
-		$deferred = array_intersect( $review['deferred'], $scalar['deferred'] );
+		$fonts = SiteKitLegacyFontPreview::bundledCandidates( $pending );
+		$fontReady = array_diff_key( $fonts, $values );
+		$fontConflicts = array_filter( array_intersect_key( $fonts, $values ), static fn ( string $value, string $key ): bool => $values[ $key ] !== $value, ARRAY_FILTER_USE_BOTH );
+		$deferred = array_diff( array_intersect( $review['deferred'], $scalar['deferred'] ), array_keys( $fonts ) );
 		$html    = Notice::render(
 			'info',
 			sprintf(
 				/* translators: 1: import-ready settings, 2: conflicts, 3: deferred settings. */
 				__( 'Legacy theme settings review: %1$d compatible values, %2$d conflicts and %3$d deferred values. Canonical settings take priority; original theme values are retained.', 'wpessential' ),
-				count( $review['ready'] ) + count( $scalar['ready'] ),
-				count( $review['conflicts'] ) + count( $scalar['conflicts'] ),
+				count( $review['ready'] ) + count( $scalar['ready'] ) + count( $fontReady ),
+				count( $review['conflicts'] ) + count( $scalar['conflicts'] ) + count( $fontConflicts ),
 				count( $deferred )
 			)
 		);
-		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ) ), $handed ) !== [] ) {
+		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ), array_keys( $fonts ) ), $handed ) !== [] ) {
 			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
 			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
-			$html .= '<p>' . esc_html__( 'Import compatible palette and scalar values while retaining existing Site Tools Kit settings where they conflict. Unsupported formats are not migrated.', 'wpessential' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar and bundled font values while retaining existing Site Tools Kit settings where they conflict. Unsupported formats are not migrated.', 'wpessential' ) . '</p>';
 			$html .= Button::button( __( 'Transfer compatible legacy settings', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
 		}
 		return $html;
@@ -338,7 +347,7 @@ final class SiteKitAdmin {
 		}
 		$fonts    = [];
 		$families = function_exists( 'wp_get_global_settings' ) ? wp_get_global_settings( [ 'typography', 'fontFamilies' ] ) : [];
-		foreach ( (array) ( $families['theme'] ?? [] ) as $family ) {
+		foreach ( array_merge( (array) ( $families['theme'] ?? [] ), SiteKitFonts::bundledPresets() ) as $family ) {
 			if ( isset( $family['slug'], $family['fontFamily'] ) ) {
 				$fonts[] = [
 					'value' => 'theme:' . $family['slug'],
