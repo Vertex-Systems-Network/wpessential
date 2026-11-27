@@ -93,7 +93,7 @@ final class SiteKitAdmin {
 			$before  = $this->store->values();
 			$review  = SiteKitLegacyPreview::assess( $pending, $before );
 			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $before );
-			$fonts   = SiteKitLegacyFontPreview::bundledCandidates( $pending );
+			$fonts   = SiteKitLegacyFontPreview::candidates( $pending, $before );
 			$changes = $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $before );
 			$this->store->update( $changes );
 			$eligible = array_merge( SiteKitLegacyPreview::handoffKeys( $pending ), SiteKitLegacyScalarPreview::handoffKeys( $pending ), array_keys( $fonts ) );
@@ -201,7 +201,7 @@ final class SiteKitAdmin {
 		$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
 		$review  = SiteKitLegacyPreview::assess( $pending, $values );
 		$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $values );
-		$fonts = SiteKitLegacyFontPreview::bundledCandidates( $pending );
+		$fonts = SiteKitLegacyFontPreview::candidates( $pending, $values );
 		$fontReady = array_diff_key( $fonts, $values );
 		$fontConflicts = array_filter( array_intersect_key( $fonts, $values ), static fn ( string $value, string $key ): bool => $values[ $key ] !== $value, ARRAY_FILTER_USE_BOTH );
 		$deferred = array_diff( array_intersect( $review['deferred'], $scalar['deferred'] ), array_keys( $fonts ) );
@@ -229,7 +229,7 @@ final class SiteKitAdmin {
 			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
 			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
-			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar and bundled font values while retaining existing Site Tools Kit settings where they conflict. Unsupported formats are not migrated.', 'wpessential' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar and font values while retaining existing Site Tools Kit settings where they conflict. Local Google font caches and delivery settings are not migrated.', 'wpessential' ) . '</p>';
 			$html .= Button::button( __( 'Transfer compatible legacy settings', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
 		}
 		return $html;
