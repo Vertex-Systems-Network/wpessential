@@ -2,17 +2,17 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: e93386c2f663cdd0cd1027a8513949ad39fe1ba9
-observed_main_source: "Free #1598 merged after eight exact-head workflows and 44/44 E2E."
-active_issue: "#1599"
-active_pr: "#1600"
-active_branch: agent/adr-0239-wp7-custom-code
-current_milestone: "P5-M14 WP7 custom code management"
+observed_main_sha: ab80f77de428f95a530ddc6cc3ec7356179786a3
+observed_main_source: "Free #1600 bounded WP7 merged after eight workflows, ten checks and 46/46 E2E."
+active_issue: "#1602"
+active_pr: "#1603"
+active_branch: agent/adr-0239-wp8-customizer
+current_milestone: "P5-M14 WP8 canonical Customizer synchronization"
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "WP6 #1598 merged; 44/44 Free E2E."
-next_safe_action: "Verify new WP7 scoped browser acceptance and exact-head CI; integrate bounded browser-language WP7 only, then WP8. #1601 PHP architecture planning remains separate."
-waiting_external: "New WP7 exact-head CI pending; #1601 developer-code security architecture deferred. Unrelated lanes remain separate."
-next_planned_slot: adr-0239-wp7-custom-code-v1
+last_completed_milestone: "Bounded WP7 #1600 merged; 46/46 Free E2E. PHP #1601 remains planning-only."
+next_safe_action: "Verify scalar Customizer source and CI; integrate shared composite/responsive controls, reconcile legacy theme settings and add bidirectional browser acceptance."
+waiting_external: "WP8 exact-head CI pending; #1601 separately gated."
+next_planned_slot: adr-0239-wp8-customizer-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -20,8 +20,9 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0133
+    - RB-0134
   terminal_pass:
+    - RB-0133
     - RB-0132
     - RB-0131
     - RB-0130
