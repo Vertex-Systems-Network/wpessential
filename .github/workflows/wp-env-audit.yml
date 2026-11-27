@@ -54,6 +54,19 @@ jobs:
           npm ci --ignore-scripts
           npm run build:admin
 
+      # Public companion theme, pinned to the reviewed WP8 candidate. Do not use a moving branch.
+      - name: Checkout paired Hi WPEssential theme
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Vertex-Systems-Network/hi-wpessential
+          ref: 0ccd33cd09c069358586c77964d59cbd64ca840d
+          path: tests/e2e/theme-fixtures/hi-wpessential
+          persist-credentials: false
+
+      - name: Configure paired theme fixture
+        working-directory: tests/e2e
+        run: printf '%s\n' '{"themes":["./theme-fixtures/hi-wpessential"]}' > .wp-env.override.json
+
       - name: Start WordPress
         # Config lives in tests/e2e: the plugin-check job writes its own .wp-env.json at the root.
         working-directory: tests/e2e
@@ -68,6 +81,7 @@ jobs:
         working-directory: tests/e2e
         env:
           WPE_E2E_BASE_URL: http://localhost:8888
+          WPE_E2E_THEME_PAIR: '1'
           WPE_E2E_WP_CLI: npx --yes @wordpress/env@12.1.0 run cli wp
           WPE_E2E_WP_ENV_DIR: ${{ github.workspace }}/tests/e2e
         run: npx playwright test -c playwright.wp-env.config.mjs

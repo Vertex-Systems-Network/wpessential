@@ -507,3 +507,63 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
     if (!wasOn) await setModule(page, 'site-kit', false);
   }
 });
+
+test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async ({ page, audit }) => {
+  test.skip(process.env.WPE_E2E_THEME_PAIR !== '1', 'Requires the pinned companion theme fixture.');
+  await openAdmin(page, 'wpessential-module-site-kit');
+  const wasOn = (await toggle(page).getAttribute('aria-checked')) === 'true';
+  const run = (code) => wp('--user=admin eval \'eval(base64_decode("' + Buffer.from(code).toString('base64') + '"));\'').trim().split('\n').at(-1);
+  const originalTheme = run('echo get_stylesheet();');
+  const backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit", null)));');
+  const read = () => JSON.parse(run('echo wp_json_encode(["legacy"=>get_theme_mod("wpessential_site", []),"handed"=>get_theme_mod("wpessential_site_kit_palette_handoff", []),"effective"=>wpessential_site_values(),"canonical"=>get_option("wpessential_site_kit", [])]);'));
+  let themeBackup = '';
+  try {
+    wp('theme activate hi-wpessential');
+    expect(run('echo get_template();')).toBe('hi-wpessential');
+    themeBackup = run('echo base64_encode(wp_json_encode(get_theme_mods()));');
+    if (!wasOn) await setModule(page, 'site-kit', true);
+    await audit('site-kit', 'paired theme retains legacy data and delegates transferred palette fields', async () => {
+      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456"]]); wp_clean_theme_json_cache(); echo "ready";');
+      const original = read().legacy;
+      expect(read().effective.color_secondary).toBe('#112233');
+      await openAdmin(page, 'wpessential-site-kit&group=colors');
+      const transfer = page.getByRole('button', { name: 'Transfer legacy palette ownership', exact: true });
+      await expect(transfer).toBeVisible();
+      const navigation = page.waitForEvent('load');
+      await transfer.click();
+      await navigation;
+      const migrated = read();
+      expect(migrated.legacy).toEqual(original);
+      expect(migrated.canonical.values.color_primary).toBe('#123456');
+      expect(migrated.canonical.values.color_secondary).toBe('#112233');
+      expect(migrated.handed).toEqual(expect.arrayContaining(['color_primary', 'color_secondary']));
+      expect(migrated.effective.color_primary).toBeUndefined();
+      expect(migrated.effective.color_secondary).toBeUndefined();
+      expect(migrated.effective.font_body).toBe('Inter');
+      await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_colors', { waitUntil: 'load' });
+      const field = page.locator('[data-wpe-setting="wpessential_site_kit[values][color_secondary]"]');
+      await expect(field.locator('.wpec-color__hex')).toHaveValue('#112233');
+      await expect.poll(() => page.evaluate(() => Boolean(window.wp?.customize?.('wpessential_site[color_secondary]')))).toBe(false);
+      await field.getByRole('button', { name: /Reset .* to the theme default/ }).click();
+      await expect(page.locator('#save')).toBeEnabled();
+      await page.locator('#save').click();
+      await expect.poll(() => read().canonical.values.color_secondary ?? '', { timeout: 30000 }).toBe('');
+      const reset = read();
+      expect(reset.legacy).toEqual(original);
+      expect(reset.effective.color_secondary).toBeUndefined();
+      expect(reset.handed).toContain('color_secondary');
+      await setModule(page, 'site-kit', false);
+      expect(read().effective.color_secondary).toBe('#112233');
+      expect(read().legacy).toEqual(original);
+      await setModule(page, 'site-kit', true);
+      expect(read().effective.color_secondary).toBeUndefined();
+    });
+  } finally {
+    if (themeBackup) {
+      run('$mods = json_decode(base64_decode("' + themeBackup + '"), true); update_option("theme_mods_" . get_stylesheet(), $mods); echo "restored";');
+    }
+    run('$old = json_decode(base64_decode("' + backup + '"), true); if ($old === null) { delete_option("wpessential_site_kit"); } else { update_option("wpessential_site_kit", $old); } wp_clean_theme_json_cache(); echo "restored";');
+    if (originalTheme !== 'hi-wpessential') wp('theme activate ' + originalTheme);
+    await setModule(page, 'site-kit', wasOn);
+  }
+});
