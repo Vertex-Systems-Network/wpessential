@@ -38,6 +38,17 @@ final class SiteKitTest extends TestCase
         self::assertSame(['js1', 'css1'], array_column(\WPEssential\Modules\SiteKit\SiteKitSnippets::ordered([$clean, $js]), 'id'));
     }
 
+    public function testHtmlSnippetRequiresWordPressSanitizer(): void
+    {
+        if (function_exists('wp_kses_post')) {
+            self::markTestSkipped('This test covers the isolated non-WordPress fallback.');
+        }
+
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean([
+            'type' => 'html', 'code' => '<p>Safe text</p>', 'enabled' => true,
+        ], true));
+    }
+
     public function testSchemaCoversEveryPortedGroup(): void
     {
         $groups = array_keys(SiteKitSchema::sections());
