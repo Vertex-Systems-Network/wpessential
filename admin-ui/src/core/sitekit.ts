@@ -115,7 +115,9 @@ function customizerStateTabs(): void {
 		group.push( item );
 		groups.set( parent, group );
 	} );
-	groups.forEach( ( items, parent ) => stateTabs( parent, items, true ) );
+	for ( const [ parent, items ] of groups ) {
+		stateTabs( parent, items, true );
+	}
 }
 
 function bindTabs( root: HTMLElement ): void {
