@@ -1911,6 +1911,24 @@ class Groups {
 				);
 				break;
 			case 'shadow':
+				$presets = self::custom_shadow_labels();
+				if ( $presets ) {
+					$dictionary = array();
+					foreach ( $presets as $slug => $name ) {
+						$dictionary[ $slug ] = 'var(--wp--preset--shadow--' . $slug . ',none)';
+					}
+					$w->add_control(
+						$key . '_wpe_preset',
+						array(
+							'label'                => __( 'Global shadow preset', 'wpessential' ),
+							'type'                 => \Elementor\Controls_Manager::SELECT,
+							'options'              => array( '' => __( 'Default / custom', 'wpessential' ) ) + $presets,
+							'default'              => '',
+							'selectors_dictionary' => $dictionary,
+							'selectors'            => array( $sel => 'box-shadow:{{VALUE}};' ),
+						)
+					);
+				}
 				$w->add_group_control(
 					\Elementor\Group_Control_Box_Shadow::get_type(),
 					array(

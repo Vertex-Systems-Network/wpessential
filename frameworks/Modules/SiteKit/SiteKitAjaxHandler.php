@@ -50,7 +50,7 @@ final class SiteKitAjaxHandler implements AjaxHandlerInterface {
 
 		return [
 			'changed' => $changed,
-			'reload'  => isset( $changed['custom_colours'] ) || isset( $changed['custom_typography'] ),
+			'reload'  => isset( $changed['custom_colours'] ) || isset( $changed['custom_typography'] ) || isset( $changed['custom_shadows'] ),
 		];
 	}
 }
