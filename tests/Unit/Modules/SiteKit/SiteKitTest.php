@@ -34,6 +34,29 @@ final class SiteKitTest extends TestCase
         self::assertSame(['color_primary' => '#123abc', 'color_secondary' => '#ffffff'], $store->values());
     }
 
+    public function testLegacyScalarAssessmentIsLosslessAndReadOnly(): void
+    {
+        $legacy = [
+            'btn_radius' => '0',
+            'field_radius' => '12.5',
+            'radius_sm' => '8',
+            'radius_md' => '999',
+            'hover_duration' => '250',
+            'hover_lift' => '{"desktop":4}',
+            'font_body' => 'Inter',
+            'back_to_top' => 'off',
+            'breakpoints' => '768|560',
+        ];
+        $canonical = ['radius_sm' => 10, 'hover_duration' => 250];
+        $review = \WPEssential\Modules\SiteKit\SiteKitLegacyScalarPreview::assess($legacy, $canonical);
+        self::assertSame(['btn_radius' => 0, 'field_radius' => 12.5], $review['ready']);
+        self::assertSame(['radius_sm'], $review['conflicts']);
+        self::assertSame(['hover_duration'], $review['unchanged']);
+        self::assertSame(['radius_md', 'hover_lift', 'font_body', 'back_to_top', 'breakpoints'], $review['deferred']);
+        self::assertSame('0', $legacy['btn_radius']);
+        self::assertSame(10, $canonical['radius_sm']);
+    }
+
     public function testLegacyThemePreviewDoesNotOverwriteCanonicalValues(): void
     {
         $legacy = ['color_primary' => '#ABCDEF', 'color_secondary' => '#123456', 'dark_primary' => 'bad', 'font_body' => 'Inter', 'breakpoints' => '768|560', 'btn_radius' => '12', 'color_accent' => ''];
