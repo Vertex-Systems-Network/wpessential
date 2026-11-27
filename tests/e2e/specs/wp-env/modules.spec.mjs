@@ -456,6 +456,17 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
   const setting = (key) => 'wpessential_site_kit[values][' + key + ']';
   const control = (key) => page.locator('[data-wpe-setting="' + setting(key) + '"]');
   const stored = () => JSON.parse(run('echo wp_json_encode(get_option("wpessential_site_kit", []));'));
+  const expandSection = async (section, key) => {
+    await page.evaluate((id) => window.wp.customize.section(id).expand(), 'wpessential_site_kit_' + section);
+    const field = control(key);
+    await expect(field).toBeVisible();
+    // Wait for the native sliding panel to reach the sidebar, not merely exist in the DOM.
+    await expect.poll(async () => {
+      const box = await field.boundingBox();
+      const sidebar = await page.locator('#customize-controls').boundingBox();
+      return Boolean(box && sidebar && box.x >= sidebar.x - 1 && box.x + box.width <= sidebar.x + sidebar.width + 1);
+    }).toBe(true);
+  };
   const openCustomizer = async (section) => {
     const url = BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=' + encodeURIComponent('wpessential_site_kit_' + section);
     const response = await page.goto(url, { waitUntil: 'load' });
@@ -477,18 +488,18 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await hex.fill('#345678');
       await hex.blur();
       expect(stored().values.color_primary).toBe('#234567');
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
+      await expandSection('type', 'size_body');
       const size = control('size_body').locator('.wpec-range__num');
       await expect(size).toBeVisible();
       // An unpublished custom breakpoint must immediately appear in the shared device menu.
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_layout').expand());
+      await expandSection('layout', 'breakpoints');
       const breakpoint = control('breakpoints');
       await expect(breakpoint.getByRole('switch', { name: 'Small phone', exact: true })).toBeVisible();
       await breakpoint.getByRole('switch', { name: 'Small phone', exact: true }).check();
       await breakpoint.getByRole('spinbutton', { name: 'Small phone width', exact: true }).fill('420');
       await breakpoint.getByRole('spinbutton', { name: 'Small phone width', exact: true }).blur();
       expect(stored().values.breakpoints).toBeUndefined();
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
+      await expandSection('type', 'size_body');
       const device = control('size_body').locator('.wpec-devices__trigger');
       await device.click();
       await control('size_body').locator('[data-device="mobile_small"]').click();
@@ -496,7 +507,7 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect.poll(async () => Math.round((await page.locator('#customize-preview').boundingBox())?.width ?? 0)).toBe(420);
       await size.fill('15');
       await size.blur();
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_layout').expand());
+      await expandSection('layout', 'breakpoints');
       const smallWidth = breakpoint.getByRole('spinbutton', { name: 'Small phone width', exact: true });
       const smallEnabled = breakpoint.getByRole('switch', { name: 'Small phone', exact: true });
       await smallWidth.fill('430');
@@ -507,7 +518,7 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await smallEnabled.check();
       await smallWidth.fill('420');
       await smallWidth.blur();
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
+      await expandSection('type', 'size_body');
       await device.click();
       await control('size_body').locator('[data-device="mobile_small"]').click();
       await expect(size).toHaveValue('15');
@@ -524,14 +535,25 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
       await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('mobile');
       await page.locator('.wp-full-overlay-footer .devices button[data-device="desktop"]').click();
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_layout').expand());
+      await expandSection('layout', 'breakpoints');
       const phoneEnabled = breakpoint.getByRole('switch', { name: 'Phone', exact: true });
+      await expect(phoneEnabled).toBeChecked();
+      await expect.poll(async () => {
+        const box = await phoneEnabled.boundingBox();
+        const sidebar = await page.locator('#customize-controls').boundingBox();
+        return Boolean(box && sidebar && box.x >= sidebar.x && box.x + box.width <= sidebar.x + sidebar.width);
+      }).toBe(true);
       await phoneEnabled.uncheck();
+      await expect(phoneEnabled).not.toBeChecked();
+      await expect.poll(() => page.evaluate((id) => {
+        const value = window.wp.customize(id).get();
+        return (typeof value === 'string' ? JSON.parse(value) : value).mobile.on;
+      }, setting('breakpoints'))).toBe(false);
       await page.locator('.wp-full-overlay-footer .devices button[data-device="mobile"]').click();
       await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('desktop');
       await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile');
       await phoneEnabled.check();
-      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
+      await expandSection('type', 'size_body');
       await size.fill('19');
       await expect.poll(() => page.evaluate((id) => window.wp.customize(id).get(), setting('size_body'))).toMatch(/19/);
       await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_button').expand());
