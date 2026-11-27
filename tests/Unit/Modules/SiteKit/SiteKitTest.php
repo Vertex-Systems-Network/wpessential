@@ -212,6 +212,17 @@ final class SiteKitTest extends TestCase
         self::assertSame('script', $typography['x']);
     }
 
+    public function testExtraGoogleFontsReadOldPrefixesAndPersistBareNames(): void
+    {
+        $raw = 'google:Inter|Roboto|Inter|theme:body|Unknown Invalid Family';
+        $fonts = \WPEssential\Modules\SiteKit\SiteKitFonts::class;
+        self::assertSame(['Inter', 'Roboto'], $fonts::extraFamilies($raw));
+        self::assertSame('Inter|Roboto', SiteKitSanitizer::clean(['type' => 'fonts'], $raw));
+        self::assertSame(['Inter', 'Roboto'], $fonts::used(['fonts_extra' => $raw]));
+        $json = SiteKitCompiler::themeJson([], ['fonts_extra' => $raw, 'fonts_delivery' => 'google'], static fn (array $path): array => []);
+        self::assertSame(['g-inter', 'g-roboto'], array_column($json['settings']['typography']['fontFamilies'], 'slug'));
+    }
+
     public function testStoreReportsChangesAndResetsGroups(): void
     {
         $store = new SiteKitStore();

@@ -915,7 +915,7 @@ types.font = ( ctx ) => {
 types.fonts = ( ctx ) => {
 	const chips = h( 'div', { class: 'wpec-fonts__chips' } );
 	const holder = h( 'div', { class: 'wpec-font__holder' } );
-	const list = (): string[] => ctx.get().split( '|' ).filter( Boolean );
+	const list = (): string[] => Array.from( new Set( ctx.get().split( '|' ).map( ( family ) => family.trim().replace( /^google:/, '' ) ).filter( Boolean ) ) );
 	const add = h( 'button', {
 		type: 'button',
 		class: 'wpec-btn',

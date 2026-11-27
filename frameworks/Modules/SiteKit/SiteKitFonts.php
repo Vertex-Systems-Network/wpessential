@@ -85,6 +85,27 @@ final class SiteKitFonts {
 	}
 
 	/**
+	 * Extra font lists store bare Google family names. Accept the old prefixed
+	 * format on read, so sites saved by older Kit sanitizers keep their fonts.
+	 *
+	 * @return list<string>
+	 */
+	public static function extraFamilies( mixed $value ): array {
+		$families = [];
+		foreach ( explode( '|', is_string( $value ) ? $value : '' ) as $ref ) {
+			$family = trim( $ref );
+			if ( str_starts_with( $family, 'google:' ) ) {
+				$family = substr( $family, 7 );
+			}
+			if ( self::exists( $family ) ) {
+				$families[] = $family;
+			}
+		}
+
+		return array_values( array_unique( $families ) );
+	}
+
+	/**
 	 * Google families the settings use (font pickers, typography sets and the extra list).
 	 *
 	 * @param array<string,mixed> $values
@@ -95,8 +116,8 @@ final class SiteKitFonts {
 		foreach ( [ 'font_body', 'font_heading', 'font_mono' ] as $key ) {
 			$out[] = (string) ( $values[ $key ] ?? '' );
 		}
-		foreach ( explode( '|', (string) ( $values['fonts_extra'] ?? '' ) ) as $family ) {
-			$out[] = 'google:' . trim( $family );
+		foreach ( self::extraFamilies( $values['fonts_extra'] ?? '' ) as $family ) {
+			$out[] = 'google:' . $family;
 		}
 		foreach ( $values as $key => $value ) {
 			if ( str_starts_with( (string) $key, 'typo_' ) && is_array( $value ) ) {

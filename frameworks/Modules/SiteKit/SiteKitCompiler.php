@@ -139,10 +139,8 @@ final class SiteKitCompiler {
 				$families[] = SiteKitFonts::entry( $slug, substr( $pick, 7 ), $v );
 			}
 		}
-		foreach ( array_filter( array_map( 'trim', explode( '|', (string) ( $v['fonts_extra'] ?? '' ) ) ) ) as $family ) {
-			if ( SiteKitFonts::exists( $family ) ) {
-				$families[] = SiteKitFonts::entry( 'g-' . strtolower( (string) preg_replace( '/[^a-z0-9]+/i', '-', $family ) ), $family, $v );
-			}
+		foreach ( SiteKitFonts::extraFamilies( $v['fonts_extra'] ?? '' ) as $family ) {
+			$families[] = SiteKitFonts::entry( 'g-' . strtolower( (string) preg_replace( '/[^a-z0-9]+/i', '-', $family ) ), $family, $v );
 		}
 		if ( $families !== [] ) {
 			$settings['typography']['fontFamilies'] = $families;
