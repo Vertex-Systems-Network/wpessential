@@ -388,3 +388,60 @@ test('Site Tools Kit: snippet save, disable, safe mode and explicit remove', asy
     if (!wasOn) await setModule(page, 'site-kit', false);
   }
 });
+
+test('Site Tools Kit: scoped browser snippets and opaque PHP isolation', async ({ page, anon, audit }) => {
+  await openAdmin(page, 'wpessential-module-site-kit');
+  const wasOn = (await toggle(page).getAttribute('aria-checked')) === 'true';
+  if (!wasOn) await setModule(page, 'site-kit', true);
+  const run = (code) => wp('--user=admin eval \'eval(base64_decode("' + Buffer.from(code).toString('base64') + '"));\'').trim().split('\n').at(-1);
+  const backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit_snippets", null)));');
+  let postId = 0;
+  try {
+    await audit('site-kit', 'priority, scoped browser output and inert unsupported rows', async () => {
+      postId = Number(run([
+        '$id = wp_insert_post(["post_title"=>"WP7 scope audit","post_type"=>"page","post_status"=>"publish","post_content"=>"<p id=\'wp7-content\'>Scope audit</p>"], true);',
+        'if (is_wp_error($id)) { throw new RuntimeException($id->get_error_message()); }',
+        '$base = ["title"=>"WP7 test","scope"=>"all","enabled"=>true,"condition"=>"pages","page_ids"=>[$id],"location"=>"head","priority"=>10];',
+        '$rows = [',
+        'array_replace($base, ["id"=>"wp7late","type"=>"js","priority"=>20,"code"=>"document.documentElement.dataset.wp7Order += \'b\';"]),',
+        'array_replace($base, ["id"=>"wp7early","type"=>"js","priority"=>1,"code"=>"document.documentElement.dataset.wp7Order = \'a\';"]),',
+        'array_replace($base, ["id"=>"wp7before","type"=>"html","location"=>"before_content","code"=>"<span id=\'wp7-before\'>Before</span>"]),',
+        'array_replace($base, ["id"=>"wp7after","type"=>"html","location"=>"after_content","code"=>"<span id=\'wp7-after\'>After</span>"]),',
+        'array_replace($base, ["id"=>"wp7admin","type"=>"html","condition"=>"all","location"=>"admin","code"=>"<span id=\'wp7-admin\'>Admin only</span>"]),',
+        'array_replace($base, ["id"=>"wp7login","type"=>"html","condition"=>"all","location"=>"login","code"=>"<span id=\'wp7-login\'>Login only</span>"]),',
+        'array_replace($base, ["id"=>"wp7opaque","title"=>"WP7 opaque PHP","type"=>"php","code"=>"opaque-wp7-marker"]),',
+        ']; update_option("wpessential_site_kit_snippets", $rows); echo $id;',
+      ].join('\n')));
+      expect(postId).toBeGreaterThan(0);
+      const front = await page.context().newPage();
+      try {
+        await front.goto(BASE + '/?page_id=' + postId, { waitUntil: 'load' });
+        await expect(front.locator('html')).toHaveAttribute('data-wp7-order', 'ab');
+        await expect(front.locator('#wp7-before')).toBeVisible();
+        await expect(front.locator('#wp7-after')).toBeVisible();
+        await expect(front.locator('#wp7-admin, #wp7-login')).toHaveCount(0);
+        expect(await front.content()).not.toContain('opaque-wp7-marker');
+        await front.goto(BASE + '/', { waitUntil: 'load' });
+        await expect(front.locator('html')).not.toHaveAttribute('data-wp7-order', 'ab');
+        await expect(front.locator('#wp7-before, #wp7-after')).toHaveCount(0);
+        await front.goto(BASE + '/?page_id=' + postId + '&wpe-safe-mode=1', { waitUntil: 'load' });
+        await expect(front.locator('#wp7-before, #wp7-after, #wpe-snippet-wp7early, #wpe-snippet-wp7late')).toHaveCount(0);
+        await openAdmin(page, 'wpessential-site-kit&group=snippets');
+        await expect(page.locator('#wp7-admin')).toHaveCount(1);
+        await expect(page.locator('#wp7-login')).toHaveCount(0);
+        await expect(page.getByRole('group', { name: 'WP7 opaque PHP', exact: true })).toHaveCount(0);
+        const login = await anon.get(BASE + '/wp-login.php');
+        expect(await login.text()).toContain('wp7-login');
+        const nav = page.waitForEvent('load');
+        await page.locator('#wpe-sk-snippets').getByRole('button', { name: 'Save snippets', exact: true }).click();
+        await nav;
+        expect(run('$rows = get_option("wpessential_site_kit_snippets", []); foreach ($rows as $row) { if ($row["id"] === "wp7opaque") { echo $row["type"] . ":" . $row["code"]; } }')).toBe('php:opaque-wp7-marker');
+      } finally {
+        await front.close();
+      }
+    });
+  } finally {
+    run('if (' + postId + ' > 0) { wp_delete_post(' + postId + ', true); } $old = json_decode(base64_decode("' + backup + '"), true); if ($old === null) { delete_option("wpessential_site_kit_snippets"); } else { update_option("wpessential_site_kit_snippets", $old); } echo "restored";');
+    if (!wasOn) await setModule(page, 'site-kit', false);
+  }
+});
