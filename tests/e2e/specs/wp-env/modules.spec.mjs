@@ -539,6 +539,9 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       const normal = states.getByRole('tab', { name: 'Normal', exact: true });
       await expect(normal).toBeVisible();
       await expect(normal).toHaveAttribute('aria-selected', 'true');
+      const controlledIds = (await normal.getAttribute('aria-controls')).split(' ');
+      expect(controlledIds).toContain(await control('btn_bg').locator('xpath=ancestor::li[contains(@class,"customize-control")]').getAttribute('id'));
+      expect(await states.evaluate((bar) => bar.scrollWidth <= bar.clientWidth)).toBe(true);
       await expect(control('btn_bg')).toBeVisible();
       await expect(control('btn_hover_bg')).toBeHidden();
       await normal.focus();
@@ -576,7 +579,11 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect(adminSize.locator('.wpec-range__num')).toHaveValue('19');
       await openAdmin(page, 'wpessential-site-kit&group=button');
       const adminStates = page.locator('#wpe-sk-button').getByRole('tablist', { name: 'State' });
-      await adminStates.getByRole('tab', { name: 'Hover', exact: true }).click();
+      const hoverTab = adminStates.getByRole('tab', { name: 'Hover', exact: true });
+      const hoverIds = (await hoverTab.getAttribute('aria-controls')).split(' ');
+      expect(await page.evaluate((ids) => ids.every((id) => Boolean(document.getElementById(id))), hoverIds)).toBe(true);
+      expect(await adminStates.evaluate((bar) => bar.scrollWidth <= bar.clientWidth)).toBe(true);
+      await hoverTab.click();
       await expect(page.locator('#wpe-sk-button .wpec').filter({ has: page.locator('input[name="values[btn_hover_bg]"]') }).locator('.wpec-color__hex')).toHaveValue('#567890');
       await adminStates.getByRole('tab', { name: 'Focus', exact: true }).click();
       await expect(page.locator('#wpe-sk-button .wpec').filter({ has: page.locator('input[name="values[btn_focus_bg]"]') }).locator('.wpec-color__hex')).toHaveValue('#654321');

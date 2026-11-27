@@ -47,6 +47,7 @@ function bindField( root: HTMLElement ): void {
 }
 
 // State tabs are shared by admin forms and native Customizer control lists.
+let stateControlId = 0;
 const stateGroups = new WeakMap< HTMLElement, { items: HTMLElement[]; select: ( key: string, focus?: boolean ) => void; current: () => string; host: HTMLElement } >();
 
 function stateTabs( container: HTMLElement, items = Array.from( container.querySelectorAll< HTMLElement >( '[data-wpec-tab]' ) ), customizer = false ): void {
@@ -79,11 +80,23 @@ function stateTabs( container: HTMLElement, items = Array.from( container.queryS
 		} );
 	};
 	states.forEach( ( [ key, label ], index ) => {
+		const controlled = items.filter( ( item ) => item.dataset.wpecTab === key ).map( ( item ) => {
+			if ( ! item.id ) {
+				let id: string;
+				do {
+					stateControlId += 1;
+					id = `wpe-sitekit-state-control-${ stateControlId }`;
+				} while ( document.getElementById( id ) );
+				item.id = id;
+			}
+			return item.id;
+		} );
 		const button = h( 'button', {
 			type: 'button',
 			role: 'tab',
 			class: 'wpec-seg__btn',
 			'data-state': key,
+			'aria-controls': controlled.join( ' ' ),
 			text: label,
 			onclick: () => select( key ),
 		} );
