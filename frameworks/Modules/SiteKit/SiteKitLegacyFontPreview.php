@@ -44,12 +44,46 @@ final class SiteKitLegacyFontPreview {
 		return $out;
 	}
 
+	/** The extended contract explicitly supports suppressing legacy extra font lists. */
+	public static function remoteSupported(): bool {
+		return SiteKitLegacyPreview::supported() && apply_filters( 'wpessential_site_kit_remote_font_handoff', false ) === true;
+	}
+
+	/**
+	 * Remote-only slice. Local cache ownership is intentionally not transferred:
+	 * copying a local selection without its cached files can cause a remote request.
+	 *
+	 * @param array<string,mixed> $legacy
+	 * @param array<string,mixed> $canonical
+	 * @return array<string,string>
+	 */
+	public static function remoteCandidates( array $legacy, array $canonical ): array {
+		if ( SiteKitFonts::local( $legacy ) || SiteKitFonts::local( $canonical ) ) {
+			return [];
+		}
+		return self::assess( $legacy, [ 'fonts_delivery' => 'google' ], [] )['ready'];
+	}
+
+	/**
+	 * @param array<string,mixed> $legacy
+	 * @param array<string,mixed> $canonical
+	 * @return array<string,string>
+	 */
+	public static function candidates( array $legacy, array $canonical ): array {
+		$bundled = self::bundledCandidates( $legacy );
+		return self::remoteSupported() ? $bundled + self::remoteCandidates( $legacy, $canonical ) : $bundled;
+	}
+
 	/**
 	 * @param list<string> $handed
 	 * @return list<string>
 	 */
 	public static function ownedKeys( array $handed ): array {
-		return self::bundledReferences() === [] ? [] : array_values( array_intersect( $handed, self::ROLES ) );
+		$eligible = self::bundledReferences() === [] ? [] : self::ROLES;
+		if ( self::remoteSupported() ) {
+			$eligible = array_merge( $eligible, [ 'fonts_extra' ] );
+		}
+		return array_values( array_intersect( $handed, $eligible ) );
 	}
 
 	/**
