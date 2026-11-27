@@ -719,7 +719,9 @@ types.breakpoints = ( ctx ) => {
 	const write = ( key: string, patch: { on?: boolean; w?: number } ): void => {
 		const value = read();
 		value[ key ] = { ...( value[ key ] ?? {} ), ...patch };
-		ctx.set( stringify( value ) );
+		// Explicit false overrides a default-enabled breakpoint. The generic
+		// composite cleaner drops false values, so do not use it for this schema.
+		ctx.set( JSON.stringify( value ) );
 	};
 	const list = h( 'div', { class: 'wpec-bps' } );
 	for ( const [ key, b ] of Object.entries( all ) ) {

@@ -292,6 +292,21 @@ final class SiteKitTest extends TestCase
         self::assertSame(['fonts_extra'], $class::assess(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'Roboto'], [])['conflicts']);
     }
 
+    public function testExplicitFalseBreakpointSurvivesCustomizerAndStore(): void
+    {
+        $field = \WPEssential\Modules\SiteKit\SiteKitSchema::field('breakpoints');
+        self::assertNotNull($field);
+        $raw = '{"mobile":{"on":false},"mobile_small":{"on":true,"w":420}}';
+        $value = \WPEssential\Modules\SiteKit\SiteKitCustomizer::sanitize($field, $raw);
+        self::assertSame(['mobile' => ['on' => false], 'mobile_small' => ['on' => true, 'w' => 420]], $value);
+        $store = new SiteKitStore();
+        $store->update(['breakpoints' => $raw]);
+        self::assertSame($value, $store->values()['breakpoints']);
+        $enabled = \WPEssential\Modules\SiteKit\SiteKitBreakpoints::enabled($value);
+        self::assertArrayNotHasKey('mobile', $enabled);
+        self::assertSame(420, $enabled['mobile_small']['width']);
+    }
+
     public function testStoreReportsChangesAndResetsGroups(): void
     {
         $store = new SiteKitStore();

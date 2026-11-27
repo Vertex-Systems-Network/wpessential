@@ -552,7 +552,8 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await page.locator('.wp-full-overlay-footer .devices button[data-device="mobile"]').click();
       await expect.poll(() => page.evaluate(() => window.wp.customize.previewedDevice.get())).toBe('desktop');
       await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile');
-      await phoneEnabled.check();
+      // Keep Phone explicitly disabled through publish and reload.
+      await expect(phoneEnabled).not.toBeChecked();
       await expandSection('type', 'size_body');
       await size.fill('19');
       await expect.poll(() => page.evaluate((id) => window.wp.customize(id).get(), setting('size_body'))).toMatch(/19/);
@@ -588,11 +589,18 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       expect(JSON.stringify(values.size_body)).toContain('19');
       expect(JSON.stringify(values.size_body.mobile_small)).toContain('15');
       expect(values.breakpoints.mobile_small).toEqual({ on: true, w: 420 });
+      expect(values.breakpoints.mobile.on).toBe(false);
       expect(values.btn_hover_bg).toBe('#567890');
       expect(values.btn_focus_bg).toBe('#654321');
       expect(run('echo base64_encode(wp_json_encode(get_theme_mod("wpessential_site", null)));')).toBe(legacy);
       await openAdmin(page, 'wpessential-site-kit&group=colors');
       await expect(adminField.locator('.wpec-color__hex')).toHaveValue('#345678');
+      await openAdmin(page, 'wpessential-site-kit&group=layout');
+      const adminPhone = page.locator('#wpe-sk-layout').getByRole('switch', { name: 'Phone', exact: true });
+      await expect(adminPhone).not.toBeChecked();
+      await adminPhone.check();
+      await page.locator('#wpe-sk-layout').getByRole('button', { name: 'Save changes', exact: true }).click();
+      await expect.poll(() => stored().values.breakpoints.mobile.on).toBe(true);
       await openAdmin(page, 'wpessential-site-kit&group=type');
       const adminSize = page.locator('.wpec').filter({ has: page.locator('input[name="values[size_body]"]') });
       await expect(adminSize.locator('.wpec-range__num')).toHaveValue('19');
