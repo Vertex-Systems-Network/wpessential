@@ -521,12 +521,24 @@ test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async
     wp('theme activate hi-wpessential');
     expect(run('echo get_template();')).toBe('hi-wpessential');
     themeBackup = run('echo base64_encode(wp_json_encode(get_theme_mods()));');
+    // First admin request after a theme switch can open the one-time Base demo
+    // onboarding wizard. Consume that redirect without importing a demo.
+    await page.goto(BASE + '/wp-admin/index.php', { waitUntil: 'load' });
+    if (new URL(page.url()).searchParams.get('page') === 'wpessential-demos') {
+      const close = page.getByRole('button', { name: 'Close', exact: true });
+      await expect(close).toBeVisible();
+      await close.click();
+    }
+    await openAdmin(page, 'wpessential-module-site-kit');
+    await expect(toggle(page)).toBeVisible();
     if (!wasOn) await setModule(page, 'site-kit', true);
     await audit('site-kit', 'paired theme retains legacy data and delegates transferred palette fields', async () => {
       run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456"]]); wp_clean_theme_json_cache(); echo "ready";');
       const original = read().legacy;
       expect(read().effective.color_secondary).toBe('#112233');
       await openAdmin(page, 'wpessential-site-kit&group=colors');
+      await expect(page).toHaveURL(/page=wpessential-site-kit&group=colors/);
+      await expect(page.locator('#wpe-sk-colors')).toBeVisible();
       const transfer = page.getByRole('button', { name: 'Transfer legacy palette ownership', exact: true });
       await expect(transfer).toBeVisible();
       const navigation = page.waitForEvent('load');
