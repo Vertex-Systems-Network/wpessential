@@ -153,8 +153,8 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
   if (!wasOn) await setModule(page, 'site-kit', true);
   try {
     await audit('site-kit', 'registered blocks and widgets inherit global token slugs', async () => {
-      // Seed in a separate request: Elementor can cache controls during initialization.
-      const run = (code) => wp(`--user=admin eval 'eval(base64_decode("${Buffer.from(code).toString('base64')}"));'`).trim().split('\n').at(-1);
+      // Seed separately, then inspect in admin context: Elementor strips options on frontend requests.
+      const run = (code) => wp(`--context=admin --user=admin eval 'eval(base64_decode("${Buffer.from(code).toString('base64')}"));'`).trim().split('\n').at(-1);
       const backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit", null)));');
       try {
         run(`
@@ -166,6 +166,7 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
           echo "seeded";
         `);
         const result = JSON.parse(run(`
+          if (!is_admin()) { throw new \\RuntimeException("Expected admin context for Elementor editor metadata"); }
           $type = \\WP_Block_Type_Registry::get_instance()->get_registered("wpessential/heading");
           if (!$type) { throw new \\RuntimeException("Missing heading block"); }
           $attrs = ["anchor" => "wp5-e2e-heading", "text" => "Token heading", "titleTypography" => ["preset" => "wpe-custom-e2e-kit-display", "weight" => "600"], "titleColor" => ["normal" => "wpe-custom-e2e-kit-brand"]];
