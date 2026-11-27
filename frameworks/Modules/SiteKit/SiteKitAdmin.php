@@ -329,7 +329,7 @@ final class SiteKitAdmin {
 			'type'     => 'css',
 			'scope'    => 'all',
 			'location' => 'footer',
-			'enabled'  => true,
+			'enabled'  => false,
 			'code'     => '',
 		];
 		$html   = '<section id="wpe-sk-snippets" class="wpe-ui-panel wpe-ui-sitekit__panel" role="tabpanel" aria-labelledby="wpe-sk-tab-snippets" data-wpe-panel' . ( $active ? '' : ' hidden' ) . '>';
@@ -373,6 +373,18 @@ final class SiteKitAdmin {
 				],
 				(string) $row['location']
 			) . '</span>';
+			$html .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Condition', 'wpessential' ) . '</span>' . self::select(
+				'wpe-sk-snippet-' . $index . '-condition',
+				$prefix . '[condition]',
+				[
+					'all'   => __( 'All pages', 'wpessential' ),
+					'front' => __( 'Front page', 'wpessential' ),
+					'pages' => __( 'Specific page IDs', 'wpessential' ),
+				],
+				(string) ( $row['condition'] ?? 'all' )
+			) . '</span>';
+			$html .= '<label class="wpe-ui-sitekit__mini">' . esc_html__( 'Page IDs (comma separated)', 'wpessential' ) . '<input type="text" name="' . esc_attr( $prefix . '[page_ids]' ) . '" value="' . esc_attr( implode( ',', (array) ( $row['page_ids'] ?? [] ) ) ) . '"></label>';
+			$html .= '<label class="wpe-ui-sitekit__mini">' . esc_html__( 'Priority', 'wpessential' ) . '<input type="number" min="0" max="1000" name="' . esc_attr( $prefix . '[priority]' ) . '" value="' . esc_attr( (string) ( $row['priority'] ?? 10 ) ) . '"></label>';
 			$html  .= '<input type="hidden" name="' . esc_attr( $prefix . '[enabled]' ) . '" value="">' . Check::render(
 				__( 'Enabled', 'wpessential' ),
 				[

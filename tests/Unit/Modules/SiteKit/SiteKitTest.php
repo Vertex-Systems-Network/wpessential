@@ -12,6 +12,27 @@ use WPEssential\Modules\SiteKit\SiteKitStore;
 
 final class SiteKitTest extends TestCase
 {
+    public function testSnippetMetadataAndRestrictedReplacement(): void
+    {
+        $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}', 'enabled' => true];
+        $js = ['id' => 'js1', 'type' => 'js', 'code' => 'console.log(1);', 'enabled' => true];
+        $clean = \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + [
+            'condition' => 'pages', 'page_ids' => '3, 7, 3, bad, -5', 'priority' => 2000,
+        ], false);
+        self::assertSame([3, 7], $clean['page_ids']);
+        self::assertSame(1000, $clean['priority']);
+        self::assertTrue(\WPEssential\Modules\SiteKit\SiteKitSnippets::matches($clean, false, 7));
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::matches($clean, true, 8));
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::matches(['condition' => 'unknown'], true, 7));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'php', 'code' => 'return 1;'], true));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'css', 'code' => ''], false));
+        $result = \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows([$js], [$css, array_replace($css, ['id' => 'js1'])], false);
+        self::assertCount(2, $result);
+        self::assertSame($js, $result[1]);
+        self::assertSame([$js], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows([$js], [], false));
+        self::assertSame(['js1', 'css1'], array_column(\WPEssential\Modules\SiteKit\SiteKitSnippets::ordered([$clean, $js]), 'id'));
+    }
+
     public function testSchemaCoversEveryPortedGroup(): void
     {
         $groups = array_keys(SiteKitSchema::sections());

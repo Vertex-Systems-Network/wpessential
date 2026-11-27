@@ -29,7 +29,7 @@ final class SiteKitSnippets {
 		add_action( 'wp_footer', [ $this, 'footerScripts' ], 99 );
 	}
 
-	/** @return list<array{id:string,title:string,type:string,scope:string,location:string,enabled:bool,code:string,updated:int}> */
+	/** @return list<array{id:string,title:string,type:string,scope:string,location:string,enabled:bool,code:string,updated:int,condition?:string,page_ids?:list<int>,priority?:int}> */
 	public function all(): array {
 		$stored = function_exists( 'get_option' ) ? get_option( self::OPTION, [] ) : [];
 
@@ -43,30 +43,53 @@ final class SiteKitSnippets {
 	 * @return list<array<string,mixed>>
 	 */
 	public function save( array $snippets, bool $canJs ): array {
-		$existing = [];
-		foreach ( $this->all() as $snippet ) {
-			$existing[ $snippet['id'] ] = $snippet;
-		}
-		$out = [];
-		foreach ( $snippets as $raw ) {
-			$clean = self::clean( (array) $raw, $canJs );
-			if ( $clean !== null ) {
-				$out[] = $clean;
-			} elseif ( isset( $raw['id'], $existing[ $raw['id'] ] ) ) {
-				$out[] = $existing[ $raw['id'] ];
-			}
-		}
+		$out = self::mergeRows( $this->all(), $snippets, $canJs );
 		update_option( self::OPTION, $out );
 
 		return $out;
 	}
 
 	/**
+	 * Restricted users cannot replace, relabel or remove existing privileged snippets.
+	 *
+	 * @param list<array<string,mixed>> $existing
+	 * @param list<array<string,mixed>> $submitted
+	 * @return list<array<string,mixed>>
+	 */
+	public static function mergeRows( array $existing, array $submitted, bool $canJs ): array {
+		$protected = [];
+		foreach ( $existing as $row ) {
+			if ( ! $canJs && ( $row['type'] ?? '' ) !== 'css' && is_string( $row['id'] ?? null ) ) {
+				$protected[ $row['id'] ] = $row;
+			}
+		}
+		$out = [];
+		foreach ( $submitted as $raw ) {
+			$id = self::id( $raw['id'] ?? '' );
+			if ( isset( $protected[ $id ] ) ) {
+				continue;
+			}
+			$clean = self::clean( $raw, $canJs );
+			if ( $clean !== null && ! isset( $out[ $clean['id'] ] ) ) {
+				$out[ $clean['id'] ] = $clean;
+			}
+		}
+		return array_values( $out + $protected );
+	}
+
+	private static function id( mixed $value ): string {
+		return substr( strtolower( (string) preg_replace( '/[^a-z0-9]/i', '', is_scalar( $value ) ? (string) $value : '' ) ), 0, 32 );
+	}
+
+	/**
 	 * @param array<string,mixed> $snippet
-	 * @return array{id:string,title:string,type:string,scope:string,location:string,enabled:bool,code:string,updated:int}|null
+	 * @return array{id:string,title:string,type:string,scope:string,location:string,enabled:bool,code:string,updated:int,condition?:string,page_ids?:list<int>,priority?:int}|null
 	 */
 	public static function clean( array $snippet, bool $canJs ): ?array {
-		$type = in_array( $snippet['type'] ?? '', [ 'css', 'js' ], true ) ? (string) $snippet['type'] : 'css';
+		$type = $snippet['type'] ?? 'css';
+		if ( ! in_array( $type, [ 'css', 'js' ], true ) ) {
+			return null;
+		}
 		if ( $type === 'js' && ! $canJs ) {
 			return null;
 		}
@@ -74,8 +97,25 @@ final class SiteKitSnippets {
 		if ( $type === 'css' ) {
 			$code = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $code ) : $code;
 		}
-		$id    = strtolower( (string) preg_replace( '/[^a-z0-9]/i', '', is_scalar( $snippet['id'] ?? null ) ? (string) $snippet['id'] : '' ) );
+		if ( trim( $code ) === '' ) {
+			return null;
+		}
+		$id = self::id( $snippet['id'] ?? '' );
 		$title = is_scalar( $snippet['title'] ?? null ) ? trim( wp_strip_all_tags( (string) $snippet['title'] ) ) : '';
+
+		$condition = $snippet['condition'] ?? 'all';
+		if ( ! in_array( $condition, [ 'all', 'front', 'pages' ], true ) ) {
+			return null;
+		}
+		$ids = $snippet['page_ids'] ?? [];
+		$ids = is_string( $ids ) ? preg_split( '/[\s,]+/', $ids, -1, PREG_SPLIT_NO_EMPTY ) : $ids;
+		$pageIds = [];
+		foreach ( is_array( $ids ) ? $ids : [] as $value ) {
+			if ( ( is_int( $value ) || is_string( $value ) ) && preg_match( '/^[1-9][0-9]*$/D', (string) $value ) === 1 ) {
+				$pageIds[] = (int) $value;
+			}
+		}
+		$priority = is_numeric( $snippet['priority'] ?? null ) ? max( 0, min( 1000, (int) $snippet['priority'] ) ) : 10;
 
 		return [
 			'id'       => $id !== '' ? substr( $id, 0, 32 ) : substr( md5( uniqid( '', true ) ), 0, 8 ),
@@ -86,7 +126,35 @@ final class SiteKitSnippets {
 			'enabled'  => ! empty( $snippet['enabled'] ),
 			'code'     => $code,
 			'updated'  => time(),
+			'condition' => $condition,
+			'page_ids' => array_values( array_unique( array_slice( $pageIds, 0, 100 ) ) ),
+			'priority' => $priority,
 		];
+	}
+
+	/**
+	 * Stable priority ordering, preserving legacy insertion order on ties.
+	 * @param list<array<string,mixed>> $rows
+	 * @return list<array<string,mixed>>
+	 */
+	public static function ordered( array $rows ): array {
+		usort( $rows, static fn ( array $a, array $b ): int => (int) ( $a['priority'] ?? 10 ) <=> (int) ( $b['priority'] ?? 10 ) );
+		return $rows;
+	}
+
+	/** @param array<string,mixed> $row */
+	public static function matches( array $row, bool $front, int $pageId ): bool {
+		return match ( $row['condition'] ?? 'all' ) {
+			'all'   => true,
+			'front' => $front,
+			'pages' => $pageId > 0 && in_array( $pageId, (array) ( $row['page_ids'] ?? [] ), true ),
+			default => false,
+		};
+	}
+
+	/** @return list<array<string,mixed>> */
+	private function eligible(): array {
+		return array_values( array_filter( self::ordered( $this->all() ), static fn ( array $row ): bool => self::matches( $row, is_front_page(), is_page() ? get_queried_object_id() : 0 ) ) );
 	}
 
 	private static function safeMode(): bool {
@@ -98,7 +166,7 @@ final class SiteKitSnippets {
 			return;
 		}
 		$css = '';
-		foreach ( $this->all() as $snippet ) {
+		foreach ( $this->eligible() as $snippet ) {
 			if ( $snippet['type'] !== 'css' || ! $snippet['enabled'] || trim( $snippet['code'] ) === '' ) {
 				continue;
 			}
@@ -125,7 +193,7 @@ final class SiteKitSnippets {
 		if ( self::safeMode() ) {
 			return;
 		}
-		foreach ( $this->all() as $snippet ) {
+		foreach ( $this->eligible() as $snippet ) {
 			if ( $snippet['type'] === 'js' && $snippet['enabled'] && $snippet['location'] === $location && trim( $snippet['code'] ) !== '' ) {
 				wp_print_inline_script_tag( $snippet['code'], [ 'id' => 'wpe-snippet-' . $snippet['id'] ] );
 			}
