@@ -561,6 +561,9 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       const normal = states.getByRole('tab', { name: 'Normal', exact: true });
       await expect(normal).toBeVisible();
       await expect(normal).toHaveAttribute('aria-selected', 'true');
+      const controlledIds = (await normal.getAttribute('aria-controls')).split(' ');
+      expect(controlledIds).toContain(await control('btn_bg').locator('xpath=ancestor::li[contains(@class,"customize-control")]').getAttribute('id'));
+      expect(await states.evaluate((bar) => bar.scrollWidth <= bar.clientWidth)).toBe(true);
       await expect(control('btn_bg')).toBeVisible();
       await expect(control('btn_hover_bg')).toBeHidden();
       await normal.focus();
@@ -598,7 +601,11 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect(adminSize.locator('.wpec-range__num')).toHaveValue('19');
       await openAdmin(page, 'wpessential-site-kit&group=button');
       const adminStates = page.locator('#wpe-sk-button').getByRole('tablist', { name: 'State' });
-      await adminStates.getByRole('tab', { name: 'Hover', exact: true }).click();
+      const hoverTab = adminStates.getByRole('tab', { name: 'Hover', exact: true });
+      const hoverIds = (await hoverTab.getAttribute('aria-controls')).split(' ');
+      expect(await page.evaluate((ids) => ids.every((id) => Boolean(document.getElementById(id))), hoverIds)).toBe(true);
+      expect(await adminStates.evaluate((bar) => bar.scrollWidth <= bar.clientWidth)).toBe(true);
+      await hoverTab.click();
       await expect(page.locator('#wpe-sk-button .wpec').filter({ has: page.locator('input[name="values[btn_hover_bg]"]') }).locator('.wpec-color__hex')).toHaveValue('#567890');
       await adminStates.getByRole('tab', { name: 'Focus', exact: true }).click();
       await expect(page.locator('#wpe-sk-button .wpec').filter({ has: page.locator('input[name="values[btn_focus_bg]"]') }).locator('.wpec-color__hex')).toHaveValue('#654321');
@@ -647,7 +654,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
     await expect(toggle(page)).toBeVisible();
     if (!wasOn) await setModule(page, 'site-kit', true);
     await audit('site-kit', 'paired theme retains legacy data and delegates compatible settings', async () => {
-      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"360|320"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8]]); wp_clean_theme_json_cache(); echo "ready";');
+      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","font_heading"=>"google:Roboto","fonts_extra"=>"Roboto|Inter","fonts_delivery"=>"google","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"360|320"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8,"fonts_delivery"=>"google"]]); wp_clean_theme_json_cache(); echo "ready";');
       const original = read().legacy;
       expect(read().effective.color_secondary).toBe('#112233');
       await openAdmin(page, 'wpessential-site-kit&group=colors');
@@ -680,6 +687,13 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(migrated.legacy.font_body).toBe('Inter');
       expect(migrated.canonical.values.font_body).toBe('theme:hi-wpessential-inter');
       expect(migrated.handed).toContain('font_body');
+      expect(migrated.canonical.values.font_heading).toBe('google:Roboto');
+      expect(migrated.canonical.values.fonts_extra).toBe('Roboto|Inter');
+      expect(migrated.effective.font_heading).toBeUndefined();
+      expect(migrated.effective.fonts_extra).toBeUndefined();
+      expect(migrated.effective.fonts_delivery).toBe('google');
+      expect(migrated.handed).toEqual(expect.arrayContaining(['font_heading', 'fonts_extra']));
+      expect(migrated.handed).not.toContain('fonts_delivery');
       const compiledFonts = JSON.parse(run('echo wp_json_encode(wp_get_global_settings(["typography","fontFamilies"]));'));
       const allFonts = Object.values(compiledFonts).flat();
       expect(allFonts.find((font) => font.slug === 'hi-wpessential-inter')?.fontFamily).toBe('Inter, system-ui, sans-serif');
@@ -733,6 +747,8 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(read().effective.color_secondary).toBe('#112233');
       expect(read().effective.btn_radius).toBe('0');
       expect(read().effective.font_body).toBe('Inter');
+      expect(read().effective.font_heading).toBe('google:Roboto');
+      expect(read().effective.fonts_extra).toBe('Roboto|Inter');
       expect(read().effective.field_radius).toBe('12');
       expect(read().legacy).toEqual(original);
       await setModule(page, 'site-kit', true);
