@@ -153,8 +153,9 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
   if (!wasOn) await setModule(page, 'site-kit', true);
   try {
     await audit('site-kit', 'registered blocks and widgets inherit global token slugs', async () => {
-      // Seed separately, then inspect in admin context: Elementor strips options on frontend requests.
-      const run = (code) => wp(`--context=admin --user=admin eval 'eval(base64_decode("${Buffer.from(code).toString('base64')}"));'`).trim().split('\n').at(-1);
+      // Seed and restore in normal CLI context. Inspect in admin context because Elementor strips
+      // options on frontend requests; skip WooCommerce only there to avoid its CLI admin-menu fatal.
+      const run = (code, admin = false) => wp(`${admin ? '--context=admin --skip-plugins=woocommerce ' : ''}--user=admin eval 'eval(base64_decode("${Buffer.from(code).toString('base64')}"));'`).trim().split('\n').at(-1);
       const backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit", null)));');
       try {
         run(`
@@ -185,7 +186,7 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
             "colour" => isset($colour["options"]["wpe-custom-e2e-kit-brand"]),
             "premium" => \\WPEssential\\Modules\\SiteKit\\SiteKitElementor::enabled(),
           ]);
-        `));
+        `, true));
         expect(result, JSON.stringify(result)).toEqual({
           blockSize: true, blockWeight: true, blockColour: true, typography: true, colour: true,
           premium: process.env.WPE_E2E_PRO === '1',
