@@ -9,8 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Pure legacy theme migration assessment and palette ownership contract.
- * Only a narrow set of semantically matching colour fields is import-ready.
+ * Pure legacy theme migration assessment and palette/scalar ownership contract.
  */
 final class SiteKitLegacyPreview {
 
@@ -66,7 +65,9 @@ final class SiteKitLegacyPreview {
 		}
 		$legacy = get_theme_mod( 'wpessential_site', [] );
 		$handed = get_theme_mod( self::HANDOFF_MOD, [] );
-		return self::ownedKeys( is_array( $legacy ) ? $legacy : [], is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [] );
+		$legacy = is_array( $legacy ) ? $legacy : [];
+		$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
+		return array_values( array_unique( array_merge( self::ownedKeys( $legacy, $handed ), SiteKitLegacyScalarPreview::confirmedKeys( [], [], $handed ) ) ) );
 	}
 
 	/**

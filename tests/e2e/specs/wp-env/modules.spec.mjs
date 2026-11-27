@@ -508,7 +508,7 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
   }
 });
 
-test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async ({ page, audit }) => {
+test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallback', async ({ page, audit }) => {
   test.skip(process.env.WPE_E2E_THEME_PAIR !== '1', 'Requires the pinned companion theme fixture.');
   await openAdmin(page, 'wpessential-module-site-kit');
   const wasOn = (await toggle(page).getAttribute('aria-checked')) === 'true';
@@ -533,14 +533,14 @@ test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async
     await openAdmin(page, 'wpessential-module-site-kit');
     await expect(toggle(page)).toBeVisible();
     if (!wasOn) await setModule(page, 'site-kit', true);
-    await audit('site-kit', 'paired theme retains legacy data and delegates transferred palette fields', async () => {
-      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456"]]); wp_clean_theme_json_cache(); echo "ready";');
+    await audit('site-kit', 'paired theme retains legacy data and delegates compatible settings', async () => {
+      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8]]); wp_clean_theme_json_cache(); echo "ready";');
       const original = read().legacy;
       expect(read().effective.color_secondary).toBe('#112233');
       await openAdmin(page, 'wpessential-site-kit&group=colors');
       await expect(page).toHaveURL(/page=wpessential-site-kit&group=colors/);
       await expect(page.locator('#wpe-sk-colors')).toBeVisible();
-      const transfer = page.getByRole('button', { name: 'Transfer legacy palette ownership', exact: true });
+      const transfer = page.getByRole('button', { name: 'Transfer compatible legacy settings', exact: true });
       await expect(transfer).toBeVisible();
       const navigation = page.waitForEvent('load');
       await transfer.click();
@@ -549,7 +549,13 @@ test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async
       expect(migrated.legacy).toEqual(original);
       expect(migrated.canonical.values.color_primary).toBe('#123456');
       expect(migrated.canonical.values.color_secondary).toBe('#112233');
-      expect(migrated.handed).toEqual(expect.arrayContaining(['color_primary', 'color_secondary']));
+      expect(migrated.handed).toEqual(expect.arrayContaining(['color_primary', 'color_secondary', 'btn_radius', 'field_radius']));
+      expect(migrated.canonical.values.btn_radius).toBe(0);
+      expect(migrated.canonical.values.field_radius).toBe(8);
+      expect(migrated.effective.btn_radius).toBeUndefined();
+      expect(migrated.effective.field_radius).toBeUndefined();
+      expect(migrated.handed).not.toContain('radius_md');
+      expect(migrated.effective.radius_md).toBe('999');
       expect(migrated.effective.color_primary).toBeUndefined();
       expect(migrated.effective.color_secondary).toBeUndefined();
       expect(migrated.effective.font_body).toBe('Inter');
@@ -567,6 +573,8 @@ test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async
       expect(reset.handed).toContain('color_secondary');
       await setModule(page, 'site-kit', false);
       expect(read().effective.color_secondary).toBe('#112233');
+      expect(read().effective.btn_radius).toBe('0');
+      expect(read().effective.field_radius).toBe('12');
       expect(read().legacy).toEqual(original);
       await setModule(page, 'site-kit', true);
       expect(read().effective.color_secondary).toBeUndefined();

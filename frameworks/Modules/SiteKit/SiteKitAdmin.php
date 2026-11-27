@@ -79,7 +79,7 @@ final class SiteKitAdmin {
 		exit;
 	}
 
-	/** Explicit palette-only migration; no legacy values are deleted. */
+	/** Explicit palette and reviewed scalar migration; no legacy values are deleted. */
 	public function handleLegacyPalette(): void {
 		if ( ! current_user_can( SiteKitAbilities::CAPABILITY ) || get_template() !== 'hi-wpessential' ) {
 			wp_die( esc_html__( 'You are not allowed to migrate these settings.', 'wpessential' ), 'WPEssential', [ 'response' => 403 ] );
@@ -89,8 +89,10 @@ final class SiteKitAdmin {
 		if ( is_array( $legacy ) ) {
 			$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
 			$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
-			$review = SiteKitLegacyPreview::assess( array_diff_key( $legacy, array_fill_keys( $handed, true ) ), $this->store->values() );
-			$this->store->update( $review['ready'] );
+			$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
+			$review  = SiteKitLegacyPreview::assess( $pending, $this->store->values() );
+			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $this->store->values() );
+			$this->store->update( $review['ready'] + $scalar['ready'] );
 			$stored = $this->store->values();
 			$keys   = [];
 			foreach ( SiteKitLegacyPreview::handoffKeys( $legacy ) as $key ) {
@@ -98,7 +100,13 @@ final class SiteKitAdmin {
 					$keys[] = $key;
 				}
 			}
-			set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, array_values( array_unique( array_merge( $handed, $keys ) ) ) );
+			$keys = array_merge( $keys, SiteKitLegacyScalarPreview::confirmedKeys( $legacy, $stored, $handed ) );
+			$next = array_values( array_unique( array_merge( $handed, $keys ) ) );
+			if ( $next !== $handed ) {
+				set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, $next );
+				// Rebuild after the theme stops compiling the newly delegated fields.
+				$this->store->normalizeCustomizerSave();
+			}
 		}
 		wp_safe_redirect( AdminUrl::page( self::PAGE_SLUG, [ 'group' => 'colors' ] ) );
 		exit;
@@ -190,23 +198,26 @@ final class SiteKitAdmin {
 		}
 		$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
 		$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
-		$review = SiteKitLegacyPreview::assess( array_diff_key( $legacy, array_fill_keys( $handed, true ) ), $values );
-		$html   = Notice::render(
+		$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
+		$review  = SiteKitLegacyPreview::assess( $pending, $values );
+		$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $values );
+		$deferred = array_intersect( $review['deferred'], $scalar['deferred'] );
+		$html    = Notice::render(
 			'info',
 			sprintf(
-				/* translators: 1: import-ready colours, 2: conflicts, 3: deferred settings. */
-				__( 'Legacy theme settings review: %1$d compatible colours, %2$d conflicts and %3$d deferred values. Canonical colours take priority; original theme values are retained.', 'wpessential' ),
-				count( $review['ready'] ),
-				count( $review['conflicts'] ),
-				count( $review['deferred'] )
+				/* translators: 1: import-ready settings, 2: conflicts, 3: deferred settings. */
+				__( 'Legacy theme settings review: %1$d compatible values, %2$d conflicts and %3$d deferred values. Canonical settings take priority; original theme values are retained.', 'wpessential' ),
+				count( $review['ready'] ) + count( $scalar['ready'] ),
+				count( $review['conflicts'] ) + count( $scalar['conflicts'] ),
+				count( $deferred )
 			)
 		);
-		if ( $review['ready'] !== [] || $review['conflicts'] !== [] || array_diff( SiteKitLegacyPreview::handoffKeys( $legacy ), $handed ) !== [] ) {
+		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ) ), $handed ) !== [] ) {
 			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
 			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
-			$html .= '<p>' . esc_html__( 'Import compatible palette values and retain existing Site Tools Kit colours where they conflict. Other settings are not migrated.', 'wpessential' ) . '</p>';
-			$html .= Button::button( __( 'Transfer legacy palette ownership', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
+			$html .= '<p>' . esc_html__( 'Import compatible palette and scalar values while retaining existing Site Tools Kit settings where they conflict. Unsupported formats are not migrated.', 'wpessential' ) . '</p>';
+			$html .= Button::button( __( 'Transfer compatible legacy settings', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
 		}
 		return $html;
 	}
