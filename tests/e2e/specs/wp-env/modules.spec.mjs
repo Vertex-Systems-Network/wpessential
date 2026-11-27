@@ -204,3 +204,61 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
     if (!wasOn) await setModule(page, 'site-kit', false);
   }
 });
+
+test('Site Tools Kit: global styling defaults render on frontend', async ({ page, audit }) => {
+  await openAdmin(page, 'wpessential-module-site-kit');
+  const wasOn = (await toggle(page).getAttribute('aria-checked')) === 'true';
+  if (!wasOn) await setModule(page, 'site-kit', true);
+  const run = (code) => wp(`--user=admin eval 'eval(base64_decode("${Buffer.from(code).toString('base64')}"));'`).trim().split('\n').at(-1);
+  let postId = 0;
+  let backup = '';
+  try {
+    await audit('site-kit', 'computed image, form, link, button and shadow styling', async () => {
+      backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit", null)));');
+      postId = Number(run(`
+        $store = new \\WPEssential\\Modules\\SiteKit\\SiteKitStore();
+        $store->update([
+          'btn_variant_primary_bg' => '#123456',
+          'btn_scale_sm_height' => ['desktop' => ['size' => 40, 'unit' => 'px'], 'mobile' => ['size' => 32, 'unit' => 'px']],
+          'image_radius' => ['desktop' => ['size' => 9, 'unit' => 'px']],
+          'field_placeholder' => '#345678', 'link_decoration_style' => 'dotted',
+          'custom_shadows' => ['tokens' => [['name' => 'E2E card', 'slug' => 'wp6-card', 'shadow' => ['x' => 4, 'y' => 8, 'blur' => 16, 'spread' => -2, 'color' => '#123456']]]],
+        ]);
+        $content = '<!-- wp:wpessential/button ' . wp_json_encode(['text' => 'WP6 button', 'variant' => 'primary', 'size' => 'sm', 'url' => '#wp6']) . ' /-->';
+        $content .= '<!-- wp:html --><div class="entry-content" id="wp6-fixture"><figure class="wp-block-image"><img alt="Test" width="20" height="20" src="' . esc_url( includes_url('images/blank.gif') ) . '"></figure><form><label for="wp6-input">Field</label><input id="wp6-input" type="text" placeholder="Example"></form><a id="wp6-link" href="#wp6">Example link</a></div><!-- /wp:html -->';
+        $id = wp_insert_post(['post_title' => 'WP6 style audit', 'post_type' => 'page', 'post_status' => 'publish', 'post_content' => $content], true);
+        if (is_wp_error($id)) { throw new \\RuntimeException($id->get_error_message()); }
+        echo $id;
+      `));
+      expect(postId).toBeGreaterThan(0);
+      const frontend = await page.context().newPage();
+      try {
+        await frontend.setViewportSize({ width: 1280, height: 900 });
+        await frontend.goto(BASE + '/?page_id=' + postId, { waitUntil: 'load' });
+        const button = frontend.locator('.wpe-button__link').filter({ hasText: 'WP6 button' });
+        await expect(button).toHaveCSS('background-color', 'rgb(18, 52, 86)');
+        await expect(button).toHaveCSS('min-height', '40px');
+        await expect(frontend.locator('#wp6-fixture img')).toHaveCSS('border-radius', '9px');
+        await expect(frontend.locator('#wp6-link')).toHaveCSS('text-decoration-style', 'dotted');
+        expect(await frontend.locator('#wp6-input').evaluate((el) => getComputedStyle(el, '::placeholder').color)).toBe('rgb(52, 86, 120)');
+        const shadow = await frontend.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--wp--preset--shadow--wpe-custom-wp6-card').trim());
+        expect(shadow).toBe('4px 8px 16px -2px #123456');
+        await frontend.setViewportSize({ width: 390, height: 844 });
+        await expect(button).toHaveCSS('min-height', '32px');
+      } finally {
+        await frontend.close();
+      }
+    });
+  } finally {
+    if (backup) {
+      run(`
+        if (${postId || 0} > 0) { wp_delete_post(${postId || 0}, true); }
+        $old = json_decode(base64_decode("${backup}"), true);
+        if ($old === null) { delete_option('wpessential_site_kit'); } else { update_option('wpessential_site_kit', $old); }
+        wp_clean_theme_json_cache();
+        echo 'restored';
+      `);
+    }
+    if (!wasOn) await setModule(page, 'site-kit', false);
+  }
+});

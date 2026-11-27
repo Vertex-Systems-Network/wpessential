@@ -574,15 +574,7 @@ final class SiteKitCompiler {
 		if ( $gradients !== '' ) {
 			$css .= ':root{' . $gradients . '}';
 		}
-		$shadowVars = '';
-		foreach ( SiteKitTokens::shadows( $v['custom_shadows'] ?? [] ) as $token ) {
-			$shadowVars .= '--wp--preset--shadow--' . $token['slug'] . ':' . self::namedShadow( $token['shadow'] ) . ';';
-		}
-		if ( $shadowVars !== '' ) {
-			$css .= ':root{' . $shadowVars . '}';
-		}
 		$css .= self::tokenCss( $v );
-		$css .= self::buttonVariantCss( $v );
 		$css .= self::controls( $v );
 		if ( ! empty( $v['motion_off'] ) ) {
 			$css .= '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}';
@@ -797,6 +789,14 @@ final class SiteKitCompiler {
 		if ( $colours !== '' ) {
 			$css .= ':root{' . $colours . '}';
 		}
+		$shadowVars = '';
+		foreach ( SiteKitTokens::shadows( $v['custom_shadows'] ?? [] ) as $token ) {
+			$shadowVars .= '--wp--preset--shadow--' . $token['slug'] . ':' . self::namedShadow( $token['shadow'] ) . ';';
+		}
+		if ( $shadowVars !== '' ) {
+			$css .= ':root{' . $shadowVars . '}';
+		}
+		$css .= self::buttonVariantCss( $v );
 		foreach ( SiteKitTokens::typography( $v['custom_typography'] ?? [] ) as $token ) {
 			$slug   = $token['slug'];
 			$styles = self::typography( $token['typography'], array_keys( $devices ) );
