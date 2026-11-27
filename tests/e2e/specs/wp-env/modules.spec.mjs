@@ -525,9 +525,10 @@ test('Site Tools Kit: paired Hi WPEssential palette handoff and fallback', async
     // onboarding wizard. Consume that redirect without importing a demo.
     await page.goto(BASE + '/wp-admin/index.php', { waitUntil: 'load' });
     if (new URL(page.url()).searchParams.get('page') === 'wpessential-demos') {
-      const close = page.getByRole('button', { name: 'Close', exact: true });
+      const close = page.locator('.wpe-ui-demowiz__close[aria-label="Close"]');
       await expect(close).toBeVisible();
       await close.click();
+      await expect(close).not.toBeVisible();
     }
     await openAdmin(page, 'wpessential-module-site-kit');
     await expect(toggle(page)).toBeVisible();
