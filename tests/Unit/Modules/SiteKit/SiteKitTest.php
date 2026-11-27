@@ -191,6 +191,33 @@ final class SiteKitTest extends TestCase
         self::assertStringNotContainsString('text-decoration-style:', SiteKitCompiler::css([]));
     }
 
+    public function testExpandedFormAndButtonStatesAreOptIn(): void
+    {
+        $store = new SiteKitStore();
+        $store->update([
+            'field_label' => '#123456',
+            'field_placeholder' => '#555555',
+            'field_disabled_bg' => '#eeeeee',
+            'field_error' => '#aa0000',
+            'field_focus' => '#006039',
+            'btn_focus_bg' => '#123456',
+            'btn_active_text' => '#ffffff',
+            'btn_disabled_border' => '#888888',
+            'btn_focus_ring' => '#006039',
+            'btn_focus_width' => 3,
+        ]);
+        $css = SiteKitCompiler::css($store->values());
+        self::assertStringContainsString(SiteKitCompiler::LABEL . '{color:#123456;}', $css);
+        self::assertStringContainsString('::placeholder{color:#555555;}', $css);
+        self::assertStringContainsString(':is(:disabled,[aria-disabled="true"]){background-color:#eeeeee;}', $css);
+        self::assertStringContainsString('[aria-invalid="true"]{border-color:#aa0000;}', $css);
+        self::assertStringContainsString(':focus-visible{background-color:#123456;}', $css);
+        self::assertStringContainsString(':active{color:#ffffff;}', $css);
+        self::assertStringContainsString(':is(:disabled,[aria-disabled="true"]){border-color:#888888;}', $css);
+        self::assertStringContainsString('outline:3px solid #006039;outline-offset:2px;', $css);
+        self::assertStringNotContainsString('::placeholder{', SiteKitCompiler::css([]));
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

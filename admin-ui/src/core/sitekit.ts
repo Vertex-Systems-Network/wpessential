@@ -47,7 +47,7 @@ function bindField( root: HTMLElement ): void {
 	sync();
 }
 
-// Normal / Hover state bar for fields marked with a tab (like Elementor).
+// State bar for fields marked with a tab (like Elementor).
 function stateTabs( form: HTMLElement ): void {
 	const items = Array.from( form.querySelectorAll< HTMLElement >( '[data-wpec-tab]' ) );
 	if ( ! items.length ) {
@@ -59,7 +59,8 @@ function stateTabs( form: HTMLElement ): void {
 		} );
 	};
 	const bar = h( 'div', { class: 'wpec-seg wpec-statebar', role: 'tablist', 'aria-label': 'State' } );
-	( [ [ 'normal', 'Normal' ], [ 'hover', 'Hover' ] ] as const ).forEach( ( [ key, label ], index ) => {
+	const states = ( [ [ 'normal', 'Normal' ], [ 'hover', 'Hover' ], [ 'focus', 'Focus' ], [ 'active', 'Active' ], [ 'disabled', 'Disabled' ] ] as const ).filter( ( [ key ] ) => items.some( ( item ) => item.dataset.wpecTab === key ) );
+	states.forEach( ( [ key, label ], index ) => {
 		bar.append(
 			h( 'button', {
 				type: 'button',
@@ -78,7 +79,7 @@ function stateTabs( form: HTMLElement ): void {
 		);
 	} );
 	items[ 0 ]?.before( bar );
-	show( 'normal' );
+	show( states[ 0 ]?.[ 0 ] ?? 'normal' );
 }
 
 function bindTabs( root: HTMLElement ): void {

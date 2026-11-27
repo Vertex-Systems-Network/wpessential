@@ -20,6 +20,7 @@ final class SiteKitCompiler {
 	private static array $units = [];
 
 	public const BUTTON = '.wp-element-button,.wp-block-button__link,.wpe-btn,button.button,a.button';
+	public const LABEL = ':where(form,.wpe-form,.elementor-form) label';
 	public const FIELD  = 'input:is([type="text"],[type="email"],[type="url"],[type="password"],[type="search"],[type="number"],[type="tel"],[type="date"]),select,textarea,.wpe-input';
 	public const IMAGE = ':where(.wp-block-post-content,.entry-content) :where(.wp-block-image img,.wp-block-post-featured-image img,figure img)';
 	public const CAPTION = ':where(.wp-block-post-content,.entry-content) :where(.wp-block-image figcaption,.wp-block-post-featured-image figcaption)';
@@ -36,6 +37,9 @@ final class SiteKitCompiler {
 		'menu_gap'      => [ self::HEADER . ' .wp-block-navigation', 'gap|--navigation-layout-gap' ],
 		'btn_size'      => [ self::BUTTON, 'font-size' ],
 		'btn_padding'   => [ self::BUTTON, 'padding' ],
+		'btn_min_height' => [ self::BUTTON, 'min-height' ],
+		'field_text_size' => [ self::FIELD, 'font-size' ],
+		'field_label_size' => [ self::LABEL, 'font-size' ],
 		'field_height'  => [ self::FIELD, 'min-height' ],
 		'field_padding' => [ self::FIELD, 'padding' ],
 		'image_radius' => [ self::IMAGE, 'border-radius' ],
@@ -405,8 +409,37 @@ final class SiteKitCompiler {
 			]
 		);
 		$css  .= $rule( self::FIELD, $field );
+		// Keep new defaults opt-in and low specificity so local styles win.
+		$input = ':where(' . self::FIELD . ')';
+		$css .= $rule(
+			$input,
+			[
+				'color'        => SiteKitSanitizer::colour( $v['field_text'] ?? '' ),
+				'border-width' => self::len( $v, 'field_border_width' ),
+				'border-style' => self::len( $v, 'field_border_width' ) !== '' ? 'solid' : '',
+			]
+		);
+		$css .= $rule( $input . '::placeholder', [ 'color' => SiteKitSanitizer::colour( $v['field_placeholder'] ?? '' ) ] );
+		$css .= $rule( self::LABEL, [ 'color' => SiteKitSanitizer::colour( $v['field_label'] ?? '' ) ] );
+		$css .= $rule(
+			$input . ':focus',
+			[
+				'background-color' => SiteKitSanitizer::colour( $v['field_focus_bg'] ?? '' ),
+				'color'            => SiteKitSanitizer::colour( $v['field_focus_text'] ?? '' ),
+			]
+		);
+		$css .= $rule(
+			$input . ':is(:disabled,[aria-disabled="true"])',
+			[
+				'background-color' => SiteKitSanitizer::colour( $v['field_disabled_bg'] ?? '' ),
+				'color'            => SiteKitSanitizer::colour( $v['field_disabled_text'] ?? '' ),
+				'border-color'     => SiteKitSanitizer::colour( $v['field_disabled_border'] ?? '' ),
+			]
+		);
+		$css .= $rule( $input . '[aria-invalid="true"]', [ 'border-color' => SiteKitSanitizer::colour( $v['field_error'] ?? '' ) ] );
+		$css .= $rule( ':where(.wpcf7-not-valid-tip,.elementor-message-danger,.wpe-field-error)', [ 'color' => SiteKitSanitizer::colour( $v['field_error_text'] ?? '' ) ] );
 		if ( ! empty( $v['field_focus'] ) ) {
-			$css .= 'input:focus,select:focus,textarea:focus,.wpe-input:focus{border-color:' . $v['field_focus'] . ';box-shadow:0 0 0 3px color-mix(in srgb,' . $v['field_focus'] . ' 25%,transparent);outline:0}';
+			$css .= 'input:focus,select:focus,textarea:focus,.wpe-input:focus{border-color:' . $v['field_focus'] . ';box-shadow:0 0 0 3px color-mix(in srgb,' . $v['field_focus'] . ' 25%,transparent);outline:2px solid ' . $v['field_focus'] . ';outline-offset:2px}';
 		}
 		if ( ! empty( $v['image_round'] ) && ! isset( $v['image_radius'] ) ) {
 			$css .= '.wp-block-post-content img,.entry-content img{border-radius:var(--wp--custom--radius--md,12px)}';
@@ -455,6 +488,22 @@ final class SiteKitCompiler {
 			$css .= self::hover( self::BUTTON ) . '{transform:translateY(-' . self::len( $v, 'btn_lift' ) . ')}';
 		}
 		$css .= $rule( self::hover( self::BUTTON ), [ 'border-color' => (string) ( $v['btn_hover_border'] ?? '' ) ] );
+		foreach ( [ 'focus-visible' => 'focus', 'active' => 'active', 'is(:disabled,[aria-disabled="true"])' => 'disabled' ] as $pseudo => $state ) {
+			$selector = ':is(' . self::BUTTON . '):' . $pseudo;
+			$css .= $rule(
+				$selector,
+				[
+					'background-color' => SiteKitSanitizer::colour( $v[ 'btn_' . $state . '_bg' ] ?? '' ),
+					'color'            => SiteKitSanitizer::colour( $v[ 'btn_' . $state . '_text' ] ?? '' ),
+					'border-color'     => SiteKitSanitizer::colour( $v[ 'btn_' . $state . '_border' ] ?? '' ),
+				]
+			);
+		}
+		$ring = SiteKitSanitizer::colour( $v['btn_focus_ring'] ?? '' );
+		$width = self::len( $v, 'btn_focus_width' );
+		if ( $ring !== '' || $width !== '' ) {
+			$css .= $rule( ':is(' . self::BUTTON . '):focus-visible', [ 'outline' => ( $width ?: '2px' ) . ' solid ' . ( $ring ?: 'currentColor' ), 'outline-offset' => '2px' ] );
+		}
 		$css .= $rule(
 			self::HEADER,
 			[
