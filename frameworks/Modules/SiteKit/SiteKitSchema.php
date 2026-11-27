@@ -315,6 +315,19 @@ final class SiteKitSchema {
 					'radius_xl'   => self::range( self::t( 'Extra large radius' ), 0, 64 ),
 					'image_zoom'  => self::range( self::t( 'Image zoom on hover' ), 1, 1.2, 0.01, '' ),
 					'image_round' => self::toggle( self::t( 'Round the corners of images in content' ) ),
+					'image_radius' => self::range( self::t( 'Image radius' ), 0, 100, 1, 'px', true ),
+					'image_border_width' => self::range( self::t( 'Image border width' ), 0, 12 ),
+					'image_border_color' => self::colour( self::t( 'Image border colour' ) ),
+					'image_fit' => self::select( self::t( 'Image object fit' ), [
+						'' => self::t( 'Theme default' ),
+						'cover' => self::t( 'Cover' ),
+						'contain' => self::t( 'Contain' ),
+						'fill' => self::t( 'Fill' ),
+						'none' => self::t( 'None' ),
+						'scale-down' => self::t( 'Scale down' ),
+					] ),
+					'image_caption_color' => self::colour( self::t( 'Caption colour' ) ),
+					'image_caption_size' => self::range( self::t( 'Caption text size' ), 10, 32, 1, 'px', true ),
 				]
 			),
 			'layout'    => self::section(
@@ -385,6 +398,17 @@ final class SiteKitSchema {
 					'link_thickness' => self::range( self::t( 'Underline thickness' ), 1, 4 ),
 					'link_offset'    => self::range( self::t( 'Underline distance' ), 0, 10 ),
 					'link_weight'    => self::select( self::t( 'Link weight' ), $weights ),
+					'link_focus' => self::colour( self::t( 'Keyboard focus colour' ) ),
+					'link_active' => self::colour( self::t( 'Active link colour' ) ),
+					'link_visited' => self::colour( self::t( 'Visited link colour' ) ),
+					'link_decoration_style' => self::select( self::t( 'Underline style' ), [
+						'' => self::t( 'Theme default' ),
+						'solid' => self::t( 'Solid' ),
+						'double' => self::t( 'Double' ),
+						'dotted' => self::t( 'Dotted' ),
+						'dashed' => self::t( 'Dashed' ),
+						'wavy' => self::t( 'Wavy' ),
+					] ),
 				]
 			),
 			'shadows'   => self::section(

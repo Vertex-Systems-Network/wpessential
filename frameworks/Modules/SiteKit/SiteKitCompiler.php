@@ -21,6 +21,9 @@ final class SiteKitCompiler {
 
 	public const BUTTON = '.wp-element-button,.wp-block-button__link,.wpe-btn,button.button,a.button';
 	public const FIELD  = 'input:is([type="text"],[type="email"],[type="url"],[type="password"],[type="search"],[type="number"],[type="tel"],[type="date"]),select,textarea,.wpe-input';
+	public const IMAGE = ':where(.wp-block-post-content,.entry-content) :where(.wp-block-image img,.wp-block-post-featured-image img,figure img)';
+	public const CAPTION = ':where(.wp-block-post-content,.entry-content) :where(.wp-block-image figcaption,.wp-block-post-featured-image figcaption)';
+	public const LINK = ':where(.wp-block-post-content,.entry-content) a';
 	public const HEADER = ':is(header.wp-block-template-part,.wp-site-blocks>header,.site-header,#masthead,.wpe-header)';
 	public const FOOTER = ':is(footer.wp-block-template-part,.wp-site-blocks>footer,.site-footer,#colophon,.wpe-footer)';
 
@@ -35,6 +38,8 @@ final class SiteKitCompiler {
 		'btn_padding'   => [ self::BUTTON, 'padding' ],
 		'field_height'  => [ self::FIELD, 'min-height' ],
 		'field_padding' => [ self::FIELD, 'padding' ],
+		'image_radius' => [ self::IMAGE, 'border-radius' ],
+		'image_caption_size' => [ self::CAPTION, 'font-size' ],
 		'gutter'        => [ ':root', '--wp--style--root--padding-left|--wp--style--root--padding-right' ],
 		'typo_body'     => [ 'body', '' ],
 		'typo_h1'       => [ 'h1,.wp-block-post-title', '' ],
@@ -403,9 +408,19 @@ final class SiteKitCompiler {
 		if ( ! empty( $v['field_focus'] ) ) {
 			$css .= 'input:focus,select:focus,textarea:focus,.wpe-input:focus{border-color:' . $v['field_focus'] . ';box-shadow:0 0 0 3px color-mix(in srgb,' . $v['field_focus'] . ' 25%,transparent);outline:0}';
 		}
-		if ( ! empty( $v['image_round'] ) ) {
+		if ( ! empty( $v['image_round'] ) && ! isset( $v['image_radius'] ) ) {
 			$css .= '.wp-block-post-content img,.entry-content img{border-radius:var(--wp--custom--radius--md,12px)}';
 		}
+		$css .= $rule(
+			self::IMAGE,
+			[
+				'border-width' => self::len( $v, 'image_border_width' ),
+				'border-style' => self::len( $v, 'image_border_width' ) !== '' ? 'solid' : '',
+				'border-color' => SiteKitSanitizer::colour( $v['image_border_color'] ?? '' ),
+				'object-fit' => in_array( $v['image_fit'] ?? '', [ 'cover', 'contain', 'fill', 'none', 'scale-down' ], true ) ? $v['image_fit'] : '',
+			]
+		);
+		$css .= $rule( self::CAPTION, [ 'color' => SiteKitSanitizer::colour( $v['image_caption_color'] ?? '' ) ] );
 		if ( self::len( $v, 'image_zoom', '' ) !== '' ) {
 			$css .= '.wp-block-image,.wp-block-post-featured-image{overflow:hidden}.wp-block-image img,.wp-block-post-featured-image img{transition:transform var(--wp--custom--hover--duration,.3s) var(--wp--custom--hover--ease,ease)}.wp-block-image:hover img,.wp-block-post-featured-image:hover img{transform:scale(' . self::len( $v, 'image_zoom', '' ) . ')}';
 		}
@@ -429,6 +444,10 @@ final class SiteKitCompiler {
 				'text-underline-offset'     => self::len( $v, 'link_offset' ),
 			]
 		);
+		$css .= $rule( self::LINK, [ 'text-decoration-style' => in_array( $v['link_decoration_style'] ?? '', [ 'solid', 'double', 'dotted', 'dashed', 'wavy' ], true ) ? $v['link_decoration_style'] : '' ] );
+		foreach ( [ 'visited' => 'link_visited', 'focus-visible' => 'link_focus', 'active' => 'link_active' ] as $state => $key ) {
+			$css .= $rule( self::LINK . ':' . $state, [ 'color' => SiteKitSanitizer::colour( $v[ $key ] ?? '' ) ] );
+		}
 		if ( ( $v['link_underline'] ?? '' ) === 'text' ) {
 			$css .= '.wp-block-post-content p a,.entry-content p a,.wp-block-post-content li a{text-decoration:underline}';
 		}
@@ -731,7 +750,7 @@ final class SiteKitCompiler {
 		};
 		$presets = array_column( SiteKitTokens::typography( $v['custom_typography'] ?? [] ), 'typography', 'slug' );
 		foreach ( self::TARGETS as $key => [ $selector, $property ] ) {
-			if ( empty( $v[ $key ] ) ) {
+			if ( ! isset( $v[ $key ] ) || $v[ $key ] === '' || $v[ $key ] === [] || $v[ $key ] === false ) {
 				continue;
 			}
 			$value = $v[ $key ];

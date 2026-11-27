@@ -160,6 +160,37 @@ final class SiteKitTest extends TestCase
         self::assertSame($row['_id'], \WPEssential\Modules\SiteKit\SiteKitElementor::customTypography($raw)[0]['_id']);
     }
 
+    public function testGlobalImageAndLinkStylesAreOptInAndResponsive(): void
+    {
+        $store = new SiteKitStore();
+        $store->update([
+            'image_round' => true,
+            'image_radius' => ['desktop' => ['size' => 0, 'unit' => 'px'], 'mobile' => ['size' => 8, 'unit' => 'px']],
+            'image_border_width' => 2,
+            'image_border_color' => '#123456',
+            'image_fit' => 'cover',
+            'image_caption_color' => '#345678',
+            'link_focus' => '#006039',
+            'link_active' => '#112233',
+            'link_visited' => '#654321',
+            'link_decoration_style' => 'dotted',
+        ]);
+        $css = SiteKitCompiler::css($store->values());
+        self::assertStringContainsString(SiteKitCompiler::IMAGE . '{border-radius:0px;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::IMAGE . '{border-radius:8px;}', $css);
+        self::assertStringContainsString('border-width:2px;border-style:solid;border-color:#123456;object-fit:cover;', $css);
+        self::assertStringContainsString(SiteKitCompiler::CAPTION . '{color:#345678;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::LINK . ':focus-visible{color:#006039;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::LINK . ':active{color:#112233;}', $css);
+        self::assertStringContainsString(SiteKitCompiler::LINK . ':visited{color:#654321;}', $css);
+        self::assertStringContainsString('text-decoration-style:dotted;', $css);
+        $store->update(['image_fit' => 'invalid;display:none', 'link_decoration_style' => 'invalid']);
+        self::assertArrayNotHasKey('image_fit', $store->values());
+        self::assertArrayNotHasKey('link_decoration_style', $store->values());
+        self::assertStringNotContainsString('object-fit:', SiteKitCompiler::css([]));
+        self::assertStringNotContainsString('text-decoration-style:', SiteKitCompiler::css([]));
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [
