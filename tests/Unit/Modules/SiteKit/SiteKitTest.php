@@ -57,6 +57,17 @@ final class SiteKitTest extends TestCase
         self::assertSame(10, $canonical['radius_sm']);
     }
 
+    public function testScalarHandoffOnlyAcknowledgesPersistedKeysAndRetainsResetOwnership(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyScalarPreview::class;
+        $legacy = ['btn_radius' => '0', 'field_radius' => '12', 'hover_duration' => '9999', 'font_body' => 'Inter'];
+        self::assertSame(['btn_radius', 'field_radius'], $class::handoffKeys($legacy));
+        self::assertSame(['btn_radius'], $class::confirmedKeys($legacy, ['btn_radius' => 0], []));
+        self::assertSame(['btn_radius', 'field_radius'], $class::confirmedKeys($legacy, ['field_radius' => 8], ['btn_radius']));
+        self::assertSame(['btn_radius'], $class::confirmedKeys($legacy, [], ['btn_radius', 'font_body']));
+        self::assertSame([], $class::confirmedKeys($legacy, ['hover_duration' => 500, 'font_body' => 'Inter'], []));
+    }
+
     public function testLegacyThemePreviewDoesNotOverwriteCanonicalValues(): void
     {
         $legacy = ['color_primary' => '#ABCDEF', 'color_secondary' => '#123456', 'dark_primary' => 'bad', 'font_body' => 'Inter', 'breakpoints' => '768|560', 'btn_radius' => '12', 'color_accent' => ''];

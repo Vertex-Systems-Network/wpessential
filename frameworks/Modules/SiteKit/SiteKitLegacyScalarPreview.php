@@ -28,6 +28,37 @@ final class SiteKitLegacyScalarPreview {
 	];
 
 	/**
+	 * Scalar keys whose saved legacy values can be transferred without conversion loss.
+	 * Existing canonical conflicts remain canonical; the original value is retained.
+	 *
+	 * @param array<string,mixed> $legacy
+	 * @return list<string>
+	 */
+	public static function handoffKeys( array $legacy ): array {
+		return array_keys( self::assess( $legacy, [] )['ready'] );
+	}
+
+	/**
+	 * Only acknowledge keys already transferred or successfully persisted in canonical storage.
+	 * A transferred key remains owned even when its canonical setting is subsequently reset.
+	 *
+	 * @param array<string,mixed> $legacy
+	 * @param array<string,mixed> $stored
+	 * @param list<string> $previous
+	 * @return list<string>
+	 */
+	public static function confirmedKeys( array $legacy, array $stored, array $previous ): array {
+		$confirmed = array_values( array_intersect( $previous, array_keys( self::UNITS ) ) );
+		foreach ( self::handoffKeys( $legacy ) as $key ) {
+			if ( array_key_exists( $key, $stored ) ) {
+				$confirmed[] = $key;
+			}
+		}
+
+		return array_values( array_unique( $confirmed ) );
+	}
+
+	/**
 	 * Assess without writing, clamping out-of-range values or silently replacing canonical data.
 	 *
 	 * @param array<string,mixed> $legacy
