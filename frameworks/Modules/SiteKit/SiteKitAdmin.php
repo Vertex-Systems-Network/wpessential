@@ -196,7 +196,7 @@ final class SiteKitAdmin {
 	}
 
 	/** @param array<string,mixed> $field */
-	private static function field( string $key, array $field, mixed $value ): string {
+	public static function field( string $key, array $field, mixed $value ): string {
 		$type = (string) $field['type'];
 		if ( $type === 'heading' ) {
 			return '<h3 class="wpe-ui-builder__section wpe-ui-sitekit__wide">' . esc_html( (string) $field['label'] ) . '</h3>';
@@ -257,7 +257,7 @@ final class SiteKitAdmin {
 	}
 
 	/** Palette, theme fonts and the Google Fonts list for the controls. */
-	private static function controlsConfig(): string {
+	public static function controlsConfig(): string {
 		$palette  = [];
 		$settings = function_exists( 'wp_get_global_settings' ) ? wp_get_global_settings( [ 'color', 'palette' ] ) : [];
 		foreach ( array_merge( (array) ( $settings['theme'] ?? [] ), (array) ( $settings['custom'] ?? [] ) ) as $colour ) {

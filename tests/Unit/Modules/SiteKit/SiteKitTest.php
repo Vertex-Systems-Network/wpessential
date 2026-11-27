@@ -22,8 +22,11 @@ final class SiteKitTest extends TestCase
         self::assertSame('', $class::sanitize($colour, ''));
         self::assertNull($class::sanitize($colour, 'invalid'));
         self::assertNull($class::sanitize($colour, ['invalid']));
-        self::assertFalse($class::supports(SiteKitSchema::field('size_body')));
-        self::assertFalse($class::supports(SiteKitSchema::field('custom_colours')));
+        self::assertTrue($class::supports(SiteKitSchema::field('size_body')));
+        self::assertTrue($class::supports(SiteKitSchema::field('custom_colours')));
+        self::assertSame(['desktop' => ['value' => 18, 'unit' => 'px']], $class::sanitize(SiteKitSchema::field('size_body'), '{"desktop":{"value":18,"unit":"px"}}'));
+        self::assertNull($class::sanitize(SiteKitSchema::field('size_body'), '{broken'));
+        self::assertFalse($class::supports(['type' => 'heading']));
         $store = new SiteKitStore();
         $store->update(['color_primary' => '#123abc', 'color_secondary' => '#ffffff']);
         $store->normalizeCustomizerSave();

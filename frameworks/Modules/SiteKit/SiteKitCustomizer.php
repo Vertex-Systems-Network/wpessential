@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Customizer projection of the canonical Site Tools Kit option.
- * V1 first slice supports scalar settings; composite controls follow separately.
+ * Shared controls render the same schema in the admin and Customizer.
  */
 final class SiteKitCustomizer {
 
@@ -22,6 +22,8 @@ final class SiteKitCustomizer {
 
 	public function register(): void {
 		add_action( 'customize_register', [ $this, 'controls' ] );
+		add_action( 'customize_controls_enqueue_scripts', [ $this, 'enqueue' ] );
+		add_action( 'customize_controls_print_footer_scripts', [ $this, 'config' ], 1 );
 		add_action( 'customize_save_' . SiteKitStore::OPTION, [ $this, 'markDirty' ] );
 		add_action( 'customize_save_after', [ $this, 'saved' ] );
 	}
@@ -32,21 +34,37 @@ final class SiteKitCustomizer {
 
 	/** @param array<string,mixed> $field */
 	public static function supports( array $field ): bool {
-		return empty( $field['responsive'] )
-			&& in_array( $field['type'] ?? '', [ 'color', 'toggle', 'range', 'select', 'choose', 'text', 'font', 'fonts' ], true );
+		return in_array(
+			$field['type'] ?? '',
+			[ 'color', 'toggle', 'range', 'select', 'choose', 'text', 'font', 'fonts', 'dimensions', 'typography', 'background', 'gradient', 'shadow', 'breakpoints', 'units', 'colour_tokens', 'typography_tokens', 'shadow_tokens' ],
+			true
+		);
 	}
 
 	/** @param array<string,mixed> $field */
 	public static function sanitize( array $field, mixed $value ): mixed {
-		if ( ! self::supports( $field ) || ! is_scalar( $value ) ) {
+		if ( ! self::supports( $field ) || ( ! is_scalar( $value ) && ! is_array( $value ) ) ) {
+			return null;
+		}
+		if ( $value === '' ) {
+			return '';
+		}
+		$composite = ! empty( $field['responsive'] ) || in_array(
+			$field['type'],
+			[ 'dimensions', 'typography', 'background', 'gradient', 'shadow', 'breakpoints', 'units', 'colour_tokens', 'typography_tokens', 'shadow_tokens' ],
+			true
+		);
+		if ( is_string( $value ) && str_starts_with( ltrim( $value ), '{' ) ) {
+			$value = json_decode( $value, true );
+			if ( ! is_array( $value ) ) {
+				return null;
+			}
+		}
+		if ( is_array( $value ) && ! $composite ) {
 			return null;
 		}
 		$clean = SiteKitSanitizer::clean( $field, $value );
-		if ( is_array( $clean ) ) {
-			return null;
-		}
-		// Null is rejected by the Customizer; an explicit blank resets a field.
-		if ( $value !== '' && $clean === '' ) {
+		if ( $clean === '' || ( $clean === [] && ! is_array( $value ) ) ) {
 			return null;
 		}
 		return $clean;
@@ -60,7 +78,6 @@ final class SiteKitCustomizer {
 				'capability' => SiteKitAbilities::CAPABILITY,
 			]
 		);
-		$values = $this->store->values();
 		foreach ( SiteKitSchema::sections() as $group => $section ) {
 			$sectionId = self::PANEL . '_' . $group;
 			$fields    = array_filter( $section['fields'], [ self::class, 'supports' ] );
@@ -77,10 +94,6 @@ final class SiteKitCustomizer {
 				]
 			);
 			foreach ( $fields as $key => $field ) {
-				// Do not replace legacy composite values with scalar input.
-				if ( is_array( $values[ $key ] ?? null ) ) {
-					continue;
-				}
 				$id = self::settingId( $key );
 				$manager->add_setting(
 					$id,
@@ -92,26 +105,39 @@ final class SiteKitCustomizer {
 						'sanitize_callback' => static fn ( mixed $value ): mixed => self::sanitize( $field, $value ),
 					]
 				);
-				$control = [
-					'label'       => (string) $field['label'],
-					'description' => (string) ( $field['help'] ?? '' ),
-					'section'     => $sectionId,
-					'settings'    => $id,
-					'type'        => 'text',
-				];
-				if ( in_array( $field['type'], [ 'select', 'choose' ], true ) ) {
-					$control['type']    = 'radio';
-					$control['choices'] = (array) $field['choices'];
-				} elseif ( $field['type'] === 'toggle' ) {
-					$control['type'] = 'checkbox';
-				} elseif ( $field['type'] === 'range' ) {
-					$control['type']        = 'number';
-					$control['input_attrs'] = array_intersect_key( $field, array_flip( [ 'min', 'max', 'step' ] ) );
-					$control['description'] = trim( $control['description'] . ' ' . (string) ( $field['unit'] ?? '' ) );
-				}
-				$manager->add_control( $id, $control );
+				$manager->add_control(
+					new SiteKitCustomizerControl(
+						$manager,
+						$id,
+						[
+							'section'  => $sectionId,
+							'settings' => $id,
+							'fieldKey' => $key,
+							'field'    => $field,
+						]
+					)
+				);
 			}
 		}
+	}
+
+	/** Only the shared UI bundle; never the dashboard app. */
+	public function enqueue(): void {
+		$root = dirname( __DIR__, 3 );
+		$assets = new \WPEssential\Platform\Admin\AdminAssetManifest( $root, plugins_url( '', $root . '/wpessential.php' ) );
+		$entry = $assets->entry( 'ui' );
+		if ( $entry === null ) {
+			return;
+		}
+		foreach ( $entry['styles'] as $index => $style ) {
+			wp_enqueue_style( 'wpessential-customizer-ui-' . $index, $style, [ 'dashicons' ], $entry['version'] );
+		}
+		wp_enqueue_script( 'wpessential-customizer-ui', $entry['script'], array_merge( $entry['dependencies'], [ 'customize-controls' ] ), $entry['version'], true );
+		wp_enqueue_media();
+	}
+
+	public function config(): void {
+		echo SiteKitAdmin::controlsConfig(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON encoded by the shared renderer.
 	}
 
 	public function markDirty(): void {

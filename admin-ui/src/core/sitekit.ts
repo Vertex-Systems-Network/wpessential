@@ -39,6 +39,7 @@ function bindField( root: HTMLElement ): void {
 	} else {
 		root.querySelector( '.wpec__ui' )?.append( control.el );
 	}
+	input.addEventListener( 'change', sync );
 	reset?.addEventListener( 'click', () => {
 		input.value = '';
 		input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
@@ -210,5 +211,67 @@ export function initSiteKit(): void {
 	} );
 	bindTabs( root );
 	bindSnippetManager( root );
+	setDevice( 'desktop' );
+}
+
+
+type CustomizeSetting = {
+	get: () => unknown;
+	set: ( value: string ) => void;
+	bind: ( callback: ( value: unknown ) => void ) => void;
+};
+type CustomizeApi = ( id: string, callback: ( setting: CustomizeSetting ) => void ) => void;
+
+/** WordPress owns changesets, preview and publishing; controls only edit its settings. */
+export function initSiteKitCustomizer(): void {
+	const api = ( window as unknown as { wp?: { customize?: CustomizeApi } } ).wp?.customize;
+	if ( ! api ) {
+		return;
+	}
+	try {
+		configure( JSON.parse( document.getElementById( 'wpe-controls-config' )?.textContent ?? '{}' ) as ControlsConfig );
+	} catch {
+		configure( {} );
+	}
+	const encode = ( value: unknown ): string => {
+		if ( value === true ) {
+			return '1';
+		}
+		if ( value === false || value === null || value === undefined ) {
+			return '';
+		}
+		return typeof value === 'object' ? JSON.stringify( value ) : String( value );
+	};
+	const attach = (): void => {
+		document.querySelectorAll< HTMLElement >( '.wpe-sitekit-customizer[data-wpe-setting]' ).forEach( ( wrapper ) => {
+			if ( wrapper.dataset.bound ) {
+				return;
+			}
+			const root = wrapper.querySelector< HTMLElement >( '.wpec[data-wpec]' );
+			const input = root?.querySelector< HTMLInputElement >( '.wpec__value' );
+			if ( ! root || ! input ) {
+				return;
+			}
+			wrapper.dataset.bound = '1';
+			api( wrapper.dataset.wpeSetting ?? '', ( setting ) => {
+				input.value = encode( setting.get() );
+				bindField( root );
+				input.addEventListener( 'change', () => {
+					if ( input.value !== encode( setting.get() ) ) {
+						setting.set( input.value );
+					}
+				} );
+				setting.bind( ( value ) => {
+					const next = encode( value );
+					if ( input.value !== next ) {
+						input.value = next;
+						input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+					}
+				} );
+			} );
+		} );
+	};
+	attach();
+	new MutationObserver( attach ).observe( document.body, { childList: true, subtree: true } );
 	setDevice( 'desktop' );
 }
