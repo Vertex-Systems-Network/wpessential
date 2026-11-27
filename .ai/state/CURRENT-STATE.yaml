@@ -2,17 +2,17 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: d44f69672c525468282dd54c28f7a05905d5369a
-observed_main_source: "Free #1596 merged after exact-head and paired runtime checks."
-active_issue: "#1597"
-active_pr: "#1598"
-active_branch: agent/adr-0239-wp6-global-styling
-current_milestone: "P5-M14 WP6 global styling groups"
+observed_main_sha: e93386c2f663cdd0cd1027a8513949ad39fe1ba9
+observed_main_source: "Free #1598 merged after eight exact-head workflows and 44/44 E2E."
+active_issue: "#1599"
+active_pr: "#1600"
+active_branch: agent/adr-0239-wp7-custom-code
+current_milestone: "P5-M14 WP7 custom code management"
 milestone_status: COMMITTED_PENDING_INTEGRATION
-last_completed_milestone: "WP5 #1596 merged; Free 42/42, paired Free + Pro 49/49."
-next_safe_action: "Verify WP6 first slice, implement remaining styling groups and tests; merge only after exact-head gates."
-waiting_external: "WP6 fresh CI pending; unrelated lanes remain separate."
-next_planned_slot: adr-0239-wp6-global-styling-v1
+last_completed_milestone: "WP6 #1598 merged; 44/44 Free E2E."
+next_safe_action: "Verify WP7 current source; implement remaining snippet languages, manager, Pro boundary and tests."
+waiting_external: "WP7 exact-head CI pending; unrelated lanes remain separate."
+next_planned_slot: adr-0239-wp7-custom-code-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -20,8 +20,9 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0132
+    - RB-0133
   terminal_pass:
+    - RB-0132
     - RB-0131
     - RB-0130
     - RB-0129

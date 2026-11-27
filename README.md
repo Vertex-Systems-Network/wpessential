@@ -70,6 +70,8 @@ The MCP server is off by default. It exposes AI-channel abilities, and write too
 
 ## Current AI-Native Development Progress
 
+**2026-11-27 — ADR-0239 WP6 integrated / WP7 active:** Free #1598 merged `e93386c2` after 8/8 workflows and 44/44 E2E. WP7 #1599 / draft #1600 adds snippet conditions, priority, privileged-row protection and scoped HTML/JS locations; further languages and Pro boundary pending. No release or full product certification.
+
 **2026-11-27 — ADR-0239 WP5 integrated / WP6 active:** Free #1596 merged `d44f6967` (8/8 workflows, 42/42 E2E); exact Free + Pro paired audit 49/49. Pro #34 and theme #127 merged; WP6 #1597 / draft #1598 begins with image/link controls. Full React inspector and theme parity remain subsequent work; no release or full-product certification.
 
 **2026-11-26 — WP5 shared kit / companion PRs:** Free #1596 now includes dynamic kit block/widget preset controls and entitlement-gated Elementor sync. Pro #34 contributes the opt-in and theme #127 delegates to the plugin while preserving standalone globals. Historical Free `6061e808` passed seven workflows and 41/41 E2E; aggregate CI failed on API timeout. Fresh combined-head verification and paired integration pending; no release or product certification.

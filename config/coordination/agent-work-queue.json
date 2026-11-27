@@ -1,7 +1,7 @@
 {
   "schema_version": 214,
   "snapshot_date": "2026-11-27",
-  "queue_anchor_main_sha": "d44f69672c525468282dd54c28f7a05905d5369a",
+  "queue_anchor_main_sha": "e93386c2f663cdd0cd1027a8513949ad39fe1ba9",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
   "source_issue": "#1595",
   "approval": {
@@ -8696,7 +8696,7 @@
       "slot_id": "adr-0239-wp6-global-styling-v1",
       "title": "ADR-0239 WP6 global styling groups",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "ADR_0239_GLOBAL_STYLING",
       "source": "ADR-0239 / #1597 / PR #1598",
       "dependencies": [
@@ -8713,7 +8713,35 @@
         "P-006 evidence promotion"
       ],
       "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
-      "close_condition": "WP6 acceptance and exact-head CI PASS; merge."
+      "close_condition": "WP6 acceptance and exact-head CI PASS; merge.",
+      "terminal_result": "PASS_ADR_0239_WP6",
+      "terminal_evidence": "8340b00c eight workflows PASS, E2E 45954508648 44/44; merged e93386c2.",
+      "terminal_merge_sha": "e93386c2f663cdd0cd1027a8513949ad39fe1ba9"
+    },
+    {
+      "priority": 1214,
+      "slot_id": "adr-0239-wp7-custom-code-v1",
+      "title": "ADR-0239 WP7 custom code management",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "ADR_0239_CUSTOM_CODE",
+      "source": "ADR-0239 / #1599 / PR #1600",
+      "dependencies": [
+        "WP6 #1598 merged"
+      ],
+      "runtime_allowed": true,
+      "claim_branch": "agent/adr-0239-wp7-custom-code",
+      "allowed_scope": [
+        "Site Tools Kit snippet metadata, languages, scoped locations, permissions, manager and tests; Pro-only extension boundary"
+      ],
+      "forbidden_scope": [
+        "PHP execution in Free",
+        "Unrelated modules",
+        "Production release",
+        "P-006 evidence promotion"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
+      "close_condition": "WP7 scoped acceptance and exact-head CI PASS; merge."
     }
   ],
   "historical_closeout": {
