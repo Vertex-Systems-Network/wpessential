@@ -612,6 +612,12 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(migrated.effective.color_primary).toBeUndefined();
       expect(migrated.effective.color_secondary).toBeUndefined();
       expect(migrated.effective.font_body).toBe('Inter');
+      await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_button', { waitUntil: 'load' });
+      const states = page.locator('.wpe-sitekit-state-tabs').getByRole('tablist', { name: 'State' });
+      await expect(states.getByRole('tab', { name: 'Focus', exact: true })).toBeVisible();
+      await states.getByRole('tab', { name: 'Focus', exact: true }).click();
+      await expect(page.locator('[data-wpe-setting="wpessential_site_kit[values][btn_focus_bg]"]')).toBeVisible();
+      await expect(page.locator('[data-wpe-setting="wpessential_site_kit[values][btn_hover_bg]"]')).toBeHidden();
       await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_colors', { waitUntil: 'load' });
       const field = page.locator('[data-wpe-setting="wpessential_site_kit[values][color_secondary]"]');
       await expect(field.locator('.wpec-color__hex')).toHaveValue('#112233');
