@@ -46,39 +46,76 @@ function bindField( root: HTMLElement ): void {
 	sync();
 }
 
-// State bar for fields marked with a tab (like Elementor).
-function stateTabs( form: HTMLElement ): void {
-	const items = Array.from( form.querySelectorAll< HTMLElement >( '[data-wpec-tab]' ) );
+// State tabs are shared by admin forms and native Customizer control lists.
+const stateGroups = new WeakMap< HTMLElement, { items: HTMLElement[]; select: ( key: string, focus?: boolean ) => void; current: () => string; host: HTMLElement } >();
+
+function stateTabs( container: HTMLElement, items = Array.from( container.querySelectorAll< HTMLElement >( '[data-wpec-tab]' ) ), customizer = false ): void {
 	if ( ! items.length ) {
 		return;
 	}
-	const show = ( tab: string ): void => {
+	const previous = stateGroups.get( container );
+	if ( previous && items.length === previous.items.length && items.every( ( item, index ) => item === previous.items[ index ] ) && previous.host.isConnected ) {
+		return;
+	}
+	const selected = previous?.current() ?? 'normal';
+	previous?.host.remove();
+	const states = ( [ [ 'normal', 'Normal' ], [ 'hover', 'Hover' ], [ 'focus', 'Focus' ], [ 'active', 'Active' ], [ 'disabled', 'Disabled' ] ] as const ).filter( ( [ key ] ) => items.some( ( item ) => item.dataset.wpecTab === key ) );
+	const bar = h( 'div', { class: 'wpec-seg wpec-statebar', role: 'tablist', 'aria-label': 'State' } );
+	const host = customizer ? h( 'li', { class: 'wpe-ui wpe-sitekit-state-tabs' }, [ bar ] ) : bar;
+	let current = states.some( ( [ key ] ) => key === selected ) ? selected : states[ 0 ]?.[ 0 ] ?? 'normal';
+	const select = ( key: string, focus = false ): void => {
+		current = key;
 		items.forEach( ( item ) => {
-			item.hidden = item.dataset.wpecTab !== tab;
+			item.hidden = item.dataset.wpecTab !== key;
+		} );
+		bar.querySelectorAll< HTMLButtonElement >( 'button' ).forEach( ( button ) => {
+			const active = button.dataset.state === key;
+			button.classList.toggle( 'is-active', active );
+			button.setAttribute( 'aria-selected', active ? 'true' : 'false' );
+			button.tabIndex = active ? 0 : -1;
+			if ( active && focus ) {
+				button.focus();
+			}
 		} );
 	};
-	const bar = h( 'div', { class: 'wpec-seg wpec-statebar', role: 'tablist', 'aria-label': 'State' } );
-	const states = ( [ [ 'normal', 'Normal' ], [ 'hover', 'Hover' ], [ 'focus', 'Focus' ], [ 'active', 'Active' ], [ 'disabled', 'Disabled' ] ] as const ).filter( ( [ key ] ) => items.some( ( item ) => item.dataset.wpecTab === key ) );
 	states.forEach( ( [ key, label ], index ) => {
-		bar.append(
-			h( 'button', {
-				type: 'button',
-				role: 'tab',
-				class: 'wpec-seg__btn' + ( index === 0 ? ' is-active' : '' ),
-				'aria-selected': index === 0 ? 'true' : 'false',
-				text: label,
-				onclick: ( event: Event ) => {
-					bar.querySelectorAll( 'button' ).forEach( ( b ) => {
-						b.classList.toggle( 'is-active', b === event.currentTarget );
-						b.setAttribute( 'aria-selected', b === event.currentTarget ? 'true' : 'false' );
-					} );
-					show( key );
-				},
-			} )
-		);
+		const button = h( 'button', {
+			type: 'button',
+			role: 'tab',
+			class: 'wpec-seg__btn',
+			'data-state': key,
+			text: label,
+			onclick: () => select( key ),
+		} );
+		button.addEventListener( 'keydown', ( event: KeyboardEvent ) => {
+			const next = event.key === 'Home' ? 0 : event.key === 'End' ? states.length - 1 : event.key === 'ArrowRight' ? ( index + 1 ) % states.length : event.key === 'ArrowLeft' ? ( index + states.length - 1 ) % states.length : -1;
+			const state = states[ next ];
+			if ( state ) {
+				event.preventDefault();
+				select( state[ 0 ], true );
+			}
+		} );
+		bar.append( button );
 	} );
-	items[ 0 ]?.before( bar );
-	show( states[ 0 ]?.[ 0 ] ?? 'normal' );
+	items[ 0 ]?.before( host );
+	stateGroups.set( container, { items, select, current: () => current, host } );
+	select( current );
+}
+
+function customizerStateTabs(): void {
+	const groups = new Map< HTMLElement, HTMLElement[] >();
+	document.querySelectorAll< HTMLElement >( '.wpe-sitekit-customizer [data-wpec-tab]' ).forEach( ( field ) => {
+		const item = field.closest< HTMLElement >( 'li.customize-control' );
+		const parent = item?.parentElement;
+		if ( ! item || ! parent ) {
+			return;
+		}
+		item.dataset.wpecTab = field.dataset.wpecTab ?? '';
+		const group = groups.get( parent ) ?? [];
+		group.push( item );
+		groups.set( parent, group );
+	} );
+	groups.forEach( ( items, parent ) => stateTabs( parent, items, true ) );
 }
 
 function bindTabs( root: HTMLElement ): void {
@@ -329,7 +366,11 @@ export function initSiteKitCustomizer(): void {
 			} );
 		} );
 	};
-	attach();
-	new MutationObserver( attach ).observe( document.body, { childList: true, subtree: true } );
+	const refresh = (): void => {
+		attach();
+		customizerStateTabs();
+	};
+	refresh();
+	new MutationObserver( refresh ).observe( document.body, { childList: true, subtree: true } );
 	setDevice( 'desktop' );
 }
