@@ -294,12 +294,25 @@ export function initSiteKitCustomizer(): void {
 			delete preview.dataset.wpeKitPreview;
 		}
 	};
+	document.addEventListener( 'wpe-legacy-preview-claim', () => {
+		if ( ! preview?.dataset.wpeKitPreview ) {
+			return;
+		}
+		syncing = true;
+		try {
+			clearPreview();
+			setDevice( 'desktop' );
+		} finally {
+			syncing = false;
+		}
+	} );
 	observeDevice( ( device, width ) => {
 		if ( syncing || ! preview ) {
 			return;
 		}
 		syncing = true;
 		try {
+			document.dispatchEvent( new Event( 'wpe-sitekit-preview-claim' ) );
 			if ( api.previewedDevice?.get() !== 'desktop' ) {
 				api.previewedDevice?.set( 'desktop' );
 			}
