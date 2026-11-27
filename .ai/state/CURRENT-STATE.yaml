@@ -10,8 +10,8 @@ active_branch: agent/adr-0239-wp7-custom-code
 current_milestone: "P5-M14 WP7 custom code management"
 milestone_status: COMMITTED_PENDING_INTEGRATION
 last_completed_milestone: "WP6 #1598 merged; 44/44 Free E2E."
-next_safe_action: "Verify WP7 current source; implement remaining snippet languages, manager, Pro boundary and tests."
-waiting_external: "WP7 exact-head CI pending; unrelated lanes remain separate."
+next_safe_action: "Verify new WP7 scoped browser acceptance and exact-head CI; integrate bounded browser-language WP7 only, then WP8. #1601 PHP architecture planning remains separate."
+waiting_external: "New WP7 exact-head CI pending; #1601 developer-code security architecture deferred. Unrelated lanes remain separate."
 next_planned_slot: adr-0239-wp7-custom-code-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true

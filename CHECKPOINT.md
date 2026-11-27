@@ -1,5 +1,11 @@
 # WPEssential — Engineering Checkpoint
 
+# 2026-11-27 — WP7 bounded browser-language acceptance / PHP follow-up
+
+- Free #1600 `dfbf6d9c` passed 8/8 workflows (WordPress E2E 45992599478). `2163bb82` adds browser regression for scoped output, priority, Safe Mode, admin/login and opaque-row preservation. Fresh exact-head CI required.
+- #1601 tracks the separately gated PHP developer-code architecture; no runtime authorization. Bounded browser-language WP7 can integrate after acceptance; WP8 independent of PHP. No production release or product certification.
+
+
 # 2026-11-27 — WP7 browser-language acceptance / PHP boundary
 
 - Free #1600 head `92d075e2` passed all 8 observed workflows, including WordPress E2E 45961984658. Subsequent Free boundary changes require new exact-head checks. PHP and unknown-language rows are inert and preserved; no Free editor or executor for them.

@@ -70,7 +70,7 @@ The MCP server is off by default. It exposes AI-channel abilities, and write too
 
 ## Current AI-Native Development Progress
 
-**2026-11-27 — ADR-0239 WP6 integrated / WP7 active:** Free #1598 merged `e93386c2` after 8/8 workflows and 44/44 E2E. WP7 #1599 / draft #1600 adds snippet conditions, priority, privileged-row protection and scoped HTML/JS locations; further languages and Pro boundary pending. No release or full product certification.
+**2026-11-27 — ADR-0239 WP7 bounded candidate:** Free main `e93386c2` (WP6 #1598). WP7 #1599 / #1600 implements CSS, bounded SCSS-lite, JS, HTML, multi-add, explicit remove, safe mode and privilege/opaque-row protection. `dfbf6d9c` 8/8 workflows PASS; additional scoped browser acceptance requires fresh exact-head CI. PHP developer-code security decision deferred to #1601; no PHP executor, release or full product certification. WP8 follows bounded WP7 integration.
 
 **2026-11-27 — ADR-0239 WP5 integrated / WP6 active:** Free #1596 merged `d44f6967` (8/8 workflows, 42/42 E2E); exact Free + Pro paired audit 49/49. Pro #34 and theme #127 merged; WP6 #1597 / draft #1598 begins with image/link controls. Full React inspector and theme parity remain subsequent work; no release or full-product certification.
 
