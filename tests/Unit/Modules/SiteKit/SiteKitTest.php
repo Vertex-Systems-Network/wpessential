@@ -12,6 +12,105 @@ use WPEssential\Modules\SiteKit\SiteKitStore;
 
 final class SiteKitTest extends TestCase
 {
+    public function testSnippetMetadataAndRestrictedReplacement(): void
+    {
+        $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}', 'enabled' => true];
+        $js = ['id' => 'js1', 'type' => 'js', 'code' => 'console.log(1);', 'enabled' => true];
+        $clean = \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + [
+            'condition' => 'pages', 'page_ids' => '3, 7, 3, bad, -5', 'priority' => 2000,
+        ], false);
+        self::assertSame([3, 7], $clean['page_ids']);
+        self::assertSame(1000, $clean['priority']);
+        self::assertTrue(\WPEssential\Modules\SiteKit\SiteKitSnippets::matches($clean, false, 7));
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::matches($clean, true, 8));
+        self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::matches(['condition' => 'unknown'], true, 7));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'php', 'code' => 'return 1;'], true));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'css', 'code' => ''], false));
+        $result = \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows([$js], [$css, array_replace($css, ['id' => 'js1'])], false);
+        self::assertCount(2, $result);
+        self::assertSame($js, $result[1]);
+        self::assertSame([$js], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows([$js], [], false));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => 'admin'], false));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => 'bad'], true));
+        self::assertSame('body_open', \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($js + ['location' => 'body_open'], true)['location']);
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'html', 'code' => '<p>Hi</p>'], false));
+        self::assertTrue(\WPEssential\Modules\SiteKit\SiteKitSnippets::privileged($css + ['location' => 'login']));
+        self::assertSame(['js1', 'css1'], array_column(\WPEssential\Modules\SiteKit\SiteKitSnippets::ordered([$clean, $js]), 'id'));
+    }
+
+    public function testSnippetDeletionIsExplicitAndPermissionBound(): void
+    {
+        $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}'];
+        $js = ['id' => 'js1', 'type' => 'js', 'code' => 'console.log(1);'];
+        $existing = [$css, $js];
+        self::assertSame($existing, \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [], true));
+        self::assertSame($existing, \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'css1', 'type' => 'invalid', 'code' => 'bad'],
+        ], true));
+        self::assertSame([$js], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'css1', 'remove' => '1'], ['id' => 'js1', 'remove' => '1'],
+        ], false));
+        self::assertSame([$css], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'js1', 'remove' => '1'],
+        ], true));
+        self::assertSame([], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'css1', 'remove' => '1'], ['id' => 'js1', 'remove' => '1'],
+        ], true));
+    }
+
+    public function testSnippetConditionAndLocationValidation(): void
+    {
+        $css = ['type' => 'css', 'code' => 'body{color:red}'];
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['condition' => 'pages', 'page_ids' => 'bad,0,-3'], true));
+        foreach (['admin', 'login'] as $location) {
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => $location, 'condition' => 'front'], true));
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => $location, 'condition' => 'pages', 'page_ids' => '7'], true));
+            self::assertSame($location, \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => $location], true)['location']);
+        }
+        self::assertSame('all', \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['scope' => ['invalid']], true)['scope']);
+    }
+
+    public function testScssLiteCompilesOnlyBoundedFlatRules(): void
+    {
+        $source = '$accent: #123456; $space: 12px; .card { color: $accent; padding: $space; }';
+        $expected = '.card { color: #123456; padding: 12px; }';
+        self::assertSame($expected, \WPEssential\Modules\SiteKit\SiteKitSnippets::compileScssLite($source));
+        self::assertSame($source, \WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $source], false)['code']);
+        foreach (['.card { color: $undefined; }', '@import "remote";', '.a { .b { color: red; } }', '$a: red; $a: blue; .a { color: $a; }', '.a { color: red; } trailing'] as $invalid) {
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::compileScssLite($invalid));
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $invalid], false));
+        }
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $source, 'location' => 'admin'], false));
+    }
+
+    public function testFreeCannotReplaceOrDeleteUnsupportedLanguageRows(): void
+    {
+        $php = ['id' => 'php1', 'type' => 'php', 'code' => 'return 1;', 'enabled' => true];
+        $unknown = ['id' => 'other1', 'type' => 'future', 'code' => 'opaque', 'enabled' => true];
+        $existing = [$php, $unknown];
+        foreach ([true, false] as $canJs) {
+            self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::isFreeType('php'));
+            self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::isFreeType('future'));
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($php, $canJs));
+            self::assertSame($existing, \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+                ['id' => 'php1', 'remove' => '1'],
+                ['id' => 'other1', 'type' => 'css', 'code' => '.test{color:red}'],
+            ], $canJs));
+        }
+        self::assertTrue(\WPEssential\Modules\SiteKit\SiteKitSnippets::isFreeType('scss'));
+    }
+
+    public function testHtmlSnippetRequiresWordPressSanitizer(): void
+    {
+        if (function_exists('wp_kses_post')) {
+            self::markTestSkipped('This test covers the isolated non-WordPress fallback.');
+        }
+
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean([
+            'type' => 'html', 'code' => '<p>Safe text</p>', 'enabled' => true,
+        ], true));
+    }
+
     public function testSchemaCoversEveryPortedGroup(): void
     {
         $groups = array_keys(SiteKitSchema::sections());

@@ -329,17 +329,23 @@ final class SiteKitAdmin {
 			'type'     => 'css',
 			'scope'    => 'all',
 			'location' => 'footer',
-			'enabled'  => true,
+			'enabled'  => false,
 			'code'     => '',
 		];
 		$html   = '<section id="wpe-sk-snippets" class="wpe-ui-panel wpe-ui-sitekit__panel" role="tabpanel" aria-labelledby="wpe-sk-tab-snippets" data-wpe-panel' . ( $active ? '' : ' hidden' ) . '>';
 		$html  .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-wpe-ajax-form="' . esc_attr( self::AJAX_SNIPPETS ) . '">';
 		$html  .= wp_nonce_field( self::SNIPPETS_ACTION, '_wpnonce', true, false ) . '<input type="hidden" name="action" value="' . esc_attr( self::SNIPPETS_ACTION ) . '">';
 		$html  .= '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'code', 20 ) . '</span><div><h2>' . esc_html__( 'Custom code', 'wpessential' ) . '</h2>';
-		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS and JavaScript that survive theme changes. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS only.', 'wpessential' ) ) . '</p></div></div>';
+		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, SCSS-lite, HTML and JavaScript that survive theme changes. SCSS-lite supports literal variables and flat CSS rules only; no nesting, imports or mixins. Public styles use an enqueued stylesheet. Admin and login require All pages. To delete an existing snippet, mark Remove on save. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS and SCSS-lite only.', 'wpessential' ) ) . '</p></div></div>';
+		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'PHP is not executable in Free. Stored unsupported-language snippets are preserved and cannot be edited here. Server-side extensions require the separately reviewed developer-code path.', 'wpessential' ) . '</p>';
+		$template = '';
 		foreach ( $rows as $index => $row ) {
 			$prefix = 'snippets[' . $index . ']';
 			$isNew  = $row['id'] === '';
+			if ( ! SiteKitSnippets::isFreeType( $row['type'] ?? null ) || ( ! $canJs && SiteKitSnippets::privileged( $row ) ) ) {
+				continue;
+			}
+			$rowStart = strlen( $html );
 			$html  .= '<fieldset class="wpe-ui-sitekit__snippet"><legend>' . esc_html( $isNew ? __( 'New snippet', 'wpessential' ) : (string) $row['title'] ) . '</legend>';
 			$html  .= '<input type="hidden" name="' . esc_attr( $prefix . '[id]' ) . '" value="' . esc_attr( (string) $row['id'] ) . '">';
 			$html  .= '<div class="wpe-ui-sitekit__row">';
@@ -348,9 +354,14 @@ final class SiteKitAdmin {
 				'wpe-sk-snippet-' . $index . '-type',
 				$prefix . '[type]',
 				$canJs ? [
-					'css' => 'CSS',
-					'js'  => 'JavaScript',
-				] : [ 'css' => 'CSS' ],
+					'css'  => 'CSS',
+					'scss' => 'SCSS-lite',
+					'js'   => 'JavaScript',
+					'html' => 'HTML',
+				] : [
+					'css'  => 'CSS',
+					'scss' => 'SCSS-lite',
+				],
 				(string) $row['type']
 			) . '</span>';
 			$html  .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Devices', 'wpessential' ) . '</span>' . self::select(
@@ -364,15 +375,33 @@ final class SiteKitAdmin {
 				],
 				(string) $row['scope']
 			) . '</span>';
-			$html  .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'JS location', 'wpessential' ) . '</span>' . self::select(
+			$html  .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Location', 'wpessential' ) . '</span>' . self::select(
 				'wpe-sk-snippet-' . $index . '-location',
 				$prefix . '[location]',
 				[
 					'footer' => __( 'Footer', 'wpessential' ),
 					'head'   => __( 'Head', 'wpessential' ),
-				],
+					'body_open' => __( 'Body open', 'wpessential' ),
+					'before_content' => __( 'Before content', 'wpessential' ),
+					'after_content' => __( 'After content', 'wpessential' ),
+				] + ( $canJs ? [
+					'admin' => __( 'Admin', 'wpessential' ),
+					'login' => __( 'Login', 'wpessential' ),
+				] : [] ),
 				(string) $row['location']
 			) . '</span>';
+			$html .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Condition', 'wpessential' ) . '</span>' . self::select(
+				'wpe-sk-snippet-' . $index . '-condition',
+				$prefix . '[condition]',
+				[
+					'all'   => __( 'All pages', 'wpessential' ),
+					'front' => __( 'Front page', 'wpessential' ),
+					'pages' => __( 'Specific page IDs', 'wpessential' ),
+				],
+				(string) ( $row['condition'] ?? 'all' )
+			) . '</span>';
+			$html .= '<label class="wpe-ui-sitekit__mini">' . esc_html__( 'Page IDs (comma separated)', 'wpessential' ) . '<input type="text" name="' . esc_attr( $prefix . '[page_ids]' ) . '" value="' . esc_attr( implode( ',', (array) ( $row['page_ids'] ?? [] ) ) ) . '"></label>';
+			$html .= '<label class="wpe-ui-sitekit__mini">' . esc_html__( 'Priority', 'wpessential' ) . '<input type="number" min="0" max="1000" name="' . esc_attr( $prefix . '[priority]' ) . '" value="' . esc_attr( (string) ( $row['priority'] ?? 10 ) ) . '"></label>';
 			$html  .= '<input type="hidden" name="' . esc_attr( $prefix . '[enabled]' ) . '" value="">' . Check::render(
 				__( 'Enabled', 'wpessential' ),
 				[
@@ -381,9 +410,27 @@ final class SiteKitAdmin {
 				],
 				(bool) $row['enabled']
 			);
+			if ( ! $isNew ) {
+				$html .= '<label class="wpe-ui-sitekit__mini"><input type="checkbox" name="' . esc_attr( $prefix . '[remove]' ) . '" value="1"> ' . esc_html__( 'Remove on save', 'wpessential' ) . '</label>';
+			}
 			$html  .= '</div><textarea class="wpe-ui-sitekit__code" name="' . esc_attr( $prefix . '[code]' ) . '" rows="6" spellcheck="false" aria-label="' . esc_attr__( 'Code', 'wpessential' ) . '">' . esc_textarea( (string) $row['code'] ) . '</textarea></fieldset>';
+			if ( $isNew ) {
+				$template = str_replace(
+					[ 'snippets[' . $index . ']', 'wpe-sk-snippet-' . $index . '-' ],
+					[ 'snippets[__index__]', 'wpe-sk-snippet-__index__-' ],
+					substr( $html, $rowStart )
+				);
+			}
 		}
-		$html .= '<div class="wpe-ui-builder__actions">' . Button::button( __( 'Save snippets', 'wpessential' ), 'primary', [ 'type' => 'submit' ] ) . '</div></form></section>';
+		$html .= '<template data-wpe-snippet-template data-next-index="' . esc_attr( (string) count( $rows ) ) . '">' . $template . '</template>';
+		$html .= '<div class="wpe-ui-builder__actions">' . Button::button(
+			__( 'Add snippet', 'wpessential' ),
+			'secondary',
+			[
+				'data-wpe-add-snippet' => true,
+				'hidden'               => true,
+			]
+		) . Button::button( __( 'Save snippets', 'wpessential' ), 'primary', [ 'type' => 'submit' ] ) . '</div></form></section>';
 
 		return $html;
 	}

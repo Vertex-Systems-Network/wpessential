@@ -19,7 +19,7 @@ Work ID root: `P5-M14`
 
 ## Current execution handoff (2026-11-27)
 
-WP5 #1596 merged d44f6967 after 42/42 Free E2E and 49/49 paired Free + Pro E2E; companion Pro #34 and theme #127 merged. WP6 #1597 / draft #1598 active, image/link first slice; remaining groups and exact-head gates pending. Full shared React controls remain WP9; full editor/theme parity remains WP12. No production release or full-product certification.
+WP5 #1596 and WP6 #1598 merged. WP6 44/44 E2E, eight workflows passed; WP7 #1599 / #1600 browser-language source and manager implemented; exact head dfbf6d9c passed eight workflows. Additional location/priority/opaque-row browser evidence pending. WP7 bounded browser-language delivery stays in #1599 / #1600; PHP developer-code architecture is separately deferred in #1601 (planning only; no executor). Existing ADR-0004/0193 remain binding. WP8 has no dependency on PHP execution. WP9/WP12 retain full editor/React/theme parity. No release or full-product certification.
 
 ## Work packages
 
@@ -30,8 +30,8 @@ WP5 #1596 merged d44f6967 after 42/42 Free E2E and 49/49 paired Free + Pro E2E; 
 | WP3 | 10 | Breakpoints list in Layout (320…1920, enable/disable, edit px); `ResponsiveControl` device dropdown with icons/tooltips; used by kit and blocks | Free | KIT DONE for Site Tools Kit; block inspector reuse lands with WP9 |
 | WP4 | 4 | Units setting: multi-select allowed units (px, %, em, rem, vh, vw, vmin, vmax, ch, fr) + custom units with `1 X = n <base>`; `UnitControl` shows only enabled units; compiler converts custom → `calc(n * base)` | Free | KIT DONE for Site Tools Kit (block UnitControl reuse with WP9) |
 | WP5 | 9 | Global colours / dark colours / typography: repeater "Add custom" with name + slug; exposed as CSS vars + `theme.json` palette/fontSizes + global picker in blocks/Elementor | Free | MERGED — #1596; 42/42 Free, 49/49 paired |
-| WP6 | 13 | Expand groups: images, forms (labels, inputs, focus, placeholder, errors), buttons (states, sizes, variants), background, links (states, underline), shadows (named presets) — every sub-element + full CSS props | Free | ACTIVE — #1597 / #1598 |
-| WP7 | 12 | Custom code: repeater of snippets — language (CSS, SCSS-lite, JS, HTML, PHP-off-by-default), location (head, body open, footer, before/after content, admin, login), conditions (all/front/page ids), priority, enable | Free (PHP exec Pro) | TODO |
+| WP6 | 13 | Expand groups: images, forms (labels, inputs, focus, placeholder, errors), buttons (states, sizes, variants), background, links (states, underline), shadows (named presets) — every sub-element + full CSS props | Free | MERGED — #1598; 44/44 E2E |
+| WP7 | 12 | Custom code: repeater of snippets — language (CSS, SCSS-lite, JS, HTML, PHP-off-by-default), location (head, body open, footer, before/after content, admin, login), conditions (all/front/page ids), priority, enable | Free (PHP exec Pro) | ACTIVE — browser-language #1599 / #1600; PHP design deferred #1601 |
 | WP8 | 14 | Customizer panels generated from the same schema/option keys | Free | TODO |
 | WP9 | 1, 3 | `InspectorTabs` + "Reset to default" toolbar button (clears attributes to block.json defaults/example) on every block | Free | TODO |
 | WP10 | 8 | Blocks/demos inherit kit: strip per-block defaults from demo content; block CSS uses kit vars | Free, theme | TODO |
@@ -41,6 +41,14 @@ WP5 #1596 merged d44f6967 after 42/42 Free E2E and 49/49 paired Free + Pro E2E; 
 | WP14 | 11 | A11y module toggle (skip link, focus ring, reduced motion, link underline, contrast mode) + W3C/axe CI on demo pages | Free, theme | TODO |
 
 Order: WP1 → WP2 → WP3/WP4 → WP5/WP6/WP7 → WP8 → WP9 → WP13 → WP10/WP12 → WP11 → WP14.
+
+## WP7 SCSS-lite V1 boundary
+
+SCSS-lite is a dependency-free subset: up to 32 unique literal variables declared before flat selector rules, with variable substitution in property values. Source limit 64 KiB; up to 128 rules and 128 declarations per rule. Unsupported syntax (including nesting, imports, mixins, interpolation and undefined variables) is rejected; no external compilation, file access or network fetch. Original source is retained and compilation is checked at save and render. Full Sass is not claimed. PHP execution remains excluded from Free.
+
+## WP7 PHP security boundary (open)
+
+WP7 lists PHP as Pro-only and off by default, but ADR-0239 supersedes only ADR-0232 decision 1; it does not supersede ADR-0004 or ADR-0193. ADR-0004 requires a separately accepted developer-mode ADR and threat model before implementing user-entered server code; ADR-0193 routes server code through the reviewed Extension SDK/plugin path and prohibits PHP/eval. Therefore Free rejects new PHP/unknown-language rows, preserves existing opaque rows even on privileged saves, excludes them from UI editing and runtime selection. No PHP executor or premium execution claim is introduced. Pro compatibility and entitlement gates are necessary but not sufficient. A dedicated ADR and recovery/security evidence must resolve the conflict before any Pro executor is considered. #1601 tracks this separately (planning only). The bounded browser-language WP7 may integrate after its acceptance gates pass; do not claim PHP feature completion. WP8 does not depend on PHP execution.
 
 ## Acceptance (per WP)
 
