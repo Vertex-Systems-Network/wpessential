@@ -336,10 +336,13 @@ final class SiteKitAdmin {
 		$html  .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-wpe-ajax-form="' . esc_attr( self::AJAX_SNIPPETS ) . '">';
 		$html  .= wp_nonce_field( self::SNIPPETS_ACTION, '_wpnonce', true, false ) . '<input type="hidden" name="action" value="' . esc_attr( self::SNIPPETS_ACTION ) . '">';
 		$html  .= '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'code', 20 ) . '</span><div><h2>' . esc_html__( 'Custom code', 'wpessential' ) . '</h2>';
-		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS and JavaScript that survive theme changes. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS only.', 'wpessential' ) ) . '</p></div></div>';
+		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, HTML and JavaScript that survive theme changes. Public CSS uses an enqueued stylesheet. Admin and login require All pages. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS only.', 'wpessential' ) ) . '</p></div></div>';
 		foreach ( $rows as $index => $row ) {
 			$prefix = 'snippets[' . $index . ']';
 			$isNew  = $row['id'] === '';
+			if ( ! $canJs && SiteKitSnippets::privileged( $row ) ) {
+				continue;
+			}
 			$html  .= '<fieldset class="wpe-ui-sitekit__snippet"><legend>' . esc_html( $isNew ? __( 'New snippet', 'wpessential' ) : (string) $row['title'] ) . '</legend>';
 			$html  .= '<input type="hidden" name="' . esc_attr( $prefix . '[id]' ) . '" value="' . esc_attr( (string) $row['id'] ) . '">';
 			$html  .= '<div class="wpe-ui-sitekit__row">';
@@ -350,6 +353,7 @@ final class SiteKitAdmin {
 				$canJs ? [
 					'css' => 'CSS',
 					'js'  => 'JavaScript',
+					'html' => 'HTML',
 				] : [ 'css' => 'CSS' ],
 				(string) $row['type']
 			) . '</span>';
@@ -364,13 +368,19 @@ final class SiteKitAdmin {
 				],
 				(string) $row['scope']
 			) . '</span>';
-			$html  .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'JS location', 'wpessential' ) . '</span>' . self::select(
+			$html  .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Location', 'wpessential' ) . '</span>' . self::select(
 				'wpe-sk-snippet-' . $index . '-location',
 				$prefix . '[location]',
 				[
 					'footer' => __( 'Footer', 'wpessential' ),
 					'head'   => __( 'Head', 'wpessential' ),
-				],
+					'body_open' => __( 'Body open', 'wpessential' ),
+					'before_content' => __( 'Before content', 'wpessential' ),
+					'after_content' => __( 'After content', 'wpessential' ),
+				] + ( $canJs ? [
+					'admin' => __( 'Admin', 'wpessential' ),
+					'login' => __( 'Login', 'wpessential' ),
+				] : [] ),
 				(string) $row['location']
 			) . '</span>';
 			$html .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Condition', 'wpessential' ) . '</span>' . self::select(

@@ -30,6 +30,11 @@ final class SiteKitTest extends TestCase
         self::assertCount(2, $result);
         self::assertSame($js, $result[1]);
         self::assertSame([$js], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows([$js], [], false));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => 'admin'], false));
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => 'bad'], true));
+        self::assertSame('body_open', \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($js + ['location' => 'body_open'], true)['location']);
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'html', 'code' => '<p>Hi</p>'], false));
+        self::assertTrue(\WPEssential\Modules\SiteKit\SiteKitSnippets::privileged($css + ['location' => 'login']));
         self::assertSame(['js1', 'css1'], array_column(\WPEssential\Modules\SiteKit\SiteKitSnippets::ordered([$clean, $js]), 'id'));
     }
 
