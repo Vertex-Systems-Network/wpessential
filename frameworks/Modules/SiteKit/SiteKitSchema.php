@@ -222,6 +222,32 @@ final class SiteKitSchema {
 			'help'  => self::t( 'Add named responsive typography presets with stable slugs.' ),
 		];
 
+		$buttonVariants = [];
+		foreach ( [
+			'gradient' => self::t( 'Brand gradient' ),
+			'primary'  => self::t( 'Primary' ),
+			'dark'     => self::t( 'Dark' ),
+			'outline'  => self::t( 'Outline' ),
+			'ghost'    => self::t( 'Ghost' ),
+			'link'     => self::t( 'Text link' ),
+		] as $slug => $label ) {
+			$prefix = 'btn_variant_' . $slug;
+			$buttonVariants[ $prefix . '_heading' ] = self::heading( $label );
+			$buttonVariants[ $prefix . '_bg' ] = self::colour( self::t( 'Background colour' ) );
+			$buttonVariants[ $prefix . '_text' ] = self::colour( self::t( 'Text colour' ) );
+			$buttonVariants[ $prefix . '_border' ] = self::colour( self::t( 'Border colour' ) );
+		}
+		foreach ( [
+			'sm' => self::t( 'Small' ),
+			'md' => self::t( 'Medium' ),
+			'lg' => self::t( 'Large' ),
+		] as $slug => $label ) {
+			$prefix = 'btn_scale_' . $slug;
+			$buttonVariants[ $prefix . '_heading' ] = self::heading( $label );
+			$buttonVariants[ $prefix . '_height' ] = self::range( self::t( 'Minimum height' ), 24, 120, 1, 'px', true );
+			$buttonVariants[ $prefix . '_size' ] = self::range( self::t( 'Text size' ), 10, 40, 1, 'px', true );
+		}
+
 		return [
 			'colors'    => self::section( self::t( 'Global colours' ), self::t( 'The site palette used by every block and Elementor widget. Leave a colour empty to keep the theme\'s.' ), 'brush', $light ),
 			'dark'      => self::section(
@@ -302,6 +328,12 @@ final class SiteKitSchema {
 					'btn_focus_width' => self::range( self::t( 'Focus outline width' ), 1, 8 ),
 					'btn_focus_ring' => self::colour( self::t( 'Focus outline colour' ) ),
 				]
+			),
+			'button_variants' => self::section(
+				self::t( 'Button variants & sizes' ),
+				self::t( 'Global defaults for the WPEssential button variants and size scale. Local element styles take precedence.' ),
+				'grid',
+				$buttonVariants
 			),
 			'forms'     => self::section(
 				self::t( 'Form fields' ),

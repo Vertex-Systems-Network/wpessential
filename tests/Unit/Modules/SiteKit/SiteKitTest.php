@@ -235,6 +235,25 @@ final class SiteKitTest extends TestCase
         self::assertStringNotContainsString('--wp--preset--shadow--wpe-custom-card', SiteKitCompiler::css($store->values()));
     }
 
+    public function testButtonVariantsAndBackgroundAdvancedControls(): void
+    {
+        $store = new SiteKitStore();
+        $store->update([
+            'btn_variant_primary_bg' => '#123456',
+            'btn_variant_outline_border' => '#234567',
+            'btn_scale_sm_height' => ['desktop' => ['size' => 40, 'unit' => 'px'], 'mobile' => ['size' => 32, 'unit' => 'px']],
+            'site_bg' => ['color' => '#ffffff', 'origin' => 'content-box', 'clip' => 'padding-box', 'blend' => 'multiply'],
+        ]);
+        $css = SiteKitCompiler::css($store->values());
+        self::assertStringContainsString('--wpe-btn-primary-bg:#123456;', $css);
+        self::assertStringContainsString('--wpe-btn-outline-border:#234567;', $css);
+        self::assertStringContainsString('--wpe-btn-sm-height:40px;', $css);
+        self::assertStringContainsString('@media (max-width: 767px){:root{--wpe-btn-sm-height:32px;}}', $css);
+        self::assertStringContainsString('background-origin:content-box;background-clip:padding-box;background-blend-mode:multiply;', $css);
+        self::assertSame([], SiteKitCompiler::background(['clip' => 'invalid', 'blend' => 'bad']));
+        self::assertSame('', SiteKitCompiler::buttonVariantCss([]));
+    }
+
     public function testCompilerWritesPaletteDarkColoursAndResponsiveCss(): void
     {
         $values = [

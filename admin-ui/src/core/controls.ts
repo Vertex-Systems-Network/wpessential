@@ -1198,7 +1198,10 @@ types.background = ( ctx ) => {
 		part( ctx, 'position', 'select', { choices: { '': t( 'Default' ), 'center center': 'Center', 'top center': 'Top', 'bottom center': 'Bottom', 'center left': 'Left', 'center right': 'Right' } }, t( 'Position' ) ),
 		part( ctx, 'size', 'buttons', { choices: { '': t( 'Auto' ), cover: t( 'Cover' ), contain: t( 'Contain' ) } }, t( 'Size' ) ),
 		part( ctx, 'repeat', 'select', { choices: { '': t( 'Default' ), 'no-repeat': 'No repeat', repeat: 'Repeat', 'repeat-x': 'Repeat X', 'repeat-y': 'Repeat Y' } }, t( 'Repeat' ) ),
-		part( ctx, 'attachment', 'buttons', { choices: { '': t( 'Scroll' ), fixed: t( 'Fixed' ) } }, t( 'Attachment' ) ),
+		part( ctx, 'attachment', 'buttons', { choices: { '': t( 'Default' ), scroll: t( 'Scroll' ), fixed: t( 'Fixed' ), local: t( 'Local' ) } }, t( 'Attachment' ) ),
+		part( ctx, 'origin', 'select', { choices: { '': t( 'Default' ), 'border-box': t( 'Border box' ), 'padding-box': t( 'Padding box' ), 'content-box': t( 'Content box' ) } }, t( 'Origin' ) ),
+		part( ctx, 'clip', 'select', { choices: { '': t( 'Default' ), 'border-box': t( 'Border box' ), 'padding-box': t( 'Padding box' ), 'content-box': t( 'Content box' ) } }, t( 'Clip' ) ),
+		part( ctx, 'blend', 'select', { choices: { '': t( 'Default' ), normal: t( 'Normal' ), multiply: t( 'Multiply' ), screen: t( 'Screen' ), overlay: t( 'Overlay' ), darken: t( 'Darken' ), lighten: t( 'Lighten' ), 'soft-light': t( 'Soft light' ), 'hard-light': t( 'Hard light' ), difference: t( 'Difference' ), exclusion: t( 'Exclusion' ) } }, t( 'Blend mode' ) ),
 	] );
 	const gradient = build( 'gradient', child( ctx, 'gradient', {}, t( 'Gradient' ) ) );
 	const gradientBox = h( 'div', {}, [ gradient.el ] );

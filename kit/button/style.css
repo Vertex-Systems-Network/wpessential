@@ -1,14 +1,14 @@
 /* WPEssential kit — Button. */
 .wpe-button { display: grid; justify-items: var(--wpek-justify, start); }
-.wpe-button__link { --h: 46px; display: inline-flex; align-items: center; justify-content: center; gap: var(--wpek-icon-gap, .5em); min-height: var(--h); padding: 0 22px; border-radius: 999px; border: 1.5px solid transparent; font-weight: 700; font-size: 15px; line-height: 1; text-decoration: none; cursor: pointer; background: var(--_bg); color: var(--_fg); transition: transform var(--wp--custom--hover--duration, .3s) var(--wp--custom--hover--ease, cubic-bezier(.2, .8, .2, 1)), box-shadow .3s, background .3s, color .3s, border-color .3s; }
-.wpe-button__link.is-sm { --h: 36px; font-size: 13px; }
-.wpe-button__link.is-lg { --h: 56px; font-size: 16px; }
-.wpe-button__link.is-gradient { --_bg: linear-gradient(110deg, #e8701a, #f7a23e); --_fg: var(--wp--preset--color--ink, #0b1a3d); }
-.wpe-button__link.is-primary { --_bg: var(--wp--preset--color--primary, #ec7d1a); --_fg: var(--wp--preset--color--on-primary, #fff); }
-.wpe-button__link.is-dark { --_bg: var(--wp--preset--color--ink, #0b1a3d); --_fg: #fff; }
-.wpe-button__link.is-outline { --_bg: transparent; --_fg: currentColor; border-color: currentColor; }
-.wpe-button__link.is-ghost { --_bg: rgba(255, 255, 255, .1); --_fg: #fff; border-color: rgba(255, 255, 255, .3); }
-.wpe-button__link.is-link { --_bg: transparent; --_fg: var(--wp--preset--color--primary, currentColor); padding: 0; min-height: 0; border-radius: 0; }
+.wpe-button__link { --h: var(--wpe-btn-md-height, 46px); display: inline-flex; align-items: center; justify-content: center; gap: var(--wpek-icon-gap, .5em); min-height: var(--h); padding: 0 22px; border-radius: 999px; border: 1.5px solid transparent; font-weight: 700; font-size: var(--wpe-btn-md-size, 15px); line-height: 1; text-decoration: none; cursor: pointer; background: var(--_bg); color: var(--_fg); transition: transform var(--wp--custom--hover--duration, .3s) var(--wp--custom--hover--ease, cubic-bezier(.2, .8, .2, 1)), box-shadow .3s, background .3s, color .3s, border-color .3s; }
+.wpe-button__link.is-sm { --h: var(--wpe-btn-sm-height, 36px); font-size: var(--wpe-btn-sm-size, 13px); }
+.wpe-button__link.is-lg { --h: var(--wpe-btn-lg-height, 56px); font-size: var(--wpe-btn-lg-size, 16px); }
+.wpe-button__link.is-gradient { --_bg: var(--wpe-btn-gradient-bg, linear-gradient(110deg, #e8701a, #f7a23e)); --_fg: var(--wpe-btn-gradient-text, var(--wp--preset--color--ink, #0b1a3d)); border-color: var(--wpe-btn-gradient-border, transparent); }
+.wpe-button__link.is-primary { --_bg: var(--wpe-btn-primary-bg, var(--wp--preset--color--primary, #ec7d1a)); --_fg: var(--wpe-btn-primary-text, var(--wp--preset--color--on-primary, #fff)); border-color: var(--wpe-btn-primary-border, transparent); }
+.wpe-button__link.is-dark { --_bg: var(--wpe-btn-dark-bg, var(--wp--preset--color--ink, #0b1a3d)); --_fg: var(--wpe-btn-dark-text, #fff); border-color: var(--wpe-btn-dark-border, transparent); }
+.wpe-button__link.is-outline { --_bg: var(--wpe-btn-outline-bg, transparent); --_fg: var(--wpe-btn-outline-text, currentColor); border-color: var(--wpe-btn-outline-border, currentColor); }
+.wpe-button__link.is-ghost { --_bg: var(--wpe-btn-ghost-bg, rgba(255, 255, 255, .1)); --_fg: var(--wpe-btn-ghost-text, #fff); border-color: var(--wpe-btn-ghost-border, rgba(255, 255, 255, .3)); }
+.wpe-button__link.is-link { --_bg: var(--wpe-btn-link-bg, transparent); --_fg: var(--wpe-btn-link-text, var(--wp--preset--color--primary, currentColor)); padding: 0; min-height: 0; border-radius: 0; border-color: var(--wpe-btn-link-border, transparent); }
 .wpe-button__icon { flex: none; width: var(--wpek-icon, 16px); height: var(--wpek-icon, 16px); transition: transform .3s; }
 i.wpe-button__icon { width: auto; height: auto; font-size: var(--wpek-icon, 16px); line-height: 1; }
 img.wpe-button__icon { object-fit: contain; }

@@ -582,6 +582,7 @@ final class SiteKitCompiler {
 			$css .= ':root{' . $shadowVars . '}';
 		}
 		$css .= self::tokenCss( $v );
+		$css .= self::buttonVariantCss( $v );
 		$css .= self::controls( $v );
 		if ( ! empty( $v['motion_off'] ) ) {
 			$css .= '*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}';
@@ -767,6 +768,15 @@ final class SiteKitCompiler {
 			}
 		}
 
+		foreach ( [
+			'origin' => [ 'border-box', 'padding-box', 'content-box' ],
+			'clip'   => [ 'border-box', 'padding-box', 'content-box' ],
+			'blend'  => [ 'normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'soft-light', 'hard-light', 'difference', 'exclusion' ],
+		] as $key => $allowed ) {
+			if ( in_array( $b[ $key ] ?? '', $allowed, true ) ) {
+				$d[ 'background-' . ( $key === 'blend' ? 'blend-mode' : $key ) ] = $b[ $key ];
+			}
+		}
 		return $d;
 	}
 
@@ -816,6 +826,39 @@ final class SiteKitCompiler {
 			}
 		}
 
+		return $css;
+	}
+
+	/** @param array<string,mixed> $v */
+	public static function buttonVariantCss( array $v ): string {
+		self::$units = is_array( $v['units'] ?? null ) ? $v['units'] : [];
+		$vars = '';
+		foreach ( [ 'gradient', 'primary', 'dark', 'outline', 'ghost', 'link' ] as $variant ) {
+			foreach ( [ 'bg', 'text', 'border' ] as $prop ) {
+				$value = SiteKitSanitizer::colour( $v[ 'btn_variant_' . $variant . '_' . $prop ] ?? '' );
+				if ( $value !== '' ) {
+					$vars .= '--wpe-btn-' . $variant . '-' . $prop . ':' . $value . ';';
+				}
+			}
+		}
+		$css = $vars !== '' ? ':root{' . $vars . '}' : '';
+		foreach ( SiteKitBreakpoints::enabled( (array) ( $v['breakpoints'] ?? [] ) ) as $device => $breakpoint ) {
+			$vars = '';
+			foreach ( [ 'sm', 'md', 'lg' ] as $scale ) {
+				foreach ( [ 'height', 'size' ] as $prop ) {
+					$value = $v[ 'btn_scale_' . $scale . '_' . $prop ] ?? [];
+					$value = is_array( $value ) ? ( $value[ $device ] ?? '' ) : ( $device === 'desktop' ? $value : '' );
+					$length = self::size( $value );
+					if ( $length !== '' ) {
+						$vars .= '--wpe-btn-' . $scale . '-' . $prop . ':' . $length . ';';
+					}
+				}
+			}
+			if ( $vars !== '' ) {
+				$rule = ':root{' . $vars . '}';
+				$css .= $breakpoint['media'] === '' ? $rule : $breakpoint['media'] . '{' . $rule . '}';
+			}
+		}
 		return $css;
 	}
 
