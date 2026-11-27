@@ -368,7 +368,17 @@ test('Site Tools Kit: snippet save, disable, safe mode and explicit remove', asy
         await row().getByRole('checkbox', { name: 'Remove on save' }).check();
         await save();
         await expect(row()).toHaveCount(0);
-        await expect(panel().getByRole('group', { name: 'WP7 second CSS', exact: true })).toBeVisible();
+        const remaining = panel().getByRole('group', { name: 'WP7 second CSS', exact: true });
+        await expect(remaining).toBeVisible();
+        await remaining.locator('select[name$="[type]"]').selectOption('scss', { force: true });
+        await remaining.getByRole('textbox', { name: 'Code', exact: true }).fill('$size: 456; :root { --wpe-wp7-second: $size; }');
+        await remaining.locator('input[type=checkbox][name$="[enabled]"]').check();
+        await save();
+        await expect(remaining.locator('select[name$="[type]"]')).toHaveValue('scss');
+        await front.goto(BASE + '/', { waitUntil: 'load' });
+        await expect(style).toHaveCount(1);
+        await expect.poll(() => cssValue('--wpe-wp7-second')).toBe('456');
+        await expect.poll(() => cssValue('--wpe-wp7-audit')).toBe('');
       } finally {
         await front.close();
       }
