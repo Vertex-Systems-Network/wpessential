@@ -110,7 +110,7 @@ final class SiteKitSnippets {
 			$code = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $code ) : $code;
 		}
 		if ( $type === 'html' ) {
-			$code = function_exists( 'wp_kses_post' ) ? wp_kses_post( $code ) : strip_tags( $code );
+			$code = function_exists( 'wp_kses_post' ) ? wp_kses_post( $code ) : '';
 		}
 		if ( trim( $code ) === '' || strlen( $code ) > 262144 ) {
 			return null;
