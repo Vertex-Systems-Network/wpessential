@@ -81,6 +81,11 @@ final class SiteKitStore {
 		return $reset;
 	}
 
+	/** Canonicalize the native Customizer's option write and run the shared save lifecycle. */
+	public function normalizeCustomizerSave(): void {
+		$this->write( $this->values() );
+	}
+
 	/** @param array<string,mixed> $values */
 	private function write( array $values ): void {
 		$data = [

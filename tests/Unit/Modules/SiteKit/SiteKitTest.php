@@ -12,6 +12,24 @@ use WPEssential\Modules\SiteKit\SiteKitStore;
 
 final class SiteKitTest extends TestCase
 {
+    public function testCustomizerUsesCanonicalOptionAndSanitizer(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitCustomizer::class;
+        self::assertSame(SiteKitStore::OPTION . '[values][color_primary]', $class::settingId('color_primary'));
+        $colour = SiteKitSchema::field('color_primary');
+        self::assertTrue($class::supports($colour));
+        self::assertSame('#123abc', $class::sanitize($colour, '#123ABC'));
+        self::assertSame('', $class::sanitize($colour, ''));
+        self::assertNull($class::sanitize($colour, 'invalid'));
+        self::assertNull($class::sanitize($colour, ['invalid']));
+        self::assertFalse($class::supports(SiteKitSchema::field('size_body')));
+        self::assertFalse($class::supports(SiteKitSchema::field('custom_colours')));
+        $store = new SiteKitStore();
+        $store->update(['color_primary' => '#123abc', 'color_secondary' => '#ffffff']);
+        $store->normalizeCustomizerSave();
+        self::assertSame(['color_primary' => '#123abc', 'color_secondary' => '#ffffff'], $store->values());
+    }
+
     public function testSnippetMetadataAndRestrictedReplacement(): void
     {
         $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}', 'enabled' => true];
