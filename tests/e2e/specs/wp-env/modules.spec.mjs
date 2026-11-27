@@ -579,9 +579,16 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
     await page.goto(BASE + '/wp-admin/index.php', { waitUntil: 'load' });
     if (new URL(page.url()).searchParams.get('page') === 'wpessential-demos') {
       const close = page.locator('.wpe-ui-demowiz__close[aria-label="Close"]');
-      await expect(close).toBeVisible();
-      await close.click();
-      await expect(close).not.toBeVisible();
+      const unavailable = page.getByRole('heading', { name: 'The demo library is unreachable', exact: true });
+      // The external catalog can be unavailable; that page has no onboarding wizard.
+      // Assert a known outcome rather than skipping any unknown overlay or error.
+      await expect(close.or(unavailable).first()).toBeVisible();
+      if (await close.isVisible()) {
+        await close.click();
+        await expect(close).not.toBeVisible();
+      } else {
+        await expect(unavailable).toBeVisible();
+      }
     }
     await openAdmin(page, 'wpessential-module-site-kit');
     await expect(toggle(page)).toBeVisible();

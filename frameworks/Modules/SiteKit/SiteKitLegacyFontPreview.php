@@ -28,7 +28,7 @@ final class SiteKitLegacyFontPreview {
 		$sameDelivery = SiteKitFonts::local( $legacy ) === SiteKitFonts::local( $canonical );
 		foreach ( [ 'font_body', 'font_heading', 'font_mono', 'fonts_extra' ] as $key ) {
 			$raw = $legacy[ $key ] ?? '';
-			if ( $raw === '' || $raw === null || $raw === false ) {
+			if ( $raw === '' || $raw === false ) {
 				continue;
 			}
 			$clean = '';
