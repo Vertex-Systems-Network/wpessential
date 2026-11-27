@@ -98,7 +98,7 @@ final class SiteKitSnippets {
 
 	/** @param array<string,mixed> $row */
 	public static function privileged( array $row ): bool {
-		return ! in_array( $row['type'] ?? '', [ 'css' ], true ) || in_array( $row['location'] ?? '', [ 'admin', 'login' ], true );
+		return ! in_array( $row['type'] ?? '', [ 'css', 'scss' ], true ) || in_array( $row['location'] ?? '', [ 'admin', 'login' ], true );
 	}
 
 	private static function id( mixed $value ): string {
@@ -111,7 +111,7 @@ final class SiteKitSnippets {
 	 */
 	public static function clean( array $snippet, bool $canJs ): ?array {
 		$type = $snippet['type'] ?? 'css';
-		if ( ! in_array( $type, [ 'css', 'js', 'html' ], true ) ) {
+		if ( ! in_array( $type, [ 'css', 'scss', 'js', 'html' ], true ) ) {
 			return null;
 		}
 		if ( self::privileged( $snippet + [ 'type' => $type ] ) && ! $canJs ) {
@@ -125,6 +125,9 @@ final class SiteKitSnippets {
 			$code = function_exists( 'wp_kses_post' ) ? wp_kses_post( $code ) : '';
 		}
 		if ( trim( $code ) === '' || strlen( $code ) > 262144 ) {
+			return null;
+		}
+		if ( $type === 'scss' && self::compileScssLite( $code ) === null ) {
 			return null;
 		}
 		$id = self::id( $snippet['id'] ?? '' );
@@ -189,6 +192,59 @@ final class SiteKitSnippets {
 		};
 	}
 
+	/**
+	 * Bounded, dependency-free SCSS subset: literal variables followed by flat rules.
+	 * Unsupported syntax is rejected, never executed or fetched.
+	 */
+	public static function compileScssLite( string $source ): ?string {
+		if ( strlen( $source ) > 65536 ) {
+			return null;
+		}
+		$rest = trim( $source );
+		$vars = [];
+		while ( preg_match( '/^\$([a-zA-Z_][a-zA-Z0-9_-]{0,63})\s*:\s*([#a-zA-Z0-9.%+-]{1,80})\s*;\s*/', $rest, $match ) === 1 ) {
+			if ( count( $vars ) >= 32 || isset( $vars[ $match[1] ] ) ) {
+				return null;
+			}
+			$vars[ $match[1] ] = $match[2];
+			$rest = substr( $rest, strlen( $match[0] ) );
+		}
+		$rules = [];
+		while ( $rest !== '' ) {
+			if ( count( $rules ) >= 128 || preg_match( '/^([a-zA-Z0-9_.#:\s,>*+~-]+)\{([^{}]+)\}\s*/', $rest, $match ) !== 1 ) {
+				return null;
+			}
+			$selector = trim( $match[1] );
+			if ( $selector === '' ) {
+				return null;
+			}
+			$declarations = [];
+			foreach ( explode( ';', $match[2] ) as $item ) {
+				if ( trim( $item ) === '' ) {
+					continue;
+				}
+				if ( count( $declarations ) >= 128 || preg_match( '/^\s*([a-zA-Z-][a-zA-Z0-9-]*)\s*:\s*([^;]+?)\s*$/D', $item, $decl ) !== 1 ) {
+					return null;
+				}
+				$value = preg_replace_callback(
+					'/\$([a-zA-Z_][a-zA-Z0-9_-]*)/',
+					static fn ( array $ref ): string => $vars[ $ref[1] ] ?? '$',
+					$decl[2]
+				);
+				if ( ! is_string( $value ) || preg_match( '/^[#a-zA-Z0-9.% ,()+\/-]+$/D', $value ) !== 1 || trim( $value ) === '' ) {
+					return null;
+				}
+				$declarations[] = $decl[1] . ': ' . $value . ';';
+			}
+			if ( $declarations === [] ) {
+				return null;
+			}
+			$rules[] = $selector . ' { ' . implode( ' ', $declarations ) . ' }';
+			$rest = substr( $rest, strlen( $match[0] ) );
+		}
+		return $rules === [] ? null : implode( "\n", $rules );
+	}
+
 	/** @return list<array<string,mixed>> */
 	private function eligible( string $context = 'public' ): array {
 		return array_values(
@@ -230,10 +286,14 @@ final class SiteKitSnippets {
 		}
 		$css = '';
 		foreach ( $this->eligible( $context ) as $snippet ) {
-			if ( $snippet['type'] !== 'css' || ! $snippet['enabled'] || trim( $snippet['code'] ) === '' ) {
+			if ( ! in_array( $snippet['type'], [ 'css', 'scss' ], true ) || ! $snippet['enabled'] || trim( $snippet['code'] ) === '' ) {
 				continue;
 			}
-			$block = '/* ' . str_replace( '*/', '', $snippet['title'] ) . " */\n" . $snippet['code'] . "\n";
+			$source = $snippet['type'] === 'scss' ? self::compileScssLite( $snippet['code'] ) : $snippet['code'];
+			if ( $source === null ) {
+				continue;
+			}
+			$block = '/* ' . str_replace( '*/', '', $snippet['title'] ) . " */\n" . $source . "\n";
 			$media = self::SCOPES[ $snippet['scope'] ] ?? '';
 			$css  .= $media !== '' ? '@media ' . $media . "{\n" . $block . "}\n" : $block;
 		}

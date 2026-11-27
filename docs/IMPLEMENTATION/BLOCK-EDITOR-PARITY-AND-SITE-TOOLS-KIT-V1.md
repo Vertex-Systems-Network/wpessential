@@ -42,6 +42,10 @@ WP5 #1596 and WP6 #1598 merged. WP6 44/44 E2E, eight workflows passed; WP7 #1599
 
 Order: WP1 → WP2 → WP3/WP4 → WP5/WP6/WP7 → WP8 → WP9 → WP13 → WP10/WP12 → WP11 → WP14.
 
+## WP7 SCSS-lite V1 boundary
+
+SCSS-lite is a dependency-free subset: up to 32 unique literal variables declared before flat selector rules, with variable substitution in property values. Source limit 64 KiB; up to 128 rules and 128 declarations per rule. Unsupported syntax (including nesting, imports, mixins, interpolation and undefined variables) is rejected; no external compilation, file access or network fetch. Original source is retained and compilation is checked at save and render. Full Sass is not claimed. PHP execution remains excluded from Free.
+
 ## Acceptance (per WP)
 
 - Unit tests for schema/compiler changes; Playwright screenshot of editor vs frontend for WP12; axe = 0 serious issues for WP14.

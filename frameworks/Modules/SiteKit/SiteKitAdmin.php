@@ -336,7 +336,7 @@ final class SiteKitAdmin {
 		$html  .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-wpe-ajax-form="' . esc_attr( self::AJAX_SNIPPETS ) . '">';
 		$html  .= wp_nonce_field( self::SNIPPETS_ACTION, '_wpnonce', true, false ) . '<input type="hidden" name="action" value="' . esc_attr( self::SNIPPETS_ACTION ) . '">';
 		$html  .= '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'code', 20 ) . '</span><div><h2>' . esc_html__( 'Custom code', 'wpessential' ) . '</h2>';
-		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, HTML and JavaScript that survive theme changes. Public CSS uses an enqueued stylesheet. Admin and login require All pages. To delete an existing snippet, mark Remove on save. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS only.', 'wpessential' ) ) . '</p></div></div>';
+		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, SCSS-lite, HTML and JavaScript that survive theme changes. SCSS-lite supports literal variables and flat CSS rules only; no nesting, imports or mixins. Public styles use an enqueued stylesheet. Admin and login require All pages. To delete an existing snippet, mark Remove on save. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS and SCSS-lite only.', 'wpessential' ) ) . '</p></div></div>';
 		$template = '';
 		foreach ( $rows as $index => $row ) {
 			$prefix = 'snippets[' . $index . ']';
@@ -353,10 +353,14 @@ final class SiteKitAdmin {
 				'wpe-sk-snippet-' . $index . '-type',
 				$prefix . '[type]',
 				$canJs ? [
-					'css' => 'CSS',
-					'js'  => 'JavaScript',
+					'css'  => 'CSS',
+					'scss' => 'SCSS-lite',
+					'js'   => 'JavaScript',
 					'html' => 'HTML',
-				] : [ 'css' => 'CSS' ],
+				] : [
+					'css'  => 'CSS',
+					'scss' => 'SCSS-lite',
+				],
 				(string) $row['type']
 			) . '</span>';
 			$html  .= '<span class="wpe-ui-sitekit__mini"><span class="wpe-ui-sitekit__unit">' . esc_html__( 'Devices', 'wpessential' ) . '</span>' . self::select(
@@ -418,7 +422,14 @@ final class SiteKitAdmin {
 			}
 		}
 		$html .= '<template data-wpe-snippet-template data-next-index="' . esc_attr( (string) count( $rows ) ) . '">' . $template . '</template>';
-		$html .= '<div class="wpe-ui-builder__actions">' . Button::button( __( 'Add snippet', 'wpessential' ), 'secondary', [ 'data-wpe-add-snippet' => true, 'hidden' => true ] ) . Button::button( __( 'Save snippets', 'wpessential' ), 'primary', [ 'type' => 'submit' ] ) . '</div></form></section>';
+		$html .= '<div class="wpe-ui-builder__actions">' . Button::button(
+			__( 'Add snippet', 'wpessential' ),
+			'secondary',
+			[
+				'data-wpe-add-snippet' => true,
+				'hidden'               => true,
+			]
+		) . Button::button( __( 'Save snippets', 'wpessential' ), 'primary', [ 'type' => 'submit' ] ) . '</div></form></section>';
 
 		return $html;
 	}

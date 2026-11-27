@@ -70,6 +70,19 @@ final class SiteKitTest extends TestCase
         self::assertSame('all', \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['scope' => ['invalid']], true)['scope']);
     }
 
+    public function testScssLiteCompilesOnlyBoundedFlatRules(): void
+    {
+        $source = '$accent: #123456; $space: 12px; .card { color: $accent; padding: $space; }';
+        $expected = '.card { color: #123456; padding: 12px; }';
+        self::assertSame($expected, \WPEssential\Modules\SiteKit\SiteKitSnippets::compileScssLite($source));
+        self::assertSame($source, \WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $source], false)['code']);
+        foreach (['.card { color: $undefined; }', '@import "remote";', '.a { .b { color: red; } }', '$a: red; $a: blue; .a { color: $a; }', '.a { color: red; } trailing'] as $invalid) {
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::compileScssLite($invalid));
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $invalid], false));
+        }
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $source, 'location' => 'admin'], false));
+    }
+
     public function testHtmlSnippetRequiresWordPressSanitizer(): void
     {
         if (function_exists('wp_kses_post')) {
