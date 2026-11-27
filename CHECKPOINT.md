@@ -1,5 +1,10 @@
 # WPEssential — Engineering Checkpoint
 
+# 2026-11-27 — WP7 browser-language acceptance / PHP boundary
+
+- Free #1600 head `92d075e2` passed all 8 observed workflows, including WordPress E2E 45961984658. Subsequent Free boundary changes require new exact-head checks. PHP and unknown-language rows are inert and preserved; no Free editor or executor for them.
+- ADR-0004 and ADR-0193 prohibit arbitrary browser-managed PHP pending a separate accepted developer-mode security ADR; ADR-0239 does not supersede those restrictions. Pro entitlement policy alone does not resolve this. WP7 remains open; no merge or new release claimed.
+
 # 2026-11-27 — ADR-0239 WP6 integrated / WP7 active
 
 - WP6 Free #1598 exact candidate 8340b00c: 8/8 workflows and WordPress E2E 45954508648 44/44 PASS; merged e93386c2f663cdd0cd1027a8513949ad39fe1ba9. #1597 closed. Actual frontend global styling, responsive button scale, local palette override, applied shadow, named shadow admin lifecycle and Elementor registered picker verified. Raw local HEX, full shared React and complete editor/theme parity remain WP9/WP12; no new release or product certification.

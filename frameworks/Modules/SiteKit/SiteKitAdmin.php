@@ -337,11 +337,12 @@ final class SiteKitAdmin {
 		$html  .= wp_nonce_field( self::SNIPPETS_ACTION, '_wpnonce', true, false ) . '<input type="hidden" name="action" value="' . esc_attr( self::SNIPPETS_ACTION ) . '">';
 		$html  .= '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'code', 20 ) . '</span><div><h2>' . esc_html__( 'Custom code', 'wpessential' ) . '</h2>';
 		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, SCSS-lite, HTML and JavaScript that survive theme changes. SCSS-lite supports literal variables and flat CSS rules only; no nesting, imports or mixins. Public styles use an enqueued stylesheet. Admin and login require All pages. To delete an existing snippet, mark Remove on save. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS and SCSS-lite only.', 'wpessential' ) ) . '</p></div></div>';
+		$html .= '<p class="wpe-ui-muted">' . esc_html__( 'PHP is not executable in Free. Stored unsupported-language snippets are preserved and cannot be edited here. Server-side extensions require the separately reviewed developer-code path.', 'wpessential' ) . '</p>';
 		$template = '';
 		foreach ( $rows as $index => $row ) {
 			$prefix = 'snippets[' . $index . ']';
 			$isNew  = $row['id'] === '';
-			if ( ! $canJs && SiteKitSnippets::privileged( $row ) ) {
+			if ( ! SiteKitSnippets::isFreeType( $row['type'] ?? null ) || ( ! $canJs && SiteKitSnippets::privileged( $row ) ) ) {
 				continue;
 			}
 			$rowStart = strlen( $html );

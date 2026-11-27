@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SiteKitSnippets {
 
 	public const OPTION = 'wpessential_site_kit_snippets';
+	public const FREE_TYPES = [ 'css', 'scss', 'js', 'html' ];
 	public const LOCATIONS = [ 'head', 'footer', 'body_open', 'before_content', 'after_content', 'admin', 'login' ];
 	public const SCOPES = [
 		'all'     => '',
@@ -80,7 +81,7 @@ final class SiteKitSnippets {
 			if ( $id !== '' ) {
 				$seen[ $id ] = true;
 			}
-			if ( isset( $stored[ $id ] ) && ! $canJs && self::privileged( $stored[ $id ] ) ) {
+			if ( isset( $stored[ $id ] ) && ( ! self::isFreeType( $stored[ $id ]['type'] ?? null ) || ( ! $canJs && self::privileged( $stored[ $id ] ) ) ) ) {
 				continue;
 			}
 			if ( ( $raw['remove'] ?? '' ) === '1' ) {
@@ -94,6 +95,11 @@ final class SiteKitSnippets {
 			}
 		}
 		return array_values( $out + $stored );
+	}
+
+	/** Free never owns or edits a PHP or unknown-language row, even for privileged users. */
+	public static function isFreeType( mixed $type ): bool {
+		return in_array( $type, self::FREE_TYPES, true );
 	}
 
 	/** @param array<string,mixed> $row */
@@ -111,7 +117,7 @@ final class SiteKitSnippets {
 	 */
 	public static function clean( array $snippet, bool $canJs ): ?array {
 		$type = $snippet['type'] ?? 'css';
-		if ( ! in_array( $type, [ 'css', 'scss', 'js', 'html' ], true ) ) {
+		if ( ! self::isFreeType( $type ) ) {
 			return null;
 		}
 		if ( self::privileged( $snippet + [ 'type' => $type ] ) && ! $canJs ) {
@@ -252,7 +258,7 @@ final class SiteKitSnippets {
 				self::ordered( $this->all() ),
 				static function ( array $row ) use ( $context ): bool {
 					$location = $row['location'] ?? 'footer';
-					if ( ! in_array( $location, self::LOCATIONS, true ) ) {
+					if ( ! self::isFreeType( $row['type'] ?? null ) || ! in_array( $location, self::LOCATIONS, true ) ) {
 						return false;
 					}
 					if ( $context !== 'public' ) {

@@ -83,6 +83,23 @@ final class SiteKitTest extends TestCase
         self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean(['type' => 'scss', 'code' => $source, 'location' => 'admin'], false));
     }
 
+    public function testFreeCannotReplaceOrDeleteUnsupportedLanguageRows(): void
+    {
+        $php = ['id' => 'php1', 'type' => 'php', 'code' => 'return 1;', 'enabled' => true];
+        $unknown = ['id' => 'other1', 'type' => 'future', 'code' => 'opaque', 'enabled' => true];
+        $existing = [$php, $unknown];
+        foreach ([true, false] as $canJs) {
+            self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::isFreeType('php'));
+            self::assertFalse(\WPEssential\Modules\SiteKit\SiteKitSnippets::isFreeType('future'));
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($php, $canJs));
+            self::assertSame($existing, \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+                ['id' => 'php1', 'remove' => '1'],
+                ['id' => 'other1', 'type' => 'css', 'code' => '.test{color:red}'],
+            ], $canJs));
+        }
+        self::assertTrue(\WPEssential\Modules\SiteKit\SiteKitSnippets::isFreeType('scss'));
+    }
+
     public function testHtmlSnippetRequiresWordPressSanitizer(): void
     {
         if (function_exists('wp_kses_post')) {

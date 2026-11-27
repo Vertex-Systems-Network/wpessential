@@ -46,6 +46,10 @@ Order: WP1 → WP2 → WP3/WP4 → WP5/WP6/WP7 → WP8 → WP9 → WP13 → WP10
 
 SCSS-lite is a dependency-free subset: up to 32 unique literal variables declared before flat selector rules, with variable substitution in property values. Source limit 64 KiB; up to 128 rules and 128 declarations per rule. Unsupported syntax (including nesting, imports, mixins, interpolation and undefined variables) is rejected; no external compilation, file access or network fetch. Original source is retained and compilation is checked at save and render. Full Sass is not claimed. PHP execution remains excluded from Free.
 
+## WP7 PHP security boundary (open)
+
+WP7 lists PHP as Pro-only and off by default, but ADR-0239 supersedes only ADR-0232 decision 1; it does not supersede ADR-0004 or ADR-0193. ADR-0004 requires a separately accepted developer-mode ADR and threat model before implementing user-entered server code; ADR-0193 routes server code through the reviewed Extension SDK/plugin path and prohibits PHP/eval. Therefore Free rejects new PHP/unknown-language rows, preserves existing opaque rows even on privileged saves, excludes them from UI editing and runtime selection. No PHP executor or premium execution claim is introduced. Pro compatibility and entitlement gates are necessary but not sufficient. A dedicated ADR and recovery/security evidence must resolve the conflict before any Pro executor is considered; WP7 remains open for this scope.
+
 ## Acceptance (per WP)
 
 - Unit tests for schema/compiler changes; Playwright screenshot of editor vs frontend for WP12; axe = 0 serious issues for WP14.
