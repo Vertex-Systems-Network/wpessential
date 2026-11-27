@@ -136,7 +136,7 @@ final class SiteKitSnippets {
 		}
 		// CSS remains an enqueued stylesheet on public pages, as in the legacy contract.
 		$condition = $snippet['condition'] ?? 'all';
-		if ( ! in_array( $condition, [ 'all', 'front', 'pages' ], true ) ) {
+		if ( ! in_array( $condition, [ 'all', 'front', 'pages' ], true ) || ( in_array( $location, [ 'admin', 'login' ], true ) && $condition !== 'all' ) ) {
 			return null;
 		}
 		$ids = $snippet['page_ids'] ?? [];
@@ -147,13 +147,17 @@ final class SiteKitSnippets {
 				$pageIds[] = (int) $value;
 			}
 		}
+		if ( $condition === 'pages' && $pageIds === [] ) {
+			return null;
+		}
+		$scope = $snippet['scope'] ?? 'all';
 		$priority = is_numeric( $snippet['priority'] ?? null ) ? max( 0, min( 1000, (int) $snippet['priority'] ) ) : 10;
 
 		return [
 			'id'       => $id !== '' ? substr( $id, 0, 32 ) : substr( md5( uniqid( '', true ) ), 0, 8 ),
 			'title'    => $title !== '' ? substr( $title, 0, 120 ) : 'Untitled snippet',
 			'type'     => $type,
-			'scope'    => array_key_exists( (string) ( $snippet['scope'] ?? '' ), self::SCOPES ) ? (string) $snippet['scope'] : 'all',
+			'scope'    => is_string( $scope ) && array_key_exists( $scope, self::SCOPES ) ? $scope : 'all',
 			'location' => $location,
 			'enabled'  => ! empty( $snippet['enabled'] ),
 			'code'     => $code,
@@ -192,6 +196,9 @@ final class SiteKitSnippets {
 				self::ordered( $this->all() ),
 				static function ( array $row ) use ( $context ): bool {
 					$location = $row['location'] ?? 'footer';
+					if ( ! in_array( $location, self::LOCATIONS, true ) ) {
+						return false;
+					}
 					if ( $context !== 'public' ) {
 						return $location === $context && ( $row['condition'] ?? 'all' ) === 'all';
 					}

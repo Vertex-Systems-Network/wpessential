@@ -355,8 +355,9 @@ test('Site Tools Kit: snippet save, disable, safe mode and explicit remove', asy
         const style = front.locator('#wpessential-site-kit-snippets-inline-css');
         await front.goto(BASE + '/', { waitUntil: 'load' });
         await expect(style).toHaveCount(1);
-        await expect(front.locator('html')).toHaveCSS('--wpe-wp7-audit', '123');
-        await expect(front.locator('html')).toHaveCSS('--wpe-wp7-second', '');
+        const cssValue = (name) => front.locator('html').evaluate((el, key) => getComputedStyle(el).getPropertyValue(key).trim(), name);
+        await expect.poll(() => cssValue('--wpe-wp7-audit')).toBe('123');
+        await expect.poll(() => cssValue('--wpe-wp7-second')).toBe('');
         await front.goto(BASE + '/?wpe-safe-mode=1', { waitUntil: 'load' });
         await expect(style).toHaveCount(0);
         await row().locator('input[type=checkbox][name$="[enabled]"]').uncheck();

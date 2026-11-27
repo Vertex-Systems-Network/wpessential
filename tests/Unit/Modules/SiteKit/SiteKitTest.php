@@ -58,6 +58,18 @@ final class SiteKitTest extends TestCase
         ], true));
     }
 
+    public function testSnippetConditionAndLocationValidation(): void
+    {
+        $css = ['type' => 'css', 'code' => 'body{color:red}'];
+        self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['condition' => 'pages', 'page_ids' => 'bad,0,-3'], true));
+        foreach (['admin', 'login'] as $location) {
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => $location, 'condition' => 'front'], true));
+            self::assertNull(\WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => $location, 'condition' => 'pages', 'page_ids' => '7'], true));
+            self::assertSame($location, \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['location' => $location], true)['location']);
+        }
+        self::assertSame('all', \WPEssential\Modules\SiteKit\SiteKitSnippets::clean($css + ['scope' => ['invalid']], true)['scope']);
+    }
+
     public function testHtmlSnippetRequiresWordPressSanitizer(): void
     {
         if (function_exists('wp_kses_post')) {
