@@ -67,7 +67,7 @@ final class SiteKitLegacyPreview {
 		$handed = get_theme_mod( self::HANDOFF_MOD, [] );
 		$legacy = is_array( $legacy ) ? $legacy : [];
 		$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
-		return array_values( array_unique( array_merge( self::ownedKeys( $legacy, $handed ), SiteKitLegacyScalarPreview::confirmedKeys( [], [], $handed ) ) ) );
+		return array_values( array_unique( array_merge( self::ownedKeys( $legacy, $handed ), SiteKitLegacyScalarPreview::confirmedKeys( [], [], $handed ), SiteKitLegacyFontPreview::ownedKeys( $handed ) ) ) );
 	}
 
 	/**

@@ -45,6 +45,15 @@ final class SiteKitFonts {
 		return self::$list;
 	}
 
+	/** @return list<array<string,mixed>> Trusted companion theme's immutable bundled sources. */
+	public static function bundledPresets(): array {
+		if ( ! function_exists( 'apply_filters' ) || ! function_exists( 'get_template' ) || get_template() !== 'hi-wpessential' ) {
+			return [];
+		}
+		$rows = apply_filters( 'wpessential_site_kit_bundled_font_presets', [] );
+		return is_array( $rows ) ? array_values( array_filter( $rows, static fn ( mixed $row ): bool => is_array( $row ) && is_string( $row['slug'] ?? null ) && preg_match( '/^hi-wpessential-[a-z0-9-]+$/', $row['slug'] ) === 1 && is_string( $row['name'] ?? null ) && is_string( $row['fontFamily'] ?? null ) ) ) : [];
+	}
+
 	public static function exists( string $family ): bool {
 		return isset( self::all()[ $family ] );
 	}

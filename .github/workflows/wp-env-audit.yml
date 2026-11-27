@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: Vertex-Systems-Network/hi-wpessential
-          ref: f4478e33c6bdc92851a38e0741eeafe27e069993
+          ref: 4d849bc9c6a007ceed182598688def5b76062cac
           path: tests/e2e/theme-fixtures/hi-wpessential
           persist-credentials: false
 

@@ -14,6 +14,44 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class SiteKitLegacyFontPreview {
 
+	private const ROLES = [ 'font_body', 'font_heading', 'font_mono' ];
+
+	/** @return array<string,string> */
+	public static function bundledReferences(): array {
+		$out = [];
+		foreach ( SiteKitFonts::bundledPresets() as $family ) {
+			$out[ (string) $family['name'] ] = 'theme:' . $family['slug'];
+		}
+		return $out;
+	}
+
+	/**
+	 * Only locally bundled role references are eligible for this runtime slice.
+	 * Google lists and delivery changes remain review-only.
+	 *
+	 * @param array<string,mixed> $legacy
+	 * @return array<string,string>
+	 */
+	public static function bundledCandidates( array $legacy ): array {
+		$refs = self::bundledReferences();
+		$out  = [];
+		foreach ( self::ROLES as $key ) {
+			$raw = $legacy[ $key ] ?? '';
+			if ( is_string( $raw ) && isset( $refs[ $raw ] ) ) {
+				$out[ $key ] = $refs[ $raw ];
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * @param list<string> $handed
+	 * @return list<string>
+	 */
+	public static function ownedKeys( array $handed ): array {
+		return self::bundledReferences() === [] ? [] : array_values( array_intersect( $handed, self::ROLES ) );
+	}
+
 	/**
 	 * @param array<string,mixed> $legacy
 	 * @param array<string,mixed> $canonical
