@@ -244,6 +244,24 @@ final class SiteKitTest extends TestCase
         self::assertArrayNotHasKey('fontFamily', $missing['styles']['typography'] ?? []);
     }
 
+    public function testLegacyBreakpointPreviewPreservesMediaBoundariesAndRejectsOverflow(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyBreakpointPreview::class;
+        $breakpoints = \WPEssential\Modules\SiteKit\SiteKitBreakpoints::class;
+        $result = $class::assess(['breakpoints' => '1920|1280|1024|768|560|480|360']);
+        self::assertSame('ready', $result['status']);
+        self::assertSame(['', '@media (min-width: 1920px)', '@media (max-width: 1439px)', '@media (max-width: 1279px)', '@media (max-width: 1023px)', '@media (max-width: 767px)', '@media (max-width: 559px)', '@media (max-width: 479px)'], array_column($breakpoints::enabled($result['values']), 'media'));
+        $default = $class::assess([]);
+        self::assertSame(['desktop', 'tablet', 'mobile'], array_keys($breakpoints::enabled($default['values'])));
+        self::assertSame(['desktop'], array_keys($breakpoints::enabled($class::assess(['breakpoints' => '-'])['values'])));
+        self::assertSame('@media (max-width: 359px)', $breakpoints::media('mobile_small', $class::assess(['breakpoints' => '320'])['values']));
+        self::assertSame('slot_conflict', $class::assess(['breakpoints' => '360|320'])['status']);
+        self::assertSame('unknown_format', $class::assess(['breakpoints' => '768|unknown'])['status']);
+        self::assertSame('responsive_values', $class::assess(['breakpoints' => '768|560', 'size_body' => '{"desktop":"18","mobile":"14"}'])['status']);
+        self::assertSame('responsive_values', $class::assess(['breakpoints' => '-', 'typo_h1' => ['size' => ['320' => '12']]])['status']);
+        self::assertSame('ready', $class::assess(['breakpoints' => '768|560', 'size_body' => '{"desktop":"18"}'])['status']);
+    }
+
     public function testStoreReportsChangesAndResetsGroups(): void
     {
         $store = new SiteKitStore();
