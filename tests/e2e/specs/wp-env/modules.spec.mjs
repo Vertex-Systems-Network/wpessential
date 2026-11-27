@@ -153,14 +153,19 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
   if (!wasOn) await setModule(page, 'site-kit', true);
   try {
     await audit('site-kit', 'registered blocks and widgets inherit global token slugs', async () => {
-      const code = `
-        $store = new \\WPEssential\\Modules\\SiteKit\\SiteKitStore();
-        $old = get_option($store::OPTION, null);
-        try {
+      // Seed in a separate request: Elementor can cache controls during initialization.
+      const run = (code) => wp(`--user=admin eval 'eval(base64_decode("${Buffer.from(code).toString('base64')}"));'`).trim().split('\n').at(-1);
+      const backup = run('echo base64_encode(wp_json_encode(get_option("wpessential_site_kit", null)));');
+      try {
+        run(`
+          $store = new \\WPEssential\\Modules\\SiteKit\\SiteKitStore();
           $store->update([
             "custom_colours" => ["tokens" => [["name" => "E2E brand", "slug" => "e2e-kit-brand", "color" => "#123456", "dark" => "#abcdef"]]],
             "custom_typography" => ["tokens" => [["name" => "E2E display", "slug" => "e2e-kit-display", "typography" => ["size" => ["desktop" => ["size" => 48, "unit" => "px"]], "weight" => "700"]]]],
           ]);
+          echo "seeded";
+        `);
+        const result = JSON.parse(run(`
           $type = \\WP_Block_Type_Registry::get_instance()->get_registered("wpessential/heading");
           if (!$type) { throw new \\RuntimeException("Missing heading block"); }
           $attrs = ["anchor" => "wp5-e2e-heading", "text" => "Token heading", "titleTypography" => ["preset" => "wpe-custom-e2e-kit-display", "weight" => "600"], "titleColor" => ["normal" => "wpe-custom-e2e-kit-brand"]];
@@ -172,23 +177,26 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
           $preset = $controls["titleTypography_wpe_preset"] ?? [];
           $colour = $controls["titleColor_wpe_global"] ?? [];
           echo wp_json_encode([
-            "block" => str_contains($html, "font-size:var(--wpe-typography-wpe-custom-e2e-kit-display-font-size,inherit)") && str_contains($html, "font-weight:600") && str_contains($html, "color:var(--wp--preset--color--wpe-custom-e2e-kit-brand)"),
+            "blockSize" => str_contains($html, "font-size:var(--wpe-typography-wpe-custom-e2e-kit-display-font-size,inherit)"),
+            "blockWeight" => str_contains($html, "font-weight:600"),
+            "blockColour" => str_contains($html, "color:var(--wp--preset--color--wpe-custom-e2e-kit-brand)"),
             "typography" => isset($preset["options"]["wpe-custom-e2e-kit-display"]) && str_contains($preset["selectors_dictionary"]["wpe-custom-e2e-kit-display"] ?? "", "var(--wpe-typography-wpe-custom-e2e-kit-display-font-size"),
             "colour" => isset($colour["options"]["wpe-custom-e2e-kit-brand"]),
             "premium" => \\WPEssential\\Modules\\SiteKit\\SiteKitElementor::enabled(),
           ]);
-        } finally {
-          if ($old === null) { delete_option($store::OPTION); } else { update_option($store::OPTION, $old); }
+        `));
+        expect(result, JSON.stringify(result)).toEqual({
+          blockSize: true, blockWeight: true, blockColour: true, typography: true, colour: true,
+          premium: process.env.WPE_E2E_PRO === '1',
+        });
+      } finally {
+        run(`
+          $old = json_decode(base64_decode("${backup}"), true);
+          if ($old === null) { delete_option("wpessential_site_kit"); } else { update_option("wpessential_site_kit", $old); }
           wp_clean_theme_json_cache();
-        }
-      `;
-      const encoded = Buffer.from(code).toString('base64');
-      const output = wp(`--user=admin eval 'eval(base64_decode("${encoded}"));'`).trim();
-      const result = JSON.parse(output.split('\n').at(-1));
-      expect(result.block).toBe(true);
-      expect(result.typography).toBe(true);
-      expect(result.colour).toBe(true);
-      expect(result.premium).toBe(process.env.WPE_E2E_PRO === '1');
+          echo "restored";
+        `);
+      }
     });
   } finally {
     if (!wasOn) await setModule(page, 'site-kit', false);
