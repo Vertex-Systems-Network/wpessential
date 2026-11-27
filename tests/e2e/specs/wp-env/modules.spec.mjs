@@ -496,6 +496,22 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await expect.poll(async () => Math.round((await page.locator('#customize-preview').boundingBox())?.width ?? 0)).toBe(420);
       await size.fill('15');
       await size.blur();
+      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_layout').expand());
+      const smallWidth = breakpoint.getByRole('spinbutton', { name: 'Small phone width', exact: true });
+      const smallEnabled = breakpoint.getByRole('switch', { name: 'Small phone', exact: true });
+      await smallWidth.fill('430');
+      await smallWidth.blur();
+      await expect.poll(async () => Math.round((await page.locator('#customize-preview').boundingBox())?.width ?? 0)).toBe(430);
+      await smallEnabled.uncheck();
+      await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
+      await smallEnabled.check();
+      await smallWidth.fill('420');
+      await smallWidth.blur();
+      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
+      await device.click();
+      await control('size_body').locator('[data-device="mobile_small"]').click();
+      await expect(size).toHaveValue('15');
+      expect(stored().values.breakpoints).toBeUndefined();
       // Native Desktop is already selected internally while a custom width is
       // displayed. Its click must still restore the shared desktop device.
       await page.locator('.wp-full-overlay-footer .devices button[data-device="desktop"]').click();

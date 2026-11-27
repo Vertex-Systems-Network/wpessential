@@ -19,7 +19,7 @@ Work ID root: `P5-M14`
 
 ## Current execution handoff (2026-11-27)
 
-WP5 #1596, WP6 #1598 and bounded browser-language WP7 #1600 merged. WP7 candidate 8a3ea579 passed 8/8 workflows, 10/10 checks, WordPress E2E 46/46; merged ab80f77d. PHP architecture remains separate #1601, planning only. WP8 #1602 / #1603 active: scalar schema projection first slice; responsive/composite shared controls, theme legacy reconciliation and bidirectional browser acceptance pending. No release or full-product certification.
+WP5 #1596, WP6 #1598 and bounded browser-language WP7 #1600 merged. WP7 candidate 8a3ea579 passed 8/8 workflows, 10/10 checks, WordPress E2E 46/46; merged ab80f77d. PHP architecture remains separate #1601, planning only. WP8 #1602 / #1603 active: shared scalar, responsive, composite and state controls, explicit palette/scalar/bundled-font transfer, and bidirectional browser acceptance verified on Free `5d928215` / theme `4d849bc9` (8/8 workflows, 10/10 checks, 48/48 WordPress E2E). Versioned ownership contract and read-only breakpoint review are on active candidate `a9dbb1a0` with theme `b9b53ebc`; fresh verification pending. No release or full-product certification.
 
 ## Work packages
 
@@ -32,7 +32,7 @@ WP5 #1596, WP6 #1598 and bounded browser-language WP7 #1600 merged. WP7 candidat
 | WP5 | 9 | Global colours / dark colours / typography: repeater "Add custom" with name + slug; exposed as CSS vars + `theme.json` palette/fontSizes + global picker in blocks/Elementor | Free | MERGED — #1596; 42/42 Free, 49/49 paired |
 | WP6 | 13 | Expand groups: images, forms (labels, inputs, focus, placeholder, errors), buttons (states, sizes, variants), background, links (states, underline), shadows (named presets) — every sub-element + full CSS props | Free | MERGED — #1598; 44/44 E2E |
 | WP7 | 12 | Custom code: repeater of snippets — language (CSS, SCSS-lite, JS, HTML, PHP-off-by-default), location (head, body open, footer, before/after content, admin, login), conditions (all/front/page ids), priority, enable | Free (PHP exec Pro) | MERGED — bounded browser-language #1600; PHP design deferred #1601 |
-| WP8 | 14 | Customizer panels generated from the same schema/option keys | Free | ACTIVE — #1602 / #1603 shared controls / palette handoff; paired evidence pending |
+| WP8 | 14 | Customizer panels generated from the same schema/option keys | Free | ACTIVE — #1602 / #1603 shared controls and bounded handoff verified; versioned contract, native preview regression and legacy breakpoint reconciliation pending |
 | WP9 | 1, 3 | `InspectorTabs` + "Reset to default" toolbar button (clears attributes to block.json defaults/example) on every block | Free | TODO |
 | WP10 | 8 | Blocks/demos inherit kit: strip per-block defaults from demo content; block CSS uses kit vars | Free, theme | TODO |
 | WP11 | 2 | Page/post meta "Content width": Default (kit) / Custom (value + unit) | Free | TODO |
@@ -52,7 +52,9 @@ WP7 lists PHP as Pro-only and off by default, but ADR-0239 supersedes only ADR-0
 
 ## WP8 current integration boundary
 
-WP8 #1602 / #1603 shared scalar, responsive and composite controls use native changesets and the canonical option. `27fa040f` PHPStan rejected inherited constructor arguments (PHP Quality and Architecture); `ba54a806` corrects the constructor. `5323b3be` adds capability/nonce-gated palette-only ownership transfer, keeps legacy values and existing canonical conflicts, and retains reset ownership. Theme companion hi-wpessential #129 (`0ccd33cd`, issue #128) consumes the owned-key contract, suppressing only owned palette controls/legacy compiler values and preserving standalone behavior. Actual combined browser, preview, save/reset and paired CI evidence pending; non-palette legacy formats remain unresolved.
+WP8 #1602 / #1603 shared scalar, responsive, composite and state controls use native changesets and canonical option keys. Verified Free `5d928215` / companion theme `4d849bc9` (hi-wpessential #129, issue #128) passed all eight workflows, ten checks and 48/48 WordPress E2E (run 46076690293). Explicit capability/nonce-gated transfer covers reviewed palette, scalar and bundled font roles, preserves legacy theme mods and canonical conflicts, requires exact canonical readback, retains reset ownership, and restores legacy behavior when the module is disabled. Google extra-font storage normalization and theme font preset resolution are verified. Versioned ownership handshake and administrator-facing read-only breakpoint review in `a9dbb1a0` / `b9b53ebc` are pending exact paired verification. Initial browser accessibility workflow failed at Chromium dependency installation (Microsoft apt repository HTTP 403), not an accessibility assertion; the failed job was rerun unchanged.
+
+Legacy breakpoint transfer is intentionally not enabled: legacy theme's 320 and 360 slots can coexist but Kit has a single small-phone slot, and legacy responsive controls still store numeric device keys/aliases. Even when the selected media boundaries are representable, moving only the breakpoint option without reconciling dependent controls would create divergent semantics. Preserve the raw source and defer unresolved formats (including Google delivery ownership); never claim full legacy parity. Native preview regression work checks native Desktop/Mobile switching, live width edits, disabling/re-enabling a selected breakpoint and retention of unpublished device values. This successor is not yet verified. WP8 remains ACTIVE; no merge or release claim.
 
 ## Acceptance (per WP)
 
