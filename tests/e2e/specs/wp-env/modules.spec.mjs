@@ -173,9 +173,9 @@ test('Site Tools Kit: shared Gutenberg and Elementor token references', async ({
           $widgets = \\Elementor\\Plugin::instance()->widgets_manager->get_widget_types();
           $widget = $widgets["wpe-heading"] ?? null;
           if (!$widget) { throw new \\RuntimeException("Missing Elementor heading widget"); }
-          $controls = $widget->get_controls();
-          $preset = $controls["titleTypography_wpe_preset"] ?? [];
-          $colour = $controls["titleColor_wpe_global"] ?? [];
+          // Elementor separates optimized style controls from the bulk controls list.
+          $preset = $widget->get_controls("titleTypography_wpe_preset") ?? [];
+          $colour = $widget->get_controls("titleColor_wpe_global") ?? [];
           echo wp_json_encode([
             "blockSize" => str_contains($html, "font-size:var(--wpe-typography-wpe-custom-e2e-kit-display-font-size,inherit)"),
             "blockWeight" => str_contains($html, "font-weight:600"),
