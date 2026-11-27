@@ -1,3 +1,8 @@
+# 2026-11-27 — WP8 shared Customizer and theme palette companion
+
+- WP8 #1602 / #1603 shared scalar, responsive and composite controls use native changesets and the canonical option. `27fa040f` PHPStan rejected inherited constructor arguments (PHP Quality and Architecture); `ba54a806` corrects the constructor. `5323b3be` adds capability/nonce-gated palette-only ownership transfer, keeps legacy values and existing canonical conflicts, and retains reset ownership. Theme companion hi-wpessential #129 (`0ccd33cd`, issue #128) consumes the owned-key contract, suppressing only owned palette controls/legacy compiler values and preserving standalone behavior. Actual combined browser, preview, save/reset and paired CI evidence pending; non-palette legacy formats remain unresolved.
+- No production migration, no release. Resume RB-0134; both draft PRs require exact-head and paired evidence before integration.
+
 # 2026-11-27 — Bounded WP7 integrated / WP8 active
 
 - Free #1600 exact head 8a3ea579 passed 8/8 workflows, 10/10 checks, WordPress E2E 45993977471 46/46; zero behind and no review blockers. Merged ab80f77de428f95a530ddc6cc3ec7356179786a3; #1599 closed. PHP #1601 planning-only, no PHP runtime.
