@@ -8732,16 +8732,16 @@
       "runtime_allowed": true,
       "claim_branch": "agent/adr-0239-wp7-custom-code",
       "allowed_scope": [
-        "Site Tools Kit snippet metadata, languages, scoped locations, permissions, manager and tests; Pro-only extension boundary"
+        "Site Tools Kit CSS, SCSS-lite, JS, HTML, metadata, scoped locations, permissions, manager, inert unsupported-row preservation and tests"
       ],
       "forbidden_scope": [
-        "PHP execution in Free",
+        "PHP execution in Free or Pro; #1601 planning only",
         "Unrelated modules",
         "Production release",
         "P-006 evidence promotion"
       ],
       "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
-      "close_condition": "WP7 scoped acceptance and exact-head CI PASS; merge."
+      "close_condition": "Bounded browser-language WP7 acceptance and exact-head CI PASS; merge. PHP #1601 separately open; no PHP feature completion."
     }
   ],
   "historical_closeout": {

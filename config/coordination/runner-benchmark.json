@@ -4092,7 +4092,8 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "IN_PROGRESS",
       "evidence": [
-        "7e259e39 first PHPDoc gate failure, 21e66481 correction and location/HTML slice; verification pending."
+        "7e259e39 first PHPDoc gate failure, 21e66481 correction and location/HTML slice; verification pending.",
+        "dfbf6d9c 8/8 workflows PASS incl. WordPress E2E 45992599478; further browser acceptance 2163bb82 requires fresh exact-head CI. PHP #1601 planning-only separately tracked."
       ],
       "note": "Do not promote before scoped acceptance."
     }
