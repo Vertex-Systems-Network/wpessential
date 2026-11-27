@@ -304,6 +304,16 @@ final class SiteKitTest extends TestCase
         self::assertSame(['font_heading' => 'google:Roboto'], $class::remoteCandidates($legacy, ['fonts_delivery' => 'google']));
     }
 
+    public function testFontHandoffDefersUnresolvedCanonicalConflict(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $candidates = ['font_body' => 'theme:hi-wpessential-inter', 'font_heading' => 'google:Roboto', 'font_mono' => 'theme:hi-wpessential-georgia', 'fonts_extra' => 'Roboto|Inter'];
+        $canonical = ['font_body' => 'theme:missing', 'font_heading' => 'google:Inter', 'font_mono' => 'theme:mono', 'fonts_extra' => 'Roboto|Unknown Invalid Family'];
+        self::assertSame(['font_heading' => 'google:Roboto', 'font_mono' => 'theme:hi-wpessential-georgia'], $class::resolvableCandidates($candidates, $canonical, ['mono']));
+        self::assertSame($candidates, $class::resolvableCandidates($candidates, [], []));
+        self::assertSame(['fonts_extra' => 'Roboto|Inter'], $class::resolvableCandidates(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'google:Roboto|Inter'], []));
+    }
+
     public function testExplicitFalseBreakpointSurvivesCustomizerAndStore(): void
     {
         $field = \WPEssential\Modules\SiteKit\SiteKitSchema::field('breakpoints');

@@ -353,7 +353,7 @@ final class SiteKitAdmin {
 		$families = function_exists( 'wp_get_global_settings' ) ? wp_get_global_settings( [ 'typography', 'fontFamilies' ] ) : [];
 		foreach ( array_merge( (array) ( $families['theme'] ?? [] ), SiteKitFonts::bundledPresets() ) as $family ) {
 			if ( isset( $family['slug'], $family['fontFamily'] ) ) {
-				$fonts[] = [
+				$fonts[ (string) $family['slug'] ] = [
 					'value' => 'theme:' . $family['slug'],
 					'name'  => (string) ( $family['name'] ?? $family['slug'] ),
 					'stack' => (string) $family['fontFamily'],
@@ -379,7 +379,7 @@ final class SiteKitAdmin {
 		}
 		$config = [
 			'palette'        => (object) $palette,
-			'themeFonts'     => $fonts,
+			'themeFonts'     => array_values( $fonts ),
 			'googleList'     => plugins_url( 'data/google-fonts.json', __FILE__ ),
 			'breakpoints'    => array_map(
 				static fn ( string $key, array $b ): array => [

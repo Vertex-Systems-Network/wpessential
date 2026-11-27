@@ -662,7 +662,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
     await expect(toggle(page)).toBeVisible();
     if (!wasOn) await setModule(page, 'site-kit', true);
     await audit('site-kit', 'paired theme retains legacy data and delegates compatible settings', async () => {
-      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","font_heading"=>"google:Roboto","fonts_extra"=>"Roboto|Inter","fonts_delivery"=>"google","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"360|320"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8,"fonts_delivery"=>"google"]]); wp_clean_theme_json_cache(); echo "ready";');
+      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","font_heading"=>"google:Roboto","font_mono"=>"Georgia","fonts_extra"=>"Roboto|Inter","fonts_delivery"=>"google","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"360|320"]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8,"fonts_delivery"=>"google","font_mono"=>"theme:missing-font"]]); wp_clean_theme_json_cache(); echo "ready";');
       const original = read().legacy;
       expect(read().effective.color_secondary).toBe('#112233');
       await openAdmin(page, 'wpessential-site-kit&group=colors');
@@ -702,12 +702,17 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(migrated.effective.fonts_delivery).toBe('google');
       expect(migrated.handed).toEqual(expect.arrayContaining(['font_heading', 'fonts_extra']));
       expect(migrated.handed).not.toContain('fonts_delivery');
+      expect(migrated.handed).not.toContain('font_mono');
+      expect(migrated.effective.font_mono).toBe('Georgia');
+      expect(migrated.canonical.values.font_mono).toBe('theme:missing-font');
       const compiledFonts = JSON.parse(run('echo wp_json_encode(wp_get_global_settings(["typography","fontFamilies"]));'));
       const allFonts = Object.values(compiledFonts).flat();
       expect(allFonts.find((font) => font.slug === 'hi-wpessential-inter')?.fontFamily).toBe('Inter, system-ui, sans-serif');
       await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_type', { waitUntil: 'load' });
       const pairedSize = page.locator('[data-wpe-setting="wpessential_site_kit[values][size_body]"]');
       await expect(pairedSize).toBeVisible();
+      const themeFontRefs = await page.locator('#wpe-controls-config').evaluate((node) => JSON.parse(node.textContent).themeFonts.map((font) => font.value));
+      expect(new Set(themeFontRefs).size).toBe(themeFontRefs.length);
       await page.evaluate(() => window.wpeControls.setDevice('360'));
       const preview = page.locator('#customize-preview');
       await expect(preview).toHaveClass(/wpe-c-preview-sized/);

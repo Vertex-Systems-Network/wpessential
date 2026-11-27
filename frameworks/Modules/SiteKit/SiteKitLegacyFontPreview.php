@@ -70,8 +70,53 @@ final class SiteKitLegacyFontPreview {
 	 * @return array<string,string>
 	 */
 	public static function candidates( array $legacy, array $canonical ): array {
-		$bundled = self::bundledCandidates( $legacy );
-		return self::remoteSupported() ? $bundled + self::remoteCandidates( $legacy, $canonical ) : $bundled;
+		$bundled    = self::bundledCandidates( $legacy );
+		$candidates = self::remoteSupported() ? $bundled + self::remoteCandidates( $legacy, $canonical ) : $bundled;
+		$slugs      = array_column( SiteKitFonts::bundledPresets(), 'slug' );
+		if ( function_exists( 'wp_get_global_settings' ) ) {
+			$origins = wp_get_global_settings( [ 'typography', 'fontFamilies' ] );
+			foreach ( (array) $origins as $families ) {
+				foreach ( (array) $families as $family ) {
+					if ( is_array( $family ) && is_string( $family['slug'] ?? null ) ) {
+						$slugs[] = $family['slug'];
+					}
+				}
+			}
+		}
+		return self::resolvableCandidates( $candidates, $canonical, $slugs );
+	}
+
+	/**
+	 * A conflicting canonical winner must resolve before suppressing the legacy source.
+	 * Existing invalid values are never overwritten by this operation.
+	 *
+	 * @param array<string,string> $candidates
+	 * @param array<string,mixed> $canonical
+	 * @param list<string> $themeSlugs
+	 * @return array<string,string>
+	 */
+	public static function resolvableCandidates( array $candidates, array $canonical, array $themeSlugs ): array {
+		foreach ( array_keys( $candidates ) as $key ) {
+			if ( ! array_key_exists( $key, $canonical ) ) {
+				continue;
+			}
+			$existing = $canonical[ $key ];
+			$valid    = false;
+			if ( is_string( $existing ) ) {
+				if ( $key === 'fonts_extra' ) {
+					$names = array_map( static fn ( string $name ): string => str_starts_with( trim( $name ), 'google:' ) ? substr( trim( $name ), 7 ) : trim( $name ), explode( '|', $existing ) );
+					$valid = array_values( array_unique( $names ) ) === SiteKitFonts::extraFamilies( $existing );
+				} elseif ( str_starts_with( $existing, 'theme:' ) ) {
+					$valid = in_array( substr( $existing, 6 ), $themeSlugs, true );
+				} elseif ( str_starts_with( $existing, 'google:' ) ) {
+					$valid = SiteKitFonts::exists( substr( $existing, 7 ) );
+				}
+			}
+			if ( ! $valid ) {
+				unset( $candidates[ $key ] );
+			}
+		}
+		return $candidates;
 	}
 
 	/**
