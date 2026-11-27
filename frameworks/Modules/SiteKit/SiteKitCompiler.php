@@ -121,22 +121,37 @@ final class SiteKitCompiler {
 			$settings['color']['palette'] = $palette;
 		}
 
-		// Fonts: body / heading / mono slugs, plus the extra families for the editors.
-		$families = [];
-		$present  = [];
-		foreach ( $list( [ 'typography', 'fontFamilies' ] ) as $family ) {
-			$slug = (string) ( $family['slug'] ?? '' );
-			$pick = (string) ( $v[ 'font_' . $slug ] ?? '' );
-			if ( str_starts_with( $pick, 'google:' ) ) {
-				$family = SiteKitFonts::entry( $slug, substr( $pick, 7 ), $v );
-			}
-			$present[ $slug ] = true;
-			$families[]       = $family;
+		// Snapshot the original presets before mapping body/heading/mono. Aliases must
+		// not depend on iteration order, even when two roles exchange their fonts.
+		$original = $list( [ 'typography', 'fontFamilies' ] );
+		$sources  = [];
+		foreach ( $preset( [ 'typography', 'fontFamilies' ] ) as $family ) {
+			$sources[ (string) ( $family['slug'] ?? '' ) ] = $family;
 		}
+		foreach ( $original as $family ) {
+			$sources[ (string) ( $family['slug'] ?? '' ) ] = $family;
+		}
+		$chosen = [];
 		foreach ( [ 'body', 'heading', 'mono' ] as $slug ) {
 			$pick = (string) ( $v[ 'font_' . $slug ] ?? '' );
-			if ( ! isset( $present[ $slug ] ) && str_starts_with( $pick, 'google:' ) ) {
-				$families[] = SiteKitFonts::entry( $slug, substr( $pick, 7 ), $v );
+			if ( str_starts_with( $pick, 'google:' ) && SiteKitFonts::exists( substr( $pick, 7 ) ) ) {
+				$chosen[ $slug ] = SiteKitFonts::entry( $slug, substr( $pick, 7 ), $v );
+			} elseif ( str_starts_with( $pick, 'theme:' ) && isset( $sources[ substr( $pick, 6 ) ] ) ) {
+				$source = $sources[ substr( $pick, 6 ) ];
+				$source['slug'] = $slug;
+				$chosen[ $slug ] = $source;
+			}
+		}
+		$families = [];
+		$present  = [];
+		foreach ( $original as $family ) {
+			$slug = (string) ( $family['slug'] ?? '' );
+			$families[] = $chosen[ $slug ] ?? $family;
+			$present[ $slug ] = true;
+		}
+		foreach ( $chosen as $slug => $family ) {
+			if ( ! isset( $present[ $slug ] ) ) {
+				$families[] = $family;
 			}
 		}
 		foreach ( SiteKitFonts::extraFamilies( $v['fonts_extra'] ?? '' ) as $family ) {
@@ -149,7 +164,7 @@ final class SiteKitCompiler {
 			'body'    => [ 'typography' ],
 			'heading' => [ 'elements', 'heading', 'typography' ],
 		] as $slug => $path ) {
-			if ( ! empty( $v[ 'font_' . $slug ] ) ) {
+			if ( isset( $chosen[ $slug ] ) ) {
 				$font = 'var(--wp--preset--font-family--' . $slug . ')';
 				if ( $slug === 'body' ) {
 					$styles['typography']['fontFamily'] = $font;

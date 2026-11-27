@@ -223,6 +223,27 @@ final class SiteKitTest extends TestCase
         self::assertSame(['g-inter', 'g-roboto'], array_column($json['settings']['typography']['fontFamilies'], 'slug'));
     }
 
+    public function testThemeFontRolesResolveOriginalPresetsWithoutLosingFaces(): void
+    {
+        $faces = [['fontFamily' => 'Heading', 'src' => ['file:./heading.woff2']]];
+        $original = [
+            ['slug' => 'body', 'name' => 'Body', 'fontFamily' => 'Body, sans-serif'],
+            ['slug' => 'heading', 'name' => 'Heading', 'fontFamily' => 'Heading, serif', 'fontFace' => $faces],
+            ['slug' => 'mono', 'name' => 'Code', 'fontFamily' => 'monospace'],
+        ];
+        $preset = static fn (array $path): array => $path === ['typography', 'fontFamilies'] ? $original : [];
+        $result = SiteKitCompiler::themeJson([], ['font_body' => 'theme:heading', 'font_heading' => 'theme:body'], $preset);
+        $families = array_column($result['settings']['typography']['fontFamilies'], null, 'slug');
+        self::assertSame('Heading, serif', $families['body']['fontFamily']);
+        self::assertSame($faces, $families['body']['fontFace']);
+        self::assertSame('Body, sans-serif', $families['heading']['fontFamily']);
+        self::assertSame('monospace', $families['mono']['fontFamily']);
+        self::assertSame('var(--wp--preset--font-family--body)', $result['styles']['typography']['fontFamily']);
+        $missing = SiteKitCompiler::themeJson([], ['font_body' => 'theme:unknown'], $preset);
+        self::assertSame($original, $missing['settings']['typography']['fontFamilies']);
+        self::assertArrayNotHasKey('fontFamily', $missing['styles']['typography'] ?? []);
+    }
+
     public function testStoreReportsChangesAndResetsGroups(): void
     {
         $store = new SiteKitStore();
