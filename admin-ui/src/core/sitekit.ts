@@ -1,7 +1,7 @@
 // Site Kit screen: binds each field wrapper (.wpec[data-wpec]) to a control from ./controls,
 // switches groups as tabs without reloading, and saves a group in place over AJAX.
 import { ajax, ajaxConfig, AjaxError } from './ajax';
-import { configure, create, h, setDevice, type ControlOptions, type ControlsConfig } from './controls';
+import { configure, create, h, observeDevice, setDevice, updateBreakpoints, type ControlOptions, type ControlsConfig } from './controls';
 import { toast } from './toast';
 
 function bindField( root: HTMLElement ): void {
@@ -218,7 +218,10 @@ type CustomizeSetting = {
 	set: ( value: string ) => void;
 	bind: ( callback: ( value: unknown ) => void ) => void;
 };
-type CustomizeApi = ( id: string, callback: ( setting: CustomizeSetting ) => void ) => void;
+type CustomizeApi = ( ( id: string, callback: ( setting: CustomizeSetting ) => void ) => void ) & {
+	bind: ( event: string, callback: () => void ) => void;
+	previewedDevice?: CustomizeSetting;
+};
 
 /** WordPress owns changesets, preview and publishing; controls only edit its settings. */
 export function initSiteKitCustomizer(): void {
@@ -240,6 +243,63 @@ export function initSiteKitCustomizer(): void {
 		}
 		return typeof value === 'object' ? JSON.stringify( value ) : String( value );
 	};
+	// WordPress keeps its native device buttons. A shared field's configured
+	// width uses the desktop canvas, constrained by the available preview area.
+	let syncing = false;
+	const preview = document.getElementById( 'customize-preview' );
+	const clearPreview = (): void => {
+		if ( preview?.dataset.wpeKitPreview ) {
+			preview.style.width = '';
+			preview.style.left = '';
+			preview.style.marginLeft = '';
+			delete preview.dataset.wpeKitPreview;
+		}
+	};
+	observeDevice( ( device, width ) => {
+		if ( syncing || ! preview ) {
+			return;
+		}
+		syncing = true;
+		try {
+			if ( api.previewedDevice?.get() !== 'desktop' ) {
+				api.previewedDevice?.set( 'desktop' );
+			}
+			clearPreview();
+			if ( device !== 'desktop' && width > 0 ) {
+				preview.dataset.wpeKitPreview = device;
+				preview.style.width = `min(100%, ${ width }px)`;
+				preview.style.left = '50%';
+				preview.style.marginLeft = `max(-50%, -${ width / 2 }px)`;
+			}
+		} finally {
+			syncing = false;
+		}
+	} );
+	let nativeBound = false;
+	const bindNative = (): void => {
+		if ( nativeBound || ! api.previewedDevice ) {
+			return;
+		}
+		nativeBound = true;
+		api.previewedDevice.bind( ( value ) => {
+			if ( syncing ) {
+				return;
+			}
+			syncing = true;
+			try {
+				clearPreview();
+				setDevice( typeof value === 'string' ? value : 'desktop' );
+			} finally {
+				syncing = false;
+			}
+		} );
+	};
+	bindNative();
+	api.bind( 'ready', bindNative );
+	api( 'wpessential_site_kit[values][breakpoints]', ( setting ) => {
+		updateBreakpoints( encode( setting.get() ) );
+		setting.bind( ( value ) => updateBreakpoints( encode( value ) ) );
+	} );
 	const attach = (): void => {
 		document.querySelectorAll< HTMLElement >( '.wpe-sitekit-customizer[data-wpe-setting]' ).forEach( ( wrapper ) => {
 			if ( wrapper.dataset.bound ) {

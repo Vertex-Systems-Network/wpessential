@@ -93,6 +93,7 @@ const googleWaiters: Array< ( rows: NonNullable< typeof googleList > ) => void >
 const previewed: Record< string, true > = {};
 const listeners: Array< () => void > = [];
 let currentDevice = 'desktop';
+let deviceObserver: ( ( device: string, width: number ) => void ) | undefined;
 
 const t = ( text: string ): string => cfg.i18n?.[ text ] ?? text;
 
@@ -406,11 +407,38 @@ function fontPicker( current: string, onPick: ( value: string ) => void, multi =
 
 /* ------------------------------------------------------------------ devices */
 
+/** Customizer uses the same enabled device model as the shared controls. */
+export function observeDevice( callback: ( device: string, width: number ) => void ): void {
+	deviceObserver = callback;
+}
+
 export function setDevice( device: string ): void {
-	currentDevice = device;
+	currentDevice = devices().some( ( d ) => d[ 0 ] === device ) ? device : 'desktop';
 	listeners.forEach( ( fn ) => {
 		fn();
 	} );
+	deviceObserver?.( currentDevice, cfg.breakpoints?.find( ( b ) => b.key === currentDevice )?.width ?? 0 );
+}
+
+/** Recompute the menu from an unpublished breakpoint setting, preserving valid selection. */
+export function updateBreakpoints( value: string ): void {
+	const stored = parse( value ) as Record< string, { on?: boolean; w?: number } >;
+	if ( ! cfg.allBreakpoints ) {
+		return;
+	}
+	cfg.breakpoints = Object.entries( cfg.allBreakpoints ).flatMap( ( [ key, base ] ) => {
+		const row = stored[ key ] ?? {};
+		if ( key !== 'desktop' && ! ( row.on ?? base.on ) ) {
+			return [];
+		}
+		const n = Number( row.w ?? base.width );
+		const width = key === 'desktop' ? 0 : Number.isFinite( n ) ? Math.max( 240, Math.min( 3840, Math.trunc( n ) ) ) : base.width;
+		return [ { key, label: base.label, width, dir: base.dir } ];
+	} ).sort( ( a, b ) => {
+		const rank = ( dir: string ): number => dir === '' ? 0 : dir === 'min' ? 1 : 2;
+		return rank( a.dir ) - rank( b.dir ) || b.width - a.width;
+	} );
+	setDevice( currentDevice );
 }
 
 // One device button per field: it shows the current device and opens a menu of enabled breakpoints.
@@ -432,23 +460,32 @@ function deviceSwitch( ctx: ControlContext ): HTMLElement {
 			menu.querySelector< HTMLElement >( '.is-active' )?.focus();
 		}
 	};
-	for ( const [ key, label, icon ] of devices() ) {
-		menu.append(
-			h( 'button', {
-				type: 'button',
-				role: 'menuitemradio',
-				class: 'wpec-devices__item',
-				'data-device': key,
-				title: label,
-				html: `${ svg( icon, 14 ) }<span>${ label.replace( /[<>&]/g, '' ) }</span>`,
-				onclick: () => {
-					setDevice( key );
-					toggle( false );
-					trigger.focus();
-				},
-			} )
-		);
-	}
+	let signature = '';
+	const rebuild = (): void => {
+		const next = JSON.stringify( devices() );
+		if ( signature === next ) {
+			return;
+		}
+		signature = next;
+		menu.replaceChildren();
+		for ( const [ key, label, icon ] of devices() ) {
+			menu.append(
+				h( 'button', {
+					type: 'button',
+					role: 'menuitemradio',
+					class: 'wpec-devices__item',
+					'data-device': key,
+					title: label,
+					html: `${ svg( icon, 14 ) }<span>${ label.replace( /[<>&]/g, '' ) }</span>`,
+					onclick: () => {
+						setDevice( key );
+						toggle( false );
+						trigger.focus();
+					},
+				} )
+			);
+		}
+	};
 	menu.addEventListener( 'keydown', ( event: KeyboardEvent ) => {
 		const items = Array.from( menu.querySelectorAll< HTMLElement >( '.wpec-devices__item' ) );
 		const at = items.indexOf( document.activeElement as HTMLElement );
@@ -466,6 +503,7 @@ function deviceSwitch( ctx: ControlContext ): HTMLElement {
 		}
 	} );
 	const sync = (): void => {
+		rebuild();
 		const current = ctx.device?.() ?? currentDevice;
 		const found = devices().find( ( d ) => d[ 0 ] === current ) ?? devices()[ 0 ];
 		if ( found ) {

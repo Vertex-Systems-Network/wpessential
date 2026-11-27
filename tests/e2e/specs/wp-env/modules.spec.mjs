@@ -480,6 +480,25 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
       const size = control('size_body').locator('.wpec-range__num');
       await expect(size).toBeVisible();
+      // An unpublished custom breakpoint must immediately appear in the shared device menu.
+      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_layout').expand());
+      const breakpoint = control('breakpoints');
+      await expect(breakpoint.getByRole('switch', { name: 'Small phone', exact: true })).toBeVisible();
+      await breakpoint.getByRole('switch', { name: 'Small phone', exact: true }).check();
+      await breakpoint.getByRole('spinbutton', { name: 'Small phone width', exact: true }).fill('420');
+      await breakpoint.getByRole('spinbutton', { name: 'Small phone width', exact: true }).blur();
+      expect(stored().values.breakpoints).toBeUndefined();
+      await page.evaluate(() => window.wp.customize.section('wpessential_site_kit_type').expand());
+      const device = control('size_body').locator('.wpec-devices__trigger');
+      await device.click();
+      await control('size_body').locator('[data-device="mobile_small"]').click();
+      await expect(page.locator('#customize-preview')).toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
+      await expect.poll(async () => Math.round((await page.locator('#customize-preview').boundingBox())?.width ?? 0)).toBe(420);
+      await size.fill('15');
+      await size.blur();
+      await device.click();
+      await control('size_body').locator('[data-device="desktop"]').click();
+      await expect(page.locator('#customize-preview')).not.toHaveAttribute('data-wpe-kit-preview', 'mobile_small');
       await size.fill('19');
       await expect.poll(() => page.evaluate((id) => window.wp.customize(id).get(), setting('size_body'))).toMatch(/19/);
       await expect(page.locator('#save')).toBeEnabled();
@@ -488,6 +507,8 @@ test('Site Tools Kit: Customizer and admin share one published option', async ({
       const values = stored().values;
       expect(values.color_secondary).toBe('#789abc');
       expect(JSON.stringify(values.size_body)).toContain('19');
+      expect(JSON.stringify(values.size_body.mobile_small)).toContain('15');
+      expect(values.breakpoints.mobile_small).toEqual({ on: true, w: 420 });
       expect(run('echo base64_encode(wp_json_encode(get_theme_mod("wpessential_site", null)));')).toBe(legacy);
       await openAdmin(page, 'wpessential-site-kit&group=colors');
       await expect(adminField.locator('.wpec-color__hex')).toHaveValue('#345678');
