@@ -38,6 +38,26 @@ final class SiteKitTest extends TestCase
         self::assertSame(['js1', 'css1'], array_column(\WPEssential\Modules\SiteKit\SiteKitSnippets::ordered([$clean, $js]), 'id'));
     }
 
+    public function testSnippetDeletionIsExplicitAndPermissionBound(): void
+    {
+        $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}'];
+        $js = ['id' => 'js1', 'type' => 'js', 'code' => 'console.log(1);'];
+        $existing = [$css, $js];
+        self::assertSame($existing, \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [], true));
+        self::assertSame($existing, \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'css1', 'type' => 'invalid', 'code' => 'bad'],
+        ], true));
+        self::assertSame([$js], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'css1', 'remove' => '1'], ['id' => 'js1', 'remove' => '1'],
+        ], false));
+        self::assertSame([$css], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'js1', 'remove' => '1'],
+        ], true));
+        self::assertSame([], \WPEssential\Modules\SiteKit\SiteKitSnippets::mergeRows($existing, [
+            ['id' => 'css1', 'remove' => '1'], ['id' => 'js1', 'remove' => '1'],
+        ], true));
+    }
+
     public function testHtmlSnippetRequiresWordPressSanitizer(): void
     {
         if (function_exists('wp_kses_post')) {

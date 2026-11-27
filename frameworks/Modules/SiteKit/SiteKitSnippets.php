@@ -44,7 +44,7 @@ final class SiteKitSnippets {
 	}
 
 	/**
-	 * Replaces the snippet list. JavaScript a user without unfiltered_html cannot write is kept as it was.
+	 * Saves submitted edits and explicit deletions. Omitted or invalid existing rows are preserved.
 	 *
 	 * @param list<array<string,mixed>> $snippets
 	 * @return list<array<string,mixed>>
@@ -64,24 +64,36 @@ final class SiteKitSnippets {
 	 * @return list<array<string,mixed>>
 	 */
 	public static function mergeRows( array $existing, array $submitted, bool $canJs ): array {
-		$protected = [];
+		$stored = [];
 		foreach ( $existing as $row ) {
-			if ( ! $canJs && self::privileged( $row ) && is_string( $row['id'] ?? null ) ) {
-				$protected[ $row['id'] ] = $row;
+			if ( is_string( $row['id'] ?? null ) ) {
+				$stored[ $row['id'] ] = $row;
 			}
 		}
 		$out = [];
+		$seen = [];
 		foreach ( $submitted as $raw ) {
 			$id = self::id( $raw['id'] ?? '' );
-			if ( isset( $protected[ $id ] ) ) {
+			if ( $id !== '' && isset( $seen[ $id ] ) ) {
+				continue;
+			}
+			if ( $id !== '' ) {
+				$seen[ $id ] = true;
+			}
+			if ( isset( $stored[ $id ] ) && ! $canJs && self::privileged( $stored[ $id ] ) ) {
+				continue;
+			}
+			if ( ( $raw['remove'] ?? '' ) === '1' ) {
+				unset( $stored[ $id ] );
 				continue;
 			}
 			$clean = self::clean( $raw, $canJs );
 			if ( $clean !== null && ! isset( $out[ $clean['id'] ] ) ) {
 				$out[ $clean['id'] ] = $clean;
+				unset( $stored[ $clean['id'] ] );
 			}
 		}
-		return array_values( $out + $protected );
+		return array_values( $out + $stored );
 	}
 
 	/** @param array<string,mixed> $row */

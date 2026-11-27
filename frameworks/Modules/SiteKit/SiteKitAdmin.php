@@ -336,7 +336,7 @@ final class SiteKitAdmin {
 		$html  .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-wpe-ajax-form="' . esc_attr( self::AJAX_SNIPPETS ) . '">';
 		$html  .= wp_nonce_field( self::SNIPPETS_ACTION, '_wpnonce', true, false ) . '<input type="hidden" name="action" value="' . esc_attr( self::SNIPPETS_ACTION ) . '">';
 		$html  .= '<div class="wpe-ui-panel__head"><span class="wpe-ui-icon">' . Icon::render( 'code', 20 ) . '</span><div><h2>' . esc_html__( 'Custom code', 'wpessential' ) . '</h2>';
-		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, HTML and JavaScript that survive theme changes. Public CSS uses an enqueued stylesheet. Admin and login require All pages. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS only.', 'wpessential' ) ) . '</p></div></div>';
+		$html  .= '<p class="wpe-ui-muted">' . esc_html__( 'CSS, HTML and JavaScript that survive theme changes. Public CSS uses an enqueued stylesheet. Admin and login require All pages. To delete an existing snippet, mark Remove on save. Open any page with ?wpe-safe-mode=1 to load it without snippets.', 'wpessential' ) . ( $canJs ? '' : ' ' . esc_html__( 'Your role can add CSS only.', 'wpessential' ) ) . '</p></div></div>';
 		foreach ( $rows as $index => $row ) {
 			$prefix = 'snippets[' . $index . ']';
 			$isNew  = $row['id'] === '';
@@ -403,6 +403,9 @@ final class SiteKitAdmin {
 				],
 				(bool) $row['enabled']
 			);
+			if ( ! $isNew ) {
+				$html .= '<label class="wpe-ui-sitekit__mini"><input type="checkbox" name="' . esc_attr( $prefix . '[remove]' ) . '" value="1"> ' . esc_html__( 'Remove on save', 'wpessential' ) . '</label>';
+			}
 			$html  .= '</div><textarea class="wpe-ui-sitekit__code" name="' . esc_attr( $prefix . '[code]' ) . '" rows="6" spellcheck="false" aria-label="' . esc_attr__( 'Code', 'wpessential' ) . '">' . esc_textarea( (string) $row['code'] ) . '</textarea></fieldset>';
 		}
 		$html .= '<div class="wpe-ui-builder__actions">' . Button::button( __( 'Save snippets', 'wpessential' ), 'primary', [ 'type' => 'submit' ] ) . '</div></form></section>';
