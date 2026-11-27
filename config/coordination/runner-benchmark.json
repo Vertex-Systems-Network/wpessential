@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "644ecee4c0c480c61a7975ab34fd3dd84ae42522",
+  "anchor_main_sha": "d44f69672c525468282dd54c28f7a05905d5369a",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -4040,13 +4040,37 @@
       "expected_minutes": 15,
       "dedup_key": "adr0239|wp5|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "810749f3: eight workflows PASS including WordPress E2E 45869079741; historical candidate only.",
         "b1f4dffd PHP Quality 45870719560 FAIL: seven PHPCS formatting errors; corrected at 34601eb6.",
-        "9027b26e source adds native style specificity and light/dark rendering assertions; fresh combined head checks required."
+        "9027b26e source adds native style specificity and light/dark rendering assertions; fresh combined head checks required.",
+        "Exact Free 60a79623 8/8 workflows, 42/42 E2E 45945992115; paired Pro 45948684490 49/49; merged d44f6967."
       ],
-      "note": "Do not promote terminal PASS before exact-head checks and remaining acceptance."
+      "note": "Bounded WP5 acceptance; WP9/WP12 remain."
+    },
+    {
+      "id": "RB-0132",
+      "source": "ADR-0239 WP6 / #1597 / PR #1598",
+      "category": "ADR_0239_GLOBAL_STYLING",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "WP6 exact-head unit, architecture, compatibility, browser and applicable E2E gates",
+      "environment": "WP6 candidate from d44f6967",
+      "dependencies": [
+        "WP5 merged",
+        "WP6 source and tests"
+      ],
+      "authorization": "BEP-STK-V1",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 15,
+      "dedup_key": "adr0239|wp6|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "First slice 6646ffaf; verification pending."
+      ],
+      "note": "Do not promote before full scoped acceptance."
     }
   ],
   "last_reconciled_issue": "#1595",
