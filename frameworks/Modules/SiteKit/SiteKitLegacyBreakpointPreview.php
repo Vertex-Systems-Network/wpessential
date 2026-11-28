@@ -216,6 +216,97 @@ final class SiteKitLegacyBreakpointPreview {
 		return self::rows( (array) ( $values['breakpoints'] ?? [] ), $mobile );
 	}
 
+	/** Reviewed pixel-range fields with equivalent menu CSS targets. */
+	private const RESPONSIVE_KEYS = [ 'menu_size', 'menu_gap' ];
+
+	public static function responsiveSupported(): bool {
+		return self::bridgeSupported() && apply_filters( 'wpessential_site_kit_responsive_handoff', 0 ) === 1;
+	}
+
+	/**
+	 * @param list<string> $handed
+	 * @return list<string>
+	 */
+	public static function responsiveOwnedKeys( array $handed ): array {
+		return self::responsiveSupported() && self::model() !== [] ? array_values( array_intersect( self::RESPONSIVE_KEYS, $handed ) ) : [];
+	}
+
+	/**
+	 * Translate an entire responsive menu field without dropping disabled-device
+	 * values, clamping numbers, changing units or overwriting canonical conflicts.
+	 *
+	 * @param array<string,mixed> $legacy
+	 * @param array<string,mixed> $canonical
+	 * @return array<string,array<string,mixed>>
+	 */
+	public static function responsiveCandidates( array $legacy, array $canonical, string $mobileKey ): array {
+		if ( ! in_array( $mobileKey, [ '480', '560' ], true ) ) {
+			return [];
+		}
+		$map = self::mapping( $mobileKey );
+		$map['tablet'] = $map[768];
+		$map['mobile'] = $map[560];
+		$out = [];
+		foreach ( self::RESPONSIVE_KEYS as $key ) {
+			$field = SiteKitSchema::field( $key );
+			$raw   = $legacy[ $key ] ?? null;
+			if ( $field === null || $raw === null || $raw === '' || $raw === [] || ! isset( $field['min'], $field['max'] ) ) {
+				continue;
+			}
+			if ( is_string( $raw ) && str_starts_with( $raw, '{' ) ) {
+				$raw = json_decode( $raw, true );
+			}
+			if ( is_numeric( $raw ) ) {
+				$raw = [ 'desktop' => $raw ];
+			}
+			if ( ! is_array( $raw ) || $raw === [] ) {
+				continue;
+			}
+			$values = [];
+			foreach ( $raw as $legacyDevice => $value ) {
+				if ( ! isset( $map[ $legacyDevice ] ) ) {
+					continue 2;
+				}
+				if ( is_array( $value ) ) {
+					if ( array_diff( array_keys( $value ), [ 'size', 'unit' ] ) !== [] || ( $value['unit'] ?? 'px' ) !== 'px' ) {
+						continue 2;
+					}
+					$value = $value['size'] ?? null;
+				}
+				if ( ! is_numeric( $value ) || ! is_finite( (float) $value ) || (float) $value < (float) $field['min'] || (float) $value > (float) $field['max'] ) {
+					continue 2;
+				}
+				$device = $map[ $legacyDevice ][0];
+				$number = 0 + $value;
+				if ( isset( $values[ $device ] ) && (float) $values[ $device ] !== (float) $number ) {
+					continue 2;
+				}
+				$values[ $device ] = $number;
+			}
+			if ( SiteKitSanitizer::clean( $field, $values ) !== $values ) {
+				continue;
+			}
+			if ( array_key_exists( $key, $canonical ) && $canonical[ $key ] !== $values ) {
+				continue;
+			}
+			$out[ $key ] = $values;
+		}
+		return $out;
+	}
+
+	/**
+	 * @param array<string,mixed> $legacy
+	 * @param array<string,mixed> $canonical
+	 * @return array<string,array<string,mixed>>
+	 */
+	public static function activeResponsiveCandidates( array $legacy, array $canonical ): array {
+		if ( ! self::responsiveSupported() || self::model() === [] ) {
+			return [];
+		}
+		$mobile = get_theme_mod( self::MAP_MOD, '' );
+		return is_string( $mobile ) ? self::responsiveCandidates( $legacy, $canonical, $mobile ) : [];
+	}
+
 	/** @param array<mixed> $tree */
 	private static function hasDeviceValues( array $tree ): bool {
 		foreach ( $tree as $key => $value ) {
