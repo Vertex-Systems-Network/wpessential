@@ -1,3 +1,7 @@
+# 2026-11-28 — WP8 canonical breakpoint bridge candidate
+
+- Free `b00694a3` passed 8/8 workflows, including WordPress E2E Audit 46085048723; existing theme `c53b27b6` CI previously passed. New Free bridge source `3a742bb7` pins theme `dc7a8f4f` and adds versioned breakpoint ownership, frozen numeric device mapping, canonical conflict deferral and live theme control synchronization; legacy field values stay unchanged. New unit and paired browser regression, plan and README update included in this batch. Exact-head CI remains required; RB-0134 open. No release or production migration.
+
 # 2026-11-28 — WP8 smallest-phone representation and CI correction
 
 - Free `640a16ad` failed PHP Quality and Architecture due to PHPCS multiline-call formatting; corrected the reported formatting errors in `f25a2e26`. Added disabled-by-default `mobile_tiny` slot (359px maximum) to preserve both legacy 320/360 boundaries, retaining existing canonical `mobile_small` behavior. Shared controls, compiler/unit tests and paired review updated; added native Customizer preview/save regression for independent device values. Legacy responsive field ownership remains review-only, no migration or merge. Exact final candidate CI pending; RB-0134 open.

@@ -46,7 +46,7 @@ final class SiteKitLegacyBreakpointPreview {
 	 * @return array{values:array<string,array{on:bool,w:int}>,mobile_key:string}|array{}
 	 */
 	private static function selection( array $legacy ): array {
-		$raw = $legacy['breakpoints'] ?? '';
+		$raw = array_key_exists( 'breakpoints', $legacy ) ? $legacy['breakpoints'] : '';
 		if ( ! is_string( $raw ) ) {
 			return [];
 		}

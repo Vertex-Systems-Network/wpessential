@@ -276,6 +276,31 @@ final class SiteKitTest extends TestCase
         self::assertSame('ready', $class::assess(['breakpoints' => '768|560', 'size_body' => '{"desktop":"18"}'])['status']);
     }
 
+    public function testCanonicalBreakpointBridgeKeepsNumericKeysAndConflicts(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyBreakpointPreview::class;
+        $legacy = ['breakpoints' => '768|560|480|360|320', 'menu_gap' => ['320' => '8', '360' => '12']];
+        $candidate = $class::candidate($legacy, []);
+        self::assertSame('480', $candidate['mobile_key']);
+        $rows = $class::rows($candidate['values'], $candidate['mobile_key']);
+        self::assertSame('mobile_extra', $rows[560]['key']);
+        self::assertSame('mobile', $rows[480]['key']);
+        self::assertSame('@media (max-width: 479px)', $rows[360]['media']);
+        self::assertSame('@media (max-width: 359px)', $rows[320]['media']);
+        self::assertSame([ '320' => '8', '360' => '12' ], $legacy['menu_gap']);
+        $updated = $candidate['values'];
+        $updated['mobile_tiny'] = ['on' => false, 'w' => 340];
+        $changed = $class::rows($updated, '480');
+        self::assertFalse($changed[320]['on']);
+        self::assertSame('@media (max-width: 340px)', $changed[320]['media']);
+        self::assertSame([], $class::candidate($legacy, ['breakpoints' => ['mobile' => ['on' => false]]]));
+        self::assertSame([], $class::candidate($legacy, ['size_body' => ['mobile' => 18]]));
+        self::assertSame([], $class::candidate(['breakpoints' => null], []));
+        self::assertSame([], $class::candidate(['breakpoints' => 'unknown'], []));
+        self::assertSame([], $class::rows([], 'unknown'));
+        self::assertSame($candidate, $class::candidate($legacy, ['breakpoints' => $candidate['values']]));
+    }
+
     public function testLegacyFontPreviewRequiresExactBundledReferencesAndCompatibleDelivery(): void
     {
         $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
