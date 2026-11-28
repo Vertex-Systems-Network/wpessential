@@ -673,7 +673,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
     await expect(toggle(page)).toBeVisible();
     if (!wasOn) await setModule(page, 'site-kit', true);
     await audit('site-kit', 'paired theme retains legacy data and delegates compatible settings', async () => {
-      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","font_heading"=>"google:Roboto","font_mono"=>"Georgia","fonts_extra"=>"Roboto|Inter","fonts_delivery"=>"google","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"768|560|360|320","menu_gap"=>wp_json_encode(["360"=>"12","320"=>"8"])]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8,"fonts_delivery"=>"google","font_mono"=>"theme:missing-font"]]); wp_clean_theme_json_cache(); echo "ready";');
+      run('set_theme_mod("wpessential_site", ["color_primary"=>"#aabbcc","color_secondary"=>"#112233","font_body"=>"Inter","font_heading"=>"google:Roboto","font_mono"=>"Georgia","fonts_extra"=>"Roboto|Inter","fonts_delivery"=>"google","btn_radius"=>"0","field_radius"=>"12","radius_md"=>"999","breakpoints"=>"768|560|360|320","menu_gap"=>wp_json_encode(["360"=>"12","320"=>"8"]),"section_space"=>wp_json_encode(["360"=>"48","320"=>"32"])]); remove_theme_mod("wpessential_site_kit_palette_handoff"); update_option("wpessential_site_kit", ["version"=>1,"values"=>["color_primary"=>"#123456","field_radius"=>8,"fonts_delivery"=>"google","font_mono"=>"theme:missing-font"]]); wp_clean_theme_json_cache(); echo "ready";');
       const original = read().legacy;
       expect(read().effective.color_secondary).toBe('#112233');
       await openAdmin(page, 'wpessential-site-kit&group=colors');
@@ -692,11 +692,17 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(migrated.canonical.values.breakpoints.mobile_tiny).toEqual({on: true, w: 359});
       expect(migrated.effective.breakpoints).toBeUndefined();
       expect(migrated.handed).toContain('breakpoints');
-      expect(migrated.effective.menu_gap).toBe(original.menu_gap);
+      expect(migrated.effective.menu_gap).toBeUndefined();
+      expect(migrated.canonical.values.menu_gap).toEqual({mobile_small: 12, mobile_tiny: 8});
+      expect(migrated.handed).toContain('menu_gap');
+      expect(migrated.effective.section_space).toBe(original.section_space);
       expect(run('echo get_theme_mod("wpessential_site_kit_breakpoint_mobile_key");')).toBe('560');
       const legacyCSS = () => run('echo wpessential_site_controls_css(wpessential_site_values());');
       expect(legacyCSS()).toContain('@media (max-width: 479px)');
       expect(legacyCSS()).toContain('@media (max-width: 359px)');
+      const kitCSS = () => run('echo \\WPEssential\\Modules\\SiteKit\\SiteKitCompiler::css(get_option("wpessential_site_kit")["values"]);');
+      expect(kitCSS()).toContain('gap:12px');
+      expect(kitCSS()).toContain('gap:8px');
       expect(migrated.canonical.values.color_primary).toBe('#123456');
       expect(migrated.canonical.values.color_secondary).toBe('#112233');
       expect(migrated.handed).toEqual(expect.arrayContaining(['color_primary', 'color_secondary', 'btn_radius', 'field_radius']));
@@ -757,6 +763,8 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       await page.locator('#save').click();
       await expect.poll(() => read().canonical.values.breakpoints.mobile_tiny.w).toBe(340);
       expect(legacyCSS()).toContain('@media (max-width: 340px)');
+      expect(kitCSS()).toContain('@media (max-width: 340px)');
+      expect(read().canonical.values.menu_gap).toEqual({mobile_small: 12, mobile_tiny: 8});
       expect(read().legacy).toEqual(original);
       await page.goto(BASE + '/wp-admin/customize.php?autofocus%5Bsection%5D=wpessential_site_kit_button', { waitUntil: 'load' });
       const states = page.locator('.wpe-sitekit-state-tabs').getByRole('tablist', { name: 'State' });
@@ -794,6 +802,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(read().effective.fonts_extra).toBe('Roboto|Inter');
       expect(read().effective.field_radius).toBe('12');
       expect(read().effective.breakpoints).toBe('768|560|360|320');
+      expect(read().effective.menu_gap).toBe(original.menu_gap);
       expect(legacyCSS()).toContain('@media (max-width: 359px)');
       expect(legacyCSS()).not.toContain('@media (max-width: 340px)');
       expect(read().legacy).toEqual(original);
@@ -802,6 +811,7 @@ test('Site Tools Kit: paired Hi WPEssential palette and scalar handoff and fallb
       expect(read().effective.font_body).toBeUndefined();
       expect(read().canonical.values.font_body).toBeUndefined();
       expect(read().effective.breakpoints).toBeUndefined();
+      expect(read().effective.menu_gap).toBeUndefined();
       expect(legacyCSS()).toContain('@media (max-width: 340px)');
     });
     await audit('site-kit', 'paired local Google font handoff reuses only verified cache files', async () => {

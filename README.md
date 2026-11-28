@@ -70,6 +70,8 @@ The MCP server is off by default. It exposes AI-channel abilities, and write too
 
 ## Current AI-Native Development Progress
 
+**2026-11-28 — WP8 responsive menu candidate:** Theme #129 alignment warnings corrected and compatible menu size/gap ownership added to Free #1603; conflicting canonical or unrepresentable legacy fields stay untouched. Exact paired gates pending, no release or full legacy parity claim.
+
 **2026-11-28 — WP8 breakpoint bridge:** Free #1603 candidate b00694a3 passed all eight workflows. New paired candidate delegates compatible breakpoint selections to the Kit without rewriting numeric legacy responsive values; incompatible canonical selections defer transfer. Exact-head paired CI pending. No release or complete legacy-field parity claim.
 
 **2026-11-28 — WP8 candidate reconciliation:** Free #1603 contains verified-cache handoff source, regression tests and independent smallest-phone representation; prior candidate 640a16ad failed PHPCS and the correction requires fresh exact-head checks. Legacy responsive ownership remains deferred; no release or full parity claim.

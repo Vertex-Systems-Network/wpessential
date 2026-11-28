@@ -301,6 +301,22 @@ final class SiteKitTest extends TestCase
         self::assertSame($candidate, $class::candidate($legacy, ['breakpoints' => $candidate['values']]));
     }
 
+    public function testResponsiveMenuHandoffPreservesDisabledValuesAndDefersConflicts(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyBreakpointPreview::class;
+        $legacy = ['menu_gap' => '{"desktop":"0","tablet":"24","480":{"size":"12","unit":"px"},"320":"8"}', 'menu_size' => ['mobile' => '14', '560' => '14']];
+        $expected = ['menu_size' => ['mobile_extra' => 14], 'menu_gap' => ['desktop' => 0, 'tablet' => 24, 'mobile' => 12, 'mobile_tiny' => 8]];
+        self::assertSame($expected, $class::responsiveCandidates($legacy, [], '480'));
+        self::assertSame($expected, $class::responsiveCandidates($legacy, $expected, '480'));
+        self::assertSame(['menu_size' => ['mobile_extra' => 14]], $class::responsiveCandidates($legacy, ['menu_gap' => ['desktop' => 16]], '480'));
+        self::assertSame([], $class::responsiveCandidates(['menu_size' => ['mobile' => '14', '560' => '16']], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['menu_gap' => ['320' => ['size' => 2, 'unit' => 'rem']]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['menu_gap' => ['320' => 65]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['menu_gap' => ['unknown' => 12]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['section_space' => ['320' => 48]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates($legacy, [], 'unknown'));
+    }
+
     public function testLegacyFontPreviewRequiresExactBundledReferencesAndCompatibleDelivery(): void
     {
         $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;

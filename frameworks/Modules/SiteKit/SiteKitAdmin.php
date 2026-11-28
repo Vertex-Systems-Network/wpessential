@@ -115,7 +115,7 @@ final class SiteKitAdmin {
 			// Only transfer dependent fields after the breakpoint bridge is active.
 			$stored = $this->store->values();
 			$responsive = SiteKitLegacyBreakpointPreview::activeResponsiveCandidates( $pending, $stored );
-			if ( $responsive !== [] ) {
+			if ( $responsive !== [] && get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] ) === $next ) {
 				$this->store->update( array_diff_key( $responsive, $stored ) );
 				$confirmed = SiteKitLegacyPreview::confirmedReadback( array_keys( $responsive ), $responsive, $this->store->values() );
 				$next = array_values( array_unique( array_merge( $next, $confirmed ) ) );

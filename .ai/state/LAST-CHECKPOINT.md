@@ -1,3 +1,7 @@
+# 2026-11-28 — WP8 responsive menu handoff / companion lint correction
+
+- Theme `dc7a8f4f` strict WPCS failed on seven alignment warnings. Successor `0036bf9c` corrects alignment and accepts the separate responsive menu handshake. Free `5b30589c` adds guarded menu size/gap transfer through the stable numeric mapping, retaining legacy source and rejecting differing canonical values; fresh exact paired fixture pinned. Unit/browser regression and README/plan included. RB-0134 remains open, no merge/release or full legacy parity claim.
+
 # 2026-11-28 — WP8 canonical breakpoint bridge candidate
 
 - Free `b00694a3` passed 8/8 workflows, including WordPress E2E Audit 46085048723; existing theme `c53b27b6` CI previously passed. New Free bridge source `3a742bb7` pins theme `dc7a8f4f` and adds versioned breakpoint ownership, frozen numeric device mapping, canonical conflict deferral and live theme control synchronization; legacy field values stay unchanged. New unit and paired browser regression, plan and README update included in this batch. Exact-head CI remains required; RB-0134 open. No release or production migration.

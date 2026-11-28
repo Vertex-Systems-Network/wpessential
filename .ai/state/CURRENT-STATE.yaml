@@ -10,8 +10,8 @@ active_branch: agent/adr-0239-wp8-customizer
 current_milestone: "P5-M14 WP8 canonical Customizer synchronization"
 milestone_status: COMMITTED_PENDING_INTEGRATION
 last_completed_milestone: "Bounded WP7 #1600 merged; 46/46 Free E2E. PHP #1601 remains planning-only."
-next_safe_action: "Run consolidated exact-head CI on Free #1603 with pinned theme #129; verify local cache handoff, validate the canonical breakpoint bridge, numeric-key preservation and standalone fallback on paired heads. No production migration."
-waiting_external: "Final Free candidate CI required; #1601 PHP planning separate; legacy overlapping field transfer remains separately bounded by compiler equivalence."
+next_safe_action: "Run consolidated exact-head CI on Free #1603 with pinned theme #129; verify local cache handoff, validate the breakpoint bridge and reviewed responsive menu transfer, conflict deferral and standalone fallback on paired heads. No production migration."
+waiting_external: "Final Free candidate CI required; #1601 PHP planning separate; remaining legacy fields require compiler-equivalence review."
 next_planned_slot: adr-0239-wp8-customizer-v1
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
