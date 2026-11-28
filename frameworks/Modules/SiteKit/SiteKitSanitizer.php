@@ -51,7 +51,7 @@ final class SiteKitSanitizer {
 			'range'            => is_numeric( $value ) ? self::number( $value, $field ) : '',
 			'select', 'choose' => is_scalar( $value ) && array_key_exists( (string) $value, (array) ( $field['choices'] ?? [] ) ) ? (string) $value : '',
 			'font'             => self::font( $value ),
-			'fonts'            => implode( '|', array_filter( array_map( [ self::class, 'font' ], explode( '|', is_scalar( $value ) ? (string) $value : '' ) ), static fn ( string $f ): bool => $f !== '' && ! str_starts_with( $f, 'theme:' ) ) ),
+			'fonts'            => implode( '|', SiteKitFonts::extraFamilies( $value ) ),
 			default            => self::text( $value ),
 		};
 	}

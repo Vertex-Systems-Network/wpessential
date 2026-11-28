@@ -1,5 +1,11 @@
 # WPEssential — Engineering Checkpoint
 
+# 2026-11-27 — Bounded WP7 integrated / WP8 active
+
+- Free #1600 exact head 8a3ea579 passed 8/8 workflows, 10/10 checks, WordPress E2E 45993977471 46/46; zero behind and no review blockers. Merged ab80f77de428f95a530ddc6cc3ec7356179786a3; #1599 closed. PHP #1601 planning-only, no PHP runtime.
+- WP8 #1602 / #1603 first source 79a5bae7: schema-derived scalar settings on canonical option paths, sanitizer and save lifecycle. Responsive/composite shared controls, theme legacy reconciliation and real browser acceptance remain. No release or P-006 promotion. Resume RB-0134.
+
+
 # 2026-11-27 — WP7 bounded browser-language acceptance / PHP follow-up
 
 - Free #1600 `dfbf6d9c` passed 8/8 workflows (WordPress E2E 45992599478). `2163bb82` adds browser regression for scoped output, priority, Safe Mode, admin/login and opaque-row preservation. Fresh exact-head CI required.

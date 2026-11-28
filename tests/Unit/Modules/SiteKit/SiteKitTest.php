@@ -12,6 +12,93 @@ use WPEssential\Modules\SiteKit\SiteKitStore;
 
 final class SiteKitTest extends TestCase
 {
+    public function testCustomizerUsesCanonicalOptionAndSanitizer(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitCustomizer::class;
+        self::assertSame(SiteKitStore::OPTION . '[values][color_primary]', $class::settingId('color_primary'));
+        $colour = SiteKitSchema::field('color_primary');
+        self::assertTrue($class::supports($colour));
+        self::assertSame('#123abc', $class::sanitize($colour, '#123ABC'));
+        self::assertSame('', $class::sanitize($colour, ''));
+        self::assertNull($class::sanitize($colour, 'invalid'));
+        self::assertNull($class::sanitize($colour, ['invalid']));
+        self::assertTrue($class::supports(SiteKitSchema::field('size_body')));
+        self::assertTrue($class::supports(SiteKitSchema::field('custom_colours')));
+        self::assertSame(['desktop' => ['size' => 18, 'unit' => 'px']], $class::sanitize(SiteKitSchema::field('size_body'), '{"desktop":{"size":18,"unit":"px"}}'));
+        self::assertSame(['size' => 2, 'unit' => 'rem'], $class::sanitize(SiteKitSchema::field('btn_radius'), '{"size":2,"unit":"rem"}'));
+        self::assertNull($class::sanitize(SiteKitSchema::field('size_body'), '{broken'));
+        self::assertFalse($class::supports(['type' => 'heading']));
+        $store = new SiteKitStore();
+        $store->update(['color_primary' => '#123abc', 'color_secondary' => '#ffffff']);
+        $store->normalizeCustomizerSave();
+        self::assertSame(['color_primary' => '#123abc', 'color_secondary' => '#ffffff'], $store->values());
+    }
+
+    public function testLegacyScalarAssessmentIsLosslessAndReadOnly(): void
+    {
+        $legacy = [
+            'btn_radius' => '0',
+            'field_radius' => '12.5',
+            'radius_sm' => '8',
+            'radius_md' => '999',
+            'hover_duration' => '250',
+            'hover_lift' => '{"desktop":4}',
+            'font_body' => 'Inter',
+            'back_to_top' => 'off',
+            'breakpoints' => '768|560',
+        ];
+        $canonical = ['radius_sm' => 10, 'hover_duration' => 250];
+        $review = \WPEssential\Modules\SiteKit\SiteKitLegacyScalarPreview::assess($legacy, $canonical);
+        self::assertSame(['btn_radius' => 0, 'field_radius' => 12.5], $review['ready']);
+        self::assertSame(['radius_sm'], $review['conflicts']);
+        self::assertSame(['hover_duration'], $review['unchanged']);
+        self::assertSame(['radius_md', 'hover_lift', 'font_body', 'back_to_top', 'breakpoints'], $review['deferred']);
+        self::assertSame('0', $legacy['btn_radius']);
+        self::assertSame(10, $canonical['radius_sm']);
+    }
+
+    public function testScalarHandoffOnlyAcknowledgesPersistedKeysAndRetainsResetOwnership(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyScalarPreview::class;
+        $legacy = ['btn_radius' => '0', 'field_radius' => '12', 'hover_duration' => '9999', 'font_body' => 'Inter'];
+        self::assertSame(['btn_radius', 'field_radius'], $class::handoffKeys($legacy));
+        self::assertSame(['btn_radius'], $class::confirmedKeys($legacy, ['btn_radius' => 0], []));
+        self::assertSame(['btn_radius', 'field_radius'], $class::confirmedKeys($legacy, ['field_radius' => 8], ['btn_radius']));
+        self::assertSame(['btn_radius'], $class::confirmedKeys($legacy, [], ['btn_radius', 'font_body']));
+        self::assertSame([], $class::confirmedKeys($legacy, ['hover_duration' => 500, 'font_body' => 'Inter'], []));
+    }
+
+    public function testHandoffReadbackRequiresExpectedValueAndKeepsCanonicalConflicts(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyPreview::class;
+        $keys = ['btn_radius', 'field_radius', 'color_primary', 'font_body', 'color_secondary'];
+        $expected = ['btn_radius' => 0, 'field_radius' => 8, 'color_primary' => '#123456', 'font_body' => 'theme:hi-wpessential-inter', 'color_secondary' => '#112233'];
+        $stored = ['btn_radius' => 0, 'field_radius' => 8, 'color_primary' => '#abcdef', 'font_body' => 'theme:hi-wpessential-heading'];
+        self::assertSame(['btn_radius', 'field_radius'], $class::confirmedReadback($keys, $expected, $stored));
+        self::assertSame($keys, $class::confirmedReadback($keys, $expected, $expected));
+        self::assertSame([], $class::confirmedReadback($keys, $expected, []));
+    }
+
+    public function testLegacyThemePreviewDoesNotOverwriteCanonicalValues(): void
+    {
+        $legacy = ['color_primary' => '#ABCDEF', 'color_secondary' => '#123456', 'dark_primary' => 'bad', 'font_body' => 'Inter', 'breakpoints' => '768|560', 'btn_radius' => '12', 'color_accent' => ''];
+        $canonical = ['color_primary' => '#ffffff'];
+        $before = $legacy;
+        $review = \WPEssential\Modules\SiteKit\SiteKitLegacyPreview::assess($legacy, $canonical);
+        self::assertSame(['color_secondary' => '#123456'], $review['ready']);
+        self::assertSame(['color_primary'], $review['conflicts']);
+        self::assertSame(['dark_primary', 'font_body', 'breakpoints', 'btn_radius'], $review['deferred']);
+        self::assertSame($before, $legacy);
+        self::assertSame(['color_primary' => '#ffffff'], $canonical);
+        self::assertSame(['color_primary', 'color_secondary'], array_values(array_intersect(\WPEssential\Modules\SiteKit\SiteKitLegacyPreview::handoffKeys($legacy), ['color_primary', 'color_secondary', 'dark_primary'])));
+        $owned = \WPEssential\Modules\SiteKit\SiteKitLegacyPreview::ownedKeys($legacy, ['color_primary']);
+        self::assertContains('color_primary', $owned);
+        self::assertContains('color_accent', $owned);
+        self::assertNotContains('color_secondary', $owned);
+        self::assertNotContains('dark_primary', $owned);
+        self::assertNotContains('font_body', $owned);
+    }
+
     public function testSnippetMetadataAndRestrictedReplacement(): void
     {
         $css = ['id' => 'css1', 'type' => 'css', 'code' => 'body{color:red}', 'enabled' => true];
@@ -134,6 +221,170 @@ final class SiteKitTest extends TestCase
         $typography = SiteKitSanitizer::clean(['type' => 'typography'], '{"family":"google:Inter","weight":"700","x":"<script>"}');
         self::assertSame('google:Inter', $typography['family']);
         self::assertSame('script', $typography['x']);
+    }
+
+    public function testExtraGoogleFontsReadOldPrefixesAndPersistBareNames(): void
+    {
+        $raw = 'google:Inter|Roboto|Inter|theme:body|Unknown Invalid Family';
+        $fonts = \WPEssential\Modules\SiteKit\SiteKitFonts::class;
+        self::assertSame(['Inter', 'Roboto'], $fonts::extraFamilies($raw));
+        self::assertSame('Inter|Roboto', SiteKitSanitizer::clean(['type' => 'fonts'], $raw));
+        self::assertSame(['Inter', 'Roboto'], $fonts::used(['fonts_extra' => $raw]));
+        $json = SiteKitCompiler::themeJson([], ['fonts_extra' => $raw, 'fonts_delivery' => 'google'], static fn (array $path): array => []);
+        self::assertSame(['g-inter', 'g-roboto'], array_column($json['settings']['typography']['fontFamilies'], 'slug'));
+    }
+
+    public function testThemeFontRolesResolveOriginalPresetsWithoutLosingFaces(): void
+    {
+        $faces = [['fontFamily' => 'Heading', 'src' => ['file:./heading.woff2']]];
+        $original = [
+            ['slug' => 'body', 'name' => 'Body', 'fontFamily' => 'Body, sans-serif'],
+            ['slug' => 'heading', 'name' => 'Heading', 'fontFamily' => 'Heading, serif', 'fontFace' => $faces],
+            ['slug' => 'mono', 'name' => 'Code', 'fontFamily' => 'monospace'],
+        ];
+        $preset = static fn (array $path): array => $path === ['typography', 'fontFamilies'] ? $original : [];
+        $result = SiteKitCompiler::themeJson([], ['font_body' => 'theme:heading', 'font_heading' => 'theme:body'], $preset);
+        $families = array_column($result['settings']['typography']['fontFamilies'], null, 'slug');
+        self::assertSame('Heading, serif', $families['body']['fontFamily']);
+        self::assertSame($faces, $families['body']['fontFace']);
+        self::assertSame('Body, sans-serif', $families['heading']['fontFamily']);
+        self::assertSame('monospace', $families['mono']['fontFamily']);
+        self::assertSame('var(--wp--preset--font-family--body)', $result['styles']['typography']['fontFamily']);
+        $missing = SiteKitCompiler::themeJson([], ['font_body' => 'theme:unknown'], $preset);
+        self::assertSame($original, $missing['settings']['typography']['fontFamilies']);
+        self::assertArrayNotHasKey('fontFamily', $missing['styles']['typography'] ?? []);
+    }
+
+    public function testLegacyBreakpointPreviewPreservesMediaBoundariesAndRejectsOverflow(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyBreakpointPreview::class;
+        $breakpoints = \WPEssential\Modules\SiteKit\SiteKitBreakpoints::class;
+        $result = $class::assess(['breakpoints' => '1920|1280|1024|768|560|480|360|320']);
+        self::assertSame('ready', $result['status']);
+        self::assertSame(['', '@media (min-width: 1920px)', '@media (max-width: 1439px)', '@media (max-width: 1279px)', '@media (max-width: 1023px)', '@media (max-width: 767px)', '@media (max-width: 559px)', '@media (max-width: 479px)', '@media (max-width: 359px)'], array_column($breakpoints::enabled($result['values']), 'media'));
+        $default = $class::assess([]);
+        self::assertSame(['desktop', 'tablet', 'mobile'], array_keys($breakpoints::enabled($default['values'])));
+        self::assertSame(['desktop'], array_keys($breakpoints::enabled($class::assess(['breakpoints' => '-'])['values'])));
+        self::assertSame('@media (max-width: 359px)', $breakpoints::media('mobile_tiny', $class::assess(['breakpoints' => '320'])['values']));
+        $both = $class::assess(['breakpoints' => '360|320']);
+        self::assertSame('ready', $both['status']);
+        self::assertSame(['desktop', 'mobile_small', 'mobile_tiny'], array_keys($breakpoints::enabled($both['values'])));
+        self::assertSame('responsive_values', $class::assess(['breakpoints' => '360|320', 'size_body' => ['360' => '18', '320' => '16']])['status']);
+        self::assertSame('unknown_format', $class::assess(['breakpoints' => '768|unknown'])['status']);
+        self::assertSame('responsive_values', $class::assess(['breakpoints' => '768|560', 'size_body' => '{"desktop":"18","mobile":"14"}'])['status']);
+        self::assertSame('responsive_values', $class::assess(['breakpoints' => '-', 'typo_h1' => ['size' => ['320' => '12']]])['status']);
+        self::assertSame('ready', $class::assess(['breakpoints' => '768|560', 'size_body' => '{"desktop":"18"}'])['status']);
+    }
+
+    public function testCanonicalBreakpointBridgeKeepsNumericKeysAndConflicts(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyBreakpointPreview::class;
+        $legacy = ['breakpoints' => '768|560|480|360|320', 'menu_gap' => ['320' => '8', '360' => '12']];
+        $candidate = $class::candidate($legacy, []);
+        self::assertSame('480', $candidate['mobile_key']);
+        $rows = $class::rows($candidate['values'], $candidate['mobile_key']);
+        self::assertSame('mobile_extra', $rows[560]['key']);
+        self::assertSame('mobile', $rows[480]['key']);
+        self::assertSame('@media (max-width: 479px)', $rows[360]['media']);
+        self::assertSame('@media (max-width: 359px)', $rows[320]['media']);
+        self::assertSame([ '320' => '8', '360' => '12' ], $legacy['menu_gap']);
+        $updated = $candidate['values'];
+        $updated['mobile_tiny'] = ['on' => false, 'w' => 340];
+        $changed = $class::rows($updated, '480');
+        self::assertFalse($changed[320]['on']);
+        self::assertSame('@media (max-width: 340px)', $changed[320]['media']);
+        self::assertSame([], $class::candidate($legacy, ['breakpoints' => ['mobile' => ['on' => false]]]));
+        self::assertSame([], $class::candidate($legacy, ['size_body' => ['mobile' => 18]]));
+        self::assertSame([], $class::candidate(['breakpoints' => null], []));
+        self::assertSame([], $class::candidate(['breakpoints' => 'unknown'], []));
+        self::assertSame([], $class::rows([], 'unknown'));
+        self::assertSame($candidate, $class::candidate($legacy, ['breakpoints' => $candidate['values']]));
+    }
+
+    public function testResponsiveMenuHandoffPreservesDisabledValuesAndDefersConflicts(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyBreakpointPreview::class;
+        $legacy = ['menu_gap' => '{"desktop":"0","tablet":"24","480":{"size":"12","unit":"px"},"320":"8"}', 'menu_size' => ['mobile' => '14', '560' => '14']];
+        $expected = ['menu_size' => ['mobile_extra' => 14], 'menu_gap' => ['desktop' => 0, 'tablet' => 24, 'mobile' => 12, 'mobile_tiny' => 8]];
+        self::assertSame($expected, $class::responsiveCandidates($legacy, [], '480'));
+        self::assertSame($expected, $class::responsiveCandidates($legacy, $expected, '480'));
+        self::assertSame(['menu_size' => ['mobile_extra' => 14]], $class::responsiveCandidates($legacy, ['menu_gap' => ['desktop' => 16]], '480'));
+        self::assertSame([], $class::responsiveCandidates(['menu_size' => ['mobile' => '14', '560' => '16']], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['menu_gap' => ['320' => ['size' => 2, 'unit' => 'rem']]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['menu_gap' => ['320' => 65]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['menu_gap' => ['unknown' => 12]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates(['section_space' => ['320' => 48]], [], '560'));
+        self::assertSame([], $class::responsiveCandidates($legacy, [], 'unknown'));
+    }
+
+    public function testLegacyFontPreviewRequiresExactBundledReferencesAndCompatibleDelivery(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $legacy = ['font_body' => 'Inter', 'font_heading' => 'google:Roboto', 'font_mono' => 'System UI', 'fonts_extra' => 'Roboto|Inter'];
+        $review = $class::assess($legacy, [], ['Inter' => 'theme:body']);
+        self::assertSame(['font_body' => 'theme:body', 'font_heading' => 'google:Roboto', 'fonts_extra' => 'Roboto|Inter'], $review['ready']);
+        self::assertSame(['font_mono'], $review['deferred']);
+        $review = $class::assess($legacy, ['font_body' => 'theme:heading', 'fonts_delivery' => 'google'], ['Inter' => 'theme:body']);
+        self::assertSame([], $review['ready']);
+        self::assertSame(['font_body'], $review['conflicts']);
+        self::assertSame(['font_heading', 'font_mono', 'fonts_extra'], $review['deferred']);
+        $review = $class::assess(['font_body' => 'Inter', 'fonts_extra' => 'Roboto|Unknown Invalid Family'], [], []);
+        self::assertSame([], $review['ready']);
+        self::assertSame(['font_body', 'fonts_extra'], $review['deferred']);
+        $review = $class::assess(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'google:Roboto|Inter'], []);
+        self::assertSame(['fonts_extra'], $review['unchanged']);
+        self::assertSame(['fonts_extra'], $class::assess(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'Roboto'], [])['conflicts']);
+    }
+
+    public function testRemoteFontHandoffRequiresMatchingRemoteDeliveryAndCompleteLists(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $legacy = ['fonts_delivery' => 'google', 'font_body' => 'Inter', 'font_heading' => 'google:Roboto', 'fonts_extra' => 'Roboto|Inter'];
+        self::assertSame(['font_heading' => 'google:Roboto', 'fonts_extra' => 'Roboto|Inter'], $class::remoteCandidates($legacy, ['fonts_delivery' => 'google']));
+        self::assertSame([], $class::remoteCandidates($legacy, []));
+        self::assertSame([], $class::remoteCandidates(['font_heading' => 'google:Roboto'], ['fonts_delivery' => 'google']));
+        self::assertSame([], $class::remoteCandidates(['font_heading' => 'google:Roboto'], []));
+        $legacy['fonts_extra'] = 'Roboto|Unknown Invalid Family';
+        self::assertSame(['font_heading' => 'google:Roboto'], $class::remoteCandidates($legacy, ['fonts_delivery' => 'google']));
+    }
+
+    public function testLocalFontHandoffRequiresEveryWinningFamilyAndValidFaces(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $candidates = ['font_body' => 'google:Roboto', 'font_heading' => 'google:Inter', 'fonts_extra' => 'Inter|Roboto'];
+        self::assertSame(['font_heading' => 'google:Inter'], $class::cachedCandidates($candidates, [], static fn (string $family): bool => $family === 'Inter'));
+        self::assertSame(['font_body' => 'google:Roboto', 'font_heading' => 'google:Inter'], $class::cachedCandidates($candidates, ['font_body' => 'google:Inter'], static fn (string $family): bool => $family === 'Inter'));
+        $face = ['fontFamily' => 'Inter', 'fontStyle' => 'normal', 'fontWeight' => '100 900', 'fontDisplay' => 'swap', 'unicodeRange' => 'U+0000-00FF', 'src' => ['https://example.test/uploads/inter.woff2']];
+        $valid = static fn (string $src): bool => $src === 'https://example.test/uploads/inter.woff2';
+        self::assertSame([$face], $class::validatedFaces('Inter', [$face], $valid));
+        self::assertSame([], $class::validatedFaces('Inter', [$face, array_replace($face, ['src' => ['https://fonts.gstatic.com/a.woff2']])], $valid));
+        self::assertSame([], $class::validatedFaces('Roboto', [$face], $valid));
+        self::assertSame([], $class::validatedFaces('Inter', [array_replace($face, ['extra' => 'unexpected'])], $valid));
+    }
+
+    public function testFontHandoffDefersUnresolvedCanonicalConflict(): void
+    {
+        $class = \WPEssential\Modules\SiteKit\SiteKitLegacyFontPreview::class;
+        $candidates = ['font_body' => 'theme:hi-wpessential-inter', 'font_heading' => 'google:Roboto', 'font_mono' => 'theme:hi-wpessential-georgia', 'fonts_extra' => 'Roboto|Inter'];
+        $canonical = ['font_body' => 'theme:missing', 'font_heading' => 'google:Inter', 'font_mono' => 'theme:mono', 'fonts_extra' => 'Roboto|Unknown Invalid Family'];
+        self::assertSame(['font_heading' => 'google:Roboto', 'font_mono' => 'theme:hi-wpessential-georgia'], $class::resolvableCandidates($candidates, $canonical, ['mono']));
+        self::assertSame($candidates, $class::resolvableCandidates($candidates, [], []));
+        self::assertSame(['fonts_extra' => 'Roboto|Inter'], $class::resolvableCandidates(['fonts_extra' => 'Roboto|Inter'], ['fonts_extra' => 'google:Roboto|Inter'], []));
+    }
+
+    public function testExplicitFalseBreakpointSurvivesCustomizerAndStore(): void
+    {
+        $field = \WPEssential\Modules\SiteKit\SiteKitSchema::field('breakpoints');
+        self::assertNotNull($field);
+        $raw = '{"mobile":{"on":false},"mobile_small":{"on":true,"w":420}}';
+        $value = \WPEssential\Modules\SiteKit\SiteKitCustomizer::sanitize($field, $raw);
+        self::assertSame(['mobile' => ['on' => false], 'mobile_small' => ['on' => true, 'w' => 420]], $value);
+        $store = new SiteKitStore();
+        $store->update(['breakpoints' => $raw]);
+        self::assertSame($value, $store->values()['breakpoints']);
+        $enabled = \WPEssential\Modules\SiteKit\SiteKitBreakpoints::enabled($value);
+        self::assertArrayNotHasKey('mobile', $enabled);
+        self::assertSame(420, $enabled['mobile_small']['width']);
     }
 
     public function testStoreReportsChangesAndResetsGroups(): void

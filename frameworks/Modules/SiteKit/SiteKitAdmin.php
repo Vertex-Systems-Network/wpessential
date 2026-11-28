@@ -29,6 +29,7 @@ final class SiteKitAdmin {
 	public const AJAX_SAVE       = 'site-kit.save';
 	public const AJAX_RESET      = 'site-kit.reset';
 	public const AJAX_SNIPPETS   = 'site-kit.snippets';
+	public const LEGACY_ACTION   = 'wpessential_site_kit_palette_handoff';
 
 	public function __construct( private readonly SiteKitStore $store, private readonly SiteKitSnippets $snippets ) {}
 
@@ -37,6 +38,7 @@ final class SiteKitAdmin {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
 		add_action( 'admin_post_' . self::SAVE_ACTION, [ $this, 'handleSave' ] );
 		add_action( 'admin_post_' . self::SNIPPETS_ACTION, [ $this, 'handleSnippets' ] );
+		add_action( 'admin_post_' . self::LEGACY_ACTION, [ $this, 'handleLegacyPalette' ] );
 		CoreAjaxRoutes::expose( self::AJAX_SAVE );
 		CoreAjaxRoutes::expose( self::AJAX_RESET );
 		CoreAjaxRoutes::expose( self::AJAX_SNIPPETS );
@@ -74,6 +76,57 @@ final class SiteKitAdmin {
 				]
 			)
 		);
+		exit;
+	}
+
+	/** Explicit palette and reviewed scalar migration; no legacy values are deleted. */
+	public function handleLegacyPalette(): void {
+		if ( ! current_user_can( SiteKitAbilities::CAPABILITY ) || ! SiteKitLegacyPreview::supported() ) {
+			wp_die( esc_html__( 'You are not allowed to migrate these settings.', 'wpessential' ), 'WPEssential', [ 'response' => 403 ] );
+		}
+		check_admin_referer( self::LEGACY_ACTION );
+		$legacy = get_theme_mod( 'wpessential_site', [] );
+		if ( is_array( $legacy ) ) {
+			$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
+			$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
+			$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
+			$before  = $this->store->values();
+			$review  = SiteKitLegacyPreview::assess( $pending, $before );
+			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $before );
+			$fonts   = SiteKitLegacyFontPreview::adoptLocalCache( SiteKitLegacyFontPreview::candidates( $pending, $before ), $before );
+			$changes = $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $before );
+			$breakpoint = SiteKitLegacyBreakpointPreview::bridgeSupported() && ! in_array( 'breakpoints', $handed, true ) ? SiteKitLegacyBreakpointPreview::candidate( $legacy, $before ) : [];
+			if ( $breakpoint !== [] && ! array_key_exists( 'breakpoints', $before ) ) {
+				$changes['breakpoints'] = $breakpoint['values'];
+			}
+			$this->store->update( $changes );
+			$eligible = array_merge( SiteKitLegacyPreview::handoffKeys( $pending ), SiteKitLegacyScalarPreview::handoffKeys( $pending ), array_keys( $fonts ) );
+			$keys     = SiteKitLegacyPreview::confirmedReadback( $eligible, $before + $changes, $this->store->values() );
+			if ( $breakpoint !== [] && SiteKitLegacyPreview::confirmedReadback( [ 'breakpoints' ], $before + $changes, $this->store->values() ) !== [] ) {
+				set_theme_mod( SiteKitLegacyBreakpointPreview::MAP_MOD, $breakpoint['mobile_key'] );
+				if ( get_theme_mod( SiteKitLegacyBreakpointPreview::MAP_MOD, '' ) === $breakpoint['mobile_key'] ) {
+					$keys[] = 'breakpoints';
+				}
+			}
+			$next     = array_values( array_unique( array_merge( $handed, $keys ) ) );
+			if ( $next !== $handed ) {
+				set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, $next );
+			}
+			// Only transfer dependent fields after the breakpoint bridge is active.
+			$stored = $this->store->values();
+			$responsive = SiteKitLegacyBreakpointPreview::activeResponsiveCandidates( $pending, $stored );
+			if ( $responsive !== [] && get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] ) === $next ) {
+				$this->store->update( array_diff_key( $responsive, $stored ) );
+				$confirmed = SiteKitLegacyPreview::confirmedReadback( array_keys( $responsive ), $responsive, $this->store->values() );
+				$next = array_values( array_unique( array_merge( $next, $confirmed ) ) );
+				set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, $next );
+			}
+			if ( $next !== $handed ) {
+				// Rebuild after the theme stops compiling the newly delegated fields.
+				$this->store->normalizeCustomizerSave();
+			}
+		}
+		wp_safe_redirect( AdminUrl::page( self::PAGE_SLUG, [ 'group' => 'colors' ] ) );
 		exit;
 	}
 
@@ -130,6 +183,7 @@ final class SiteKitAdmin {
 		$values   = $this->store->values();
 
 		$html  = PageHeader::render( __( 'Site Tools Kit', 'wpessential' ), __( 'Site settings', 'wpessential' ), __( 'Colours, fonts, buttons, forms, layout and motion for the whole site, in Gutenberg and Elementor. Empty fields keep your theme\'s value.', 'wpessential' ), Button::link( __( 'View site', 'wpessential' ), home_url( '/' ), 'ghost', true, true ) );
+		$html .= $this->legacyMigrationNotice( $values );
 		$html .= '<div class="wpe-ui-sitekit" data-wpe-tabs>';
 		$html .= '<nav class="wpe-ui-sitekit__nav" role="tablist" aria-label="' . esc_attr__( 'Site Kit groups', 'wpessential' ) . '">';
 		foreach ( $sections as $id => $section ) {
@@ -149,6 +203,63 @@ final class SiteKitAdmin {
 			'reset' => [ 'info', __( 'Group reset to the theme defaults.', 'wpessential' ) ],
 		];
 		Screen::render( self::PAGE_SLUG, $html, isset( $messages[ $notice ] ) ? Notice::render( ...$messages[ $notice ] ) : '', 'site-kit' );
+	}
+
+	/** @param array<string,mixed> $values */
+	private function legacyMigrationNotice( array $values ): string {
+		if ( ! function_exists( 'get_template' ) || get_template() !== 'hi-wpessential' || ! function_exists( 'get_theme_mod' ) ) {
+			return '';
+		}
+		$legacy = get_theme_mod( 'wpessential_site', [] );
+		if ( ! is_array( $legacy ) || $legacy === [] ) {
+			return '';
+		}
+		if ( ! SiteKitLegacyPreview::supported() ) {
+			return Notice::render( 'info', __( 'Legacy settings transfer requires a compatible Hi WPEssential theme version. Original theme settings remain active.', 'wpessential' ) );
+		}
+		$handed = get_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, [] );
+		$handed = is_array( $handed ) ? array_values( array_filter( $handed, 'is_string' ) ) : [];
+		$pending = array_diff_key( $legacy, array_fill_keys( $handed, true ) );
+		$review  = SiteKitLegacyPreview::assess( $pending, $values );
+		$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $values );
+		$fonts = SiteKitLegacyFontPreview::candidates( $pending, $values );
+		$fontReady = array_diff_key( $fonts, $values );
+		$fontConflicts = array_filter( array_intersect_key( $fonts, $values ), static fn ( string $value, string $key ): bool => $values[ $key ] !== $value, ARRAY_FILTER_USE_BOTH );
+		$breakpointCandidate = SiteKitLegacyBreakpointPreview::bridgeSupported() && ! in_array( 'breakpoints', $handed, true ) ? SiteKitLegacyBreakpointPreview::candidate( $legacy, $values ) : [];
+		$breakpointKeys = $breakpointCandidate === [] ? [] : [ 'breakpoints' ];
+		$responsive = SiteKitLegacyBreakpointPreview::activeResponsiveCandidates( $pending, $values );
+		if ( $breakpointCandidate !== [] && SiteKitLegacyBreakpointPreview::responsiveSupported() ) {
+			$responsive = SiteKitLegacyBreakpointPreview::responsiveCandidates( $pending, $values, $breakpointCandidate['mobile_key'] );
+		}
+		$deferred = array_diff( array_intersect( $review['deferred'], $scalar['deferred'] ), array_keys( $fonts ), $breakpointKeys, array_keys( $responsive ) );
+		$html    = Notice::render(
+			'info',
+			sprintf(
+				/* translators: 1: import-ready settings, 2: conflicts, 3: deferred settings. */
+				__( 'Legacy theme settings review: %1$d compatible values, %2$d conflicts and %3$d deferred values. Canonical settings take priority; original theme values are retained.', 'wpessential' ),
+				count( $review['ready'] ) + count( $scalar['ready'] ) + count( $fontReady ) + count( $breakpointKeys ) + count( $responsive ),
+				count( $review['conflicts'] ) + count( $scalar['conflicts'] ) + count( $fontConflicts ),
+				count( $deferred )
+			)
+		);
+		if ( array_key_exists( 'breakpoints', $legacy ) ) {
+			$breakpoint = SiteKitLegacyBreakpointPreview::assess( $legacy );
+			$message = match ( true ) {
+				SiteKitLegacyBreakpointPreview::model() !== [] => __( 'Breakpoints are now controlled by Site Tools Kit. Original theme responsive values remain stored.', 'wpessential' ),
+				$breakpointCandidate !== [] => __( 'Compatible breakpoints can transfer. Legacy responsive values retain their original device keys.', 'wpessential' ),
+				$breakpoint['status'] === 'unknown_format' => __( 'Legacy breakpoints need review: unsupported format. No values have been changed.', 'wpessential' ),
+				default => __( 'Legacy breakpoint transfer needs compatible theme support and non-conflicting canonical breakpoints.', 'wpessential' ),
+			};
+			$html .= '<p data-wpe-legacy-breakpoint-review="' . esc_attr( $breakpoint['status'] ) . '">' . esc_html( $message ) . '</p>';
+		}
+		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ), array_keys( $fonts ), $breakpointKeys, array_keys( $responsive ) ), $handed ) !== [] ) {
+			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
+			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
+			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar, font, breakpoint and responsive menu values while retaining existing Site Tools Kit settings where they conflict. Local Google font values transfer only when existing local files and cache metadata are verified. Delivery settings are not migrated.', 'wpessential' ) . '</p>';
+			$html .= Button::button( __( 'Transfer compatible legacy settings', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
+		}
+		return $html;
 	}
 
 	private static function tab( string $id, string $title, string $icon, bool $active, int $count ): string {
@@ -196,7 +307,7 @@ final class SiteKitAdmin {
 	}
 
 	/** @param array<string,mixed> $field */
-	private static function field( string $key, array $field, mixed $value ): string {
+	public static function field( string $key, array $field, mixed $value ): string {
 		$type = (string) $field['type'];
 		if ( $type === 'heading' ) {
 			return '<h3 class="wpe-ui-builder__section wpe-ui-sitekit__wide">' . esc_html( (string) $field['label'] ) . '</h3>';
@@ -257,7 +368,7 @@ final class SiteKitAdmin {
 	}
 
 	/** Palette, theme fonts and the Google Fonts list for the controls. */
-	private static function controlsConfig(): string {
+	public static function controlsConfig(): string {
 		$palette  = [];
 		$settings = function_exists( 'wp_get_global_settings' ) ? wp_get_global_settings( [ 'color', 'palette' ] ) : [];
 		foreach ( array_merge( (array) ( $settings['theme'] ?? [] ), (array) ( $settings['custom'] ?? [] ) ) as $colour ) {
@@ -267,9 +378,9 @@ final class SiteKitAdmin {
 		}
 		$fonts    = [];
 		$families = function_exists( 'wp_get_global_settings' ) ? wp_get_global_settings( [ 'typography', 'fontFamilies' ] ) : [];
-		foreach ( (array) ( $families['theme'] ?? [] ) as $family ) {
+		foreach ( array_merge( (array) ( $families['theme'] ?? [] ), SiteKitFonts::bundledPresets() ) as $family ) {
 			if ( isset( $family['slug'], $family['fontFamily'] ) ) {
-				$fonts[] = [
+				$fonts[ (string) $family['slug'] ] = [
 					'value' => 'theme:' . $family['slug'],
 					'name'  => (string) ( $family['name'] ?? $family['slug'] ),
 					'stack' => (string) $family['fontFamily'],
@@ -295,7 +406,7 @@ final class SiteKitAdmin {
 		}
 		$config = [
 			'palette'        => (object) $palette,
-			'themeFonts'     => $fonts,
+			'themeFonts'     => array_values( $fonts ),
 			'googleList'     => plugins_url( 'data/google-fonts.json', __FILE__ ),
 			'breakpoints'    => array_map(
 				static fn ( string $key, array $b ): array => [

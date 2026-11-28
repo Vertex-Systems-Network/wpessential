@@ -19,7 +19,7 @@ Work ID root: `P5-M14`
 
 ## Current execution handoff (2026-11-27)
 
-WP5 #1596 and WP6 #1598 merged. WP6 44/44 E2E, eight workflows passed; WP7 #1599 / #1600 browser-language source and manager implemented; exact head dfbf6d9c passed eight workflows. Additional location/priority/opaque-row browser evidence pending. WP7 bounded browser-language delivery stays in #1599 / #1600; PHP developer-code architecture is separately deferred in #1601 (planning only; no executor). Existing ADR-0004/0193 remain binding. WP8 has no dependency on PHP execution. WP9/WP12 retain full editor/React/theme parity. No release or full-product certification.
+WP5 #1596, WP6 #1598 and bounded browser-language WP7 #1600 merged. WP7 candidate 8a3ea579 passed 8/8 workflows, 10/10 checks, WordPress E2E 46/46; merged ab80f77d. PHP architecture remains separate #1601, planning only. WP8 #1602 / #1603 active: shared scalar, responsive, composite and state controls, explicit palette/scalar/bundled-font transfer, and bidirectional browser acceptance verified on Free `5d928215` / theme `4d849bc9` (8/8 workflows, 10/10 checks, 48/48 WordPress E2E). Versioned ownership contract and read-only breakpoint review are on active candidate `a9dbb1a0` with theme `b9b53ebc`; fresh verification pending. No release or full-product certification.
 
 ## Work packages
 
@@ -31,8 +31,8 @@ WP5 #1596 and WP6 #1598 merged. WP6 44/44 E2E, eight workflows passed; WP7 #1599
 | WP4 | 4 | Units setting: multi-select allowed units (px, %, em, rem, vh, vw, vmin, vmax, ch, fr) + custom units with `1 X = n <base>`; `UnitControl` shows only enabled units; compiler converts custom → `calc(n * base)` | Free | KIT DONE for Site Tools Kit (block UnitControl reuse with WP9) |
 | WP5 | 9 | Global colours / dark colours / typography: repeater "Add custom" with name + slug; exposed as CSS vars + `theme.json` palette/fontSizes + global picker in blocks/Elementor | Free | MERGED — #1596; 42/42 Free, 49/49 paired |
 | WP6 | 13 | Expand groups: images, forms (labels, inputs, focus, placeholder, errors), buttons (states, sizes, variants), background, links (states, underline), shadows (named presets) — every sub-element + full CSS props | Free | MERGED — #1598; 44/44 E2E |
-| WP7 | 12 | Custom code: repeater of snippets — language (CSS, SCSS-lite, JS, HTML, PHP-off-by-default), location (head, body open, footer, before/after content, admin, login), conditions (all/front/page ids), priority, enable | Free (PHP exec Pro) | ACTIVE — browser-language #1599 / #1600; PHP design deferred #1601 |
-| WP8 | 14 | Customizer panels generated from the same schema/option keys | Free | TODO |
+| WP7 | 12 | Custom code: repeater of snippets — language (CSS, SCSS-lite, JS, HTML, PHP-off-by-default), location (head, body open, footer, before/after content, admin, login), conditions (all/front/page ids), priority, enable | Free (PHP exec Pro) | MERGED — bounded browser-language #1600; PHP design deferred #1601 |
+| WP8 | 14 | Customizer panels generated from the same schema/option keys | Free | ACTIVE — #1602 / #1603 shared controls and bounded handoff verified; versioned contract, native preview regression and legacy breakpoint reconciliation pending |
 | WP9 | 1, 3 | `InspectorTabs` + "Reset to default" toolbar button (clears attributes to block.json defaults/example) on every block | Free | TODO |
 | WP10 | 8 | Blocks/demos inherit kit: strip per-block defaults from demo content; block CSS uses kit vars | Free, theme | TODO |
 | WP11 | 2 | Page/post meta "Content width": Default (kit) / Custom (value + unit) | Free | TODO |
@@ -50,6 +50,12 @@ SCSS-lite is a dependency-free subset: up to 32 unique literal variables declare
 
 WP7 lists PHP as Pro-only and off by default, but ADR-0239 supersedes only ADR-0232 decision 1; it does not supersede ADR-0004 or ADR-0193. ADR-0004 requires a separately accepted developer-mode ADR and threat model before implementing user-entered server code; ADR-0193 routes server code through the reviewed Extension SDK/plugin path and prohibits PHP/eval. Therefore Free rejects new PHP/unknown-language rows, preserves existing opaque rows even on privileged saves, excludes them from UI editing and runtime selection. No PHP executor or premium execution claim is introduced. Pro compatibility and entitlement gates are necessary but not sufficient. A dedicated ADR and recovery/security evidence must resolve the conflict before any Pro executor is considered. #1601 tracks this separately (planning only). The bounded browser-language WP7 may integrate after its acceptance gates pass; do not claim PHP feature completion. WP8 does not depend on PHP execution.
 
+## WP8 current integration boundary
+
+WP8 #1602 / #1603 shared scalar, responsive, composite and state controls use native changesets and canonical option keys. Verified Free `5d928215` / companion theme `4d849bc9` (hi-wpessential #129, issue #128) passed all eight workflows, ten checks and 48/48 WordPress E2E (run 46076690293). Explicit capability/nonce-gated transfer covers reviewed palette, scalar and bundled font roles, preserves legacy theme mods and canonical conflicts, requires exact canonical readback, retains reset ownership, and restores legacy behavior when the module is disabled. Google extra-font storage normalization and theme font preset resolution are verified. Versioned ownership handshake and administrator-facing read-only breakpoint review in `a9dbb1a0` / `b9b53ebc` are pending exact paired verification. Initial browser accessibility workflow failed at Chromium dependency installation (Microsoft apt repository HTTP 403), not an accessibility assertion; the failed job was rerun unchanged.
+
+Legacy breakpoint transfer is intentionally not enabled while legacy responsive controls store numeric device keys/aliases. The new disabled-by-default smallest-phone slot represents 320 and 360 independently without changing existing small-phone settings. Even when the selected media boundaries are representable, moving only the breakpoint option without reconciling dependent controls would create divergent semantics. Preserve the raw source and defer unresolved formats (including Google delivery ownership); never claim full legacy parity. Native preview regression work checks native Desktop/Mobile switching, live width edits, disabling/re-enabling a selected breakpoint and retention of unpublished device values. This successor is not yet verified. WP8 remains ACTIVE; no merge or release claim.
+
 ## Acceptance (per WP)
 
 - Unit tests for schema/compiler changes; Playwright screenshot of editor vs frontend for WP12; axe = 0 serious issues for WP14.
@@ -63,3 +69,15 @@ Low: PHP unit + JS build per WP; WP12/WP14 add one Playground Playwright job (~5
 ## Rollback
 
 Each WP is an isolated PR; revert the PR. WP1 keeps option keys, so reverting restores the Pro module without data loss.
+
+### WP8 consolidated local-cache candidate
+
+The active font-reference guard candidate `18637d86` is the base. Local-to-local Google handoff is eligible only when all winning family metadata and existing upload files validate; transfer reuses the existing files, preserves the original theme cache and delivery mode, and confirms canonical metadata readback before claiming ownership. Missing, malformed, remote and conflicting cache entries remain legacy-owned. Breakpoint ownership remains deferred where dependent legacy responsive values cannot be represented losslessly; the independent smallest-phone slot removes the earlier 320/360 collision, the read-only review and explicit preview arbitration remain in place. No final CI or full parity claim is made here.
+
+### WP8 canonical breakpoint bridge candidate
+
+Free `b00694a3` passed all eight workflows, including native preview/save and local-cache regression. The new paired candidate adds a separately versioned, explicit breakpoint handoff. A frozen phone-key mapping retains both 560/480 and 360/320 legacy numeric device identities; the original responsive theme data is not rewritten. The companion theme consumes canonical widths, enabled states and media order in CSS and Customizer controls. Canonical conflicting selections or incompatible existing canonical responsive values defer transfer. Legacy responsive field values still owned by the theme remain in its original store, rather than being silently converted across different selectors, units or compiler semantics. Standalone theme fallback remains available. Fresh exact-head paired verification required; no release or complete legacy-field parity claim.
+
+### WP8 bounded responsive menu ownership
+
+Companion candidate `dc7a8f4f` failed strict WPCS on seven array alignment warnings, not a runtime assertion. The successor `0036bf9c` aligns the localization array and adds a separate responsive handoff handshake for menu size/gap. Free can transfer complete pixel-range trees through the frozen device mapping only after confirmed breakpoint ownership; unknown device keys, out-of-range values, incompatible units, conflicting aliases and differing canonical values defer transfer. Original theme data is retained; standalone fallback remains. Other legacy fields with different compiler semantics remain outside this bounded transfer. Fresh paired CI required.

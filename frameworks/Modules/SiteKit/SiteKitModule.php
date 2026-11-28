@@ -56,6 +56,7 @@ final class SiteKitModule implements ModuleInterface {
 			SiteKitElementor::register();
 		}
 		( new SiteKitAdmin( $store, $snippets ) )->register();
+		( new SiteKitCustomizer( $store ) )->register();
 	}
 
 	public function boot( ServiceRegistryInterface $services ): void {}

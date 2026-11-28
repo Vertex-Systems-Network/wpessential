@@ -3,7 +3,7 @@ import { initAjaxForms } from './core/forms';
 import { initAjaxNav } from './core/nav';
 import { initClickLoaders } from './core/skeleton';
 import { initDropdowns } from './core/dropdown';
-import { initSiteKit } from './core/sitekit';
+import { initSiteKit, initSiteKitCustomizer } from './core/sitekit';
 import { enhanceTable } from './core/table';
 import { BULK_ACTIONS, LIFECYCLE_VIEWS, markRow, rowActions, runLifecycle } from './core/lifecycle';
 import { statusCell } from './core/status-pill';
@@ -155,8 +155,13 @@ function initAccountMenu(): void {
 	} );
 }
 
-initAjaxForms();
-initClickLoaders();
-initAccountMenu();
-initAjaxNav( initScreen );
-initScreen();
+if ( document.getElementById( 'customize-controls' ) ) {
+	initSiteKitCustomizer();
+	initDropdowns();
+} else {
+	initAjaxForms();
+	initClickLoaders();
+	initAccountMenu();
+	initAjaxNav( initScreen );
+	initScreen();
+}

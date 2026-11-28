@@ -70,7 +70,13 @@ The MCP server is off by default. It exposes AI-channel abilities, and write too
 
 ## Current AI-Native Development Progress
 
-**2026-11-27 — ADR-0239 WP7 bounded candidate:** Free main `e93386c2` (WP6 #1598). WP7 #1599 / #1600 implements CSS, bounded SCSS-lite, JS, HTML, multi-add, explicit remove, safe mode and privilege/opaque-row protection. `dfbf6d9c` 8/8 workflows PASS; additional scoped browser acceptance requires fresh exact-head CI. PHP developer-code security decision deferred to #1601; no PHP executor, release or full product certification. WP8 follows bounded WP7 integration.
+**2026-11-28 — WP8 responsive menu candidate:** Theme #129 alignment warnings corrected and compatible menu size/gap ownership added to Free #1603; conflicting canonical or unrepresentable legacy fields stay untouched. Exact paired gates pending, no release or full legacy parity claim.
+
+**2026-11-28 — WP8 breakpoint bridge:** Free #1603 candidate b00694a3 passed all eight workflows. New paired candidate delegates compatible breakpoint selections to the Kit without rewriting numeric legacy responsive values; incompatible canonical selections defer transfer. Exact-head paired CI pending. No release or complete legacy-field parity claim.
+
+**2026-11-28 — WP8 candidate reconciliation:** Free #1603 contains verified-cache handoff source, regression tests and independent smallest-phone representation; prior candidate 640a16ad failed PHPCS and the correction requires fresh exact-head checks. Legacy responsive ownership remains deferred; no release or full parity claim.
+
+**2026-11-27 — ADR-0239 WP7 integrated / WP8 active:** Bounded #1600 merged `ab80f77d` (8/8 workflows, 10/10 checks, 46/46 E2E). WP8 #1602 / #1603 shared scalar, responsive and composite controls use native changesets and the canonical option. `27fa040f` PHPStan rejected inherited constructor arguments (PHP Quality and Architecture); `ba54a806` corrects the constructor. `5323b3be` adds capability/nonce-gated palette-only ownership transfer, keeps legacy values and existing canonical conflicts, and retains reset ownership. Theme companion hi-wpessential #129 (`0ccd33cd`, issue #128) consumes the owned-key contract, suppressing only owned palette controls/legacy compiler values and preserving standalone behavior. Actual combined browser, preview, save/reset and paired CI evidence pending; non-palette legacy formats remain unresolved. PHP #1601 planning-only; no release or full-product certification.
 
 **2026-11-27 — ADR-0239 WP5 integrated / WP6 active:** Free #1596 merged `d44f6967` (8/8 workflows, 42/42 E2E); exact Free + Pro paired audit 49/49. Pro #34 and theme #127 merged; WP6 #1597 / draft #1598 begins with image/link controls. Full React inspector and theme parity remain subsequent work; no release or full-product certification.
 

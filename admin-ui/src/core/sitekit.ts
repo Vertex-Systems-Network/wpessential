@@ -1,7 +1,7 @@
 // Site Kit screen: binds each field wrapper (.wpec[data-wpec]) to a control from ./controls,
 // switches groups as tabs without reloading, and saves a group in place over AJAX.
 import { ajax, ajaxConfig, AjaxError } from './ajax';
-import { configure, create, h, setDevice, type ControlOptions, type ControlsConfig } from './controls';
+import { configure, create, h, observeDevice, setDevice, updateBreakpoints, type ControlOptions, type ControlsConfig } from './controls';
 import { toast } from './toast';
 
 function bindField( root: HTMLElement ): void {
@@ -28,7 +28,6 @@ function bindField( root: HTMLElement ): void {
 		set: ( value ) => {
 			input.value = value;
 			input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
-			sync();
 		},
 	} );
 	if ( control.devices ) {
@@ -39,47 +38,99 @@ function bindField( root: HTMLElement ): void {
 	} else {
 		root.querySelector( '.wpec__ui' )?.append( control.el );
 	}
+	input.addEventListener( 'change', sync );
 	reset?.addEventListener( 'click', () => {
 		input.value = '';
 		input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
-		sync();
 	} );
 	sync();
 }
 
-// State bar for fields marked with a tab (like Elementor).
-function stateTabs( form: HTMLElement ): void {
-	const items = Array.from( form.querySelectorAll< HTMLElement >( '[data-wpec-tab]' ) );
+// State tabs are shared by admin forms and native Customizer control lists.
+let stateControlId = 0;
+const stateGroups = new WeakMap< HTMLElement, { items: HTMLElement[]; select: ( key: string, focus?: boolean ) => void; current: () => string; host: HTMLElement } >();
+
+function stateTabs( container: HTMLElement, items = Array.from( container.querySelectorAll< HTMLElement >( '[data-wpec-tab]' ) ), customizer = false ): void {
 	if ( ! items.length ) {
 		return;
 	}
-	const show = ( tab: string ): void => {
+	const previous = stateGroups.get( container );
+	if ( previous && items.length === previous.items.length && items.every( ( item, index ) => item === previous.items[ index ] ) && previous.host.isConnected ) {
+		return;
+	}
+	const selected = previous?.current() ?? 'normal';
+	previous?.host.remove();
+	const states = ( [ [ 'normal', 'Normal' ], [ 'hover', 'Hover' ], [ 'focus', 'Focus' ], [ 'active', 'Active' ], [ 'disabled', 'Disabled' ] ] as const ).filter( ( [ key ] ) => items.some( ( item ) => item.dataset.wpecTab === key ) );
+	const bar = h( 'div', { class: 'wpec-seg wpec-statebar', role: 'tablist', 'aria-label': 'State' } );
+	const host = customizer ? h( 'li', { class: 'wpe-ui wpe-sitekit-state-tabs' }, [ bar ] ) : bar;
+	let current = states.some( ( [ key ] ) => key === selected ) ? selected : states[ 0 ]?.[ 0 ] ?? 'normal';
+	const select = ( key: string, focus = false ): void => {
+		current = key;
 		items.forEach( ( item ) => {
-			item.hidden = item.dataset.wpecTab !== tab;
+			item.hidden = item.dataset.wpecTab !== key;
+		} );
+		bar.querySelectorAll< HTMLButtonElement >( 'button' ).forEach( ( button ) => {
+			const active = button.dataset.state === key;
+			button.classList.toggle( 'is-active', active );
+			button.setAttribute( 'aria-selected', active ? 'true' : 'false' );
+			button.tabIndex = active ? 0 : -1;
+			if ( active && focus ) {
+				button.focus();
+			}
 		} );
 	};
-	const bar = h( 'div', { class: 'wpec-seg wpec-statebar', role: 'tablist', 'aria-label': 'State' } );
-	const states = ( [ [ 'normal', 'Normal' ], [ 'hover', 'Hover' ], [ 'focus', 'Focus' ], [ 'active', 'Active' ], [ 'disabled', 'Disabled' ] ] as const ).filter( ( [ key ] ) => items.some( ( item ) => item.dataset.wpecTab === key ) );
 	states.forEach( ( [ key, label ], index ) => {
-		bar.append(
-			h( 'button', {
-				type: 'button',
-				role: 'tab',
-				class: 'wpec-seg__btn' + ( index === 0 ? ' is-active' : '' ),
-				'aria-selected': index === 0 ? 'true' : 'false',
-				text: label,
-				onclick: ( event: Event ) => {
-					bar.querySelectorAll( 'button' ).forEach( ( b ) => {
-						b.classList.toggle( 'is-active', b === event.currentTarget );
-						b.setAttribute( 'aria-selected', b === event.currentTarget ? 'true' : 'false' );
-					} );
-					show( key );
-				},
-			} )
-		);
+		const controlled = items.filter( ( item ) => item.dataset.wpecTab === key ).map( ( item ) => {
+			if ( ! item.id ) {
+				let id: string;
+				do {
+					stateControlId += 1;
+					id = `wpe-sitekit-state-control-${ stateControlId }`;
+				} while ( document.getElementById( id ) );
+				item.id = id;
+			}
+			return item.id;
+		} );
+		const button = h( 'button', {
+			type: 'button',
+			role: 'tab',
+			class: 'wpec-seg__btn',
+			'data-state': key,
+			'aria-controls': controlled.join( ' ' ),
+			text: label,
+			onclick: () => select( key ),
+		} );
+		button.addEventListener( 'keydown', ( event: KeyboardEvent ) => {
+			const next = event.key === 'Home' ? 0 : event.key === 'End' ? states.length - 1 : event.key === 'ArrowRight' ? ( index + 1 ) % states.length : event.key === 'ArrowLeft' ? ( index + states.length - 1 ) % states.length : -1;
+			const state = states[ next ];
+			if ( state ) {
+				event.preventDefault();
+				select( state[ 0 ], true );
+			}
+		} );
+		bar.append( button );
 	} );
-	items[ 0 ]?.before( bar );
-	show( states[ 0 ]?.[ 0 ] ?? 'normal' );
+	items[ 0 ]?.before( host );
+	stateGroups.set( container, { items, select, current: () => current, host } );
+	select( current );
+}
+
+function customizerStateTabs(): void {
+	const groups = new Map< HTMLElement, HTMLElement[] >();
+	document.querySelectorAll< HTMLElement >( '.wpe-sitekit-customizer [data-wpec-tab]' ).forEach( ( field ) => {
+		const item = field.closest< HTMLElement >( 'li.customize-control' );
+		const parent = item?.parentElement;
+		if ( ! item || ! parent ) {
+			return;
+		}
+		item.dataset.wpecTab = field.dataset.wpecTab ?? '';
+		const group = groups.get( parent ) ?? [];
+		group.push( item );
+		groups.set( parent, group );
+	} );
+	for ( const [ parent, items ] of groups ) {
+		stateTabs( parent, items, true );
+	}
 }
 
 function bindTabs( root: HTMLElement ): void {
@@ -210,5 +261,157 @@ export function initSiteKit(): void {
 	} );
 	bindTabs( root );
 	bindSnippetManager( root );
+	setDevice( 'desktop' );
+}
+
+
+type CustomizeSetting = {
+	get: () => unknown;
+	set: ( value: string ) => void;
+	bind: ( callback: ( value: unknown ) => void ) => void;
+};
+type CustomizeApi = ( ( id: string, callback: ( setting: CustomizeSetting ) => void ) => void ) & {
+	bind: ( event: string, callback: () => void ) => void;
+	previewedDevice?: CustomizeSetting;
+};
+
+/** WordPress owns changesets, preview and publishing; controls only edit its settings. */
+export function initSiteKitCustomizer(): void {
+	const api = ( window as unknown as { wp?: { customize?: CustomizeApi } } ).wp?.customize;
+	if ( ! api ) {
+		return;
+	}
+	try {
+		configure( JSON.parse( document.getElementById( 'wpe-controls-config' )?.textContent ?? '{}' ) as ControlsConfig );
+	} catch {
+		configure( {} );
+	}
+	const encode = ( value: unknown ): string => {
+		if ( value === true ) {
+			return '1';
+		}
+		if ( value === false || value === null || value === undefined ) {
+			return '';
+		}
+		return typeof value === 'object' ? JSON.stringify( value ) : String( value );
+	};
+	// WordPress keeps its native device buttons. A shared field's configured
+	// width uses the desktop canvas, constrained by the available preview area.
+	let syncing = false;
+	const preview = document.getElementById( 'customize-preview' );
+	const clearPreview = (): void => {
+		if ( preview?.dataset.wpeKitPreview ) {
+			preview.style.width = '';
+			preview.style.left = '';
+			preview.style.marginLeft = '';
+			delete preview.dataset.wpeKitPreview;
+		}
+	};
+	document.addEventListener( 'wpe-legacy-preview-claim', () => {
+		if ( ! preview?.dataset.wpeKitPreview ) {
+			return;
+		}
+		syncing = true;
+		try {
+			clearPreview();
+			setDevice( 'desktop' );
+		} finally {
+			syncing = false;
+		}
+	} );
+	observeDevice( ( device, width ) => {
+		if ( syncing || ! preview ) {
+			return;
+		}
+		syncing = true;
+		try {
+			document.dispatchEvent( new Event( 'wpe-sitekit-preview-claim' ) );
+			if ( api.previewedDevice?.get() !== 'desktop' ) {
+				api.previewedDevice?.set( 'desktop' );
+			}
+			clearPreview();
+			if ( device !== 'desktop' && width > 0 ) {
+				preview.dataset.wpeKitPreview = device;
+				preview.style.width = `min(100%, ${ width }px)`;
+				preview.style.left = '50%';
+				preview.style.marginLeft = `max(-50%, -${ width / 2 }px)`;
+			}
+		} finally {
+			syncing = false;
+		}
+	} );
+	let nativeBound = false;
+	const bindNative = (): void => {
+		if ( nativeBound || ! api.previewedDevice ) {
+			return;
+		}
+		nativeBound = true;
+		api.previewedDevice.bind( ( value ) => {
+			if ( syncing ) {
+				return;
+			}
+			syncing = true;
+			try {
+				clearPreview();
+				const requested = typeof value === 'string' ? value : 'desktop';
+				const selected = setDevice( requested );
+				// Native device buttons remain available even when the corresponding
+				// Kit breakpoint is disabled. Keep preview and field selection aligned.
+				if ( selected !== requested ) {
+					api.previewedDevice?.set( 'desktop' );
+				}
+			} finally {
+				syncing = false;
+			}
+		} );
+	};
+	bindNative();
+	api.bind( 'ready', bindNative );
+	// Custom widths use WordPress' desktop mode internally. Clicking its already
+	// selected Desktop button does not emit a Value change, so handle that intent.
+	document.addEventListener( 'click', ( event ) => {
+		if ( preview?.dataset.wpeKitPreview && event.target instanceof Element && event.target.closest( '.wp-full-overlay-footer .devices button[data-device="desktop"]' ) ) {
+			setDevice( 'desktop' );
+		}
+	}, true );
+	api( 'wpessential_site_kit[values][breakpoints]', ( setting ) => {
+		updateBreakpoints( encode( setting.get() ) );
+		setting.bind( ( value ) => updateBreakpoints( encode( value ) ) );
+	} );
+	const attach = (): void => {
+		document.querySelectorAll< HTMLElement >( '.wpe-sitekit-customizer[data-wpe-setting]' ).forEach( ( wrapper ) => {
+			if ( wrapper.dataset.bound ) {
+				return;
+			}
+			const root = wrapper.querySelector< HTMLElement >( '.wpec[data-wpec]' );
+			const input = root?.querySelector< HTMLInputElement >( '.wpec__value' );
+			if ( ! root || ! input ) {
+				return;
+			}
+			wrapper.dataset.bound = '1';
+			api( wrapper.dataset.wpeSetting ?? '', ( setting ) => {
+				input.value = encode( setting.get() );
+				bindField( root );
+				input.addEventListener( 'change', () => {
+					if ( input.value !== encode( setting.get() ) ) {
+						setting.set( input.value );
+					}
+				} );
+				setting.bind( ( value ) => {
+					const next = encode( value );
+					if ( input.value !== next ) {
+						input.value = next;
+						input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+					}
+				} );
+			} );
+		} );
+	};
+	const refresh = (): void => {
+		attach();
+		customizerStateTabs();
+	};
+	refresh();
+	new MutationObserver( refresh ).observe( document.body, { childList: true, subtree: true } );
 	setDevice( 'desktop' );
 }

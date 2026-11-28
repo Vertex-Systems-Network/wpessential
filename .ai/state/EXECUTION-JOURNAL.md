@@ -1,3 +1,13 @@
+# 2026-11-27 — WP8 shared Customizer and theme palette companion
+
+- WP8 #1602 / #1603 shared scalar, responsive and composite controls use native changesets and the canonical option. `27fa040f` PHPStan rejected inherited constructor arguments (PHP Quality and Architecture); `ba54a806` corrects the constructor. `5323b3be` adds capability/nonce-gated palette-only ownership transfer, keeps legacy values and existing canonical conflicts, and retains reset ownership. Theme companion hi-wpessential #129 (`0ccd33cd`, issue #128) consumes the owned-key contract, suppressing only owned palette controls/legacy compiler values and preserving standalone behavior. Actual combined browser, preview, save/reset and paired CI evidence pending; non-palette legacy formats remain unresolved.
+- No production migration, no release. Resume RB-0134; both draft PRs require exact-head and paired evidence before integration.
+
+# 2026-11-27 — Bounded WP7 integrated / WP8 active
+
+- Free #1600 exact head 8a3ea579 passed 8/8 workflows, 10/10 checks, WordPress E2E 45993977471 46/46; zero behind and no review blockers. Merged ab80f77de428f95a530ddc6cc3ec7356179786a3; #1599 closed. PHP #1601 planning-only, no PHP runtime.
+- WP8 #1602 / #1603 first source 79a5bae7: schema-derived scalar settings on canonical option paths, sanitizer and save lifecycle. Responsive/composite shared controls, theme legacy reconciliation and real browser acceptance remain. No release or P-006 promotion. Resume RB-0134.
+
 # 2026-11-27 — WP7 bounded browser-language acceptance / PHP follow-up
 
 - Free #1600 `dfbf6d9c` passed 8/8 workflows (WordPress E2E 45992599478). `2163bb82` adds browser regression for scoped output, priority, Safe Mode, admin/login and opaque-row preservation. Fresh exact-head CI required.

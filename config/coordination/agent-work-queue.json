@@ -1,7 +1,7 @@
 {
   "schema_version": 214,
   "snapshot_date": "2026-11-27",
-  "queue_anchor_main_sha": "e93386c2f663cdd0cd1027a8513949ad39fe1ba9",
+  "queue_anchor_main_sha": "ab80f77de428f95a530ddc6cc3ec7356179786a3",
   "mode": "ACTIVE_AUTONOMOUS_DEVELOPMENT",
   "source_issue": "#1595",
   "approval": {
@@ -8723,7 +8723,7 @@
       "slot_id": "adr-0239-wp7-custom-code-v1",
       "title": "ADR-0239 WP7 custom code management",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "ADR_0239_CUSTOM_CODE",
       "source": "ADR-0239 / #1599 / PR #1600",
       "dependencies": [
@@ -8741,7 +8741,35 @@
         "P-006 evidence promotion"
       ],
       "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
-      "close_condition": "Bounded browser-language WP7 acceptance and exact-head CI PASS; merge. PHP #1601 separately open; no PHP feature completion."
+      "close_condition": "Bounded browser-language WP7 acceptance and exact-head CI PASS; merge. PHP #1601 separately open; no PHP feature completion.",
+      "terminal_result": "PASS_ADR_0239_WP7_BOUNDED_BROWSER_LANGUAGES",
+      "terminal_evidence": "8a3ea579 8/8 workflows, 10/10 checks, WordPress E2E 45993977471 46/46; merged ab80f77d; PHP #1601 planning-only.",
+      "terminal_merge_sha": "ab80f77de428f95a530ddc6cc3ec7356179786a3"
+    },
+    {
+      "priority": 1215,
+      "slot_id": "adr-0239-wp8-customizer-v1",
+      "title": "ADR-0239 WP8 canonical Customizer synchronization",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "ADR_0239_CUSTOMIZER",
+      "source": "ADR-0239 / #1602 / PR #1603",
+      "dependencies": [
+        "Bounded WP7 #1600 merged"
+      ],
+      "runtime_allowed": true,
+      "claim_branch": "agent/adr-0239-wp8-customizer",
+      "allowed_scope": [
+        "Schema-derived Customizer controls, canonical option keys, save lifecycle, theme legacy reconciliation, preview and bidirectional tests"
+      ],
+      "forbidden_scope": [
+        "PHP execution",
+        "Unrelated modules",
+        "Production release",
+        "P-006 evidence promotion"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-002 / BEP-STK-V1",
+      "close_condition": "WP8 schema, shared control and bidirectional runtime acceptance; exact-head CI PASS; merge."
     }
   ],
   "historical_closeout": {

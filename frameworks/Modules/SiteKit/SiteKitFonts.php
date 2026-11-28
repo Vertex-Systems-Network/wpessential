@@ -45,6 +45,15 @@ final class SiteKitFonts {
 		return self::$list;
 	}
 
+	/** @return list<array<string,mixed>> Trusted companion theme's immutable bundled sources. */
+	public static function bundledPresets(): array {
+		if ( ! function_exists( 'apply_filters' ) || ! function_exists( 'get_template' ) || get_template() !== 'hi-wpessential' ) {
+			return [];
+		}
+		$rows = apply_filters( 'wpessential_site_kit_bundled_font_presets', [] );
+		return is_array( $rows ) ? array_values( array_filter( $rows, static fn ( mixed $row ): bool => is_array( $row ) && is_string( $row['slug'] ?? null ) && preg_match( '/^hi-wpessential-[a-z0-9-]+$/', $row['slug'] ) === 1 && is_string( $row['name'] ?? null ) && is_string( $row['fontFamily'] ?? null ) ) ) : [];
+	}
+
 	public static function exists( string $family ): bool {
 		return isset( self::all()[ $family ] );
 	}
@@ -85,6 +94,27 @@ final class SiteKitFonts {
 	}
 
 	/**
+	 * Extra font lists store bare Google family names. Accept the old prefixed
+	 * format on read, so sites saved by older Kit sanitizers keep their fonts.
+	 *
+	 * @return list<string>
+	 */
+	public static function extraFamilies( mixed $value ): array {
+		$families = [];
+		foreach ( explode( '|', is_string( $value ) ? $value : '' ) as $ref ) {
+			$family = trim( $ref );
+			if ( str_starts_with( $family, 'google:' ) ) {
+				$family = substr( $family, 7 );
+			}
+			if ( self::exists( $family ) ) {
+				$families[] = $family;
+			}
+		}
+
+		return array_values( array_unique( $families ) );
+	}
+
+	/**
 	 * Google families the settings use (font pickers, typography sets and the extra list).
 	 *
 	 * @param array<string,mixed> $values
@@ -95,8 +125,8 @@ final class SiteKitFonts {
 		foreach ( [ 'font_body', 'font_heading', 'font_mono' ] as $key ) {
 			$out[] = (string) ( $values[ $key ] ?? '' );
 		}
-		foreach ( explode( '|', (string) ( $values['fonts_extra'] ?? '' ) ) as $family ) {
-			$out[] = 'google:' . trim( $family );
+		foreach ( self::extraFamilies( $values['fonts_extra'] ?? '' ) as $family ) {
+			$out[] = 'google:' . $family;
 		}
 		foreach ( $values as $key => $value ) {
 			if ( str_starts_with( (string) $key, 'typo_' ) && is_array( $value ) ) {

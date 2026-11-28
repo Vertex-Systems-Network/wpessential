@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "e93386c2f663cdd0cd1027a8513949ad39fe1ba9",
+  "anchor_main_sha": "ab80f77de428f95a530ddc6cc3ec7356179786a3",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -4090,15 +4090,39 @@
       "expected_minutes": 15,
       "dedup_key": "adr0239|wp7|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "7e259e39 first PHPDoc gate failure, 21e66481 correction and location/HTML slice; verification pending.",
-        "dfbf6d9c 8/8 workflows PASS incl. WordPress E2E 45992599478; further browser acceptance 2163bb82 requires fresh exact-head CI. PHP #1601 planning-only separately tracked."
+        "dfbf6d9c 8/8 workflows PASS incl. WordPress E2E 45992599478; further browser acceptance 2163bb82 requires fresh exact-head CI. PHP #1601 planning-only separately tracked.",
+        "8a3ea579 exact-head 8/8 workflows, 10/10 checks, WordPress E2E 45993977471 46/46; merged ab80f77d."
       ],
-      "note": "Do not promote before scoped acceptance."
+      "note": "Bounded WP7 acceptance; PHP architecture #1601 deferred separately (planning only)."
+    },
+    {
+      "id": "RB-0134",
+      "source": "ADR-0239 WP8 / #1602 / PR #1603",
+      "category": "ADR_0239_CUSTOMIZER",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "WP8 exact-head PHP quality, architecture, compatibility and WordPress bidirectional Customizer E2E",
+      "environment": "WP8 candidate from ab80f77d",
+      "dependencies": [
+        "Bounded WP7 merged",
+        "WP8 source and tests"
+      ],
+      "authorization": "BEP-STK-V1",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 15,
+      "dedup_key": "adr0239|wp8|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "79a5bae7 scalar schema projection first slice; shared composite controls and browser acceptance pending."
+      ],
+      "note": "No independent option or PHP runtime."
     }
   ],
-  "last_reconciled_issue": "#1595",
+  "last_reconciled_issue": "#1602",
   "last_reconciled_policy": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
