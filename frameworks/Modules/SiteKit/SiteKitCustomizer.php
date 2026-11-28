@@ -22,6 +22,7 @@ final class SiteKitCustomizer {
 
 	public function register(): void {
 		add_filter( 'wpessential_site_kit_owned_legacy_fields', [ SiteKitLegacyPreview::class, 'themeOwnedKeys' ] );
+		add_filter( 'wpessential_site_kit_legacy_breakpoint_model', [ SiteKitLegacyBreakpointPreview::class, 'model' ] );
 		add_action( 'customize_register', [ $this, 'controls' ] );
 		add_action( 'customize_controls_enqueue_scripts', [ $this, 'enqueue' ] );
 		add_action( 'customize_controls_print_footer_scripts', [ $this, 'config' ], 1 );

@@ -95,9 +95,19 @@ final class SiteKitAdmin {
 			$scalar  = SiteKitLegacyScalarPreview::assess( $pending, $before );
 			$fonts   = SiteKitLegacyFontPreview::adoptLocalCache( SiteKitLegacyFontPreview::candidates( $pending, $before ), $before );
 			$changes = $review['ready'] + $scalar['ready'] + array_diff_key( $fonts, $before );
+			$breakpoint = SiteKitLegacyBreakpointPreview::bridgeSupported() && ! in_array( 'breakpoints', $handed, true ) ? SiteKitLegacyBreakpointPreview::candidate( $legacy, $before ) : [];
+			if ( $breakpoint !== [] && ! array_key_exists( 'breakpoints', $before ) ) {
+				$changes['breakpoints'] = $breakpoint['values'];
+			}
 			$this->store->update( $changes );
 			$eligible = array_merge( SiteKitLegacyPreview::handoffKeys( $pending ), SiteKitLegacyScalarPreview::handoffKeys( $pending ), array_keys( $fonts ) );
 			$keys     = SiteKitLegacyPreview::confirmedReadback( $eligible, $before + $changes, $this->store->values() );
+			if ( $breakpoint !== [] && SiteKitLegacyPreview::confirmedReadback( [ 'breakpoints' ], $before + $changes, $this->store->values() ) !== [] ) {
+				set_theme_mod( SiteKitLegacyBreakpointPreview::MAP_MOD, $breakpoint['mobile_key'] );
+				if ( get_theme_mod( SiteKitLegacyBreakpointPreview::MAP_MOD, '' ) === $breakpoint['mobile_key'] ) {
+					$keys[] = 'breakpoints';
+				}
+			}
 			$next     = array_values( array_unique( array_merge( $handed, $keys ) ) );
 			if ( $next !== $handed ) {
 				set_theme_mod( SiteKitLegacyPreview::HANDOFF_MOD, $next );
@@ -204,31 +214,34 @@ final class SiteKitAdmin {
 		$fonts = SiteKitLegacyFontPreview::candidates( $pending, $values );
 		$fontReady = array_diff_key( $fonts, $values );
 		$fontConflicts = array_filter( array_intersect_key( $fonts, $values ), static fn ( string $value, string $key ): bool => $values[ $key ] !== $value, ARRAY_FILTER_USE_BOTH );
-		$deferred = array_diff( array_intersect( $review['deferred'], $scalar['deferred'] ), array_keys( $fonts ) );
+		$breakpointCandidate = SiteKitLegacyBreakpointPreview::bridgeSupported() && ! in_array( 'breakpoints', $handed, true ) ? SiteKitLegacyBreakpointPreview::candidate( $legacy, $values ) : [];
+		$breakpointKeys = $breakpointCandidate === [] ? [] : [ 'breakpoints' ];
+		$deferred = array_diff( array_intersect( $review['deferred'], $scalar['deferred'] ), array_keys( $fonts ), $breakpointKeys );
 		$html    = Notice::render(
 			'info',
 			sprintf(
 				/* translators: 1: import-ready settings, 2: conflicts, 3: deferred settings. */
 				__( 'Legacy theme settings review: %1$d compatible values, %2$d conflicts and %3$d deferred values. Canonical settings take priority; original theme values are retained.', 'wpessential' ),
-				count( $review['ready'] ) + count( $scalar['ready'] ) + count( $fontReady ),
+				count( $review['ready'] ) + count( $scalar['ready'] ) + count( $fontReady ) + count( $breakpointKeys ),
 				count( $review['conflicts'] ) + count( $scalar['conflicts'] ) + count( $fontConflicts ),
 				count( $deferred )
 			)
 		);
 		if ( array_key_exists( 'breakpoints', $legacy ) ) {
 			$breakpoint = SiteKitLegacyBreakpointPreview::assess( $legacy );
-			$message = match ( $breakpoint['status'] ) {
-				'ready' => __( 'Legacy breakpoint boundaries can be represented in the Kit. Review only: transfer is not enabled while legacy responsive controls remain.', 'wpessential' ),
-				'responsive_values' => __( 'Legacy breakpoints need review: existing responsive values must be reconciled before transfer.', 'wpessential' ),
-				default => __( 'Legacy breakpoints need review: unsupported format. No values have been changed.', 'wpessential' ),
+			$message = match ( true ) {
+				SiteKitLegacyBreakpointPreview::model() !== [] => __( 'Breakpoints are now controlled by Site Tools Kit. Original theme responsive values remain stored.', 'wpessential' ),
+				$breakpointCandidate !== [] => __( 'Compatible breakpoints can transfer. Legacy responsive values retain their original device keys.', 'wpessential' ),
+				$breakpoint['status'] === 'unknown_format' => __( 'Legacy breakpoints need review: unsupported format. No values have been changed.', 'wpessential' ),
+				default => __( 'Legacy breakpoint transfer needs compatible theme support and non-conflicting canonical breakpoints.', 'wpessential' ),
 			};
 			$html .= '<p data-wpe-legacy-breakpoint-review="' . esc_attr( $breakpoint['status'] ) . '">' . esc_html( $message ) . '</p>';
 		}
-		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ), array_keys( $fonts ) ), $handed ) !== [] ) {
+		if ( array_diff( array_merge( SiteKitLegacyPreview::handoffKeys( $legacy ), SiteKitLegacyScalarPreview::handoffKeys( $legacy ), array_keys( $fonts ), $breakpointKeys ), $handed ) !== [] ) {
 			$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$html .= wp_nonce_field( self::LEGACY_ACTION, '_wpnonce', true, false );
 			$html .= '<input type="hidden" name="action" value="' . esc_attr( self::LEGACY_ACTION ) . '">';
-			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar and font values while retaining existing Site Tools Kit settings where they conflict. Local Google font values transfer only when existing local files and cache metadata are verified. Delivery settings are not migrated.', 'wpessential' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Import compatible palette, scalar, font and breakpoint values while retaining existing Site Tools Kit settings where they conflict. Local Google font values transfer only when existing local files and cache metadata are verified. Delivery settings are not migrated.', 'wpessential' ) . '</p>';
 			$html .= Button::button( __( 'Transfer compatible legacy settings', 'wpessential' ), 'secondary', [ 'type' => 'submit' ] ) . '</form>';
 		}
 		return $html;
